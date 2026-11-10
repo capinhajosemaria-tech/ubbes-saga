@@ -148,10 +148,11 @@ function confirmPlace(){if(!place||!place.chk||!place.chk.ok)return;const D=DEF[
   if(count(place.t)>=limitOf(place.t)||!afford(costOf(place.t)))endMode();else lastPlaceKey='';}
 let roadErase=false;
 /* roads: tap a start, tap an end, see a ghost of the road, confirm */
-let roadA=null,roadPrev=null,roadFail=false,roadHover='';
+let roadA=null,roadPrev=null,roadFail=false,roadHover='',roadLock=false;
 let roadKind='road';
 function startWall(){startRoad();roadKind='wall';roadBar();}
-function startRoad(){roadKind='road';mode='road';roadErase=false;roadA=null;roadPrev=null;roadFail=false;roadBar();}
+function startRoad(){roadKind='road';mode='road';roadErase=false;roadReset();}
+function roadReset(){roadA=null;roadPrev=null;roadFail=false;roadLock=false;roadHover='';roadBar();}
 function roadOK(x,y){if(!inMap(x,y))return false;const i=y*N+x;if(roadKind==='wall'){if(roadErase)return !!walls[i];if(walls[i])return true;return !occ[i]&&isUnl(x,y)&&BUILDABLE.has(ter[i]);}
   if(roadErase)return !!roads[i];if(walls[i]===1)return false;if(roads[i])return true;return !occ[i]&&isUnl(x,y)&&(BUILDABLE.has(ter[i])||ter[i]===T.RIVER);}
 function roadPath(a,b){if(!roadOK(a[0],a[1])||!roadOK(b[0],b[1]))return null;
@@ -167,21 +168,26 @@ function wallCost(){if(!roadPrev)return {};let w=0,pl=0;for(const p of roadPrev)
 function roadBar(){const G=roadKind==='wall'?walls:roads;const n=roadPrev?roadPrev.filter(p=>roadErase?G[p[1]*N+p[0]]:!G[p[1]*N+p[0]]).length:0;
   const bridge=!roadErase&&roadPrev&&roadPrev.some(p=>ter[p[1]*N+p[0]]===T.RIVER&&!roads[p[1]*N+p[0]]);
   const W=roadKind==='wall',wc=W?wallCost():{};
-  const msg='<strong>'+(W?(roadErase?'Remove palisade':'Palisade'):(roadErase?'Remove roads':'Roads'))+'</strong> · '+(!roadA?(roadErase?'Tap the start of the stretch to remove.':W?'Tap where the palisade starts. Where it crosses a road, a gate is built.':'Tap where the road starts.')
-    :roadFail?'No way through to there. Tap another end point.'
-    :!roadPrev?'Now tap where it ends.'
-    :(roadErase?n+' tiles will be removed.':W?n+' stakes: '+costStr(wc)+(afford(wc)?'':' (not enough)')+'.':n+' new tiles'+(bridge?', with a bridge':'')+'. Roads are free.')+' Tap elsewhere to move the end.')+(W?' <span class="meta">Palisade: '+(S.wallClosed?'closed':'not closed yet')+'.</span>':'')
-    +' <span class="meta">Drag to move the map. Gold dots: not connected to the Town Hall.</span>';
-  setModeBar(msg,roadFail,[{label:'Done',fn:()=>{endMode();save();}},{label:roadErase?'Draw':'Erase',fn:()=>{roadErase=!roadErase;roadA=null;roadPrev=null;roadFail=false;roadBar();}},{label:'Clear',disabled:!roadA,fn:()=>{roadA=null;roadPrev=null;roadFail=false;roadBar();}},{label:roadErase?'Remove':W?'Build palisade':'Build road',cls:'primary',disabled:!roadPrev||!n||(W&&!roadErase&&!afford(wc)),fn:confirmRoad}]);}
+  const what=W?(roadErase?'Remove palisade':'Palisade'):(roadErase?'Remove roads':'Roads');
+  let msg='<strong>'+what+'</strong> · ';
+  if(!roadA)msg+=(roadErase?'Click the start of the stretch to remove.':W?'Click where the palisade starts. Where it crosses a road, a gate is built.':'Click where the road starts.');
+  else if(!roadLock)msg+=(roadFail?'No way through to there. ':'')+'Now click where it ends.';
+  else if(roadFail)msg+='No way through to there. Click another end point, or Cancel.';
+  else msg+=(roadErase?n+' tiles will be removed.':W?n+' stakes: '+costStr(wc)+(afford(wc)?'':' (not enough)')+'.':n+' new tiles'+(bridge?', with a bridge':'')+'. Roads are free.')+' Check the plan, then press '+(roadErase?'Remove':W?'Build palisade':'Build road')+'.';
+  if(W)msg+=' <span class="meta">Palisade: '+(S.wallClosed?'closed':'not closed yet')+'.</span>';
+  if(!roadLock)msg+=' <span class="meta">Drag to move the map. Gold dots: not connected to the Town Hall.</span>';
+  const btns=roadLock?[{label:'Cancel',fn:roadReset},{label:roadErase?'Remove':W?'Build palisade':'Build road',cls:'primary',disabled:!roadPrev||!n||(W&&!roadErase&&!afford(wc)),fn:confirmRoad}]
+    :[{label:'Close',fn:()=>{endMode();save();}},{label:roadErase?'Draw':'Erase',fn:()=>{roadErase=!roadErase;roadReset();}}].concat(roadA?[{label:'Cancel',fn:roadReset}]:[]);
+  setModeBar(msg,roadFail&&roadLock,btns);}
 function roadTarget(t){if(!roadA)return;if(t[0]===roadA[0]&&t[1]===roadA[1]){roadPrev=roadOK(t[0],t[1])?[t]:null;roadFail=false;return;}const p=roadPath(roadA,t);roadFail=!p;roadPrev=p;}
 function roadTap(t){if(!inMap(t[0],t[1]))return;
-  if(!roadA){if(!roadOK(t[0],t[1])){toast(roadErase?'There is no road there.':'A road cannot go there: '+(!isUnl(t[0],t[1])?'the land is locked.':occ[t[1]*N+t[0]]?'a building stands there.':'the ground is not open.'));return;}roadA=t;roadPrev=null;roadFail=false;roadBar();return;}
-  roadTarget(t);roadHover=t[0]+','+t[1];roadBar();}
-function roadHoverAt(px,py){if(!roadA)return;const w=s2w(px,py),t=w2t(w[0],w[1]);const k=t[0]+','+t[1];if(k===roadHover||!inMap(t[0],t[1]))return;roadHover=k;roadTarget(t);roadBar();}
+  if(!roadA){if(!roadOK(t[0],t[1])){toast(roadErase?'There is no road there.':'A road cannot go there: '+(!isUnl(t[0],t[1])?'the land is locked.':occ[t[1]*N+t[0]]?'a building stands there.':'the ground is not open.'));return;}roadA=t;roadPrev=null;roadFail=false;roadLock=false;roadBar();return;}
+  roadTarget(t);roadHover=t[0]+','+t[1];roadLock=true;roadBar();}
+function roadHoverAt(px,py){if(!roadA||roadLock)return;const w=s2w(px,py),t=w2t(w[0],w[1]);const k=t[0]+','+t[1];if(k===roadHover||!inMap(t[0],t[1]))return;roadHover=k;roadTarget(t);roadBar();}
 function confirmRoad(){if(!roadPrev)return;if(roadKind==='wall'){if(!roadErase){const c=wallCost();if(!afford(c)){toast('Not enough: needs '+costStr(c));return;}pay(c,1);}
-    for(const p of roadPrev){const i=p[1]*N+p[0];if(roadErase)walls[i]=0;else if(!walls[i])walls[i]=roads[i]?2:1;}recomputeWalls();const end=roadPrev[roadPrev.length-1];roadPrev=null;roadA=roadErase?null:end;roadFail=false;rebuildOcc();checkMilestones();save();roadBar();return;}
+    for(const p of roadPrev){const i=p[1]*N+p[0];if(roadErase)walls[i]=0;else if(!walls[i])walls[i]=roads[i]?2:1;}recomputeWalls();roadPrev=null;roadA=null;roadLock=false;roadFail=false;rebuildOcc();checkMilestones();save();roadBar();return;}
   for(const p of roadPrev){const i=p[1]*N+p[0];if(roadErase)roads[i]=0;else if(roadOK(p[0],p[1]))roads[i]=1;}
-  const end=roadPrev[roadPrev.length-1];roadPrev=null;roadA=roadErase?null:end;roadFail=false;recomputeConn();assignWorkers();checkMilestones();save();roadBar();}
+  roadPrev=null;roadA=null;roadLock=false;roadFail=false;recomputeConn();assignWorkers();checkMilestones();save();roadBar();}
 function drawRoadGhost(){
   if(roadPrev)for(const p of roadPrev){const i=p[1]*N+p[0];const sx=(p[0]-p[1])*HW,sy=(p[0]+p[1])*HH-(ter[i]===T.RIVER?-2:elev[i]);
     poly([sx,sy-HH*0.78,sx+HW*0.78,sy,sx,sy+HH*0.78,sx-HW*0.78,sy],roadErase?'rgba(163,74,58,0.55)':roads[i]?'rgba(201,166,74,0.28)':ter[i]===T.RIVER?'rgba(138,110,82,0.6)':'rgba(222,200,150,0.62)');}

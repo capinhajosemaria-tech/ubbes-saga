@@ -4,7 +4,7 @@ const typing=e=>{const t=e.target;return t&&(t.tagName==='INPUT'||t.tagName==='T
 document.addEventListener('keydown',e=>{if(typing(e)||e.ctrlKey||e.metaKey||e.altKey)return;const k=e.key;
   if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','w','a','s','d','W','A','S','D'].includes(k)){if(!titleOn){keysHeld.add(k.toLowerCase());e.preventDefault();}return;}
   if(titleOn)return;
-  if(k==='Escape'){if(modalOpen)return;if(mode==='road'&&roadA){roadA=null;roadPrev=null;roadFail=false;roadBar();return;}if(mode!=='view'){endMode();return;}closeSheet();return;}
+  if(k==='Escape'){if(modalOpen)return;if(mode==='road'&&roadA){roadReset();return;}if(mode!=='view'){endMode();return;}closeSheet();return;}
   if(modalOpen)return;
   if(k===' '){e.preventDefault();if(speed>0){speedBefore=speed;setSpeed(0);}else setSpeed(speedBefore||1);return;}
   if(k==='1'){setSpeed(1);return;}if(k==='2'){setSpeed(2);return;}if(k==='3'){setSpeed(4);return;}if(k==='0'){setSpeed(0.5);return;}

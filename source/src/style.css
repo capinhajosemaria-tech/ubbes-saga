@@ -75,7 +75,7 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 table.t{width:100%;border-collapse:collapse;font-size:13px}
 table.t td{padding:6px 0;border-bottom:1px solid #DDE3E1}
 table.t td:last-child{text-align:right;font-variant-numeric:tabular-nums}
-.tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
 .tabs button{flex:none;min-height:36px;padding:0 12px;border-radius:999px;border:1px solid var(--line);background:var(--panel-solid);font:600 13px var(--body);color:var(--ink);cursor:pointer}
 .tabs button[aria-pressed="true"]{background:var(--ink);color:var(--panel-solid);border-color:var(--ink)}
 .blist{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
@@ -222,3 +222,4 @@ textarea{background:var(--parch2);border-color:var(--line2)}
 .seg button.fast{color:var(--gold2)}
 body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 textarea,input{-webkit-user-select:text;user-select:text}
+@media (pointer:fine){.res{cursor:grab}.res.drag{cursor:grabbing}}

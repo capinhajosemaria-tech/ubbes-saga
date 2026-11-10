@@ -1,0 +1,31 @@
+/* =================== save / load =================== */
+function snapshot(){const s=Object.assign({},S);delete s.bal;delete s.tc;s.meta={name:pname(jarlP())||'Kaldstrand',year:yearNow(),pop:S.pop,th:thLevel(),mode:S.mode};
+  return {v:3,n:N,S:s,meta:s.meta,b:B.map(b=>[b.t,b.fx,b.fy,b.rot,b.desired,b.lvl,Math.round(b.anvil),b.mode,b.proj]),roads:Array.from(roads.reduce((a,v,i)=>{if(v)a.push(i);return a;},[])),walls:Array.from(walls.reduce((a,v,i)=>{if(v)a.push(i*4+v);return a;},[])),
+  zones:Array.from(unlocked),trees:trees.map(t=>[Math.round(t.amt*10)/10,t.regrow]),bushes:bushes.map(b=>Math.round(b.amt*10)/10)};}
+function apply(d){
+  if(!d||d.v!==3||d.n!==N||!d.S||!Array.isArray(d.b))return false;
+  const num=(v,def)=>Number.isFinite(+v)?+v:def;
+  freshState(d.S.mode||'relaxed',d.S.adv||'');
+  const base=S;S=Object.assign(base,d.S);S.res=Object.assign(EMPTY_RES(),d.S.res||{});for(const k in S.res)S.res[k]=Math.max(0,num(S.res[k],0));
+  S.pol=Object.assign({ration:'normal',rite:'cremation',child:false,borders:'open',loot:'jarl',thralls:'soft'},d.S.pol||{});S.gods=Object.assign({odin:40,thor:40,freyja:40,njord:40,loki:30},d.S.gods||{});
+  S.bal=null;S.modal=Array.isArray(S.modal)?S.modal:[];S.people=Array.isArray(S.people)?S.people:[];S.ships=Array.isArray(S.ships)?S.ships:[];S.raids=Array.isArray(S.raids)?S.raids:[];
+  S.reserve=S.reserve||{};S.tg=S.tg||{};S.blessCd=S.blessCd||{};S.blessOn=S.blessOn||{};S.fx=S.fx||{};S.mods=S.mods||[];S.evtSeen=S.evtSeen||{};S.yr=S.yr||{births:0,deaths:0,arrived:0,left:0,raids:0,silver:0,fame:0};S.winter=S.winter||{hard:false,said:false,told:false};
+  B=[];nextId=1;for(const a of d.b){if(!DEF[a[0]])continue;const b=addBuilding(a[0],a[1]|0,a[2]|0,(a[3]|0)&3,true);
+    b.lvl=Math.min(5,Math.max(1,a[5]|0||1));b.anvil=num(a[6],100);b.mode=SMITH[a[7]]?a[7]:'tools';b.proj=a[8]&&SHIPS[a[8].type]?{type:a[8].type,done:num(a[8].done,0)}:null;
+    b.desired=Math.min(slotsOf(b),Math.max(0,a[4]|0));}
+  roads=new Uint8Array(N*N);(d.roads||[]).forEach(i=>{if(i>=0&&i<N*N)roads[i]=1;});
+  walls=new Uint8Array(N*N);(d.walls||[]).forEach(q=>{const i=q>>2;if(i>=0&&i<N*N)walls[i]=q&3;});S.maps=S.maps||{};S.mkt=S.mkt||{};S.advs=S.advs||(S.adv?[S.adv]:[]);
+  unlocked=new Set((d.zones||[]).filter(z=>typeof z==='string'));if(!unlocked.size)defaultZones();
+  if(Array.isArray(d.trees)&&d.trees.length===trees.length)trees.forEach((t,i)=>{t.amt=num(d.trees[i][0],0);t.regrow=num(d.trees[i][1],0);});
+  if(Array.isArray(d.bushes)&&d.bushes.length===bushes.length)bushes.forEach((b,i)=>{b.amt=num(d.bushes[i],0);});
+  S.cleared=Array.isArray(S.cleared)?S.cleared:[];S.cleared.forEach(i=>clearForest(i,true));
+  syncPop();rebuildOcc();recomputeConn();assignWorkers();recalcMorale();dayAcc=S.gameT%DAY;return true;}
+function save(){if(titleOn||!curSlot||!S||S.over&&!S.modal.length)return;try{localStorage.setItem(SLOT_KEY(curSlot),JSON.stringify(snapshot()));localStorage.setItem(LAST_KEY,String(curSlot));}catch(e){}}
+function exportCode(){const s=JSON.stringify(snapshot());return 'UBBE3:'+btoa(unescape(encodeURIComponent(s)));}
+function importCode(code){try{if(/^UBBE1:/.test(code)){toast('That code is from an older version of the game and cannot be loaded.');return false;}const s=decodeURIComponent(escape(atob(code.replace(/^UBBE3:/,'').replace(/\s+/g,''))));const ok=apply(JSON.parse(s));if(ok){if(!curSlot)curSlot=1;syncWalkers();save();}return ok;}catch(e){return false;}}
+freshState('relaxed','');S.modal=[];
+syncWalkers();assignWorkers();
+setInterval(save,10000);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)save();});
+window.addEventListener('pagehide',save);
+showTitle('home');

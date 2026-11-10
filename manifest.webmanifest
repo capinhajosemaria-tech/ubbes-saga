@@ -1,0 +1,29 @@
+{
+ "name": "Ubbe's Saga",
+ "short_name": "Ubbe's Saga",
+ "description": "A Viking village saga. Build Kaldstrand, year 865.",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "any",
+ "background_color": "#263035",
+ "theme_color": "#263035",
+ "icons": [
+  {
+   "src": "icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png"
+  },
+  {
+   "src": "icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png"
+  },
+  {
+   "src": "icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "maskable"
+  }
+ ]
+}

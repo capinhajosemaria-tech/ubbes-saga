@@ -1,0 +1,62 @@
+/* =================== ground: yards, fields, door paths =================== */
+const FIELDS=new Set(['hay','garden','grain','flax']);
+function jitterRing(c,pad,seed){const cx=(c.T[0]+c.Bt[0])/2,cy=(c.T[1]+c.Bt[1])/2,out=[];const corners=[c.T,c.R,c.Bt,c.L];
+  for(let e=0;e<4;e++){const a=corners[e],b=corners[(e+1)%4];for(let k=0;k<3;k++){const p=lerp(a,b,k/3);const dx=p[0]-cx,dy=p[1]-cy,len=Math.hypot(dx,dy)||1;const j=pad+(h2(seed,e*3+k,77)-0.5)*7;out.push(p[0]+dx/len*j,p[1]+dy/len*j*0.6);}}return out;}
+function summerProgress(){const yt=S.gameT%YEAR;return yt<SUMMER?yt/SUMMER:1;}
+function drawField(b,c,win){
+  const soil=win?'#D9DCD8':'#8A7558',rows=b.t==='hay'?0:Math.max(b.w,b.h)*2;
+  poly(P(c.T,c.R,c.Bt,c.L),win?'#DDE1DE':b.t==='hay'?'#9AAA72':soil);
+  const along=b.w>=b.h,n=along?b.h*3:b.w*3,p=summerProgress();
+  if(b.t==='hay'){if(win)return;ctx.strokeStyle=p<0.6?'#8FA368':'#B9B276';ctx.lineWidth=1.2;ctx.beginPath();
+    for(let k=0;k<70;k++){const u=h2(b.id,k,81),v=h2(b.id,k,82);const a=lerp(lerp(c.T,c.R,u),lerp(c.L,c.Bt,u),v);const hgt=3+5*Math.min(1,p*1.6);ctx.moveTo(a[0],a[1]);ctx.lineTo(a[0]-1,a[1]-hgt);ctx.moveTo(a[0]+2,a[1]);ctx.lineTo(a[0]+3,a[1]-hgt*0.8);}ctx.stroke();return;}
+  for(let k=0;k<n;k++){const f=(k+0.5)/n;const a=along?lerp(c.T,c.L,f):lerp(c.T,c.R,f),e=along?lerp(c.R,c.Bt,f):lerp(c.L,c.Bt,f);
+    ctx.strokeStyle=win?'rgba(170,165,150,0.6)':'rgba(70,55,38,0.55)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(e[0],e[1]);ctx.stroke();
+    if(win)continue;
+    const g=Math.min(1,0.25+p*1.4);
+    if(b.t==='grain'){ctx.strokeStyle=p>0.65?'#D6B865':'#93A86A';ctx.lineWidth=1.4;ctx.beginPath();for(let s=0;s<14;s++){const q=lerp(a,e,(s+0.5)/14);ctx.moveTo(q[0],q[1]);ctx.lineTo(q[0]+1,q[1]-7*g);}ctx.stroke();}
+    else if(b.t==='garden'){for(let s=0;s<8;s++){const q=lerp(a,e,(s+0.5)/8);ctx.fillStyle=s%2?'#6E8A4E':'#86A465';ctx.beginPath();ctx.ellipse(q[0],q[1]-2*g,3.2*g+0.6,2.2*g+0.4,0,0,6.3);ctx.fill();}}
+    else if(b.t==='flax'){ctx.strokeStyle='#7E9A62';ctx.lineWidth=1.1;ctx.beginPath();for(let s=0;s<14;s++){const q=lerp(a,e,(s+0.5)/14);ctx.moveTo(q[0],q[1]);ctx.lineTo(q[0],q[1]-8*g);}ctx.stroke();
+      if(p>0.35&&p<0.8){ctx.fillStyle='#8EA3D6';for(let s=0;s<14;s+=2){const q=lerp(a,e,(s+0.5)/14);ctx.beginPath();ctx.arc(q[0],q[1]-8*g,1.4,0,6.3);ctx.fill();}}}
+  }
+}
+function drawGround(b,win){
+  const e=elev[b.fy*N+b.fx]||2,c=fp(b);
+  ctx.save();ctx.translate(0,-e);
+  if(FIELDS.has(b.t)){ctx.fillStyle=win?'rgba(200,205,202,0.5)':'rgba(120,108,80,0.35)';const r=jitterRing(c,3,b.id);poly(r,ctx.fillStyle);drawField(b,inset(c,0.02),win);ctx.restore();return;}
+  if(b.t==='harbour'||b.t==='shipyard'){ctx.restore();return;}
+  const yard=b.t==='pen'?(win?'#D2D5D0':'#9C8C6C'):b.t==='train'?(win?'#D8DAD5':'#C2B48C'):(win?'#D6D9D5':'#A99F80');
+  poly(jitterRing(c,6,b.id),win?'rgba(205,210,206,0.6)':'rgba(150,138,100,0.32)');
+  poly(jitterRing(c,1,b.id+7),yard);
+  if(!win){ctx.strokeStyle='rgba(95,122,80,0.75)';ctx.lineWidth=1.2;ctx.beginPath();const r=jitterRing(c,3,b.id+3);for(let i=0;i<r.length;i+=4){const x=r[i],y=r[i+1];ctx.moveTo(x-2,y);ctx.lineTo(x,y-4);ctx.lineTo(x+2,y);}ctx.stroke();}
+  ctx.restore();
+}
+/* short dirt track from each workplace to the road next to it */
+function doorPaths(win){
+  ctx.strokeStyle=win?'#CFCAbd':'#B19E7B';ctx.lineWidth=6;ctx.lineCap='round';ctx.beginPath();
+  for(const b of B){if(DEF[b.t].road===false||FIELDS.has(b.t))continue;
+    const st=sideTiles(b,SIDES[(b.rot|0)&3]);const mid=st[Math.floor((st.length-1)/2)];
+    if(mid&&inMap(mid[0],mid[1])&&!occ[mid[1]*N+mid[0]]&&DEF[b.t].cat!=='Decor'){const fx0=Math.min(Math.max(mid[0],b.fx),b.fx+b.w-1),fy0=Math.min(Math.max(mid[1],b.fy),b.fy+b.h-1);const a=iso((mid[0]*0.35+fx0*0.65),(mid[1]*0.35+fy0*0.65)),r=iso(mid[0],mid[1]),ei=elev[mid[1]*N+mid[0]]||2;ctx.moveTo(a[0],a[1]-ei);ctx.lineTo(r[0],r[1]-ei);}
+    for(const p of st.concat(edgeTiles(b))){if(!inMap(p[0],p[1]))continue;const i=p[1]*N+p[0];if(!roads[i])continue;
+      const fx=Math.min(Math.max(p[0],b.fx),b.fx+b.w-1),fy=Math.min(Math.max(p[1],b.fy),b.fy+b.h-1);const a=iso((p[0]+fx)/2,(p[1]+fy)/2),r=iso(p[0],p[1]);
+      ctx.moveTo(a[0],a[1]-elev[i]);ctx.lineTo(r[0],r[1]-elev[i]);break;}}
+  ctx.stroke();ctx.lineCap='butt';
+}
+/* roads: soft dirt band with darker edges, wheel ruts and a few pebbles */
+function drawRoads(win,vis){
+  const arms=[[1,0,HW/2,HH/2],[-1,0,-HW/2,-HH/2],[0,1,-HW/2,HH/2],[0,-1,HW/2,-HH/2]];
+  const pass=(width,color,rut)=>{ctx.strokeStyle=color;ctx.lineWidth=width;ctx.lineCap='round';ctx.beginPath();
+    for(let y=0;y<N;y++)for(let x=0;x<N;x++){const i=y*N+x;if(!roads[i])continue;const sx=(x-y)*HW,sy=(x+y)*HH-(ter[i]===T.RIVER?2:elev[i]);if(!vis(sx,sy))continue;let any=false;
+      for(const a of arms){if(inMap(x+a[0],y+a[1])&&roads[(y+a[1])*N+x+a[0]]){any=true;
+        if(rut){const len=Math.hypot(a[2],a[3]),px=-a[3]/len*rut,py=a[2]/len*rut;ctx.moveTo(sx+px,sy+py);ctx.lineTo(sx+a[2]+px,sy+a[3]+py);ctx.moveTo(sx-px,sy-py);ctx.lineTo(sx+a[2]-px,sy+a[3]-py);}
+        else{ctx.moveTo(sx,sy);ctx.lineTo(sx+a[2],sy+a[3]);}}}
+      if(!any&&!rut){ctx.moveTo(sx-0.1,sy);ctx.lineTo(sx+0.1,sy);}}
+    ctx.stroke();};
+  pass(17,win?'rgba(170,166,152,0.35)':'rgba(120,104,72,0.28)',0);
+  pass(13,win?'#D2CDBF':'#B6A27F',0);
+  pass(8,win?'#DCD8CC':'#C3B08C',0);
+  pass(1.4,win?'rgba(165,158,140,0.8)':'rgba(132,114,84,0.75)',3);
+  ctx.lineCap='butt';
+  for(let y=0;y<N;y++)for(let x=0;x<N;x++){const i=y*N+x;if(!roads[i]||ter[i]===T.RIVER)continue;const sx=(x-y)*HW,sy=(x+y)*HH-elev[i];if(!vis(sx,sy))continue;
+    for(let k=0;k<3;k++){const u=h2(x,y,90+k);if(u<0.5)continue;ctx.fillStyle=win?'#BDB8AA':'#9A8F7C';ctx.beginPath();ctx.ellipse(sx+(h2(x,y,93+k)-0.5)*12,sy+(h2(x,y,96+k)-0.5)*6,1.6,1,0,0,6.3);ctx.fill();}
+    if(!win){for(const a of arms){if(inMap(x+a[0],y+a[1])&&roads[(y+a[1])*N+x+a[0]])continue;if(h2(x,y,100+a[0]*3+a[1])<0.5)continue;const ex=sx+a[2]*0.55,ey=sy+a[3]*0.55;ctx.strokeStyle='rgba(95,122,80,0.8)';ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(ex-2,ey);ctx.lineTo(ex,ey-4);ctx.lineTo(ex+2,ey);ctx.stroke();}}}
+}

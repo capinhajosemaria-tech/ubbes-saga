@@ -22,7 +22,7 @@ Read this first in every session. It is short on purpose: details live in the fi
 - `source/src/NN_name.js` — game code, concatenated in file-name order by `source/build.py` into one file. New modules must match `[0-9][0-9]_*.js`; a module that must load after `20_x.js` is named `20_zsomething.js`.
 - `source/src/head.html`, `body.html`, `style.css` — page shell and styles. `source/VERSION` — version string.
 - `tools/` — test page builder, regression checks, balance bots. See below.
-- `.claude/agents/tester.md` — the test runner agent (cheap model). `.claude/skills/ubbe-release/` — release steps.
+- `.claude/agents/` — helper agents (see "Saving tokens"). `.claude/skills/ubbe-release/` — release steps.
 
 ## Working rules
 - **Rounds:** each round has a fixed list (3–6 items) taken from `BACKLOG.md`. New wishes during a round go to the backlog unless they block play.
@@ -31,6 +31,16 @@ Read this first in every session. It is short on purpose: details live in the fi
 - **Testing:** delegate builds, checks and bot runs to the **tester** agent; it returns a short summary. Do not paste long logs into the conversation. Look at screenshots yourself only when judging visuals.
 - **Saves:** if the map or the save format changes, bump the save keys in `30_saves_title.js` and tell the player old saves will not load.
 - **End of round:** update `SPEC.md` (if behaviour changed), regenerate `docs/NUMBERS.md`, add a `CHANGELOG.md` entry, tick `BACKLOG.md`, release.
+
+## Saving tokens (José's usage limit matters)
+Delegate routine work to the cheaper agents in `.claude/agents/` and keep the main conversation for design, decisions and writing game code:
+| Agent | Model | Use it for |
+|---|---|---|
+| `tester` | Haiku | Build, `tools/check.py`, plain bot runs, perf, `gen_numbers.py` |
+| `finder` | Haiku | "Where is the code that does X?" before editing; read only the lines it points to, not whole files |
+| `balance` | Sonnet | Balance questions: several bot runs, raid Monte Carlo, workers vs jobs, compared with the targets |
+| `shots` | Haiku | Screenshots joined into one contact sheet (`tools/ui/sheet.py`); then read only `tools/shots/sheet.png` |
+Also: one round per conversation (start a new one after each release); run independent agents in parallel; never run checks or bots directly in the main conversation.
 
 ## Commands (run from the repository root)
 ```
@@ -41,6 +51,7 @@ sh tools/bots/runall.sh 900 "$(cat tools/bots/profiles.json)"   # run from tools
 python3 tools/gen_numbers.py             # regenerate docs/NUMBERS.md
 sh tools/release.sh "Beta 0.6.2"         # set version, build, copy game to repo root
 ```
+`python3 tools/ui/sheet.py [views]` (from `tools/`) makes one contact sheet of PC and iPhone views.
 UI/balance scripts in `tools/ui` and `tools/balance` run from `tools/` (they use `test.html` and `shots/` there).
 Playwright and Chromium are preinstalled in Claude's cloud sessions; nothing to install.
 

@@ -18,11 +18,16 @@ Decisions: old saves may break (bump save keys); start with about 16 people inst
 ## Polish after Town Hall 5 (beta polish rounds)
 Merge José's play feedback here, grouped as visual / balance / organisation. **PC only for now** (decided 2026-11-10): tune everything on PC, then convert to iPhone; phone items wait in "Phone (later)".
 Sources: José's first play feedback (Relaxed mode) and Claude's first review (Beta 0.6.1).
+José's second play session (Relaxed, 2026-11-10, after Polish 1) added the items marked *(play 2)*. Keep: the first part of Town Hall 1 feels good, don't change its pacing.
 
 ### Visual
 - [x] **Resource bar hard to read** (José): show each resource's name next to the number, clearer and more detailed icons.
 - [ ] **Icons in menus too vague** (José): more explicit, detailed icons in build tray, panels and sheets.
 - [x] Mountain massif dominates the TH5 view (about a third of the screen, a flat white block): make it smaller with a new design (José agrees), freeing land for building.
+- [ ] **Log-pile props look wrong** *(play 2)*: remove the loose firewood/log props from the village; keep logs only at the Woodlodge, and redraw them properly (round end at the back as well as the front, not cut flat).
+- [ ] **Menu look** *(play 2)*: menus are better organised now, but José prefers a look closer to the original option, more like Bad North (clean, minimal, light panels).
+- [ ] **Title font for numbers** *(play 2)*: use the title font also for resource numbers and other figures in the UI.
+- [ ] **Show the 6 × 6 land blocks** *(play 2)*: the unlockable 6 × 6 tile groups should be visible in the translucent grid (still subdued), so it is clear which block will be unlocked.
 - [ ] World map: labels overlap ("Iona" over "SCOTLAND", "Jutland" over "JUTLAND"); Birka sits on the Norway landmass (should be Sweden); England, the main goal, opens half hidden in mist.
 
 ### Balance
@@ -31,6 +36,7 @@ Sources: José's first play feedback (Relaxed mode) and Claude's first review (B
 - [ ] Re-check raiding after TH4 with the new `balance` agent (several runs per profile), together with the Monte Carlo update below.
 
 ### Organisation / gameplay
+- [ ] **Remove water as a resource** *(play 2)*: the village is by a river, and 2–3 wells in a small village feel wrong. Remove water and wells to reduce complexity (may come back later). Save keys likely need a bump.
 - [x] **More building space** (José): start with more land unlocked (more than the free 3 × 3 zones) and more buildable room overall.
 - [ ] **Menus not well organised, sometimes unclear** (José): review build categories, panel structure and the wording of sheets; explain what each building does and needs.
 - [x] To do says "Every bed is taken" at the start while the bar shows 11/12; make the message and the counter agree.

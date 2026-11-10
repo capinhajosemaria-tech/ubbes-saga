@@ -6,7 +6,7 @@ Read this first in every session. It is short on purpose: details live in the fi
 - The owner (José) does not program. He plays, gives feedback in **Portuguese**, and decides. Claude is game designer and developer.
 - Talk to him in Portuguese; everything inside the game (UI text, names) is in **English**.
 - He wants honest feedback, one or two follow-up questions when something is unclear, and suggestions.
-- Main platform is **PC** (Chrome/Edge); it must also play well on an **iPhone 14** (390 × 844).
+- Main platform is **PC** (Chrome/Edge). **For now, design and test on PC only**; the iPhone 14 (390 × 844) version comes later, after PC is polished. Don't spend effort on phone layout until then (keep the phone checks in `tools/check.py` passing, nothing more).
 
 ## What to read
 | File | What it is | When |

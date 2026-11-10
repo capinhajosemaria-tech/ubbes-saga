@@ -1,38 +1,86 @@
 /* =================== world map (Bad North style), trade market, level 4–5 sheets =================== */
-const WPOS={home:[236,96],hval:[244,50],sogn:[246,78],hord:[226,124],ringa:[272,112],skir:[264,152],jut:[248,212],hedeby:[252,248],birka:[338,150],
-  shet:[160,62],ork:[136,98],heb:[92,126],lind:[160,184],iona:[86,150],york:[152,214],london:[178,272]};
-const LANDS=[
-  {r:'scand',p:'206,8 300,4 312,40 296,70 286,104 276,140 262,166 244,160 230,140 218,118 214,96 220,70 224,40'},
-  {r:'scand',p:'300,4 398,0 398,190 360,200 336,176 318,150 296,120 290,90 312,40'},
-  {r:'scand',p:'236,182 262,178 268,206 260,236 266,256 246,262 232,240 236,214'},
-  {r:'scand',p:'276,232 296,226 302,240 284,246'},
-  {r:'isles',p:'154,52 166,50 168,70 158,74'},{r:'isles',p:'128,92 144,90 146,104 130,106'},{r:'isles',p:'80,118 96,112 100,134 86,138'},
-  {r:'england',p:'98,120 132,112 150,134 146,160 158,178 164,206 178,238 196,270 170,292 120,296 112,262 126,232 110,204 90,188 84,160 92,140'},
-  {r:'england',p:'20,176 64,166 76,196 62,236 30,240 14,212'}];
-function worldSVG(){const reg=r=>regionOpen(r);
-  let o='<svg viewBox="-40 -20 480 340" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Map of the north"><defs><linearGradient id="wsea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2F4A55"/><stop offset="1" stop-color="#2F4A55"/></linearGradient>'
-    +'<radialGradient id="wfog"><stop offset="0" stop-color="#E4E8E7" stop-opacity="0.88"/><stop offset="0.6" stop-color="#E4E8E7" stop-opacity="0.62"/><stop offset="1" stop-color="#E4E8E7" stop-opacity="0"/></radialGradient><filter id="wblur"><feGaussianBlur stdDeviation="6"/></filter></defs>';
-  o+='<rect x="-40" y="-20" width="480" height="340" fill="url(#wsea)"/>';
-  for(let k=0;k<26;k++){const x=(k*67)%400,y=(k*41)%300;o+='<path d="M'+x+' '+y+' q4 -3 8 0 t8 0" stroke="#4F6C78" stroke-width="1" fill="none" opacity="0.6"/>';}
-  for(const L of LANDS){const pts=L.p.split(' ').map(q=>q.split(',').map(Number));const sh=pts.map(q=>q[0]+','+(q[1]+5)).join(' ');
-    o+='<polygon points="'+sh+'" fill="#55604F"/><polygon points="'+L.p+'" fill="'+(reg(L.r)?'#B3BC9E':'#8E978A')+'" stroke="#E7E3D2" stroke-width="0.6" stroke-opacity="0.5"/>';
-    const cx=pts.reduce((a,q)=>a+q[0],0)/pts.length,cy=pts.reduce((a,q)=>a+q[1],0)/pts.length;o+='<polygon points="'+pts.slice(0,Math.ceil(pts.length/2)).map(q=>((q[0]+cx)/2)+','+((q[1]+cy)/2)).join(' ')+' '+cx+','+cy+'" fill="#C6CDB2" opacity="0.55"/>';}
-  [[262,40],[282,70],[300,30],[330,60],[268,100]].forEach(q=>{o+='<polygon points="'+(q[0]-9)+','+(q[1]+6)+' '+q[0]+','+(q[1]-10)+' '+(q[0]+9)+','+(q[1]+6)+'" fill="#8F9A90"/><polygon points="'+(q[0]-3)+','+(q[1]-5)+' '+q[0]+','+(q[1]-10)+' '+(q[0]+3)+','+(q[1]-5)+'" fill="#F1F0EA"/>';});
+/* World chart: 1000 × 800 units, north up. Drag or swipe to move, wheel or pinch to zoom. */
+const WPOS={home:[590,240],hval:[610,125],sogn:[615,195],hord:[565,310],ringa:[680,280],skir:[660,385],jut:[620,530],hedeby:[632,615],birka:[845,375],
+  shet:[402,155],ork:[342,246],heb:[232,315],lind:[408,462],iona:[214,374],york:[384,535],london:[448,676]};
+const WLANDS=[
+  {r:'scand',n:'Norway',lp:[760,150],p:'650,-160 640,0 618,40 600,88 586,130 570,170 576,210 560,250 548,300 556,340 584,380 618,408 650,424 700,440 760,470 800,500 832,480 862,420 882,360 902,300 932,240 962,170 1000,100 1160,70 1160,-160'},
+  {r:'scand',n:'Jutland',lp:[612,470],p:'600,468 640,458 662,500 656,560 672,600 690,640 642,652 610,622 600,562 594,512'},
+  {r:'scand',p:'690,556 728,560 734,598 700,604'},{r:'scand',p:'742,566 772,560 780,590 752,596'},
+  {r:'scand',n:'Gotland',p:'918,468 934,460 940,500 924,508'},
+  {r:'isles',p:'390,130 412,126 418,170 398,182'},{r:'isles',p:'322,236 356,230 362,256 330,262'},{r:'isles',p:'212,290 242,284 252,330 226,348'},
+  {r:'england',n:'Scotland',lp:[300,380],p:'330,280 382,268 402,300 386,340 410,380 420,420 432,462 300,470 270,460 250,420 238,380 268,340 298,302'},
+  {r:'england',n:'England',lp:[380,600],p:'300,470 432,462 446,500 470,560 492,620 502,660 470,700 400,712 330,722 280,700 302,660 270,620 300,580 280,540 300,500'},
+  {r:'england',p:'200,362 228,358 232,388 206,392'},
+  {r:'west',n:'Ireland',lp:[150,560],p:'100,480 170,450 222,480 226,560 200,640 130,662 80,602 70,530'},
+  {r:'far',n:'Iceland',lp:[120,70],p:'40,40 150,20 222,50 200,110 90,122 30,90'},
+  {r:'far',n:'Frankia',lp:[700,740],p:'380,800 420,762 520,742 600,702 662,672 760,662 880,640 1000,622 1160,610 1160,960 350,960'},
+  {r:'far',n:'Baltic',lp:[975,330],p:'1000,200 962,262 950,340 968,420 1000,462 1160,490 1160,170'}];
+const WMTN=[[600,60],[640,100],[700,90],[660,170],[620,150],[740,150],[700,220],[780,230],[640,250],[720,320],[820,300],[760,380],[310,330],[350,360],[140,60]];
+let WV=null;/* view box */
+function wOpen(r){return r==='west'||r==='far'?false:regionOpen(r);}
+function worldSVG(){const reg=r=>wOpen(r);
+  let o='<svg id="wsvg" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Map of the north"><defs>'
+    +'<radialGradient id="wsea" cx="0.6" cy="0.4" r="0.8"><stop offset="0" stop-color="#3A5964"/><stop offset="1" stop-color="#28414B"/></radialGradient>'
+    +'<filter id="wblur" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="16"/></filter>'
+    +'<filter id="wblur2" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="6"/></filter>'
+    +'<linearGradient id="fgT" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#DDE3E2" stop-opacity="1"/><stop offset="0.6" stop-color="#DDE3E2" stop-opacity="0.97"/><stop offset="0.8" stop-color="#DDE3E2" stop-opacity="0.55"/><stop offset="1" stop-color="#DDE3E2" stop-opacity="0"/></linearGradient>'
+    +'<linearGradient id="fgB" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#DDE3E2" stop-opacity="1"/><stop offset="0.6" stop-color="#DDE3E2" stop-opacity="0.97"/><stop offset="0.8" stop-color="#DDE3E2" stop-opacity="0.55"/><stop offset="1" stop-color="#DDE3E2" stop-opacity="0"/></linearGradient>'
+    +'<linearGradient id="fgL" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#DDE3E2" stop-opacity="1"/><stop offset="0.6" stop-color="#DDE3E2" stop-opacity="0.97"/><stop offset="0.8" stop-color="#DDE3E2" stop-opacity="0.55"/><stop offset="1" stop-color="#DDE3E2" stop-opacity="0"/></linearGradient>'
+    +'<linearGradient id="fgR" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#DDE3E2" stop-opacity="1"/><stop offset="0.6" stop-color="#DDE3E2" stop-opacity="0.97"/><stop offset="0.8" stop-color="#DDE3E2" stop-opacity="0.55"/><stop offset="1" stop-color="#DDE3E2" stop-opacity="0"/></linearGradient>'
+    +'<pattern id="wwave" width="60" height="40" patternUnits="userSpaceOnUse"><path d="M6 14 q6 -5 12 0 t12 0 M36 32 q6 -5 12 0 t12 0" stroke="#4E6C78" stroke-width="1.2" fill="none" opacity="0.55"/></pattern></defs>';
+  o+='<rect x="-300" y="-300" width="1600" height="1400" fill="url(#wsea)"/><rect x="-300" y="-300" width="1600" height="1400" fill="url(#wwave)"/>';
+  /* sailing routes under the land */
   const H=WPOS.home;
   for(const t of TARGETS){if(!reg(t.reg))continue;const p=WPOS[t.id];if(!p)continue;const mx=(H[0]+p[0])/2+(p[1]-H[1])*0.18,my=(H[1]+p[1])/2-(p[0]-H[0])*0.18;
-    o+='<path d="M'+H[0]+' '+H[1]+' Q'+mx+' '+my+' '+p[0]+' '+p[1]+'" stroke="#E7E3D2" stroke-width="1" stroke-dasharray="3 3" fill="none" opacity="'+(worldSel===t.id?0.95:0.4)+'"/>';}
-  for(const k in REGIONS){if(reg(k))continue;const c=k==='isles'?[124,96]:[118,214];const F=k==='isles'?[[124,92,62,44],[150,70,30,26],[92,124,34,24]]:[[124,214,84,96],[44,206,46,40],[160,262,46,42]];o+='<g filter="url(#wblur)">'+F.map(e=>'<ellipse cx="'+e[0]+'" cy="'+e[1]+'" rx="'+e[2]+'" ry="'+e[3]+'" fill="#E4E8E7" opacity="0.62"/>').join('')+'</g>';o+='<text x="'+c[0]+'" y="'+(c[1]-30)+'" text-anchor="middle" font-family="Marcellus SC, Georgia, serif" font-size="11" fill="#3D3129">'+esc(REGIONS[k].n)+'</text><text x="'+c[0]+'" y="'+(c[1]+13)+'" text-anchor="middle" font-family="Inter, sans-serif" font-size="8" fill="#3D3129">'+(k==='england'&&thLevel()>=5?'Buy the traveller’s map':'Town Hall '+REGIONS[k].lv)+'</text>';}
+    o+='<path d="M'+H[0]+' '+H[1]+' Q'+mx+' '+my+' '+p[0]+' '+p[1]+'" stroke="#E7E3D2" stroke-width="'+(worldSel===t.id?2.2:1.4)+'" stroke-dasharray="6 6" fill="none" opacity="'+(worldSel===t.id?0.95:0.35)+'"/>';}
+  for(const L of WLANDS){const pts=L.p.split(' ').map(q=>q.split(',').map(Number));const sh=pts.map(q=>q[0]+','+(q[1]+9)).join(' ');const op=reg(L.r);
+    o+='<polygon points="'+sh+'" fill="#4A5547"/><polygon points="'+L.p+'" fill="'+(op?'#B3BC9E':'#9AA392')+'" stroke="#EDE8D6" stroke-width="1.2" stroke-opacity="0.55" stroke-linejoin="round"/>';
+    /* low-poly facets: two lighter planes toward the centre */
+    const cx=pts.reduce((a,q)=>a+q[0],0)/pts.length,cy=pts.reduce((a,q)=>a+q[1],0)/pts.length;const half=pts.slice(0,Math.ceil(pts.length/2));
+    o+='<polygon points="'+half.map(q=>((q[0]*0.55+cx*0.45))+','+((q[1]*0.55+cy*0.45))).join(' ')+' '+cx+','+cy+'" fill="#C8CFB4" opacity="0.5"/>';
+    o+='<polygon points="'+pts.slice(Math.floor(pts.length/2)).map(q=>((q[0]*0.7+cx*0.3))+','+((q[1]*0.7+cy*0.3))).join(' ')+' '+cx+','+cy+'" fill="#8E9A80" opacity="0.28"/>';}
+  for(const q of WMTN){o+='<polygon points="'+(q[0]-16)+','+(q[1]+10)+' '+q[0]+','+(q[1]-18)+' '+(q[0]+16)+','+(q[1]+10)+'" fill="#8F9A90"/><polygon points="'+q[0]+','+(q[1]-18)+' '+(q[0]+16)+','+(q[1]+10)+' '+(q[0]+4)+','+(q[1]+10)+'" fill="#7A847B"/><polygon points="'+(q[0]-6)+','+(q[1]-8)+' '+q[0]+','+(q[1]-18)+' '+(q[0]+6)+','+(q[1]-8)+'" fill="#F1F0EA"/>';}
+  for(const L of WLANDS)if(L.n&&L.lp)o+='<text x="'+L.lp[0]+'" y="'+L.lp[1]+'" text-anchor="middle" font-family="Marcellus SC, Georgia, serif" font-size="17" letter-spacing="3" fill="#56604E" opacity="0.75">'+esc(L.n.toUpperCase())+'</text>';
+  /* places (dim when their land is still in the mist) */
   for(const t of TARGETS){const lk=!reg(t.reg);const p=WPOS[t.id];if(!p)continue;const st=S.tg[t.id]||{},sel=worldSel===t.id,col=t.walls?'#A34A3A':t.trade?'#C9A64A':'#F3EBD8';
-    o+='<g '+(lk?'opacity="0.5"':'data-tg="'+t.id+'" style="cursor:pointer"')+'><circle cx="'+p[0]+'" cy="'+p[1]+'" r="12" fill="transparent"/>';
-    if(/Monastery/.test(t.type))o+='<rect x="'+(p[0]-4)+'" y="'+(p[1]-6)+'" width="8" height="8" fill="'+col+'" stroke="#2F2620"/><path d="M'+p[0]+' '+(p[1]-12)+' v6 M'+(p[0]-2.5)+' '+(p[1]-9.5)+' h5" stroke="#2F2620" stroke-width="1.4"/>';
-    else if(t.walls)o+='<path d="M'+(p[0]-6)+' '+(p[1]+3)+' v-8 h3 v3 h2 v-3 h2 v3 h2 v-3 h3 v8 z" fill="'+col+'" stroke="#2F2620"/>';
-    else if(t.jarl)o+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="5" fill="'+col+'" stroke="#2F2620" stroke-width="1.2"/><circle cx="'+p[0]+'" cy="'+p[1]+'" r="1.6" fill="#2F2620"/>';
-    else o+='<path d="M'+(p[0]-5)+' '+(p[1]+3)+' v-4 l5 -4 l5 4 v4 z" fill="'+col+'" stroke="#2F2620"/>';
-    if(sel)o+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="9" fill="none" stroke="#C9A64A" stroke-width="1.6"/>';
-    if((st.pill||0)>S.day)o+='<circle cx="'+(p[0]+6)+'" cy="'+(p[1]-6)+'" r="2.4" fill="#A34A3A"/>';
-    o+='<text x="'+(p[0]+8)+'" y="'+(p[1]+3)+'" font-family="Marcellus SC, Georgia, serif" font-size="9" fill="#F3EBD8" stroke="#26404B" stroke-width="2.4" paint-order="stroke">'+esc(t.n)+'</text></g>';}
-  o+='<g><circle cx="'+H[0]+'" cy="'+H[1]+'" r="6" fill="#2F2620" stroke="#C9A64A" stroke-width="1.6"/><text x="'+(H[0]+9)+'" y="'+(H[1]+4)+'" font-family="Marcellus SC, Georgia, serif" font-size="11" fill="#F3EBD8" stroke="#26404B" stroke-width="2.6" paint-order="stroke">Kaldstrand</text></g>';
+    o+='<g '+(lk?'opacity="0.55"':'data-tg="'+t.id+'" style="cursor:pointer"')+' transform="translate('+p[0]+' '+p[1]+')"><circle r="22" fill="transparent"/>';
+    if(/Monastery/.test(t.type))o+='<rect x="-6" y="-9" width="12" height="12" fill="'+col+'" stroke="#2F2620" stroke-width="1.5"/><path d="M0 -18 v9 M-4 -14 h8" stroke="#2F2620" stroke-width="2"/>';
+    else if(t.walls)o+='<path d="M-9 5 v-12 h4 v4 h3 v-4 h4 v4 h3 v-4 h4 v12 z" fill="'+col+'" stroke="#2F2620" stroke-width="1.5"/>';
+    else if(t.jarl)o+='<circle r="7.5" fill="'+col+'" stroke="#2F2620" stroke-width="1.8"/><circle r="2.4" fill="#2F2620"/>';
+    else o+='<path d="M-8 5 v-6 l8 -6 l8 6 v6 z" fill="'+col+'" stroke="#2F2620" stroke-width="1.5"/>';
+    if(sel)o+='<circle r="14" fill="none" stroke="#C9A64A" stroke-width="2.4"/>';
+    if((st.pill||0)>S.day)o+='<circle cx="9" cy="-9" r="3.6" fill="#A34A3A"/>';
+    o+='<text x="13" y="5" font-family="Marcellus SC, Georgia, serif" font-size="15" fill="#F3EBD8" stroke="#26404B" stroke-width="3.6" paint-order="stroke">'+esc(t.n)+'</text></g>';}
+  /* mist over every land not yet open, and over the edges of the known world */
+  o+='<g filter="url(#wblur)" pointer-events="none">';
+  for(const L of WLANDS){if(reg(L.r))continue;o+='<polygon points="'+L.p+'" fill="#E2E7E6" opacity="'+(L.r==='far'?0.82:0.62)+'" transform="translate(0 0)"/>';}
+  const blobs={isles:[[360,230,120,90]],england:[[340,520,190,240]],west:[[150,560,120,140]],far:[[120,70,160,90],[700,760,380,90],[1000,320,80,200]]};
+  for(const k in blobs){if(reg(k))continue;for(const e of blobs[k])o+='<ellipse cx="'+e[0]+'" cy="'+e[1]+'" rx="'+e[2]+'" ry="'+e[3]+'" fill="#E2E7E6" opacity="0.5"/>';}
+  o+='</g>';
+  for(const k in REGIONS){if(reg(k))continue;const c=k==='isles'?[330,200]:[360,420];o+='<g pointer-events="none"><text x="'+c[0]+'" y="'+c[1]+'" text-anchor="middle" font-family="Marcellus SC, Georgia, serif" font-size="22" fill="#3D3129">'+esc(REGIONS[k].n)+'</text><text x="'+c[0]+'" y="'+(c[1]+20)+'" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" fill="#3D3129">'+(k==='england'&&thLevel()>=5?'Buy the traveller’s map':'Opens at Town Hall '+REGIONS[k].lv)+'</text></g>';}
+  o+='<g pointer-events="none"><rect x="-300" y="-300" width="1600" height="440" fill="url(#fgT)"/><rect x="-300" y="660" width="1600" height="440" fill="url(#fgB)"/><rect x="-300" y="-300" width="440" height="1400" fill="url(#fgL)"/><rect x="860" y="-300" width="440" height="1400" fill="url(#fgR)"/></g>';
+  /* home */
+  o+='<g pointer-events="none"><circle cx="'+H[0]+'" cy="'+H[1]+'" r="10" fill="#2F2620" stroke="#C9A64A" stroke-width="2.6"/><text x="'+(H[0]+15)+'" y="'+(H[1]+6)+'" font-family="Marcellus SC, Georgia, serif" font-size="19" fill="#F3EBD8" stroke="#26404B" stroke-width="4" paint-order="stroke">Kaldstrand</text></g>';
   return o+'</svg>';}
+/* drag / swipe to move, wheel / pinch to zoom */
+function wSetView(){const sv=$('wsvg');if(sv&&WV)sv.setAttribute('viewBox',WV.x.toFixed(1)+' '+WV.y.toFixed(1)+' '+WV.w.toFixed(1)+' '+WV.h.toFixed(1));}
+function wClamp(){const r=WV.h/WV.w;WV.w=Math.max(240,Math.min(1100,WV.w));WV.h=WV.w*r;if(WV.h>1000){WV.h=1000;WV.w=WV.h/r;}WV.x=Math.max(-100,Math.min(1100-WV.w,WV.x));WV.y=Math.max(-90,Math.min(890-WV.h,WV.y));}
+function wInit(box){const sv=$('wsvg');const R=box.getBoundingClientRect();const asp=R.height/Math.max(1,R.width);
+  if(!WV||Math.abs(WV.h/WV.w-asp)>0.01){const w=Math.min(1000,Math.max(420,R.width*0.9));const c=worldSel&&WPOS[worldSel]?WPOS[worldSel]:WPOS.home;WV={x:c[0]-w/2,y:c[1]-w*asp/2,w:w,h:w*asp};}
+  wClamp();sv.setAttribute('preserveAspectRatio','none');wSetView();
+  const pts=new Map();let moved=0,pinch=null;
+  const toW=(px,py)=>[WV.x+(px-R.left)/R.width*WV.w,WV.y+(py-R.top)/R.height*WV.h];
+  box.addEventListener('pointerdown',e=>{pts.set(e.pointerId,{x:e.clientX,y:e.clientY});moved=0;if(pts.size===2){const v=[...pts.values()];pinch={d:Math.hypot(v[0].x-v[1].x,v[0].y-v[1].y),w:WV.w,c:toW((v[0].x+v[1].x)/2,(v[0].y+v[1].y)/2)};}});
+  box.addEventListener('pointermove',e=>{const p=pts.get(e.pointerId);if(!p)return;const dx=e.clientX-p.x,dy=e.clientY-p.y;p.x=e.clientX;p.y=e.clientY;
+    if(pts.size===1){moved+=Math.abs(dx)+Math.abs(dy);if(moved>6&&!box.hasPointerCapture(e.pointerId)){try{box.setPointerCapture(e.pointerId);}catch(er){}}WV.x-=dx/R.width*WV.w;WV.y-=dy/R.height*WV.h;}
+    else if(pinch&&pts.size===2){const v=[...pts.values()];const d=Math.hypot(v[0].x-v[1].x,v[0].y-v[1].y);const asp2=WV.h/WV.w;WV.w=pinch.w*pinch.d/Math.max(1,d);WV.h=WV.w*asp2;const m=[(v[0].x+v[1].x)/2,(v[0].y+v[1].y)/2];WV.x=pinch.c[0]-(m[0]-R.left)/R.width*WV.w;WV.y=pinch.c[1]-(m[1]-R.top)/R.height*WV.h;moved=99;}
+    wClamp();wSetView();});
+  const up=e=>{pts.delete(e.pointerId);if(pts.size<2)pinch=null;};box.addEventListener('pointerup',up);box.addEventListener('pointercancel',up);
+  box.addEventListener('click',e=>{if(moved>6){e.stopPropagation();e.preventDefault();}},true);
+  box.addEventListener('wheel',e=>{e.preventDefault();const c=toW(e.clientX,e.clientY);const k=Math.exp(e.deltaY*0.0015);const asp2=WV.h/WV.w;WV.w*=k;WV.h=WV.w*asp2;wClamp();WV.x=c[0]-(e.clientX-R.left)/R.width*WV.w;WV.y=c[1]-(e.clientY-R.top)/R.height*WV.h;wClamp();wSetView();},{passive:false});
+  /* zoom buttons */
+  box.insertAdjacentHTML('beforeend','<div class="wzoom"><button type="button" data-wz="0.8" aria-label="Zoom in">+</button><button type="button" data-wz="1.25" aria-label="Zoom out">−</button><button type="button" data-wz="home" aria-label="Back to Kaldstrand">⌂</button></div>');
+  box.querySelectorAll('[data-wz]').forEach(b=>{b.addEventListener('pointerdown',e=>e.stopPropagation());b.onclick=e=>{e.stopPropagation();const z=b.dataset.wz;if(z==='home'){WV.x=WPOS.home[0]-WV.w/2;WV.y=WPOS.home[1]-WV.h/2;}else{const cx=WV.x+WV.w/2,cy=WV.y+WV.h/2,asp2=WV.h/WV.w;WV.w*=+z;WV.h=WV.w*asp2;wClamp();WV.x=cx-WV.w/2;WV.y=cy-WV.h/2;}wClamp();wSetView();};});}
 function worldClose(){const w=$('wfs');if(w)w.remove();worldSel=null;}
 function worldPanel(){closeSheet();let w=$('wfs');if(!w){w=document.createElement('div');w.id='wfs';w.className='wfs';document.body.appendChild(w);}
   let side='<div class="wside"><div class="whd"><div><h2>The World</h2><p>Where the ships of Kaldstrand can sail</p></div><button type="button" class="x" id="wfs-x" aria-label="Close map">×</button></div>';
@@ -41,7 +89,7 @@ function worldPanel(){closeSheet();let w=$('wfs');if(!w){w=document.createElemen
   for(const k in REGIONS){const open=regionOpen(k);side+='<h3>'+esc(REGIONS[k].n)+'</h3>';if(!open){side+='<p class="meta">'+(k==='england'&&thLevel()>=5?'Buy the traveller’s map to sail here.':'Opens at Town Hall level '+REGIONS[k].lv+'.')+'</p>';continue;}
     side+='<div class="wlist">'+TARGETS.filter(t=>t.reg===k).map(t=>{const st=S.tg[t.id]||{};return '<button type="button" class="wrow'+(worldSel===t.id?' on':'')+'" data-tg="'+t.id+'"><b>'+esc(t.n)+'</b><span>'+esc(t.type)+' · '+travel(t)+' days · defence '+t.def+(t.walls?' · walls':'')+((st.pill||0)>S.day?' · plundered':'')+'</span></button>';}).join('')+'</div>';}
   side+='</div>';
-  w.innerHTML='<div class="wm">'+worldSVG()+'</div>'+side;
+  w.innerHTML='<div class="wm" id="wmbox">'+worldSVG()+'<div class="whint">Drag to sail around · wheel or pinch to zoom</div></div>'+side;requestAnimationFrame(()=>wInit($('wmbox')));
   $('wfs-x').onclick=worldClose;
   w.querySelectorAll('[data-tg]').forEach(b=>b.onclick=()=>{worldSel=b.dataset.tg;targetSheet(b.dataset.tg);});
   if($('w-map'))$('w-map').onclick=()=>{if(S.res.gold<40)return;S.res.gold-=40;S.maps=S.maps||{};S.maps.england=1;checkMilestones();toast('England lies open on the map.');worldPanel();save();};}

@@ -234,7 +234,7 @@ textarea,input{-webkit-user-select:text;user-select:text}
 .wlist{display:flex;flex-direction:column;gap:6px}
 .wrow{display:flex;flex-direction:column;gap:2px;text-align:left;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:#fff;cursor:pointer;font-family:var(--body);color:var(--ink)}
 .wrow b{font-family:var(--display);font-weight:400;font-size:16px}.wrow span{font-size:12.5px;color:var(--muted)}.wrow.on,.wrow:hover{border-color:var(--gold)}
-@media (max-width:760px){.wfs{flex-direction:column}.wfs .wm{flex:1 1 55%}.wfs .wside{width:auto;flex:1 1 45%;box-shadow:0 -8px 30px rgba(0,0,0,.3)}}
+@media (max-width:760px){.wfs{flex-direction:column}.wfs .wm{flex:1 1 62%}.wfs .wside{width:auto;flex:1 1 38%;box-shadow:0 -8px 30px rgba(0,0,0,.3)}}
 
 /* Resource bar, grouped like a city-builder HUD */
 .res{gap:6px;align-items:stretch}
@@ -298,3 +298,10 @@ textarea,input{-webkit-user-select:text;user-select:text}
 @media (max-width:520px){.todo{width:auto;max-width:200px}.tdl{max-height:30vh;overflow:auto}}
 
 .bcard .bth{width:100%;height:76px;object-fit:contain;border-radius:8px;background:radial-gradient(ellipse at 50% 70%,#A9B88F 0,#93A97E 55%,rgba(147,169,126,0) 72%)}
+
+.wfs .wm{position:relative;overflow:hidden;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
+.wfs .wm:active{cursor:grabbing}
+.wzoom{position:absolute;left:14px;bottom:14px;display:flex;flex-direction:column;gap:6px}
+.wzoom button{width:42px;height:42px;border-radius:10px;border:1px solid var(--woodline);background:rgba(47,38,32,.92);color:var(--cream);font:600 20px var(--body);cursor:pointer}
+.wzoom button:hover{background:rgba(70,56,46,.95)}
+.whint{position:absolute;left:50%;transform:translateX(-50%);top:14px;padding:6px 12px;border-radius:9px;background:rgba(36,29,24,.8);color:var(--cream2);font-size:12.5px;pointer-events:none}

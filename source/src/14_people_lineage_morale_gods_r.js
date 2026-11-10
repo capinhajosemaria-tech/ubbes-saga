@@ -78,8 +78,8 @@ function freshState(mode,adv){
   B=[];nextId=1;roads=new Uint8Array(N*N);defaultZones();ter.set(TER0);
   for(const t of trees){t.amt=TREE_WOOD;t.regrow=0;t.gone=0;}S.cleared=[];for(const b of bushes)b.amt=15;
   addBuilding('th',TH_POS.fx,TH_POS.fy,0,true);
-  rebuildOcc();[[46,46],[56,46]].forEach(q=>{if(canPlace('house',q[0],q[1],0,0).ok)addBuilding('house',q[0],q[1],0,true);rebuildOcc();});
-  for(let x=46;x<=57;x++){if(BUILDABLE.has(tAt(x,49))&&!occ[49*N+x])roads[49*N+x]=1;}[[51,50],[51,51],[51,52]].forEach(p=>{if(BUILDABLE.has(tAt(p[0],p[1])))roads[p[1]*N+p[0]]=1;});
+  rebuildOcc();[[HOME_X-5,HOME_Y-2],[HOME_X+5,HOME_Y-2]].forEach(q=>{if(canPlace('house',q[0],q[1],0,0).ok)addBuilding('house',q[0],q[1],0,true);rebuildOcc();});
+  {const ry=HOME_Y+1;for(let x=HOME_X-5;x<=HOME_X+6;x++){if(BUILDABLE.has(tAt(x,ry))&&!occ[ry*N+x])roads[ry*N+x]=1;}}[[HOME_X,HOME_Y+2],[HOME_X,HOME_Y+3],[HOME_X,HOME_Y+4]].forEach(p=>{if(BUILDABLE.has(tAt(p[0],p[1])))roads[p[1]*N+p[0]]=1;});
   rebuildOcc();recomputeConn();
   /* the founding household */
   const ubbe=newPerson({n:'Ubbe',g:'m',a:31,num:1,jt:['ambitious','devout'],look:31,tr:'',scar:1});

@@ -2,7 +2,7 @@
 function render(){
   SHIP_HITS=[];
   const win=isWinter(),PL=win?C.w:C.s;
-  ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle=win?'#4A6570':'#5A7A86';ctx.fillRect(0,0,W,H);
+  ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle=win?FOG.w:FOG.s;ctx.fillRect(0,0,W,H);
   ctx.setTransform(dpr*zoom,0,0,dpr*zoom,dpr*(W/2-camX*zoom),dpr*(H/2-camY*zoom));
   const vx0=camX-W/2/zoom-TW*2,vx1=camX+W/2/zoom+TW*2,vy0=camY-H/2/zoom-60,vy1=camY+H/2/zoom+160;
   const vis=(sx,sy)=>sx>vx0&&sx<vx1&&sy>vy0&&sy<vy1;
@@ -10,20 +10,32 @@ function render(){
   for(const b of BS){const pp=iso(b.fx,b.fy);if(vis(pp[0],pp[1])||vis(pp[0],pp[1]+120))drawGround(b,win);}
   drawMoraleGlow();
   /* roads; on the river a road becomes a plank bridge */
-  for(let y=0;y<N;y++)for(let x=0;x<N;x++){const i=y*N+x;if(!roads[i]||ter[i]!==T.RIVER)continue;const sx=(x-y)*HW,sy=(x+y)*HH;if(!vis(sx,sy))continue;const t0=sy-2;
-    poly([sx,t0-HH*0.75,sx+HW*0.75,t0,sx,t0+HH*0.75,sx-HW*0.75,t0],'#8A6E52');poly([sx-HW*0.75,t0,sx,t0+HH*0.75,sx,t0+HH*0.75+4,sx-HW*0.75,t0+4],'#6E543D');poly([sx,t0+HH*0.75,sx+HW*0.75,t0,sx+HW*0.75,t0+4,sx,t0+HH*0.75+4],'#5C4634');
-    ctx.strokeStyle='rgba(78,60,46,0.6)';ctx.lineWidth=1;ctx.beginPath();for(let k=1;k<5;k++){const a=lerp([sx-HW*0.75,t0],[sx,t0-HH*0.75],k/5),b2=lerp([sx,t0+HH*0.75],[sx+HW*0.75,t0],k/5);ctx.moveTo(a[0],a[1]);ctx.lineTo(b2[0],b2[1]);}ctx.stroke();}
+  for(let y=0;y<N;y++)for(let x=0;x<N;x++){const i=y*N+x;if(!roads[i]||ter[i]!==T.RIVER)continue;const sx=(x-y)*HW,sy=(x+y)*HH;if(!vis(sx,sy))continue;
+    const rd=(a,b)=>inMap(a,b)&&roads[b*N+a];const alongX=(rd(x+1,y)||rd(x-1,y))&&!(rd(x,y+1)||rd(x,y-1))||(rd(x+1,y)&&rd(x-1,y));
+    const g=(u,v,h)=>[sx+(u-v)*HW,sy+(u+v)*HH-h];const H=4;const U=alongX?[-0.52,0.52]:[-0.36,0.36],V=alongX?[-0.36,0.36]:[-0.52,0.52];
+    const c=[g(U[0],V[0],H),g(U[1],V[0],H),g(U[1],V[1],H),g(U[0],V[1],H)],d=[g(U[1],V[0],0),g(U[1],V[1],0),g(U[0],V[1],0)];
+    poly(P(c[1],c[2],d[1],d[0]),win?'#7D6A58':'#5C4634');poly(P(c[2],c[3],d[2],d[1]),win?'#8C7764':'#6E543D');
+    poly(P(...c),win?'#A38E79':'#8F7255');
+    ctx.strokeStyle=win?'rgba(90,74,60,0.6)':'rgba(70,52,38,0.55)';ctx.lineWidth=1;ctx.beginPath();
+    for(let k=1;k<6;k++){const f=k/6;if(alongX){const a=g(U[0]+(U[1]-U[0])*f,V[0],H),b2=g(U[0]+(U[1]-U[0])*f,V[1],H);ctx.moveTo(a[0],a[1]);ctx.lineTo(b2[0],b2[1]);}else{const a=g(U[0],V[0]+(V[1]-V[0])*f,H),b2=g(U[1],V[0]+(V[1]-V[0])*f,H);ctx.moveTo(a[0],a[1]);ctx.lineTo(b2[0],b2[1]);}}ctx.stroke();
+    /* rails */
+    ctx.strokeStyle=win?'#6E5C4C':'#4E3B2C';ctx.lineWidth=1.6;ctx.beginPath();
+    for(const vv of (alongX?[V[0],V[1]]:[U[0],U[1]])){const a=alongX?g(U[0],vv,H+7):g(vv,V[0],H+7),b2=alongX?g(U[1],vv,H+7):g(vv,V[1],H+7);ctx.moveTo(a[0],a[1]);ctx.lineTo(b2[0],b2[1]);
+      for(const uu of [0,0.5]){const p0=alongX?g(U[0]+uu*(U[1]-U[0])*1.98,vv,H):g(vv,V[0]+uu*(V[1]-V[0])*1.98,H);ctx.moveTo(p0[0],p0[1]);ctx.lineTo(p0[0],p0[1]-7);}}ctx.stroke();}
   drawRoads(win,vis);doorPaths(win);
   if(mode==='road')drawRoadGhost();
   if(mode==='road'||mode==='erase'){ctx.fillStyle='rgba(201,166,74,0.9)';for(let y=0;y<N;y++)for(let x=0;x<N;x++){const i=y*N+x;if(roads[i]&&!conn[i]){const sx=(x-y)*HW,sy=(x+y)*HH-elev[i];if(vis(sx,sy)){ctx.beginPath();ctx.arc(sx,sy,3,0,6.3);ctx.fill();}}}}
-  /* locked overlay + borders */
+  /* locked overlay (soft) + faint grid + owned-land border */
+  const gridT=[],lockP=new Path2D();
   for(let y=0;y<N;y++)for(let x=0;x<N;x++){const sx=(x-y)*HW,sy=(x+y)*HH;if(!vis(sx,sy))continue;const top=sy-elev[y*N+x];
-    if(!isUnl(x,y))poly([sx,top-HH-0.6,sx+HW+0.8,top,sx,top+HH+0.6,sx-HW-0.8,top],'rgba(30,38,42,0.34)');
-    else{ctx.strokeStyle='rgba(201,166,74,0.95)';ctx.lineWidth=2.2/zoom+0.6;ctx.beginPath();
+    if(!isUnl(x,y)){if(ter[y*N+x]!==T.SEA){lockP.moveTo(sx,top-HH);lockP.lineTo(sx+HW,top);lockP.lineTo(sx,top+HH);lockP.lineTo(sx-HW,top);lockP.lineTo(sx,top-HH);gridT.push(sx,top);}}
+    else{ctx.strokeStyle='rgba(236,222,178,0.75)';ctx.lineWidth=1.4/zoom+0.5;ctx.beginPath();
       if(!isUnl(x+1,y)||x+1>=N){ctx.moveTo(sx+HW,top);ctx.lineTo(sx,top+HH);}
       if(!isUnl(x-1,y)||x-1<0){ctx.moveTo(sx,top-HH);ctx.lineTo(sx-HW,top);}
       if(!isUnl(x,y+1)||y+1>=N){ctx.moveTo(sx,top+HH);ctx.lineTo(sx-HW,top);}
       if(!isUnl(x,y-1)||y-1<0){ctx.moveTo(sx,top-HH);ctx.lineTo(sx+HW,top);}ctx.stroke();}}
+  ctx.fillStyle='rgba(38,48,53,0.13)';ctx.fill(lockP,'nonzero');
+  if(gridT.length&&zoom>0.5){ctx.strokeStyle=win?'rgba(60,70,76,0.08)':'rgba(255,255,255,'+(0.11*Math.min(1,(zoom-0.5)*3)).toFixed(3)+')';ctx.lineWidth=1/zoom;ctx.beginPath();for(let k=0;k<gridT.length;k+=2){const sx=gridT[k],top=gridT[k+1];ctx.moveTo(sx-HW,top);ctx.lineTo(sx,top-HH);ctx.lineTo(sx+HW,top);}ctx.stroke();}
   /* placement ghost footprint & range */
   let ghost=null;
   if(mode==='place'&&place){const ct=w2t(camX,camY),d=dims(place.t,place.rot),fx=ct[0]-Math.floor((d.w-1)/2),fy=ct[1]-Math.floor((d.h-1)/2);
@@ -53,10 +65,20 @@ function render(){
     if(o.kind==='peak'){drawPeak(o,win);continue;}if(o.kind==='rocks'){drawRocks(o,win);continue;}if(o.kind==='iron'){drawIron(o);continue;}
     const a=isUnl(o.x,o.y)?1:0.72;
     if(o.kind==='tree'){if(!o.gone)drawTree(o,win,a);}
-    else if(o.kind==='bush')drawSprite(SP.bush[win?1:(o.amt>0.5?0:2)],sx+o.ox,sy-elev[o.y*N+o.x]+o.oy,o.s,a,false);}
+    else if(o.kind==='bush'&&!o.gone)drawSprite(SP.bush[win?1:(o.amt>0.5?0:2)],sx+o.ox,sy-elev[o.y*N+o.x]+o.oy,o.s,a,false);}
   flushDyn(Infinity);
-  drawShipsAtHarbour(win);drawAnims(win);
+  drawShipsAtHarbour(win);drawAnims(win);drawHover();
   for(const b of B)drawBadge(b);
   for(const p of smoke){ctx.fillStyle='rgba(220,225,224,'+(p.a*0.75).toFixed(3)+')';ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,6.3);ctx.fill();}
+  drawEdgeFog(win,vis);
   if(win){ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle='rgba(243,245,243,0.85)';for(const f of flakes){ctx.beginPath();ctx.arc(f.x*W+Math.sin(f.p)*6,f.y*H,f.s,0,6.3);ctx.fill();}}
+}
+
+/* The world fades into sea-mist at its edges, so it never reads as a floating board. */
+const FOG={s:"#B9C6C8",w:"#CDD6D8"},FOGB=14;const FOGA=new Float32Array(N*N).fill(-1);
+function drawEdgeFog(win,vis){const c=hex(win?FOG.w:FOG.s),cs='rgba('+c[0]+','+c[1]+','+c[2]+',';
+  for(let y=0;y<N;y++)for(let x=0;x<N;x++){const de=Math.min(x,y,N-1-x,N-1-y);if(de>=FOGB)continue;const sx=(x-y)*HW,sy=(x+y)*HH;if(!vis(sx,sy))continue;
+    const i=y*N+x;let a=FOGA[i];if(a<0){const n=(vn(x*0.3,y*0.3,79)-0.5)*0.25;a=FOGA[i]=Math.max(0,Math.min(1,Math.pow((FOGB-de)/FOGB,1.5)+n*(de/FOGB)));}if(a<0.02)continue;
+    const e=elev[y*N+x],top=sy-e;
+    poly([sx,top-HH-6,sx+HW+8,top,sx,top+HH+14+Math.max(0,e),sx-HW-8,top],cs+a.toFixed(3)+')');}
 }

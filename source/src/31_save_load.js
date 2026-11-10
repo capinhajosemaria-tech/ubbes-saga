@@ -1,6 +1,6 @@
 /* =================== save / load =================== */
 function snapshot(){const s=Object.assign({},S);delete s.bal;delete s.tc;s.meta={name:pname(jarlP())||'Kaldstrand',year:yearNow(),pop:S.pop,th:thLevel(),mode:S.mode};
-  return {v:3,n:N,S:s,meta:s.meta,b:B.map(b=>[b.t,b.fx,b.fy,b.rot,b.desired,b.lvl,Math.round(b.anvil),b.mode,b.proj]),roads:Array.from(roads.reduce((a,v,i)=>{if(v)a.push(i);return a;},[])),walls:Array.from(walls.reduce((a,v,i)=>{if(v)a.push(i*4+v);return a;},[])),
+  return {v:3,n:N,S:s,meta:s.meta,b:B.map(b=>[b.t,b.fx,b.fy,b.rot,b.desired,b.lvl,Math.round(b.anvil),b.mode,b.proj,b.sch===undefined?null:b.sch]),roads:Array.from(roads.reduce((a,v,i)=>{if(v)a.push(i);return a;},[])),walls:Array.from(walls.reduce((a,v,i)=>{if(v)a.push(i*4+v);return a;},[])),
   zones:Array.from(unlocked),trees:trees.map(t=>[Math.round(t.amt*10)/10,t.regrow]),bushes:bushes.map(b=>Math.round(b.amt*10)/10)};}
 function apply(d){
   if(!d||d.v!==3||d.n!==N||!d.S||!Array.isArray(d.b))return false;
@@ -11,7 +11,7 @@ function apply(d){
   S.bal=null;S.modal=Array.isArray(S.modal)?S.modal:[];S.people=Array.isArray(S.people)?S.people:[];S.ships=Array.isArray(S.ships)?S.ships:[];S.raids=Array.isArray(S.raids)?S.raids:[];
   S.reserve=S.reserve||{};S.tg=S.tg||{};S.blessCd=S.blessCd||{};S.blessOn=S.blessOn||{};S.fx=S.fx||{};S.mods=S.mods||[];S.evtSeen=S.evtSeen||{};S.yr=S.yr||{births:0,deaths:0,arrived:0,left:0,raids:0,silver:0,fame:0};S.winter=S.winter||{hard:false,said:false,told:false};
   B=[];nextId=1;for(const a of d.b){if(!DEF[a[0]])continue;const b=addBuilding(a[0],a[1]|0,a[2]|0,(a[3]|0)&3,true);
-    b.lvl=Math.min(5,Math.max(1,a[5]|0||1));b.anvil=num(a[6],100);b.mode=SMITH[a[7]]?a[7]:'tools';b.proj=a[8]&&SHIPS[a[8].type]?{type:a[8].type,done:num(a[8].done,0)}:null;
+    b.lvl=Math.min(5,Math.max(1,a[5]|0||1));b.anvil=num(a[6],100);b.mode=SMITH[a[7]]?a[7]:'tools';b.proj=a[8]&&SHIPS[a[8].type]?{type:a[8].type,done:num(a[8].done,0)}:(a[8]&&b.t==='tomb'?{done:num(a[8].done,0)}:null);if(a[9]!==null&&a[9]!==undefined&&HOUSE_SCH[a[9]])b.sch=a[9]|0;
     b.desired=Math.min(slotsOf(b),Math.max(0,a[4]|0));}
   roads=new Uint8Array(N*N);(d.roads||[]).forEach(i=>{if(i>=0&&i<N*N)roads[i]=1;});
   walls=new Uint8Array(N*N);(d.walls||[]).forEach(q=>{const i=q>>2;if(i>=0&&i<N*N)walls[i]=q&3;});S.maps=S.maps||{};S.mkt=S.mkt||{};S.advs=S.advs||(S.adv?[S.adv]:[]);

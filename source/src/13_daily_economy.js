@@ -1,16 +1,16 @@
 /* =================== daily economy =================== */
 function dayTick(){
   S.day++;const win=isWinter(),r=S.res;assignWorkers();
-  const before={food:foodUnits(),wood:r.wood,planks:r.planks,iron:r.iron,tools:r.tools,water:r.water};
+  const before={food:foodUnits(),wood:r.wood,planks:r.planks,iron:r.iron,tools:r.tools,water:r.water,silver:r.silver,fame:S.fame};PRODLOG={};
   let marketOn=false;
-  for(const b of B){const D=DEF[b.t];b.made='';
+  for(const b of B){const D=DEF[b.t];b.made='';PRODSRC=b.t;
     if(!slotsOf(b)){b.status='ok';continue;}
     if(D.seasonal&&win){b.status='Resting for winter: workers free for other jobs';continue;}
     if(!b.conn&&D.road!==false){b.status='No road to the Town Hall';continue;}
     if(b.workers===0){b.status='No workers: tap + to assign';continue;}
     const n=b.workers;let tf=1;
     if(D.tools){if(r.tools<=0)tf=D.farm?0.15:0.6;else r.tools=Math.max(0,r.tools-n/60);}
-    const E=tf*(b.lvl>=4?1.4:b.lvl>=2?1.2:1)*prodMult(b);
+    const E=tf*(b.lvl>=5?1.55:b.lvl>=4?1.4:FIELDS.has(b.t)&&b.lvl>=3?1.3:b.lvl>=2?1.2:1)*prodMult(b);
     b.status=tf<1?'Working slowly: no tools':'Working';
     const mk=(k,a)=>{const g=addRes(k,a);b.made=(b.made?b.made+', ':'')+'+'+g.toFixed(1)+' '+(RNAME[k]||k).toLowerCase();if(a>0.01&&g<a*0.5)b.status='Storage full';return g;};
     switch(b.t){
@@ -67,13 +67,13 @@ function dayTick(){
         else b.made=Math.floor(100*b.proj.done/SHIPS[b.proj.type].work)+'% built';break;}
     }
   }
-  /* herd: births, winter hay, slaughter above capacity */
+  PRODSRC='pen';/* herd: births, winter hay, slaughter above capacity */
   if(has('pen')){
     while(S.herdAcc>=1){S.herdAcc-=1;if(S.herd.pigs<=S.herd.sheep)S.herd.pigs++;else S.herd.sheep++;}
     if(win){const need=herdTotal()*0.4;if(r.hay>=need)r.hay-=need;else{r.hay=0;if(herdTotal()>2){if(S.herd.pigs>=S.herd.sheep&&S.herd.pigs>1)S.herd.pigs--;else if(S.herd.sheep>1)S.herd.sheep--;toast('An animal died for want of hay.');}}}
     const cap=herdCap();while(herdTotal()>cap){if(S.herd.pigs>=S.herd.sheep)S.herd.pigs--;else S.herd.sheep--;addRes('meat',10);if(hideUse())addRes('hides',1);if(miscUse())addRes('misc',0.5);}
   }
-  /* trader: in summer, every 12 days for 4 days, needs a trading house and a harbour */
+  PRODSRC='other';/* trader: in summer, every 12 days for 4 days, needs a trading house and a harbour */
   if(has('trade')&&has('harbour')&&!win){const d=S.day%12;if(d===1&&!S.trader){const tr=newTrader();if(tr){S.trader=tr;toast('A merchant ship from '+PARTNERS[tr.from].n+' is moored at the harbour. Open the trading house to trade.',4500);}}}
   if(S.trader&&(S.day>=S.trader.until||win))S.trader=null;
   /* consumption: fresh first, then bread, then preserved */
@@ -96,7 +96,7 @@ function dayTick(){
   /* nature */
   for(const t of trees)if(t.regrow>0){t.regrow--;if(t.regrow<=0){t.regrow=0;t.amt=TREE_WOOD;}}
   const yt=S.gameT%YEAR;if(yt<DAY*1.01&&S.day>1)for(const b of bushes)b.amt=15;
-  S.bal={food:foodUnits()-before.food,wood:r.wood-before.wood,planks:r.planks-before.planks,iron:r.iron-before.iron,tools:r.tools-before.tools,water:r.water-before.water};
+  S.bal={food:foodUnits()-before.food,wood:r.wood-before.wood,planks:r.planks-before.planks,iron:r.iron-before.iron,tools:r.tools-before.tools,water:r.water-before.water,silver:r.silver-before.silver,fame:S.fame-before.fame};S.prodLog=PRODLOG;PRODLOG=null;PRODSRC='other';
   checkMilestones();
 }
 function checkMilestones(){
@@ -107,7 +107,7 @@ function checkMilestones(){
 }
 const currentGoal=()=>MS.find(m=>!S.ms.includes(m.id)&&m.lv<=thLevel());
 function thReq(){const lv=thLevel()+1,u=TH_UP[lv];if(!u)return null;
-  const items=[{ok:S.pop>=u.pop,t:'At least '+u.pop+' people ('+S.pop+')'},{ok:Math.floor(S.gameT/YEAR)>=u.years,t:'Survive '+u.years+' winter'+(u.years>1?'s':'')},
+  const items=[{ok:S.pop>=u.pop,t:'At least '+u.pop+' people ('+S.pop+')'},
     {ok:(S.fameEarned||0)>=u.fame,t:'Fame earned in the saga: '+u.fame+' ('+Math.floor(S.fameEarned||0)+')'},...u.bld.map(q=>({ok:B.some(b=>b.t===q[0]&&b.lvl>=q[1]),t:DEF[q[0]].name+(q[1]>1?' at level '+q[1]:'')})),...u.ms.map(id=>({ok:S.ms.includes(id),t:'Saga goal: '+MS.find(m=>m.id===id).title})),{ok:afford(u.cost),t:'Materials: '+costStr(u.cost)}];
   return {lv:lv,cost:u.cost,items:items,ok:items.every(i=>i.ok)};}
 function roadReach(){recomputeConn();const R=new Uint8Array(N*N),q=[];for(let i=0;i<N*N;i++)if(roads[i]&&conn[i]){R[i]=1;q.push(i);}

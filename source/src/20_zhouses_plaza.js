@@ -6,6 +6,14 @@ const HOUSE_STY=[
   [['#6E543D','#54402E','#7A6A58','#62554A','#A34A3A'],['#76593F','#5A4330','#7F9568','#6B8058','#8E3B2F'],['#6A5240','#503D2E','#6E6458','#58504A','#C9A64A']],
   [['#7A5D44','#5C4532','#6E6458','#58504A','#A34A3A'],['#6E543D','#54402E','#7F9568','#6B8058','#C9A64A'],['#82634A','#634A36','#8C7A5E','#73644C','#8E3B2F']],
   [['#6A4E38','#4E3A2A','#5E5850','#4A4540','#C9A64A'],['#74563D','#57412E','#7F9568','#6B8058','#A34A3A'],['#6E543D','#54402E','#7A6A58','#62554A','#C9A64A']]];
+const HOUSE_SCH=[
+  {n:'Turf and oak',wall:'#8E6F52',wallD:'#6E543D',roof:'#7F9568',roofD:'#6B8058',barge:'#5C4634',rt:'turf'},
+  {n:'Straw and pine',wall:'#A08460',wallD:'#80684B',roof:'#C2A45E',roofD:'#A68A48',barge:'#6E543D',rt:'thatch'},
+  {n:'Tarred shingle',wall:'#5E4A3A',wallD:'#463729',roof:'#5E5850',roofD:'#4A4540',barge:'#C9A64A',rt:'shingle'},
+  {n:'Red ochre',wall:'#9A4E3A',wallD:'#7A3C2D',roof:'#7F9568',roofD:'#6B8058',barge:'#3E3028',rt:'turf'},
+  {n:'Whitewashed',wall:'#D8CDB4',wallD:'#B9AE95',roof:'#B39E66',roofD:'#97834F',barge:'#5C4634',rt:'thatch'},
+  {n:'Birch and slate',wall:'#B7AE9C',wallD:'#958C7B',roof:'#6F7A80',roofD:'#5A646A',barge:'#A34A3A',rt:'shingle'}];
+function houseSch(b){if(b.sch!==undefined&&b.sch!==null)return b.sch;if(S&&S.houseSch!==undefined&&S.houseSch!==null)return S.houseSch;return Math.floor(h2(b.id||0,b.fx*7+b.fy,77)*4);}
 function roofPoint(c,wh,H,o,u,v){/* a point on the visible roof plane: u along the ridge, v from eave (0) to ridge (1) */
   const a=o.alongX?lerp(up(c.L,wh),up(c.Bt,wh),u):lerp(up(c.Bt,wh),up(c.R,wh),u),b=o.alongX?lerp(up(o.M1,H),up(o.M2,H),u):lerp(up(o.M2,H),up(o.M1,H),u);return lerp(a,b,v);}
 function drawHouse(b,win){
@@ -13,9 +21,10 @@ function drawHouse(b,win){
   const c0=fp(b),c=inset(c0,L>=4?0.08:L>=2?0.13:0.17);
   const wh=[9,11,13,14,15][L-1],rh=[15,14,16,17,18][L-1];
   if(L>=5){poly(P(c.L,c.Bt,[c.Bt[0],c.Bt[1]+4],[c.L[0],c.L[1]+4]),'#8E877D');poly(P(c.Bt,c.R,[c.R[0],c.R[1]+4],[c.Bt[0],c.Bt[1]+4]),'#77716A');}
-  const r=hall(c,wh,rh,alongX,{wall:st[0],wallD:st[1],roof:st[2],roofD:st[3],barge:st[4]},win);
+  const SC=HOUSE_SCH[houseSch(b)];
+  const r=hall(c,wh,rh,alongX,{wall:SC.wall,wallD:SC.wallD,roof:SC.roof,roofD:SC.roofD,barge:L>=3?st[4]:SC.barge,rt:SC.rt},win);
   const o={alongX:alongX,M1:r.M1,M2:r.M2};
-  if(!win){/* roof texture: turf tufts or shingle rows */
+  if(false){
     const turf=st[2]==='#7F9568'||st[2]==='#8E9C68'||st[2]==='#728A60'||st[2]==='#6E8A5E';
     if(turf){ctx.fillStyle='rgba(70,92,58,0.55)';for(let k=0;k<7;k++){const p=roofPoint(c,wh-3,r.H,o,0.12+0.76*h2(b.id,k,91),0.15+0.7*h2(b.id,k,92));ctx.fillRect(p[0]-1,p[1]-2,2,3);}if(L<=2&&h2(b.id,3,93)>0.5){ctx.fillStyle='#C9B06A';const p=roofPoint(c,wh-3,r.H,o,0.6,0.45);ctx.beginPath();ctx.arc(p[0],p[1],1.4,0,6.3);ctx.fill();}}
     else{ctx.strokeStyle='rgba(38,30,24,0.28)';ctx.lineWidth=0.8;ctx.beginPath();for(let k=1;k<5;k++){const a=roofPoint(c,wh-3,r.H,o,0.02,k/5),e=roofPoint(c,wh-3,r.H,o,0.98,k/5);ctx.moveTo(a[0],a[1]);ctx.lineTo(e[0],e[1]);}ctx.stroke();}}
@@ -26,7 +35,7 @@ function drawHouse(b,win){
   const side=v===0?fl:fr;
   if(L===1||v===2)logPileC(side[0]+(side===fl?-6:8),side[1]+2,2.4);
   if(L>=2&&v!==2)barrelC(side[0]+(side===fl?-8:10),side[1]+4);
-  if(L>=2){const bx=fb[0]+(v===1?-14:10),by=fb[1]+2;poly([bx-7,by-3,bx+7,by+1,bx+7,by-1,bx-7,by-5],'#A88A69');ctx.fillStyle='#6E543D';ctx.fillRect(bx-6,by-3,1.4,4);ctx.fillRect(bx+5,by,1.4,3);}
+  if(L>=2){const bx=fb[0]+(v===1?-14:10),by=fb[1]+2;if(propOK(bx,by)){poly([bx-7,by-3,bx+7,by+1,bx+7,by-1,bx-7,by-5],'#A88A69');ctx.fillStyle='#6E543D';ctx.fillRect(bx-6,by-3,1.4,4);ctx.fillRect(bx+5,by,1.4,3);}}
   if(L>=3){const p=lerp(c.L,c.Bt,0.3);ctx.fillStyle=v===1?'#D7CDB4':'#A34A3A';ctx.beginPath();ctx.arc(p[0],p[1]-wh*0.55,3.4,0,6.3);ctx.fill();ctx.fillStyle='#C9C2B2';ctx.beginPath();ctx.arc(p[0],p[1]-wh*0.55,1.1,0,6.3);ctx.fill();}
   if(L>=4){/* lean-to store shed */const s={T:lerp(c0.R,c0.T,0.25),R:c0.R,Bt:lerp(c0.R,c0.Bt,0.45),L:null};s.L=[s.T[0]+s.Bt[0]-s.R[0],s.T[1]+s.Bt[1]-s.R[1]];
     poly(P(s.L,s.Bt,up(s.Bt,7),up(s.L,7)),st[1]);poly(P(s.Bt,s.R,up(s.R,7),up(s.Bt,7)),st[1]);poly(P(up(s.L,7),up(s.Bt,7),up(s.R,7),up(s.T,10)),win?'#E6E9E7':st[3]);}

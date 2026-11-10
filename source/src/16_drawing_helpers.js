@@ -11,23 +11,48 @@ const C={s:{sea:hex('#6F8F9B'),river:hex('#7FA1AC'),beach:hex('#D8CCAE'),grass:h
 function tileColor(tt,PL){switch(tt){case T.SEA:return PL.sea;case T.RIVER:return PL.river;case T.BEACH:return PL.beach;case T.FOREST:return PL.forest;case T.FOOT:return PL.foot;case T.IRON:return PL.iron;case T.MOUNT:return PL.mount;default:return PL.grass;}}
 function faceColor(tt,PL){if(tt===T.MOUNT||tt===T.FOOT||tt===T.IRON)return PL.rock;if(tt===T.BEACH)return PL.sand;return PL.soil;}
 
+/* per-tile colour cache: noise is costly, terrain rarely changes */
+const TF=new Float32Array(N*N).fill(-1),TDRY=new Float32Array(N*N),TCOL=new Array(N*N),TKEY=new Int16Array(N*N).fill(-1);
+function tileF(x,y,i){let f=TF[i];if(f<0){f=TF[i]=1+(vn(x*0.13,y*0.13,11)-0.5)*0.11+(vn(x*0.5,y*0.5,12)-0.5)*0.035+(h2(x,y,11)-0.5)*0.012;TDRY[i]=sat((vn(x*0.09,y*0.09,13)-0.42)*2.2)*0.55;}return f;}
+const DRYC=hex('#A9AC80');
 function drawTile(x,y,PL,win){
   const i=y*N+x,tt=ter[i],e=elev[i];const sx=(x-y)*HW,sy=(x+y)*HH,top=sy-e;
-  let f=1+(h2(x,y,11)-0.5)*0.06;
+  let f=tileF(x,y,i);
   if(tt===T.SEA)f*=1+0.05*Math.sin(t*1.1+x*0.7+y*0.45);
   if(tt===T.RIVER&&!win)f*=1+0.06*Math.sin(t*2.2-y*0.9);
-  if(tt===T.MOUNT)f*=1-Math.min(0.1,(mountW(x)-y)*0.012)+(vn(x*0.4,y*0.4,22)-0.5)*0.08;
+  if(tt===T.MOUNT){drawMesaTile(x,y,i,e,sx,sy,top,win);return;}
   const base=tileColor(tt,PL),fc=faceColor(tt,PL);
-  const eR=x+1<N?elev[i+1]:-12;if(eR<e)poly([sx+HW,top,sx,top+HH,sx,sy+HH-eR,sx+HW,sy-eR],sh(fc,0.78));
-  const eL=y+1<N?elev[i+N]:-12;if(eL<e)poly([sx-HW,top,sx,top+HH,sx,sy+HH-eL,sx-HW,sy-eL],sh(fc,0.94));
-  poly([sx,top-HH-0.6,sx+HW+0.8,top,sx,top+HH+0.6,sx-HW-0.8,top],sh(base,f*0.97));
-  poly([sx,top-HH-0.6,sx,top+HH+0.6,sx-HW-0.8,top],sh(base,f*1.03));
+  const eR=x+1<N?elev[i+1]:e;if(eR<e)poly([sx+HW,top,sx,top+HH,sx,sy+HH-eR,sx+HW,sy-eR],sh(fc,0.78));
+  const eL=y+1<N?elev[i+N]:e;if(eL<e)poly([sx-HW,top,sx,top+HH,sx,sy+HH-eL,sx-HW,sy-eL],sh(fc,0.94));
+  let col;if(tt===T.SEA||(tt===T.RIVER&&!win))col=sh(base,f);else{const key=tt*2+(win?1:0);if(TKEY[i]!==key){let bc=base;if((tt===T.GRASS||tt===T.FOREST||tt===T.BERRY)&&!win){const dry=TDRY[i];bc=[base[0]+(DRYC[0]-base[0])*dry,base[1]+(DRYC[1]-base[1])*dry,base[2]+(DRYC[2]-base[2])*dry];}TCOL[i]=sh(bc,f);TKEY[i]=key;}col=TCOL[i];}
+  poly([sx,top-HH-0.7,sx+HW+0.9,top,sx,top+HH+0.7,sx-HW-0.9,top],col);
   if(zoom>0.75&&!win&&tt===T.GRASS&&!occ[i]&&!roads[i]){const r=h2(x,y,12);if(r>0.6){ctx.strokeStyle='rgba(95,122,80,0.7)';ctx.lineWidth=1.2;ctx.beginPath();const ox=(h2(x,y,13)-0.5)*30,oy=(h2(x,y,14)-0.5)*12;ctx.moveTo(sx+ox-2,top+oy);ctx.lineTo(sx+ox,top+oy-5);ctx.lineTo(sx+ox+2,top+oy);ctx.stroke();}
     if(r>0.93){ctx.fillStyle='#EFE9DA';ctx.beginPath();ctx.arc(sx+(h2(x,y,15)-0.5)*26,top+(h2(x,y,16)-0.5)*10,1.8,0,6.3);ctx.fill();}}
   if(tt===T.SEA&&zoom>0.55&&h2(x,y,9)>0.82){ctx.strokeStyle=win?'rgba(170,190,198,0.6)':'rgba(170,196,204,0.8)';ctx.lineWidth=1.6;const o=Math.sin(t*0.8+x+y)*5;ctx.beginPath();ctx.moveTo(sx-10+o,top);ctx.quadraticCurveTo(sx-4+o,top-4,sx+2+o,top);ctx.quadraticCurveTo(sx+8+o,top-4,sx+14+o,top);ctx.stroke();}
   if(tt===T.BEACH){const a=0.35+0.25*Math.sin(t*1.4+x*0.6);ctx.strokeStyle='rgba(243,245,243,'+a.toFixed(2)+')';ctx.lineWidth=2.2;
     if(x+1<N&&ter[i+1]===T.SEA){ctx.beginPath();ctx.moveTo(sx+HW,top);ctx.lineTo(sx,top+HH);ctx.stroke();}
     if(y+1<N&&ter[i+N]===T.SEA){ctx.beginPath();ctx.moveTo(sx,top+HH);ctx.lineTo(sx-HW,top);ctx.stroke();}}
+}
+const ROCK={s:{lo:hex('#8C8778'),hi:hex('#A9A396'),grass:hex('#8E9C7A'),snow:hex('#EEEDE7')},w:{lo:hex('#A9AEAC'),hi:hex('#CDD1CF'),grass:hex('#C9D0CF'),snow:hex('#F6F7F5')}};
+const LIGHT=(()=>{const v=[-0.55,-0.35,0.76],l=Math.hypot(...v);return v.map(a=>a/l);})();
+function hfTri(a,b,c,R,x,y,k){/* a,b,c = [cx,cy,h] */
+  const ux=b[0]-a[0],uy=b[1]-a[1],uz=(b[2]-a[2])/30,vx=c[0]-a[0],vy=c[1]-a[1],vz=(c[2]-a[2])/30;
+  let nx=uy*vz-uz*vy,ny=uz*vx-ux*vz,nz=ux*vy-uy*vx;if(nz<0){nx=-nx;ny=-ny;nz=-nz;}const nl=Math.hypot(nx,ny,nz)||1;
+  const dl=(nx*LIGHT[0]+ny*LIGHT[1]+nz*LIGHT[2])/nl,flat=nz/nl,hm=(a[2]+b[2]+c[2])/3;
+  const cx0=(a[0]+b[0]+c[0])/3,cy0=(a[1]+b[1]+c[1])/3,snowy=hm/100+(vn(cx0*0.09,cy0*0.09,77)-0.5)*0.55+(flat-0.85)*1.2;
+  let col=hm<24&&flat>0.6?R.grass:(snowy>0.7?R.snow:(hm>40?R.hi:R.lo));
+  if(col===R.lo||col===R.hi){const m=sat((hm-14)/70);col=[R.lo[0]+(R.hi[0]-R.lo[0])*m,R.lo[1]+(R.hi[1]-R.lo[1])*m,R.lo[2]+(R.hi[2]-R.lo[2])*m];}
+  const f=0.62+0.5*Math.max(0,dl)+(h2(x,y,90+k)-0.5)*0.05;
+  const s=q=>[(q[0]-q[1])*HW,(q[0]+q[1]-1)*HH-q[2]];const A=s(a),B=s(b),Cc=s(c);
+  ctx.beginPath();ctx.moveTo(A[0],A[1]);ctx.lineTo(B[0],B[1]);ctx.lineTo(Cc[0],Cc[1]);ctx.closePath();const st=sh(col,f);ctx.fillStyle=st;ctx.fill();ctx.strokeStyle=st;ctx.lineWidth=0.6;ctx.stroke();}
+const MESAC=new Array(N*N);
+function drawMesaTile(x,y,i,e,sx,sy,top,win){let m=MESAC[i];if(!m){m=MESAC[i]={s:[],w:[]};const prev=ctx;const rec=(R,arr)=>{ctx={beginPath(){},moveTo(a,b){arr.push([a,b]);},lineTo(a,b){arr[arr.length-1].push(a,b);},closePath(){},fill(){},stroke(){},set fillStyle(v){arr[arr.length-1].c=v;},set strokeStyle(v){},set lineWidth(v){}};drawMesaTile0(x,y,i,R);};rec(ROCK.s,m.s);rec(ROCK.w,m.w);ctx=prev;}
+  const L=win?m.w:m.s;for(const q of L){ctx.beginPath();ctx.moveTo(q[0],q[1]);for(let k=2;k<q.length;k+=2)ctx.lineTo(q[k],q[k+1]);ctx.closePath();ctx.fillStyle=q.c;ctx.fill();ctx.strokeStyle=q.c;ctx.lineWidth=0.6;ctx.stroke();}}
+function drawMesaTile0(x,y,i,R){const c=(cx,cy)=>[cx,cy,cornerH[cy*(N+1)+cx]];
+  const n=c(x,y),eE=c(x+1,y),s=c(x+1,y+1),w=c(x,y+1);
+  /* split along the diagonal that keeps ridges sharp */
+  if(Math.abs(n[2]-s[2])>Math.abs(eE[2]-w[2])){hfTri(n,eE,w,R,x,y,0);hfTri(eE,s,w,R,x,y,1);}else{hfTri(n,eE,s,R,x,y,0);hfTri(n,s,w,R,x,y,1);}
+  /* skirt down to lower neighbours at the map edge */
 }
 function lerp(a,b,k){return [a[0]+(b[0]-a[0])*k,a[1]+(b[1]-a[1])*k];}
 function drawPeak(o,win){
@@ -66,8 +91,11 @@ function drawTree(o,win,a){
   const k=p<0.55?0.35:0.65;drawSprite(SP.spruce[win?1:0],sx,sy,o.s*k,a,false);
 }
 /* isometric log pile on canvas: logs along +x axis */
-function logPileC(px,py,r){const vx=22,vy=11,gx=-0.894*2.1*r,gy=0.447*2.1*r,mx=-0.447,my=0.894;
+let PROP_B=null,CUR_T=null;
+/* props only stand on the building's own plot or open ground: never on roads, water or another building */
+function propOK(wx,wy){if(!PROP_B)return true;const t=w2t(wx,wy+4);if(!inMap(t[0],t[1]))return false;const i=t[1]*N+t[0];if(roads[i]||walls[i])return false;const tt=ter[i];if(tt===T.SEA||tt===T.RIVER)return false;if(occ[i]&&occ[i]!==PROP_B.id)return false;return true;}
+function logPileC(px,py,r){if(!propOK(px,py))return;const vx=22,vy=11,gx=-0.894*2.1*r,gy=0.447*2.1*r,mx=-0.447,my=0.894;
   for(let j=0;j<3;j++)for(let k=0;k<3-j;k++){const x=px+(k+j*0.5)*gx,y=py+(k+j*0.5)*gy-j*1.75*r,qx=x-vx,qy=y-vy;
     poly([qx-mx*r,qy-my*r,x-mx*r,y-my*r,x+mx*r,y+my*r,qx+mx*r,qy+my*r],'#8A6E52');poly([qx,qy,x,y,x+mx*r,y+my*r,qx+mx*r,qy+my*r],'#6E543D');
     ctx.save();ctx.translate(x,y);ctx.rotate(-0.464);ctx.fillStyle='#D2B98F';ctx.beginPath();ctx.ellipse(0,0,r*0.9,r,0,0,6.3);ctx.fill();ctx.strokeStyle='#8E6F52';ctx.lineWidth=1;ctx.stroke();ctx.restore();}}
-function barrelC(x,y){poly([x-5,y,x+5,y,x+5,y-11,x-5,y-11],'#8A6E52');poly([x,y,x+5,y,x+5,y-11,x,y-11],'#6E543D');ctx.fillStyle='#A88A69';ctx.beginPath();ctx.ellipse(x,y-11,5,2.4,0,0,6.3);ctx.fill();ctx.strokeStyle='#4E4A45';ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(x-5,y-4);ctx.lineTo(x+5,y-4);ctx.moveTo(x-5,y-8);ctx.lineTo(x+5,y-8);ctx.stroke();}
+function barrelC(x,y){if(!propOK(x,y))return;poly([x-5,y,x+5,y,x+5,y-11,x-5,y-11],'#8A6E52');poly([x,y,x+5,y,x+5,y-11,x,y-11],'#6E543D');ctx.fillStyle='#A88A69';ctx.beginPath();ctx.ellipse(x,y-11,5,2.4,0,0,6.3);ctx.fill();ctx.strokeStyle='#4E4A45';ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(x-5,y-4);ctx.lineTo(x+5,y-4);ctx.moveTo(x-5,y-8);ctx.lineTo(x+5,y-8);ctx.stroke();}

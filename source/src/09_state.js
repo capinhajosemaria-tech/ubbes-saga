@@ -1,7 +1,7 @@
 /* =================== state =================== */
 let S,B=[],nextId=1;
 let roads=new Uint8Array(N*N),conn=new Uint8Array(N*N),occ=new Int32Array(N*N);
-const TH_POS={fx:49,fy:43};
+const TH_POS={fx:HOME_X-2,fy:HOME_Y-5};
 const has=t=>B.some(b=>b.t===t);
 const count=t=>B.filter(b=>b.t===t).length;
 const herdTotal=()=>S.herd.pigs+S.herd.sheep;

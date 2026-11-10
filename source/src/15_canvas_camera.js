@@ -1,5 +1,5 @@
 /* =================== canvas & camera =================== */
-const cv=document.getElementById('map'),ctx=cv.getContext('2d');
+const cv=document.getElementById('map');let ctx=cv.getContext('2d');
 let W=0,H=0,dpr=1;
 function resize(){dpr=Math.min(2,window.devicePixelRatio||1);W=window.innerWidth;H=window.innerHeight;cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);}
 window.addEventListener('resize',resize);resize();

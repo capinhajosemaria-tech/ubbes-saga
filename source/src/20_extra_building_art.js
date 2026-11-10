@@ -8,6 +8,7 @@ function strawman(x,y){ctx.strokeStyle='#5A4636';ctx.lineWidth=2;ctx.beginPath()
 function spearRack(x,y){ctx.strokeStyle='#5A4636';ctx.lineWidth=1.6;ctx.beginPath();for(let k=0;k<4;k++){ctx.moveTo(x+k*4,y);ctx.lineTo(x+k*4+2,y-22);}ctx.moveTo(x-2,y-6);ctx.lineTo(x+16,y-6);ctx.stroke();ctx.fillStyle='#B7BCBF';for(let k=0;k<4;k++){ctx.beginPath();ctx.moveTo(x+k*4+1,y-22);ctx.lineTo(x+k*4+3,y-22);ctx.lineTo(x+k*4+2,y-27);ctx.fill();}}
 function pennant(b,e,col){const p=iso(b.fx+b.w/2-0.5,b.fy+b.h/2-0.5),x=p[0]+8,y=p[1]-e-Math.min(56,22+b.w*8);ctx.strokeStyle='#4E3C2E';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x,y-14);ctx.stroke();poly([x,y-14,x+10,y-11,x,y-8],col);}
 function drawExtra(b,win,c0,alongX){
+  if(drawExtra2(b,win,c0,alongX))return true;
   const c=inset(c0,0.1),fb=c.Bt,fr2=lerp(c.Bt,c.R,0.5),fl=lerp(c.L,c.Bt,0.5);
   switch(b.t){
     case 'hay':{if(win||summerProgress()>0.55){[[0.35,0.4],[0.65,0.6]].forEach((q,i)=>{const p=lerp(lerp(c.T,c.R,q[0]),lerp(c.L,c.Bt,q[0]),q[1]);poly([p[0]-10,p[1],p[0]+10,p[1],p[0]+7,p[1]-9,p[0],p[1]-14,p[0]-7,p[1]-9],win?'#E6E8E3':'#C9B776');poly([p[0],p[1],p[0]+10,p[1],p[0]+7,p[1]-9,p[0],p[1]-14],win?'#D3D6D1':'#B3A062');});}return true;}
@@ -70,7 +71,7 @@ function drawShipsAtHarbour(win){const hb=B.find(b=>b.t==='harbour');const home=
   home.forEach((s,i)=>{const sp=spots[Math.min(spots.length-1,Math.floor((i+0.5)*spots.length/home.length))];const p=iso(sp.q[0],sp.q[1]);const bob=Math.sin(t*1.2+i)*1.2;
     const flip=Math.abs(sp.p[0]-(hb.fx+hb.w/2-0.5))>Math.abs(sp.p[1]-(hb.fy+hb.h/2-0.5));drawShip(p[0],p[1]+8+bob,0.36,flip,s.type==='knarr');SHIP_HITS.push([p[0],p[1],s.id]);});}
 
-function drawBuilding(b,win,alpha,ghost){DOOR_SIDE=SIDES[(b.rot|0)&3];try{drawBuilding0(b,win,alpha,ghost);}finally{DOOR_SIDE=null;}}
+function drawBuilding(b,win,alpha,ghost){DOOR_SIDE=SIDES[(b.rot|0)&3];PROP_B=ghost||b.thumb?null:b;CUR_T=b.t;try{drawBuilding0(b,win,alpha,ghost);}finally{DOOR_SIDE=null;PROP_B=null;CUR_T=null;}}
 function drawBuilding0(b,win,alpha,ghost){
   const D=DEF[b.t],e=D.water?1:(elev[b.fy*N+b.fx]||2);
   if(alpha<1)ctx.globalAlpha=alpha;

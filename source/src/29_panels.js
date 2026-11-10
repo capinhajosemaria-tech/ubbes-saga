@@ -105,7 +105,7 @@ function planSheet(){const t=TG(plan.tgt);const home=S.ships.filter(s=>!s.away);
   card.querySelectorAll('[data-pt]').forEach(b=>b.onclick=()=>{plan.tactic=b.dataset.pt;planSheet();});
   $('p-pris').onchange=()=>{plan.pris=$('p-pris').checked;};if($('p-jarl'))$('p-jarl').onchange=()=>{plan.jarl=$('p-jarl').checked;planSheet();};
   $('p-back').onclick=()=>targetSheet(plan.tgt);
-  $('p-go').onclick=()=>{const w=launchRaid({tgt:plan.tgt,ships:plan.ships,crew:planCrew(),tactic:plan.tactic,pris:plan.pris,jarl:plan.jarl});if(w){toast(w);return;}closeSheet();save();};}
+  $('p-go').onclick=()=>{const w=launchRaid({tgt:plan.tgt,ships:plan.ships,crew:planCrew(),tactic:plan.tactic,pris:plan.pris,jarl:plan.jarl});if(w){toast(w);return;}closeSheet();worldClose();save();};}
 function sagaPanel(){const g=currentGoal();
   let h=head('Saga of Kaldstrand','Fame '+fmt(S.fame)+' · '+MODES[S.mode].n+' · slot '+(curSlot||1));
   h+='<h3>Goals</h3>'+MS.filter(m=>m.lv<=thLevel()).map(m=>{const done=S.ms.includes(m.id),now=g&&g.id===m.id;return '<div class="ms'+(done?' done':now?' now':'')+'"><i aria-hidden="true"></i><div><strong>'+esc(m.title)+'</strong><br><span class="meta">'+esc(m.goal)+(m.unlock.length?' · unlocks '+esc(m.unlock.map(u=>DEF[u].name).join(', ')):'')+'</span></div><span class="f">+'+m.fame+'</span></div>';}).join('');

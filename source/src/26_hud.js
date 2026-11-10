@@ -13,12 +13,32 @@ ICON.warriors='<svg width="14" height="14" aria-hidden="true"><circle cx="7" cy=
 ICON.morale='<svg width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="6" fill="#C9A64A"></circle><path d="M4 8 Q7 11 10 8" stroke="#263035" stroke-width="1.4" fill="none"></path><circle cx="5" cy="5.5" r="0.9" fill="#263035"></circle><circle cx="9" cy="5.5" r="0.9" fill="#263035"></circle></svg>';
 ICON.silver='<svg width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="6" fill="#B7BCBF"></circle><circle cx="7" cy="7" r="3" fill="none" stroke="#8C9398"></circle></svg>';
 const CHIPS=[['food','Food'],['wood','Wood'],['planks','Planks'],['iron','Iron'],['tools','Tools'],['water','Water'],['fame','Fame'],['people','People'],['morale','Morale'],['warriors','Warriors'],['silver','Silver']];
-$('res').innerHTML=CHIPS.map(c=>'<button type="button" class="chip" id="chip-'+c[0]+'" data-res="'+c[0]+'" aria-label="'+c[1]+'">'+ICON[c[0]]+'<span>'+c[1]+'</span> <strong id="r-'+c[0]+'">0</strong></button>').join('');
+const RGROUPS=[['people','morale'],['food','water'],['wood','planks','iron','tools'],['silver','fame','warriors']];
+$('res').innerHTML=RGROUPS.map(g=>'<div class="rg">'+g.map(k=>{const c=CHIPS.find(q=>q[0]===k);return '<button type="button" class="chip" id="chip-'+k+'" data-res="'+k+'" aria-label="'+c[1]+'">'+ICON[k]+'<span class="v"><strong id="r-'+k+'">0</strong><em id="d-'+k+'"></em></span><span class="lbl">'+c[1]+'</span></button>';}).join('')+'</div>').join('');
+{const tip=document.createElement('div');tip.id='rtip';tip.className='rtip';tip.hidden=true;document.body.appendChild(tip);}
+const RTIP={food:'Everything people eat. Each person eats about 1 a day, more in winter.',water:'Carried from wells. Each person drinks every day.',wood:'Felled by woodcutters. Burned as firewood in winter and turned into planks.',planks:'Sawn from wood at the carpenter.',iron:'Dug at the mine.',tools:'Forged by the smith. Workers wear them out.',silver:'From trade and plunder.',fame:'Earned by deeds. Spend it on land.',people:'People living in Kaldstrand / beds in houses.',morale:'How content the village is.',warriors:'Trained fighters (+ in training).'};
+function tipHtml(k){const c=CHIPS.find(q=>q[0]===k),r=S.res,bal=(S.bal||{})[k],L=(S.prodLog||{})[k]||{};
+  let h='<b>'+c[1]+'</b><p>'+RTIP[k]+'</p>';
+  const cap={food:capFood(),water:capWater(),wood:capMat(),planks:capMat(),iron:capMat()}[k];
+  if(k==='food')h+='<div class="tr"><span>In store</span><span>'+fmt(foodUnits())+' / '+fmt(cap)+'</span></div>';
+  else if(cap)h+='<div class="tr"><span>In store</span><span>'+fmt(r[k])+(k==='water'?' / '+fmt(cap):'')+'</span></div>';
+  if(bal!==undefined){const prod=Object.values(L).reduce((a,v)=>a+v,0),used=Math.max(0,prod-bal);
+    h+='<div class="tr"><span>Yesterday</span><span class="'+(bal>=0?'up':'dn')+'">'+(bal>=0?'+':'')+bal.toFixed(1)+' / day</span></div>';
+    const items=Object.entries(L).sort((a,b)=>b[1]-a[1]).slice(0,6);
+    if(items.length)h+='<div class="ts">Made by</div>'+items.map(e=>'<div class="tr"><span>'+esc(DEF[e[0]]?DEF[e[0]].name:e[0]==='pen'?'Herd':'Trade and finds')+'</span><span class="up">+'+e[1].toFixed(1)+'</span></div>').join('');
+    if(used>0.05)h+='<div class="tr"><span>'+(k==='food'?'Eaten':k==='wood'?'Burned and worked':k==='water'?'Drunk':'Used')+'</span><span class="dn">−'+used.toFixed(1)+'</span></div>';
+    if(k==='food'||k==='water'||k==='wood'){const lim=k==='food'?eatNeed():k==='water'?S.pop:fireNeed();if(bal<0){const have=k==='food'?foodUnits():r[k];h+='<p class="warnp">Lasts about '+Math.max(0,Math.floor(have/(-bal)))+' days at this rate.</p>';}}}
+  if(k==='morale'&&S.mf)h+=S.mf.slice().sort((a,b)=>Math.abs(b.v)-Math.abs(a.v)).slice(0,6).map(f=>'<div class="tr"><span>'+esc(f.t)+'</span><span class="'+(f.v>=0?'up':'dn')+'">'+(f.v>0?'+':'')+f.v+'</span></div>').join('');
+  return h;}
+document.querySelectorAll('.chip').forEach(b=>{b.addEventListener('mouseenter',()=>{const t=$('rtip');t.innerHTML=tipHtml(b.dataset.res);t.hidden=false;const rc=b.getBoundingClientRect();t.style.left=Math.max(8,Math.min(innerWidth-288,rc.left+rc.width/2-140))+'px';t.style.top=(rc.bottom+8)+'px';});
+  b.addEventListener('mouseleave',()=>{$('rtip').hidden=true;});});
 document.querySelectorAll('.chip').forEach(b=>b.addEventListener('click',()=>openPanel(b.dataset.res==='warriors'?'war':(b.dataset.res==='people'||b.dataset.res==='morale')?'people':'village')));
 function hud(){
   document.querySelectorAll('.seg .fast').forEach(b=>b.hidden=!(S.mode==='test'||S.mode==='sandbox'));
   const r=S.res;
   $('r-food').textContent=fmt(foodUnits());$('r-wood').textContent=fmt(r.wood);$('r-planks').textContent=fmt(r.planks);$('r-iron').textContent=fmt(r.iron);$('r-tools').textContent=fmt(r.tools);$('r-water').textContent=fmt(r.water);$('r-fame').textContent=fmt(S.fame);$('r-people').textContent=S.pop+'/'+housing();
+  const B0=S.bal||{};for(const k of ['food','water','wood','planks','iron','tools','silver','fame']){const e=$('d-'+k);if(!e)continue;const v=B0[k];if(v===undefined||Math.abs(v)<0.05){e.textContent='';e.className='';continue;}e.textContent=(v>0?'▲':'▼')+fmt(Math.abs(v));e.className=v>0?'up':'dn';}
+  if(!$('rtip').hidden){const hv=document.querySelector('.chip:hover');if(hv)$('rtip').innerHTML=tipHtml(hv.dataset.res);}
   $('r-warriors').textContent=S.warriors+(S.train?'+'+S.train.n:'');$('r-silver').textContent=fmt(r.silver);$('r-morale').textContent=Math.round(S.morale);$('chip-morale').classList.toggle('warn',S.morale<40);
   $('chip-warriors').hidden=thLevel()<2;$('chip-silver').hidden=thLevel()<3;
   $('chip-food').classList.toggle('warn',foodUnits()<eatNeed()*3);$('chip-water').classList.toggle('warn',r.water<S.pop);$('chip-wood').classList.toggle('warn',isWinter()&&r.wood<fireNeed()*3);$('chip-tools').classList.toggle('warn',r.tools<1);
@@ -77,11 +97,13 @@ function buildingSheet(b){
       on.push(()=>{$('th-up').onclick=()=>{if(upgradeTH()){closeSheet();save();}};});}
     else h+='<p>The hall stands at its highest level for this update.</p>';
     openSheet(h,'building');on.forEach(f=>f());return;}
+  if(b.t==='house'){const cur=houseSch(b);h+='<h3>Colours</h3><div class="swatches" role="group" aria-label="House colours">'+HOUSE_SCH.map((q,i)=>'<button type="button" class="sw'+(i===cur?' on':'')+'" data-sch="'+i+'" title="'+q.n+'" aria-label="'+q.n+'"><i style="background:'+q.roof+'"></i><i style="background:'+q.wall+'"></i></button>').join('')+'</div><div class="acts">'+btn('sch-all','Use on every house')+btn('sch-mix','Mixed village')+'</div>';
+    on.push(()=>{$('sheet-card').querySelectorAll('[data-sch]').forEach(x=>x.onclick=()=>{b.sch=+x.dataset.sch;save();buildingSheet(b);});$('sch-all').onclick=()=>{S.houseSch=houseSch(b);for(const o of B)if(o.t==='house')delete o.sch;save();toast('Every house now uses '+HOUSE_SCH[S.houseSch].n.toLowerCase()+'.');buildingSheet(b);};$('sch-mix').onclick=()=>{S.houseSch=null;for(const o of B)if(o.t==='house')delete o.sch;save();buildingSheet(b);};});}
   if(D.housing)h+='<div class="meta">Shelters '+(b.t==='house'?HOUSE_CAP[b.lvl-1]:D.housing)+' people'+(b.t==='house'&&b.lvl>=3?' · burns ¾ firewood':'')+'</div>';
   if(D.store)h+='<div class="meta">Storage: '+(D.store.food?(300+150*(b.lvl-1))+' food':D.store.mat?(300+150*(b.lvl-1))+' goods':(60+30*(b.lvl-1))+' weapons')+'</div>';
   h+='<p>'+esc(D.desc)+'</p>';
   if(D.up){const nx=b.lvl+1;if(b.lvl>=5)h+='<div class="meta">Highest level reached.</div>';
-    else{const c=upCost(b),need=canUpgrade(b);const eff=b.t==='house'?(nx===2||nx===4?'+1 resident':nx===3?'Better insulated: −25% firewood':'A carved hall: draws newcomers'):D.store?'+150 storage':nx===2?'+20% output':nx===4?'+40% output in all':'+1 worker slot';
+    else{const c=upCost(b),need=canUpgrade(b);const eff=b.t==='house'?('+1 resident'+(nx===3?', better insulated: −25% firewood':nx===5?', a carved hall that draws newcomers':'')):D.store?'+150 storage':nx===2?'+20% output':nx===3?(FIELDS.has(b.t)?'+30% output in all':'+1 worker slot'):nx===4?'+40% output in all':'Finest work: +55% output in all';
       h+='<div class="wk">'+btn('b-up','Upgrade to level '+nx,{cls:'primary',dis:!need||!afford(c)})+'<span class="meta">'+esc(eff)+' · '+esc(costStr(c))+(need?'':' · raise the Town Hall first')+'</span></div>';
       on.push(()=>{$('b-up').onclick=()=>{if(!canUpgrade(b)||!afford(upCost(b)))return;pay(upCost(b),1);b.lvl++;assignWorkers();toast(D.name+' upgraded to level '+b.lvl+'.');buildingSheet(b);save();};});}}
   if(!D.fixed){h+='<div class="acts"><button type="button" class="btn danger" id="b-demo">'+(demolishArmed===b.id?'Tap again to demolish':'Demolish (50% back)')+'</button><button type="button" class="btn" id="b-move">Move</button></div>';
@@ -110,12 +132,12 @@ function tileSheet(x,y){
 /* ---------- panels ---------- */
 let buildCat='Housing';
 let newArmed=false;
-function renderBuild(){
+function renderBuild(){if(isWide()){if(mode!=='view')endMode();closeSheet();openTray(buildCat);return;}
   let h=head('Build','Construction is instant. Town Hall level '+thLevel()+'.');
   h+='<div class="tabs" role="group" aria-label="Categories">'+CATS.map(c=>'<button type="button" data-cat="'+c+'" aria-pressed="'+(c===buildCat)+'">'+c+'</button>').join('')+'</div><div class="blist">';
   Object.keys(DEF).filter(k=>DEF[k].cat===buildCat).forEach(k=>{const D=DEF[k],av=isAvail(k),lim=limitOf(k),cnt=count(k),uq=cnt>=lim,cst=costOf(k),free=!Object.keys(cst).length&&Object.keys(D.cost).length,ok=av&&!uq&&afford(cst);
     const lock=D.lvl>thLevel()?'Needs Town Hall level '+D.lvl:!av?'Unlocks with: '+(MS.find(m=>m.unlock.includes(k))||{title:'?'}).title:uq?'Limit reached for this level':'';
-    h+='<button type="button" class="bcard'+(ok?'':' no')+'" data-b="'+k+'"><b>'+esc(D.name)+'</b>'+(D.lvl<=thLevel()?'<span class="lim">Built '+cnt+' / '+lim+'</span>':'')+'<span>'+D.w+'×'+D.h+(D.slots?' · '+D.slots+' workers':'')+(D.housing?' · '+D.housing+' people':'')+'</span><span class="cost'+(av&&!afford(cst)?' bad':'')+'">'+esc(free?'First one free':costStr(cst))+'</span>'+(lock?'<span>'+esc(lock)+'</span>':'')+'</button>';});
+    h+='<button type="button" class="bcard'+(ok?'':' no')+'" data-b="'+k+'"><img class="bth" alt="" src="'+buildThumb(k,1)+'"><b>'+esc(D.name)+'</b>'+(D.lvl<=thLevel()?'<span class="lim">Built '+cnt+' / '+lim+'</span>':'')+'<span>'+D.w+'×'+D.h+(D.slots?' · '+D.slots+' workers':'')+(D.housing?' · '+D.housing+' people':'')+'</span><span class="cost'+(av&&!afford(cst)?' bad':'')+'">'+esc(free?'First one free':costStr(cst))+'</span>'+(lock?'<span>'+esc(lock)+'</span>':'')+'</button>';});
   h+='</div>';openSheet(h,'build');
   $('sheet-card').querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{buildCat=b.dataset.cat;renderBuild();});
   $('sheet-card').querySelectorAll('.bcard').forEach(c=>c.onclick=()=>{const k=c.dataset.b,D=DEF[k];

@@ -15,3 +15,5 @@ The game works offline once it has been opened once. Saves live on the device; u
 ## Repository
 - `index.html`, `manifest.webmanifest`, `sw.js`, `icon-*.png`: the built game served by GitHub Pages.
 - `source/`: the game's source modules. Run `python3 source/build.py` to build `source/dist/`.
+- `tools/`: regression checks, balance bots and the release script.
+- `CLAUDE.md`, `SPEC.md`, `BACKLOG.md`, `CHANGELOG.md` and `docs/`: how the game works and how to work on it.

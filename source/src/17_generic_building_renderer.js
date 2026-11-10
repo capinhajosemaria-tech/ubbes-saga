@@ -4,13 +4,14 @@ function inset(c,k){const cx=(c.T[0]+c.Bt[0])/2,cy=(c.T[1]+c.Bt[1])/2,f=p=>[p[0]
 const up=(p,h)=>[p[0],p[1]-h];
 function hall(c,wh,rh,alongX,o,win){
   {const st=CUR_T&&CUR_T!=='house'&&BSTY[CUR_T];if(st){o=Object.assign({},st,o);}}
+  if(o.hip&&!o.nr){const r0=hall(c,wh,rh,alongX,Object.assign({},o,{hip:0,nr:1}),win);const r=hipRoof(c,wh,rh,alongX,Object.assign({},o,{hp:o.hip,sag:o.sag||0,ov:3,seed:(c.T[0]|0)}),win);if(o.chim&&!win){const m=lerp(r.rb,r.rf,0.3);poly([m[0]-4,m[1]+4,m[0]+4,m[1]+4,m[0]+4,m[1]-9,m[0]-4,m[1]-9],'#6C665E');poly([m[0],m[1]+4,m[0]+4,m[1]+4,m[0]+4,m[1]-9,m[0],m[1]-9],'#57524B');}return {M1:r0.M1,M2:r0.M2,H:r0.H,hip:r};}
   const wt=o.wt||'planks';
   const roofL=win?'#EEF1F0':o.roof||'#7F9568',roofD=win?'#D3DAD9':o.roofD||'#6B8058',wall=o.wall||'#8E6F52',wallD=o.wallD||'#6E543D';
   poly(P([c.L[0]+5,c.L[1]+3],[c.Bt[0]+5,c.Bt[1]+3],[c.R[0]+5,c.R[1]+3],[c.T[0]+5,c.T[1]+3]),'rgba(38,48,53,0.16)');
   let M1,M2,eaveA,eaveB,gA,gB;
   if(alongX){M1=lerp(c.L,c.T,0.5);M2=lerp(c.Bt,c.R,0.5);}else{M1=lerp(c.T,c.R,0.5);M2=lerp(c.L,c.Bt,0.5);}
   const H=wh+rh;
-  if(alongX)poly(P(up(c.T,wh),up(c.R,wh),up(M2,H),up(M1,H)),roofD);else poly(P(up(c.L,wh),up(c.T,wh),up(M1,H),up(M2,H)),roofD);
+  if(o.nr){}else if(alongX)poly(P(up(c.T,wh),up(c.R,wh),up(M2,H),up(M1,H)),roofD);else poly(P(up(c.L,wh),up(c.T,wh),up(M1,H),up(M2,H)),roofD);
   poly(P(c.L,c.Bt,up(c.Bt,wh),up(c.L,wh)),wall);
   poly(P(c.Bt,c.R,up(c.R,wh),up(c.Bt,wh)),wallD);
   /* stone footing with joints */
@@ -27,11 +28,12 @@ function hall(c,wh,rh,alongX,o,win){
   ctx.strokeStyle='rgba(48,36,26,0.75)';ctx.lineWidth=2;ctx.beginPath();for(const q of [c.L,c.Bt,c.R]){ctx.moveTo(q[0],q[1]-3);ctx.lineTo(q[0],q[1]-wh);}ctx.stroke();
   /* shadow under the eaves */
   poly(P(up(c.L,wh-3.5),up(c.Bt,wh-3.5),up(c.Bt,wh),up(c.L,wh)),'rgba(30,22,16,0.28)');poly(P(up(c.Bt,wh-3.5),up(c.R,wh-3.5),up(c.R,wh),up(c.Bt,wh)),'rgba(30,22,16,0.32)');
-  if(alongX){poly(P(up(c.Bt,wh),up(c.R,wh),up(M2,H)),wallD);
+  if(o.nr){}else if(alongX){poly(P(up(c.Bt,wh),up(c.R,wh),up(M2,H)),wallD);
     poly(P([c.L[0]-2,c.L[1]-wh+3],[c.Bt[0],c.Bt[1]-wh+3],up(M2,H+1),up(M1,H+1)),roofL);
   }else{poly(P(up(c.L,wh),up(c.Bt,wh),up(M2,H)),wall);
     poly(P([c.Bt[0],c.Bt[1]-wh+3],[c.R[0]+2,c.R[1]-wh+3],up(M1,H+1),up(M2,H+1)),roofL);}
   {const side=o.side||DOOR_SIDE||(alongX?'+x':'+y');if(o.door!==false&&(side==='+x'||side==='+y'))doorOnFace(side==='+y'?c.L:c.Bt,side==='+y'?c.Bt:c.R,wh);}
+  if(o.nr)return {M1:M1,M2:M2,H:H};
   {/* roof surface: turf, thatch or shingles */const rt=o.rt||'turf';const ea=alongX?up(c.L,wh):up(c.Bt,wh),eb=alongX?up(c.Bt,wh):up(c.R,wh),ra=alongX?up(M1,H):up(M2,H),rb=alongX?up(M2,H):up(M1,H);
     const at=(u,v)=>lerp(lerp(ea,eb,u),lerp(ra,rb,u),v);
     if(win){ctx.strokeStyle='rgba(180,190,192,0.6)';ctx.lineWidth=1;ctx.beginPath();for(let k=1;k<4;k++){const a=at(0,k/4),b2=at(1,k/4);ctx.moveTo(a[0],a[1]);ctx.lineTo(b2[0],b2[1]);}ctx.stroke();}
@@ -64,7 +66,7 @@ function wallTexture(c,wh,wt,win){
 const BSTY={
   wood:{wt:'logs',wall:'#7A5A3E',wallD:'#5E4430',roof:'#6E5A44',roofD:'#584735',rt:'shingle'},
   carp:{wall:'#B08F6A',wallD:'#8E7152',roof:'#C2A45E',roofD:'#A68A48',rt:'thatch'},
-  mine:{wt:'stone',wall:'#8E877D',wallD:'#6F6961',roof:'#5E5850',roofD:'#4A4540',rt:'shingle'},
+  mine:{wt:'stone',wall:'#8E877D',wallD:'#6F6961',roof:'#5E5850',roofD:'#4A4540',rt:'shingle',hip:0.4},
   smith:{wt:'stone',wall:'#7D776E',wallD:'#625D56',roof:'#4A4540',roofD:'#3A3632',rt:'shingle',chim:1},
   fish:{wall:'#8C8478',wallD:'#6E675D',roof:'#7F9568',roofD:'#6B8058',rt:'turf'},
   berry:{wall:'#9A7C5E',wallD:'#7C6248',roof:'#B39E66',roofD:'#97834F',rt:'thatch'},
@@ -73,13 +75,13 @@ const BSTY={
   gran:{wall:'#A08460',wallD:'#80684B',roof:'#C2A45E',roofD:'#A68A48',rt:'thatch'},
   jarl:{wall:'#6E4A36',wallD:'#553826',roof:'#7F9568',roofD:'#6B8058',rt:'turf'},
   smoke:{wt:'logs',wall:'#4E3E32',wallD:'#3C3026',roof:'#5A5048',roofD:'#463E38',rt:'shingle',chim:1},
-  bakery:{wt:'stone',wall:'#B5AA96',wallD:'#958B79',roof:'#B39E66',roofD:'#97834F',rt:'thatch',chim:1},
-  weaver:{wt:'frame',wall:'#D8CDB4',wallD:'#B9AE95',roof:'#B39E66',roofD:'#97834F',rt:'thatch'},
+  bakery:{wt:'stone',wall:'#B5AA96',wallD:'#958B79',roof:'#B39E66',roofD:'#97834F',rt:'thatch',chim:1,hip:0.5},
+  weaver:{wt:'frame',wall:'#D8CDB4',wallD:'#B9AE95',roof:'#B39E66',roofD:'#97834F',rt:'thatch',hip:0.25},
   hunter:{wt:'logs',wall:'#6A5240',wallD:'#503D2E',roof:'#7F9568',roofD:'#6B8058',rt:'turf'},
-  trade:{wt:'frame',wall:'#C9B48E',wallD:'#A99470',roof:'#7A4A3A',roofD:'#623A2E',rt:'shingle'},
-  arsenal:{wt:'stone',wall:'#857F76',wallD:'#6C665E',roof:'#5E5850',roofD:'#4A4540',rt:'shingle'},
-  thrall:{wall:'#7A6A58',wallD:'#5E5144',roof:'#8E9C68',roofD:'#78864F',rt:'turf'},
-  salt:{wall:'#A8A196',wallD:'#8A8378',roof:'#6F7A80',roofD:'#5A646A',rt:'shingle'},
+  trade:{wt:'frame',wall:'#C9B48E',wallD:'#A99470',roof:'#7A4A3A',roofD:'#623A2E',rt:'red',hip:0.2,sag:5},
+  arsenal:{wt:'stone',wall:'#857F76',wallD:'#6C665E',roof:'#5E5850',roofD:'#4A4540',rt:'shingle',hip:0.14},
+  thrall:{wall:'#7A6A58',wallD:'#5E5144',roof:'#8E9C68',roofD:'#78864F',rt:'turf',hip:0.35},
+  salt:{wall:'#A8A196',wallD:'#8A8378',roof:'#6F7A80',roofD:'#5A646A',rt:'shingle',hip:0.3},
   brewery:{wall:'#8A6A50',wallD:'#6C523D',roof:'#C2A45E',roofD:'#A68A48',rt:'thatch',chim:1},
   tailor:{wt:'frame',wall:'#D8CDB4',wallD:'#B9AE95',roof:'#8E4E3A',roofD:'#723D2D',rt:'shingle'},
   hof:{wall:'#3E3028',wallD:'#2E241E',roof:'#3A3430',roofD:'#2C2724',rt:'shingle',barge:'#C9A64A'}};

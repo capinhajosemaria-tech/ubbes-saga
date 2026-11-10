@@ -1,6 +1,6 @@
 /* =================== saga milestones =================== */
 const MS=[
-  {id:'settle',lv:1,title:'Settle the shore',goal:'Build a berry gatherer, a water carrier and a woodcutter’s lodge (the first of each is free)',fame:20,unlock:['carp','pyre'],test:()=>has('berry')&&has('water')&&has('wood'),saga:'Ubbe sent the women to the berry slopes, men to the river with buckets, and axes into the grove.'},
+  {id:'settle',lv:1,title:'Settle the shore',goal:'Build a berry gatherer and a woodcutter’s lodge (the first of each is free)',fame:20,unlock:['carp','pyre'],test:()=>has('berry')&&has('wood'),saga:'Ubbe sent the women to the berry slopes, men to the river with buckets, and axes into the grove.'},
   {id:'planks',lv:1,title:'Timber and planks',goal:'Build a carpenter and store 40 planks',fame:20,unlock:['mine','ware'],test:()=>has('carp')&&S.res.planks>=40,saga:'Planks were sawn for better halls.'},
   {id:'iron',lv:1,title:'Iron from the hills',goal:'Build an iron mine and store 20 iron',fame:20,unlock:['smith','gran'],test:()=>has('mine')&&S.res.iron>=20,saga:'Ore was dug below the mountain.'},
   {id:'tools',lv:1,title:'The first tools',goal:'Build a smithy and stock 12 tools',fame:30,unlock:['pres'],test:()=>has('smith')&&S.res.tools>=12,saga:'The first tools came hot from the anvil.'},
@@ -24,7 +24,7 @@ const MS=[
   {id:'raid',lv:3,title:'The first raid',goal:'Bring a ship home from a raid with plunder or tribute',fame:60,unlock:[],test:()=>(S.raidsDone||0)>=1,saga:'The first raiders of Kaldstrand came home with their ships riding low.'},
   {id:'forty',lv:3,title:'A proper town',goal:'Reach 40 people',fame:30,unlock:[],test:()=>S.pop>=40,saga:'Forty souls now lived in Kaldstrand.'}
 ];
-const START_AVAIL=['house','fish','berry','water','wood'];
+const START_AVAIL=['house','fish','berry','wood'];
 const SHIP_NAMES=['Sea-Raven','Wave-Biter','Storm-Ox','Grey Goose','Long Serpent','Iron Swan','Foam-Wolf','Elk of the Waves'];
 const SHIPS={karvi:{name:'Karvi',work:110,cost:{planks:80,iron:20,cloth:10,rope:10},desc:'Warship. Carries 15 men and 120 loads of plunder.'},knarr:{name:'Knarr',work:140,cost:{planks:100,iron:15,cloth:15,rope:15},desc:'Cargo ship. 8 men, 250 loads. Poor in battle.'}};
 const BLESS_OLD={freyja:{name:'Freyja’s harvest',cost:{veg:20,berries:10},meals:40,text:'+25% from farms, gatherers and the pen',hits:['hay','garden','grain','flax','berry','pen']},

@@ -22,18 +22,21 @@ function drawHouse(b,win){
   const wh=[9,11,13,14,15][L-1],rh=[15,14,16,17,18][L-1];
   if(L>=5){poly(P(c.L,c.Bt,[c.Bt[0],c.Bt[1]+4],[c.L[0],c.L[1]+4]),'#8E877D');poly(P(c.Bt,c.R,[c.R[0],c.R[1]+4],[c.Bt[0],c.Bt[1]+4]),'#77716A');}
   const SC=HOUSE_SCH[houseSch(b)];
-  const r=hall(c,wh,rh,alongX,{wall:SC.wall,wallD:SC.wallD,roof:SC.roof,roofD:SC.roofD,barge:L>=3?st[4]:SC.barge,rt:SC.rt},win);
+  /* shape varies by variant: 0 gable, 1 hipped and slightly bowed, 2 round hut at levels 1–2 */
+  if(v===2&&L<=2){const q=inset(c0,0.2);roundHut(q.cx,q.cy+2,L===1?19:21,wh,rh+6,{rt:SC.rt==='shingle'?'turf':SC.rt,roof:SC.rt==='shingle'?undefined:SC.roof,roofD:SC.rt==='shingle'?undefined:SC.roofD,wall:SC.wall,wallD:SC.wallD},win);
+    const fb=c0.Bt;if(L>=2)barrelC(fb[0]+12,fb[1]-2);return;}
+  const r=hall(c,wh,rh,alongX,{wall:SC.wall,wallD:SC.wallD,roof:SC.roof,roofD:SC.roofD,barge:L>=3?st[4]:SC.barge,rt:SC.rt,hip:v===1?0.22:0,sag:v===1?4:0},win);
   const o={alongX:alongX,M1:r.M1,M2:r.M2};
   if(false){
     const turf=st[2]==='#7F9568'||st[2]==='#8E9C68'||st[2]==='#728A60'||st[2]==='#6E8A5E';
     if(turf){ctx.fillStyle='rgba(70,92,58,0.55)';for(let k=0;k<7;k++){const p=roofPoint(c,wh-3,r.H,o,0.12+0.76*h2(b.id,k,91),0.15+0.7*h2(b.id,k,92));ctx.fillRect(p[0]-1,p[1]-2,2,3);}if(L<=2&&h2(b.id,3,93)>0.5){ctx.fillStyle='#C9B06A';const p=roofPoint(c,wh-3,r.H,o,0.6,0.45);ctx.beginPath();ctx.arc(p[0],p[1],1.4,0,6.3);ctx.fill();}}
     else{ctx.strokeStyle='rgba(38,30,24,0.28)';ctx.lineWidth=0.8;ctx.beginPath();for(let k=1;k<5;k++){const a=roofPoint(c,wh-3,r.H,o,0.02,k/5),e=roofPoint(c,wh-3,r.H,o,0.98,k/5);ctx.moveTo(a[0],a[1]);ctx.lineTo(e[0],e[1]);}ctx.stroke();}}
   /* gable dragon heads from level 3 */
-  if(L>=3){const m=up(r.M2,r.H);ctx.strokeStyle=st[4];ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(m[0]+4,m[1]-8);ctx.quadraticCurveTo(m[0]+9,m[1]-13,m[0]+7,m[1]-16);ctx.moveTo(m[0]-4,m[1]-8);ctx.quadraticCurveTo(m[0]-9,m[1]-13,m[0]-7,m[1]-16);ctx.stroke();}
+  if(L>=3&&r.hip){dragonHead(r.hip.rf,alongX?1:-1,st[4],0.75);}
+  else if(L>=3){const m=up(r.M2,r.H);ctx.strokeStyle=st[4];ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(m[0]+4,m[1]-8);ctx.quadraticCurveTo(m[0]+9,m[1]-13,m[0]+7,m[1]-16);ctx.moveTo(m[0]-4,m[1]-8);ctx.quadraticCurveTo(m[0]-9,m[1]-13,m[0]-7,m[1]-16);ctx.stroke();}
   /* props */
   const fb=c0.Bt,fl=lerp(c0.L,c0.Bt,0.5),fr=lerp(c0.Bt,c0.R,0.5);
   const side=v===0?fl:fr;
-  if(L===1||v===2)logPileC(side[0]+(side===fl?-6:8),side[1]+2,2.4);
   if(L>=2&&v!==2)barrelC(side[0]+(side===fl?-8:10),side[1]+4);
   if(L>=2){const bx=fb[0]+(v===1?-14:10),by=fb[1]+2;if(propOK(bx,by)){poly([bx-7,by-3,bx+7,by+1,bx+7,by-1,bx-7,by-5],'#A88A69');ctx.fillStyle='#6E543D';ctx.fillRect(bx-6,by-3,1.4,4);ctx.fillRect(bx+5,by,1.4,3);}}
   if(L>=3){const p=lerp(c.L,c.Bt,0.3);ctx.fillStyle=v===1?'#D7CDB4':'#A34A3A';ctx.beginPath();ctx.arc(p[0],p[1]-wh*0.55,3.4,0,6.3);ctx.fill();ctx.fillStyle='#C9C2B2';ctx.beginPath();ctx.arc(p[0],p[1]-wh*0.55,1.1,0,6.3);ctx.fill();}
@@ -51,7 +54,6 @@ function drawPlaza(b,win){const L=thLevel(),e=elev[b.fy*N+b.fx]||2;
   const fire=at(4.9,4.9),feast=feastOn();
   ctx.save();
   /* paving: flat stones around the fire */
-  ctx.fillStyle=win?'rgba(206,210,206,0.9)':'rgba(176,165,140,0.85)';ctx.beginPath();ctx.ellipse(fire[0],fire[1],44,22,0,0,6.3);ctx.fill();
   for(let k=0;k<14;k++){const a=k/14*6.283,rr=30+(k%3)*5;ctx.fillStyle=k%2?(win?'#C9CCC8':'#9A958B'):(win?'#D6D9D5':'#A8A398');ctx.beginPath();ctx.ellipse(fire[0]+Math.cos(a)*rr,fire[1]+Math.sin(a)*rr*0.5,5,2.6,0,0,6.3);ctx.fill();}
   /* benches around the fire */
   const bench=(x,y,ang)=>{ctx.save();ctx.translate(x,y);poly([-11,-2,11,-2,11,2,-11,2].map((v,i)=>i%2?v*0.5+(ang?(i>2?3:-3):0):v),'#8A6E52');ctx.restore();};

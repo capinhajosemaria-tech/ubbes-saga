@@ -26,15 +26,18 @@ function render(){
   if(mode==='road')drawRoadGhost();
   if(mode==='road'||mode==='erase'){ctx.fillStyle='rgba(201,166,74,0.9)';for(let y=0;y<N;y++)for(let x=0;x<N;x++){const i=y*N+x;if(roads[i]&&!conn[i]){const sx=(x-y)*HW,sy=(x+y)*HH-elev[i];if(vis(sx,sy)){ctx.beginPath();ctx.arc(sx,sy,3,0,6.3);ctx.fill();}}}}
   /* locked overlay (soft) + faint grid + owned-land border */
-  const gridT=[],lockP=new Path2D();
+  const gridT=[],lockP=new Path2D(),zoneA=new Path2D(),zoneB=new Path2D();
   for(let y=0;y<N;y++)for(let x=0;x<N;x++){const sx=(x-y)*HW,sy=(x+y)*HH;if(!vis(sx,sy))continue;const top=sy-elev[y*N+x];
-    if(!isUnl(x,y)){if(ter[y*N+x]!==T.SEA&&ter[y*N+x]!==T.MOUNT){lockP.moveTo(sx,top-HH);lockP.lineTo(sx+HW,top);lockP.lineTo(sx,top+HH);lockP.lineTo(sx-HW,top);lockP.lineTo(sx,top-HH);gridT.push(sx,top);}}
+    if(!isUnl(x,y)){if(ter[y*N+x]!==T.SEA&&ter[y*N+x]!==T.MOUNT){lockP.moveTo(sx,top-HH);lockP.lineTo(sx+HW,top);lockP.lineTo(sx,top+HH);lockP.lineTo(sx-HW,top);lockP.lineTo(sx,top-HH);gridT.push(sx,top);
+      /* 6×6 land blocks: outline each block's back edges; blocks next to owned land a little brighter */
+      const zx=Math.floor(x/6),zy=Math.floor(y/6),nx=zoneAdj(zx,zy)?zoneA:zoneB;if(x%6===0){nx.moveTo(sx,top-HH);nx.lineTo(sx-HW,top);}if(y%6===0){nx.moveTo(sx,top-HH);nx.lineTo(sx+HW,top);}}}
     else{ctx.strokeStyle='rgba(236,222,178,0.75)';ctx.lineWidth=1.4/zoom+0.5;ctx.beginPath();
       if(!isUnl(x+1,y)||x+1>=N){ctx.moveTo(sx+HW,top);ctx.lineTo(sx,top+HH);}
       if(!isUnl(x-1,y)||x-1<0){ctx.moveTo(sx,top-HH);ctx.lineTo(sx-HW,top);}
       if(!isUnl(x,y+1)||y+1>=N){ctx.moveTo(sx,top+HH);ctx.lineTo(sx-HW,top);}
       if(!isUnl(x,y-1)||y-1<0){ctx.moveTo(sx,top-HH);ctx.lineTo(sx+HW,top);}ctx.stroke();}}
   ctx.fillStyle='rgba(38,48,53,0.13)';ctx.fill(lockP,'nonzero');
+  ctx.lineWidth=1.3/zoom+0.4;ctx.strokeStyle=win?'rgba(60,70,76,0.22)':'rgba(255,250,232,0.42)';ctx.stroke(zoneA);ctx.strokeStyle=win?'rgba(60,70,76,0.12)':'rgba(255,250,232,0.2)';ctx.stroke(zoneB);
   if(gridT.length&&zoom>0.5){ctx.strokeStyle=win?'rgba(60,70,76,0.08)':'rgba(255,255,255,'+(0.11*Math.min(1,(zoom-0.5)*3)).toFixed(3)+')';ctx.lineWidth=1/zoom;ctx.beginPath();for(let k=0;k<gridT.length;k+=2){const sx=gridT[k],top=gridT[k+1];ctx.moveTo(sx-HW,top);ctx.lineTo(sx,top-HH);ctx.lineTo(sx+HW,top);}ctx.stroke();}
   /* placement ghost footprint & range */
   let ghost=null;

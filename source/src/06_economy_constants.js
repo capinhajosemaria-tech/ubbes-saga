@@ -1,5 +1,5 @@
 /* =================== economy constants =================== */
-/* 1 day ≈ 27 s at 1×. People eat 0.5 meals and drink 0.25 water a day; warriors eat 1.5× */
+/* 1 day ≈ 27 s at 1×. People eat 0.5 meals a day; warriors eat 1.5× */
 const EAT=0.5,DRINK=0.25,FIRE_HOUSE=1,FIRE_TH=2,WAR_EAT=1.5;
 const MEAL={fish:1,berries:1,meat:1,veg:1,bread:1.5,dfish:2,jam:2,smoked:2,pickles:2,sausage:3,ale:1,mead:2};
 const FRESH=['fish','berries','meat','veg','bread'];

@@ -1,4 +1,4 @@
-# Ubbe's Saga — specification (Beta 0.7.0)
+# Ubbe's Saga — specification (Beta 0.8.0)
 
 How the game works **today**. Numbers are in `docs/NUMBERS.md` (generated). The long-term vision for Town Hall 6–10 is in `docs/DESIGN.md`.
 
@@ -19,7 +19,7 @@ A cozy-but-harsh Viking village builder for the browser. Year 865, the village o
 - Terrain: sea, beach, grass, forest, berry bushes, river, foothills, iron outcrops, mountains. Islands in the bay, a tarn in the western woods.
 - Mountains are one continuous low-poly heightfield (gentle foot, short cliff band, ridged grey peaks with valleys, snow only on the highest peaks). They stay low and to the north (a short spur north of the village, a small peak to the north-east), leaving open meadow. Locked-land shading and edge mist are lighter over rock.
 - Land is bought in 6 × 6 zones with **fame**; the saga starts with 21 zones (a 5 × 5 block minus its four corners, 30 × 30 tiles); the corners and everything further are bought; cost grows with distance (`30·d − 10`).
-- Edges fade into sea-mist; unbought land is slightly darker with a faint tile grid.
+- Edges fade into sea-mist; unbought land is slightly darker with a faint tile grid, and each 6 × 6 block is outlined (brighter for blocks next to owned land).
 - Trees can be cleared for good (half their wood). Felled trees regrow in 60 days.
 
 ## 5. People
@@ -34,7 +34,8 @@ A cozy-but-harsh Viking village builder for the browser. Year 865, the village o
 - Buildings have worker slots; people are assigned automatically, the player sets how many per building (− / +).
 - Output per worker × building level bonus: level 2–3 ×1.2 (fields ×1.3 at level 3), level 4 ×1.4, level 5 ×1.55. Non-field buildings get +1 worker slot at level 3.
 - **Balance rule:** a full village at every Town Hall level has **4–8 more workers than jobs**, with every warrior place filled (checked by `tools/balance/jobs.py`).
-- Storage caps: food (granaries), goods (warehouses), weapons (arsenal), water (wells).
+- Storage caps: food (granaries), goods (warehouses), weapons (arsenal). There is no water resource: the village lives by the river.
+- Fisher's Hut: full catch within 5 tiles of the sea or the river; beyond that 16% less per tile (never under 20%); none if no water within 12 tiles. Less in winter (more at sea than on the river).
 - Chains: wood → planks; iron → tools / weapons / armour; fish, meat, berries, veg → smoked, preserved, sausage; grain → bread, ale; honey → mead; wool / flax → cloth → clothes.
 - Wool, hides and odds-and-ends only appear once something can use them (or trade opens).
 - **Keep materials for the next hall** (Town Hall sheet, on by default): once every other requirement is met, workshops stop using the wood, planks and iron the next level needs.
@@ -58,15 +59,15 @@ Market with dynamic prices: partners unlock gradually (Skiringssal TH3, Hedeby T
 - Banquets (people / warriors / council) and festivals with fire, pig on a spit and dancers at the plaza.
 
 ## 11. Interface
-- **PC (≥ 900 px wide):** top resource bar grouped (people · food/water · materials · wealth); each item shows a detailed icon, its name, the amount and the daily change, with a hover breakdown; the To do list warns "Only 1 bed left" / "Every bed is taken" in step with the People counter; date and saga goal under it; speed control and **To do** list on the right; a bottom **dock** with panels (Village, People, War, World, Saga), build categories and Roads/Palisade; the **build tray** shows building pictures; building and panel sheets dock on the left; buildings light up on hover.
+- **PC (≥ 900 px wide):** top resource bar grouped (people · food · materials · wealth); each item shows a detailed icon, its name and the amount (in the title font) side by side and the daily change, with a hover breakdown; the To do list warns "Only 1 bed left" / "Every bed is taken" in step with the People counter; date and saga goal under it; speed control and **To do** list on the right; a bottom **dock** with panels (Village, People, War, World, Saga), build categories and Roads/Palisade; the **build tray** shows building pictures; building and panel sheets dock on the left; buildings light up on hover.
 - **Phone:** same top bar (swipe), bottom navigation, Roads/Build buttons, bottom sheets; build menu with pictures; To do list collapsed.
-- **To do list:** Town Hall ready, food/water/firewood shortages, full beds, idle people, buildings in trouble, the current saga goal, next Town Hall requirement, ships ready to sail. Each item moves the camera or opens the right sheet / placement.
+- **To do list:** Town Hall ready, food/firewood shortages, full beds, idle people, buildings in trouble, the current saga goal, next Town Hall requirement, ships ready to sail. Each item moves the camera or opens the right sheet / placement.
 - **Roads and palisade:** click start, click end (the plan is then fixed), Build or Cancel.
 - **World map:** full screen, large chart (Iceland to the Baltic, Norway to Frankia); drag/swipe to move, wheel/pinch to zoom; mist at the edges and over lands not yet open, their places still visible.
-- Fonts: Marcellus SC for titles, Inter for text. Wood-and-parchment panels.
+- Fonts: Marcellus SC for titles and for numbers (resource bar, tables, counters), Inter for text. Classic look: dark wood bars, parchment sheets with dark headers, white building cards whose pictures are cropped and centred automatically. PC keeps the central bottom dock (panels, build categories, roads).
 
 ## 12. Art direction
-Low-poly, flat-shaded, muted Nordic palette. Each building type has its own wall (planks, logs, stone, timber frame), roof (turf, thatch, shingle) and colours; houses have six colour schemes (per house or whole village). Roads lie on the ground as worn dirt paths; bridges are plank decks with rails. Props never stand on roads, water or another plot. Winter turns everything to snow.
+Low-poly, flat-shaded, muted Nordic palette. Each building type has its own silhouette as well as wall (planks, logs, stone, timber frame), roof (turf, thatch, shingle) and colours: gable halls, hipped and bowed longhouses (Jarl's House, Trading House), round huts (Berry Gatherer, Hunter, small houses), open sheds (Woodcutter's Lodge, Carpenter, Smithy front), a raised storehouse on posts (Granary), pyramid roofs (Mine, Bakery, Smokehouse). The Town Hall is a great bowed longhouse with a hipped turf roof (shingle from level 4), dragon heads, an entrance gable, an annex from level 2 and a raised louvred roof from level 3; its plot is a cobblestone plaza. Logs lie only at the Woodcutter's Lodge, stacked with round ends; houses have six colour schemes (per house or whole village). Roads lie on the ground as worn dirt paths; bridges are plank decks with rails. Props never stand on roads, water or another plot. Winter turns everything to snow.
 
 ## 13. Technical
 - One HTML file built from `source/src` modules; canvas 2D renderer; no libraries. Installable PWA (manifest + service worker, offline after first load).

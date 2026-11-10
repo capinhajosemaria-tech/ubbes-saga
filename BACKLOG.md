@@ -3,17 +3,22 @@
 José adds feedback here while playing (or tells Claude, who adds it). At the start of a round, pick 3–6 items and move them to "This round".
 Format: `- [ ] what · why / where seen` — screenshots welcome in the conversation.
 
-## This round — Polish 1: the early game (PC) · approved by José 2026-11-10
-Decisions: old saves may break (bump save keys); start with about 16 people instead of 11 and faster newcomers in year 1; show 1–2 screenshots of the new mountain before rolling it out.
-- [x] More people at the start (~16) and faster newcomers in the first year; check with the `balance` agent that TH2 does not get too easy.
-- [x] More land unlocked at the start.
-- [x] Smaller mountain with a new design, freeing building space (screenshots first).
-- [x] Resource bar: name next to each number, clearer and more detailed icons.
-- [x] Fix "Every bed is taken" shown while the bar reads 11/12.
+## This round — Polish 2: look and simplification (PC) · approved by José 2026-11-10
+Decisions: Town Hall option A (bowed great hall; raised roof must grow out of the main roof seamlessly), cobblestone plaza; menu option M1 (classic 0.5 colours and sheets) but keep the current central dock on PC (panels + build categories + roads), no separate Build/Roads buttons; PC only; old saves will not load (water removed).
+- [x] Remove water and wells; Fisher's Hut works at 100% within 5 tiles of water (sea or river), less further away.
+- [x] Building revamp: new Town Hall (A), cobblestone plaza, own silhouettes for workshops and houses, loose log props removed (logs only at the Woodlodge, round at both ends).
+- [x] Menus in the classic look (M1); fix building pictures missing or off-centre in the build tray.
+- [x] Title font (Marcellus SC) for resource numbers and other figures.
+- [x] 6 × 6 land blocks visible (subdued) in the grid.
+
+## Done rounds
+- Polish 1 — the early game (Beta 0.7.0).
 
 ## Next rounds (planned)
-- **Polish 2 — organisation:** menus and build categories, clearer wording, explicit icons everywhere.
-- **Polish 3 — world map and raids:** overlapping labels, Birka in Sweden, England visible, raid balance after TH4 (with the Monte Carlo update).
+- **Polish 3 — Town Hall 1 and tutorial:** faster TH1 unlocks for winter essentials, short dynamic tutorial (see Play 3 feedback).
+- **Later — walls:** walls and sea palisades working like Clash of Clans walls.
+- **Later — organisation:** build categories, clearer wording, explicit icons everywhere.
+- **Later — world map and raids:** overlapping labels, Birka in Sweden, England visible, raid balance after TH4 (with the Monte Carlo update).
 
 ## Polish after Town Hall 5 (beta polish rounds)
 Merge José's play feedback here, grouped as visual / balance / organisation. **PC only for now** (decided 2026-11-10): tune everything on PC, then convert to iPhone; phone items wait in "Phone (later)".
@@ -24,10 +29,10 @@ José's second play session (Relaxed, 2026-11-10, after Polish 1) added the item
 - [x] **Resource bar hard to read** (José): show each resource's name next to the number, clearer and more detailed icons.
 - [ ] **Icons in menus too vague** (José): more explicit, detailed icons in build tray, panels and sheets.
 - [x] Mountain massif dominates the TH5 view (about a third of the screen, a flat white block): make it smaller with a new design (José agrees), freeing land for building.
-- [ ] **Log-pile props look wrong** *(play 2)*: remove the loose firewood/log props from the village; keep logs only at the Woodlodge, and redraw them properly (round end at the back as well as the front, not cut flat).
-- [ ] **Menu look** *(play 2)*: menus are better organised now, but José prefers a look closer to the original option, more like Bad North (clean, minimal, light panels).
-- [ ] **Title font for numbers** *(play 2)*: use the title font also for resource numbers and other figures in the UI.
-- [ ] **Show the 6 × 6 land blocks** *(play 2)*: the unlockable 6 × 6 tile groups should be visible in the translucent grid (still subdued), so it is clear which block will be unlocked.
+- [x] **Log-pile props look wrong** *(play 2)*: remove the loose firewood/log props from the village; keep logs only at the Woodlodge, and redraw them properly (round end at the back as well as the front, not cut flat).
+- [x] **Menu look** *(play 2)*: menus are better organised now, but José prefers a look closer to the original option, more like Bad North (clean, minimal, light panels).
+- [x] **Title font for numbers** *(play 2)*: use the title font also for resource numbers and other figures in the UI.
+- [x] **Show the 6 × 6 land blocks** *(play 2)*: the unlockable 6 × 6 tile groups should be visible in the translucent grid (still subdued), so it is clear which block will be unlocked.
 - [ ] World map: labels overlap ("Iona" over "SCOTLAND", "Jutland" over "JUTLAND"); Birka sits on the Norway landmass (should be Sweden); England, the main goal, opens half hidden in mist.
 
 ### Balance
@@ -36,7 +41,7 @@ José's second play session (Relaxed, 2026-11-10, after Polish 1) added the item
 - [ ] Re-check raiding after TH4 with the new `balance` agent (several runs per profile), together with the Monte Carlo update below.
 
 ### Organisation / gameplay
-- [ ] **Remove water as a resource** *(play 2)*: the village is by a river, and 2–3 wells in a small village feel wrong. Remove water and wells to reduce complexity (may come back later). Save keys likely need a bump.
+- [x] **Remove water as a resource** *(play 2)*: the village is by a river, and 2–3 wells in a small village feel wrong. Remove water and wells to reduce complexity (may come back later). Save keys likely need a bump.
 - [x] **More building space** (José): start with more land unlocked (more than the free 3 × 3 zones) and more buildable room overall.
 - [ ] **Menus not well organised, sometimes unclear** (José): review build categories, panel structure and the wording of sheets; explain what each building does and needs.
 - [x] To do says "Every bed is taken" at the start while the bar shows 11/12; make the message and the counter agree.
@@ -45,7 +50,7 @@ José's second play session (Relaxed, 2026-11-10, after Polish 1) added the item
 - [ ] **Event choices: unclear gain or loss** (UI): cost/gain hints like "(+23 meals, −80 wood)" are ambiguous, e.g. the before-winter event ("skip this year" vs feast/meals): you can't tell whether meals are gained or spent. Show clear signed amounts with icons, green for gain and red for cost, and say "you get" / "you pay".
 - [ ] **Walls never implemented** (gameplay): walls and the sea palisades should work like Clash of Clans walls: raiders must break through them (wall HP, upgrade levels, paths blocked), and they visibly protect the village.
 - [ ] **More close-up detail** (visual): buildings, ground textures, roads, walls and palisades should show more detail when zoomed in.
-- [ ] **Fisher's Hut placement** (gameplay): replace "needs water within X tiles" with a productivity falloff: 100% up to 5 tiles from any water tile (sea or river), less beyond that.
+- [x] **Fisher's Hut placement** (gameplay): replace "needs water within X tiles" with a productivity falloff: 100% up to 5 tiles from any water tile (sea or river), less beyond that.
 - [ ] **Town Hall 1 unlocks too slow / tutorial** (balance + UX): in one save the Preserver and other winter essentials only unlocked once winter had already started. Rethink the TH1 saga steps: winter essentials buildable earlier, fewer steps to unlock buildings overall. Add a short, dynamic written tutorial at the start of each save: how the game works, what each TH1 building does and why it matters, how to prepare for winter, and other basics.
 - [ ] **Road texture breaks from grass to sand** (visual, minor): the road texture is discontinuous where it crosses from grass to sand.
 

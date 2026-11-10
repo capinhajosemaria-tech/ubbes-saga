@@ -4,15 +4,19 @@ const isWide=()=>innerWidth>=900;
 /* --- building thumbnails, drawn once with the real renderer --- */
 const THUMBS={};
 function buildThumb(t,lvl){const key=t+':'+(lvl||1);if(THUMBS[key])return THUMBS[key];
-  const D=DEF[t],w=D.w,h=D.h,cw=150,ch=112,k=2;
-  const c=document.createElement('canvas');c.width=cw*k;c.height=ch*k;const tc=c.getContext('2d');
+  /* draw big on a scratch canvas, find the drawn pixels, then fit and centre them in the card picture */
+  const D=DEF[t],w=D.w,h=D.h,cw=150,ch=112,k=2,G=900,pad=8;
+  const g=document.createElement('canvas');g.width=G;g.height=G;const gc=g.getContext('2d');
   const fake={id:900000+Object.keys(THUMBS).length,t:t,fx:0,fy:0,w:w,h:h,rot:0,lvl:lvl||1,desired:0,workers:0,anvil:100,mode:'tools',proj:t==='tomb'?{done:0}:null,status:'',thumb:1};
-  const span=(w+h)*HW,tall=(w+h)*HH+(t==='tower'?110:t==='hof'?90:60);const s=Math.min(1.1,(cw-10)/span,(ch-8)/tall);
-  const cx=iso((w-1)/2,(h-1)/2);const e0=elev[0]||2;
-  const prev=ctx,pz=zoom;ctx=tc;zoom=1.2;
-  try{tc.setTransform(k*s,0,0,k*s,k*(cw/2)-k*s*cx[0],k*(ch-10-((w+h)*HH*0.5)*s)-k*s*(cx[1]-e0));
-    drawGround(fake,false);drawBuilding(fake,false,1,false);}catch(err){}
+  const cx=iso((w-1)/2,(h-1)/2),e0=elev[0]||2,sc=Math.min(1.6,560/((w+h)*HW));
+  const prev=ctx,pz=zoom;ctx=gc;zoom=1.2;
+  try{gc.setTransform(sc,0,0,sc,G/2-sc*cx[0],G*0.62-sc*(cx[1]-e0));drawGround(fake,false);drawBuilding(fake,false,1,false);}catch(err){}
   ctx=prev;zoom=pz;
+  let x0=G,y0=G,x1=0,y1=0;try{const d=gc.getImageData(0,0,G,G).data;for(let y=0;y<G;y+=2)for(let x=0;x<G;x+=2){if(d[(y*G+x)*4+3]>70){if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y;}}}catch(err){x0=0;y0=0;x1=G;y1=G;}
+  if(x1<=x0){x0=0;y0=0;x1=G;y1=G;}
+  const bw=x1-x0+2,bh=y1-y0+2,f=Math.min((cw*k-2*pad*k)/bw,(ch*k-2*pad*k)/bh,2.2);
+  const c=document.createElement('canvas');c.width=cw*k;c.height=ch*k;const tc=c.getContext('2d');
+  const dw=bw*f,dh=bh*f;tc.drawImage(g,x0,y0,bw,bh,(cw*k-dw)/2,(ch*k-dh)/2+2,dw,dh);
   return THUMBS[key]=c.toDataURL();}
 
 /* --- category icons --- */
@@ -81,7 +85,6 @@ function suggestions(){const out=[],r=S.res,win=isWinter();
   /* shortages */
   const ed=eatNeed(),fd=foodUnits()/Math.max(1,ed);
   if(fd<6)out.push({p:1,ic:'Food',t:'Food for only '+Math.floor(fd)+' days',sub:'Put more people on fishers, hunters or berries',go:()=>{const b=B.find(b=>['fish','berry','hunter','garden'].includes(b.t)&&b.workers<slotsOf(b));if(b)focusOn(b,true);else placeType(has('fish')?'berry':'fish');},cls:'bad'});
-  if(r.water<S.pop*2)out.push({p:1,ic:'Food',t:'Water is running low',go:()=>{const b=B.find(b=>b.t==='water'&&b.workers<slotsOf(b));if(b)focusOn(b,true);else placeType('water');},cls:'bad'});
   if(win&&r.wood<fireNeed()*4)out.push({p:1,ic:'Resources',t:'Firewood for only '+Math.floor(r.wood/Math.max(1,fireNeed()))+' days',go:()=>{const b=B.find(b=>b.t==='wood'&&b.workers<slotsOf(b));if(b)focusOn(b,true);else placeType('wood');},cls:'bad'});
   {const fr=housing()-S.pop;if(fr<=1&&canBuildNow('house'))out.push({p:2,ic:'Housing',t:fr<=0?'Every bed is taken':'Only 1 bed left',sub:fr<=0?'Build a house so newcomers can stay':'Build a house so more newcomers can stay',go:()=>placeType('house')});}
   if(freeWorkers>0)out.push({p:2,ic:'Village',t:freeWorkers+' '+(freeWorkers>1?'people have':'person has')+' no work',sub:'Open the work overview',go:()=>openPanel('village')});

@@ -1,4 +1,4 @@
-# Ubbe's Saga: numbers (Beta 0.7.0)
+# Ubbe's Saga: numbers (Beta 0.8.0)
 
 Generated from the game by `tools/gen_numbers.py`. Do not edit by hand.
 
@@ -25,7 +25,6 @@ Limits are per Town Hall level 1 / 2 / 3 / 4 / 5. Workers: +1 at building level 
 | carp | Carpenter | Resources | 1 | 2×2 | 25 wood | 2 | 4 wood → 2 planks per worker a day | 1 / 2 / 2 / 2 / 2 |
 | mine | Iron Mine | Resources | 1 | 2×2 | 30 wood, 10 planks | 3 | 2 iron per worker a day | 1 / 1 / 2 / 2 / 2 |
 | smith | Smithy | Resources | 1 | 2×2 | 15 wood, 20 planks, 10 iron | 2 | Tools, and later weapons | 1 / 1 / 1 / 2 / 2 |
-| water | Water Carrier | Resources | 1 | 1×1 | 5 wood | 2 | 6 water per worker a day | 2 / 2 / 3 / 3 / 3 |
 | fish | Fisher’s Hut | Food | 1 | 2×1 | 15 wood | 3 | 4 fish per worker a day | 2 / 2 / 2 / 2 / 2 |
 | berry | Berry Gatherer | Food | 1 | 2×2 | 10 wood | 2 | 4 berries per worker a day (summer) | 2 / 2 / 2 / 2 / 2 |
 | pres | Preserver | Food | 1 | 2×2 | 15 wood, 20 planks | 2 | Dried fish, jam and (with salt) pickles | 1 / 1 / 1 / 1 / 2 |
@@ -67,7 +66,7 @@ Limits are per Town Hall level 1 / 2 / 3 / 4 / 5. Workers: +1 at building level 
 
 | Age | Goal | Task | Fame | Unlocks |
 |---|---|---|---|---|
-| 1 | Settle the shore | Build a berry gatherer, a water carrier and a woodcutter’s lodge (the first of each is free) | 20 | Carpenter, Funeral Pyre |
+| 1 | Settle the shore | Build a berry gatherer and a woodcutter’s lodge (the first of each is free) | 20 | Carpenter, Funeral Pyre |
 | 1 | Timber and planks | Build a carpenter and store 40 planks | 20 | Iron Mine, Warehouse |
 | 1 | Iron from the hills | Build an iron mine and store 20 iron | 20 | Smithy, Granary |
 | 1 | The first tools | Build a smithy and stock 12 tools | 30 | Preserver |

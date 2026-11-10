@@ -24,6 +24,7 @@ function drawGround(b,win){
   ctx.save();ctx.translate(0,-e);
   if(FIELDS.has(b.t)){ctx.fillStyle=win?'rgba(200,205,202,0.5)':'rgba(120,108,80,0.35)';const r=jitterRing(c,3,b.id);poly(r,ctx.fillStyle);drawField(b,inset(c,0.02),win);ctx.restore();return;}
   if(b.t==='harbour'||b.t==='shipyard'){ctx.restore();return;}
+  if(b.t==='th'){cobbles(b,c,win);ctx.restore();return;}
   const yard=b.t==='pen'?(win?'rgba(210,213,208,0.8)':'rgba(150,134,100,0.62)'):b.t==='train'?(win?'rgba(216,218,213,0.85)':'rgba(190,176,136,0.75)'):(win?'rgba(214,217,213,0.7)':'rgba(160,150,112,0.42)');
   poly(jitterRing(c,7,b.id),win?'rgba(205,210,206,0.35)':'rgba(140,140,96,0.16)');
   poly(jitterRing(c,1,b.id+7),yard);
@@ -67,4 +68,18 @@ function drawRoads(win,vis){
   for(let y=0;y<N;y++)for(let x=0;x<N;x++){const i=y*N+x;if(!roads[i]||ter[i]===T.RIVER)continue;const sx=(x-y)*HW,sy=(x+y)*HH-elev[i];if(!vis(sx,sy))continue;
     for(let k=0;k<3;k++){const u=h2(x,y,90+k);if(u<0.5)continue;ctx.fillStyle=win?'#BDB8AA':'#9A8F7C';ctx.beginPath();ctx.ellipse(sx+(h2(x,y,93+k)-0.5)*12,sy+(h2(x,y,96+k)-0.5)*6,1.6,1,0,0,6.3);ctx.fill();}
     if(!win){for(const a of arms){if(inMap(x+a[0],y+a[1])&&roads[(y+a[1])*N+x+a[0]])continue;if(h2(x,y,100+a[0]*3+a[1])<0.5)continue;const ex=sx+a[2]*0.55,ey=sy+a[3]*0.55;ctx.strokeStyle='rgba(95,122,80,0.8)';ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(ex-2,ey);ctx.lineTo(ex,ey-4);ctx.lineTo(ex+2,ey);ctx.stroke();}}}
+}
+
+/* Town Hall plaza: cobblestones over the whole plot, a darker kerb at the edge. Stones are batched by colour (3 fills). */
+function cobbles(b,c,win){
+  poly(jitterRing(c,6,b.id),win?'rgba(205,210,206,0.4)':'rgba(140,140,96,0.18)');
+  poly(P(c.T,c.R,c.Bt,c.L),win?'#D2D5D1':'#9C9483');
+  const n=b.w*4,m=b.h*4,cols=win?['#E4E7E3','#DADDD9','#CDD1CD']:['#B9B09C','#ADA490','#A39985'];
+  const pt=(u,v)=>[c.T[0]+u*(c.R[0]-c.T[0])+v*(c.L[0]-c.T[0]),c.T[1]+u*(c.R[1]-c.T[1])+v*(c.L[1]-c.T[1])];
+  const du=[(c.R[0]-c.T[0])/n,(c.R[1]-c.T[1])/n],dv=[(c.L[0]-c.T[0])/m,(c.L[1]-c.T[1])/m];
+  for(let k=0;k<3;k++){ctx.fillStyle=cols[k];ctx.beginPath();
+    for(let i=0;i<n;i++)for(let j=0;j<m;j++){if(Math.floor(h2(i+b.id,j,91)*3)!==k)continue;const off=(j%2)*0.5;const p=pt((i+off+0.5)/n,(j+0.5)/m);if((i+off+0.5)/n>1)continue;
+      const s=0.36+0.06*h2(i,j,92);ctx.moveTo(p[0]-du[0]*s-dv[0]*s,p[1]-du[1]*s-dv[1]*s);ctx.lineTo(p[0]+du[0]*s-dv[0]*s,p[1]+du[1]*s-dv[1]*s);ctx.lineTo(p[0]+du[0]*s+dv[0]*s,p[1]+du[1]*s+dv[1]*s);ctx.lineTo(p[0]-du[0]*s+dv[0]*s,p[1]-du[1]*s+dv[1]*s);ctx.closePath();}
+    ctx.fill();}
+  ctx.strokeStyle=win?'rgba(150,152,148,0.7)':'rgba(96,86,70,0.65)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(c.L[0],c.L[1]);ctx.lineTo(c.Bt[0],c.Bt[1]);ctx.lineTo(c.R[0],c.R[1]);ctx.stroke();
 }

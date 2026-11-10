@@ -52,7 +52,6 @@ function drawExtra(b,win,c0,alongX){
     case 'shipyard':{const along=alongX;poly(P(c0.T,c0.R,c0.Bt,c0.L),win?'#D6D9D5':'#B19E7B');
       ctx.strokeStyle='#8A6E52';ctx.lineWidth=3;ctx.beginPath();for(let k=0;k<6;k++){const a=along?lerp(c0.T,c0.L,(k+0.5)/6):lerp(c0.T,c0.R,(k+0.5)/6),e2=along?lerp(c0.R,c0.Bt,(k+0.5)/6):lerp(c0.L,c0.Bt,(k+0.5)/6);ctx.moveTo(a[0],a[1]);ctx.lineTo(e2[0],e2[1]);}ctx.stroke();
       const sh={T:c0.T,R:lerp(c0.T,c0.R,0.3),L:lerp(c0.T,c0.L,0.3)};sh.Bt=[sh.R[0]+sh.L[0]-c0.T[0],sh.R[1]+sh.L[1]-c0.T[1]];hall(inset(sh,0.1),12,12,true,{},win);
-      logPileC(c0.L[0]+40,c0.L[1]-4,4);
       if(b.proj){const pr=b.proj.done/SHIPS[b.proj.type].work;drawShip(c0.cx||(c0.T[0]+c0.Bt[0])/2,(c0.T[1]+c0.Bt[1])/2+4,0.34,!along,b.proj.type==='knarr',pr);}
       return true;}
     case 'harbour':{poly(P(c0.T,c0.R,c0.Bt,c0.L),'#A88A69');ctx.strokeStyle='rgba(78,60,46,0.5)';ctx.lineWidth=1;ctx.beginPath();for(let k=1;k<9;k++){const a=lerp(c0.T,c0.L,k/9),e2=lerp(c0.R,c0.Bt,k/9);ctx.moveTo(a[0],a[1]);ctx.lineTo(e2[0],e2[1]);}ctx.stroke();
@@ -77,6 +76,7 @@ function drawBuilding0(b,win,alpha,ghost){
   if(alpha<1)ctx.globalAlpha=alpha;
   ctx.save();ctx.translate(0,-e);
   if(b.t==='house'){drawHouse(b,win);if(!ghost&&b.lvl>=2)pennant(b,0,b.lvl>=3?'#A34A3A':'#C9A64A');ctx.restore();if(alpha<1)ctx.globalAlpha=1;return;}
+  if(b.t==='th'&&(window.__THV!==undefined?window.__THV:THV)){THV=window.__THV!==undefined?window.__THV:THV;drawTownHall(b,win);drawPlaza(b,win);ctx.restore();if(alpha<1)ctx.globalAlpha=1;return;}
   if(b.t==='th'){const hb=thHallRect(b),p=iso(hb.fx+hb.w/2-0.5,hb.fy+hb.h/2-0.5),L=thLevel();
     if(L>=2){const c=fp(hb);[c.L,c.R].forEach((q,i)=>{const x=q[0]+(i?-14:14),y=q[1]+(i?2:2);ctx.strokeStyle='#4E3C2E';ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x,y-46);ctx.stroke();poly([x,y-45,x+(i?-16:16),y-41,x,y-35],'#A34A3A');poly([x+(i?-4:4),y-42,x+(i?-10:10),y-40,x+(i?-5:5),y-39],'#263035');});}
     drawSprite(SP.lh[win?1:0],p[0],p[1],[0.6,0.64,0.69,0.72,0.75][L-1],1,false);
@@ -85,6 +85,7 @@ function drawBuilding0(b,win,alpha,ghost){
     drawPlaza(b,win);
     ctx.restore();if(alpha<1)ctx.globalAlpha=1;return;}
   const c0=fp(b),alongX=b.w>=b.h;
+  if(!window.__OLDB&&drawShaped(b,win,c0,alongX)){if(!ghost&&b.lvl>=2)pennant(b,0,b.lvl>=3?'#A34A3A':'#C9A64A');ctx.restore();if(alpha<1)ctx.globalAlpha=1;return;}
   if(drawExtra(b,win,c0,alongX)){if(!ghost&&b.lvl>=2)pennant(b,0,b.lvl>=3?'#A34A3A':'#C9A64A');ctx.restore();if(alpha<1)ctx.globalAlpha=1;return;}
   switch(b.t){
     case 'market':{const c=inset(c0,0.04);poly(P(c.T,c.R,c.Bt,c.L),win?'#D8DCDA':'#B5AE9F');

@@ -24,8 +24,7 @@ function dayTick(){
         for(const k in sm.c){const have=(k==='wood')?r.wood:resv(k);make=Math.min(make,have/sm.c[k]);}
         if(make<=0.01){b.status='Waiting for '+Object.keys(sm.c).map(k=>RNAME[k].toLowerCase()).join(' and ');break;}
         const g=mk(md,make);for(const k in sm.c)r[k]-=g*sm.c[k];b.anvil-=1;if(miscUse())addRes('misc',g*0.03*(md==='arrows'?0.1:1));break;}
-      case 'water':{const c=tilesInRange(b,D.need.r,t=>t===T.RIVER),eff=Math.min(1,c/2);mk('water',n*6*eff*E*(win?0.7:1));break;}
-      case 'fish':{const c=tilesInRange(b,D.need.r,isWater),sea=tilesInRange(b,D.need.r,t=>t===T.SEA),eff=Math.min(1,c/4);mk('fish',n*4*eff*E*(win?(sea>0?0.4:0.25):1));if(sea>0&&miscUse())addRes('misc',n*0.02);break;}
+      case 'fish':{const sea=waterDist(b,t=>t===T.SEA)<=5?1:0,eff=fishEff(waterDist(b));mk('fish',n*4*eff*E*(win?(sea>0?0.4:0.25):1));if(sea>0&&miscUse())addRes('misc',n*0.02);break;}
       case 'berry':{let want=n*4*E,got=0;const list=bushes.filter(t=>t.amt>0&&rectDist(b,t.x,t.y)<=D.need.r);
         for(const t of list){if(want<=0)break;const take=Math.min(t.amt,want);t.amt-=take;want-=take;got+=take;}
         if(!list.length)b.status='Bushes picked clean until next summer';mk('berries',got);break;}
@@ -81,14 +80,12 @@ function dayTick(){
   let need=eatNeed();
   for(const k of ['fish','berries','meat','veg','bread','dfish','jam','pickles','smoked','sausage']){if(need<=0)break;const e=Math.min(r[k],need/MEAL[k]);r[k]-=e;need-=e*MEAL[k];}
   if(need>0.01)short='food';
-  let wneed=drinkers()*DRINK;if(r.water>=wneed)r.water-=wneed;else{r.water=0;short=short||'water';}
   if(win){const fw=fireNeed()*(S.winter.hard?1.3:1);if(r.wood>=fw)r.wood-=fw;else{r.wood=0;short=short||'firewood';}}
   ['fish','berries','meat','veg'].forEach(k=>r[k]*=0.97);r.bread*=0.98;
   for(const k in r)if(r[k]<0)r[k]=0;
   /* people */
   if(short)S.lastShort=short;else{S.lastShort='';
-    if(r.water<drinkers()*DRINK*3)toast('Water runs out in under 3 days. Build or staff a water carrier by the river.',3600);
-    else if(foodUnits()<eatNeed()*3)toast('Food runs out in under 3 days. Put more people on food.',3600);
+    if(foodUnits()<eatNeed()*3)toast('Food runs out in under 3 days. Put more people on food.',3600);
     else if(win&&r.wood<fireNeed()*3)toast('Firewood runs out in under 3 days.',3600);
     else if(matItems()>capMat()*0.95)toast('The storehouses are full. Build or upgrade a warehouse, or spend some goods.',3600);
     else if(r.tools<2&&B.some(b=>DEF[b.t].tools&&b.workers>0))toast(has('smith')?'Tools are almost gone. Put workers in the smithy.':'Tools are almost gone. Work will slow down until a smithy forges more.',3600);}

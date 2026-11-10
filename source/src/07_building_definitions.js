@@ -9,8 +9,7 @@ const DEF={
   carp:{name:'Carpenter',w:2,h:2,cost:{wood:25},slots:2,tools:true,cat:'Resources',lvl:1,up:true,out:'4 wood → 2 planks per worker a day',desc:'Saws timber into planks. Never touches the wood reserve you set.'},
   mine:{name:'Iron Mine',w:2,h:2,cost:{wood:30,planks:10},slots:3,tools:true,need:{k:'iron',r:4},cat:'Resources',lvl:1,up:true,out:'2 iron per worker a day',desc:'Digs ore at the foot of the mountains.'},
   smith:{name:'Smithy',w:2,h:2,cost:{wood:15,planks:20,iron:10},slots:2,cat:'Resources',lvl:1,up:true,out:'Tools, and later weapons',desc:'Forges tools; from Town Hall 2 spears, from Town Hall 3 shields, bows, arrows and swords. Needs a working anvil; a new one costs 10 iron. +15% next to a mine.'},
-  water:{name:'Water Carrier',w:1,h:1,cost:{wood:5},slots:2,tools:true,need:{k:'river',r:3},cat:'Resources',lvl:1,up:true,out:'6 water per worker a day',desc:'Fetches fresh water from the river.'},
-  fish:{name:'Fisher’s Hut',w:2,h:1,cost:{wood:15},slots:3,tools:true,need:{k:'water',r:3},cat:'Food',lvl:1,up:true,out:'4 fish per worker a day',desc:'A small hut with boats. One by the bay and one by the river is enough: set how many fish with the workers. Catches far less in winter.'},
+  fish:{name:'Fisher’s Hut',w:2,h:1,cost:{wood:15},slots:3,tools:true,need:{k:'waterd',r:5},cat:'Food',lvl:1,up:true,out:'4 fish per worker a day',desc:'A small hut with boats. Full catch within 5 tiles of the sea or the river, less further away. Set how many fish with the workers. Catches far less in winter.'},
   berry:{name:'Berry Gatherer',w:2,h:2,cost:{wood:10},slots:2,tools:true,need:{k:'bush',r:5},seasonal:true,cat:'Food',lvl:1,up:true,out:'4 berries per worker a day (summer)',desc:'Picks berries within 5 tiles. Rests in winter; its workers are free for other jobs.'},
   pres:{name:'Preserver',w:2,h:2,cost:{wood:15,planks:20},slots:2,cat:'Food',lvl:1,up:true,out:'Dried fish, jam and (with salt) pickles',desc:'Preserved food never spoils and feeds twice as much.'},
   gran:{name:'Granary',w:3,h:2,cost:{wood:30,planks:10},slots:0,road:false,store:{food:300},cat:'Storage',lvl:1,up:true,desc:'Raised storehouse. Holds 300 more food, +150 per upgrade.'},
@@ -44,11 +43,11 @@ const DEF={
   trade:{name:'Trading House',w:3,h:2,cost:{wood:40,planks:40,iron:10},slots:0,cat:'Sea',lvl:3,desc:'Merchants sail in during summer. Sell surplus for silver, buy what you lack. Needs a harbour.'}
 };
 /* limits per Town Hall level [1,2,3] */
-const LIMITS={th:[1,1,1],house:[6,10,14],jarl:[1,1,1],pyre:[1,1,2],wood:[2,3,4],carp:[1,2,2],mine:[1,2,2],smith:[1,1,2],water:[2,3,3],fish:[2,2,2],berry:[2,2,3],pres:[1,1,2],gran:[1,2,2],ware:[1,2,2],market:[1,1,1],
+const LIMITS={th:[1,1,1],house:[6,10,14],jarl:[1,1,1],pyre:[1,1,2],wood:[2,3,4],carp:[1,2,2],mine:[1,2,2],smith:[1,1,2],fish:[2,2,2],berry:[2,2,3],pres:[1,1,2],gran:[1,2,2],ware:[1,2,2],market:[1,1,1],
   pen:[0,1,2],hay:[0,2,3],garden:[0,2,3],salt:[0,1,1],smoke:[0,1,2],altar:[0,1,1],train:[0,1,1],arsenal:[0,1,1],grain:[0,0,3],bakery:[0,0,1],flax:[0,0,2],weaver:[0,0,1],hunter:[0,0,2],shipyard:[0,0,1],harbour:[0,0,1],trade:[0,0,1],thrall:[0,0,1],camp:[4,6,8],bench:[6,8,10],wattle:[20,30,40],rune:[0,4,6],herbs:[0,4,6],prow:[0,0,3],nets:[0,0,4]};
 const thLevel=()=>S.th||1;
 const limitOf=k=>(LIMITS[k]||[1,1,1])[thLevel()-1];
-const FIRST_FREE=['berry','wood','water'];
+const FIRST_FREE=['berry','wood'];
 const costOf=k=>FIRST_FREE.includes(k)&&!B.some(b=>b.t===k)?{}:DEF[k].cost;
 const CATS=['Housing','Resources','Food','Farms','Storage','Village','War','Sea','Decor'];
 const BUILDABLE=new Set([T.GRASS,T.BEACH,T.FOOT]);
@@ -69,10 +68,10 @@ Object.assign(DEF,{
   tower:{name:'Watchtower',w:2,h:2,cost:{wood:40,planks:30},slots:0,road:false,cat:'War',lvl:5,desc:'A timber tower for two archers. Adds to the village’s defence, more if it stands by the palisade.'}
 });
 for(const k in LIMITS){const a=LIMITS[k];while(a.length<5)a.push(a[a.length-1]);}
-Object.assign(LIMITS,{house:[6,10,14,18,22],wood:[2,3,4,4,5],mine:[1,2,2,2,3],carp:[1,2,2,3,3],smith:[1,1,2,2,3],water:[2,3,3,4,4],berry:[2,2,3,3,3],pres:[1,1,2,2,2],gran:[1,2,2,3,3],ware:[1,2,2,3,3],
+Object.assign(LIMITS,{house:[6,10,14,18,22],wood:[2,3,4,4,5],mine:[1,2,2,2,3],carp:[1,2,2,3,3],smith:[1,1,2,2,3],berry:[2,2,3,3,3],pres:[1,1,2,2,2],gran:[1,2,2,3,3],ware:[1,2,2,3,3],
   pen:[0,1,2,2,3],hay:[0,2,3,3,4],garden:[0,2,3,4,4],smoke:[0,1,2,2,2],grain:[0,0,3,4,5],flax:[0,0,2,3,3],hunter:[0,0,2,2,3],salt:[0,1,1,2,2],
   brewery:[0,0,0,1,2],hives:[0,0,0,3,4],tomb:[0,0,0,1,1],tailor:[0,0,0,0,1],hof:[0,0,0,0,1],tower:[0,0,0,0,2],camp:[4,6,8,10,12],bench:[6,8,10,12,14],rune:[0,4,6,8,10],herbs:[0,4,6,8,10],prow:[0,0,3,4,6],nets:[0,0,4,5,6]});
 /* Beta 0.6: limits tuned so a full village always has 4–8 more workers than jobs, with every warrior place filled */
-Object.assign(LIMITS,{house:[11,15,22,25,27],wood:[2,3,3,3,4],carp:[1,2,2,2,2],mine:[1,1,2,2,2],smith:[1,1,1,2,2],water:[2,2,3,3,3],berry:[2,2,2,2,2],pres:[1,1,1,1,2],pen:[0,1,1,2,2],hay:[0,1,1,2,3],garden:[0,2,2,3,3],salt:[0,1,1,1,1],smoke:[0,1,1,1,2],grain:[0,0,2,2,3],flax:[0,0,1,2,2],hunter:[0,0,1,2,2],brewery:[0,0,0,1,1],hives:[0,0,0,2,3]});
+Object.assign(LIMITS,{house:[11,15,22,25,27],wood:[2,3,3,3,4],carp:[1,2,2,2,2],mine:[1,1,2,2,2],smith:[1,1,1,2,2],berry:[2,2,2,2,2],pres:[1,1,1,1,2],pen:[0,1,1,2,2],hay:[0,1,1,2,3],garden:[0,2,2,3,3],salt:[0,1,1,1,1],smoke:[0,1,1,1,2],grain:[0,0,2,2,3],flax:[0,0,1,2,2],hunter:[0,0,1,2,2],brewery:[0,0,0,1,1],hives:[0,0,0,2,3]});
 TH_UP[4]={cost:{wood:260,planks:220,iron:80,tools:15,silver:100},pop:48,fame:950,bld:[['gran',3],['ware',3]],ms:['ship','raid','bread']};
 TH_UP[5]={cost:{wood:380,planks:320,iron:140,tools:25,silver:250,gold:20},pop:80,fame:1700,bld:[['brewery',1],['house',4]],ms:['ale','vikings','snekkja','isles','tomb']};

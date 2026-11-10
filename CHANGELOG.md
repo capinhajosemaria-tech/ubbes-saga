@@ -2,6 +2,14 @@
 
 Versions are `Beta 0.MINOR.PATCH` until Town Hall 10 (`1.0.0`).
 
+## Beta 0.8.0
+- Water is gone: no more wells, water carriers or water stock — the village lives by the river. Fisher's Huts catch fully within 5 tiles of the sea or the river and less further away; the placement shows the catch.
+- New buildings: the Town Hall is a great bowed longhouse with dragon heads that grows a raised roof from level 3, on a cobblestone plaza. Workshops and houses get their own shapes: round huts, open sheds, a granary on posts, a stone forge, hipped and bowed halls.
+- Loose log piles removed; logs only at the Woodcutter's Lodge, with round ends.
+- Classic menu look on PC with the bottom dock kept; building pictures in the build bar are now centred and sized to fit.
+- Numbers in the title font; 6 × 6 land blocks outlined on locked land.
+- Old saves do not carry over.
+
 ## Beta 0.7.0
 - A bigger start: 16 people (a new couple with a child and two young adults) and 4 houses with 20 beds; newcomers arrive faster in the first year. Town Hall 2 now needs 22 people.
 - More land from the start: 21 free zones (a 5 × 5 block minus its corners) instead of 9.

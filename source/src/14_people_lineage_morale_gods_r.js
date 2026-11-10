@@ -67,7 +67,7 @@ function randTrait(){return Math.random()<0.25?pick(TRAIT_KEYS):'';}
 function marry(a,b){a.sp=b.id;b.sp=a.id;}
 function freshState(mode,adv){
   mode=mode||'relaxed';
-  const r=EMPTY_RES();Object.assign(r,{fish:55,berries:55,dfish:30,wood:80,planks:20,tools:6,water:100});
+  const r=EMPTY_RES();Object.assign(r,{fish:55,berries:55,dfish:30,wood:80,planks:20,tools:6});
   S={v:3,mode:mode,gameT:20,day:0,pop:11,fame:0,res:r,woodReserve:40,reserve:{},th:1,herd:{pigs:2,sheep:2},herdAcc:0,warriors:0,train:null,ships:[],trades:0,trader:null,
      ms:[],avail:START_AVAIL.slice(),saga:[{y:1,t:'Ragnar has fallen. Ubbe, his son, came to this cold shore with sixteen souls and raised a hall.'}],bal:null,lastShort:'',
      people:[],nextPid:1,jarl:0,heir:0,gen:1,morale:60,mf:[],attr:35,af:[],mods:[],gods:{odin:40,thor:40,freyja:40,njord:40,loki:30},blessCd:{},blessOn:{},offers:0,
@@ -112,7 +112,7 @@ function bDist(a,b){const dx=Math.max(0,a.fx-(b.fx+b.w-1),b.fx-(a.fx+a.w-1)),dy=
 function recalcMorale(){
   const f=[],r=S.res,add=(t,v)=>{if(v)f.push({t:t,v:Math.round(v)});};
   const ls=S.lastShort;
-  if(ls==='food')add('Hunger',-20);else if(ls==='water')add('Thirst',-15);else if(ls==='firewood')add('Cold houses',-15);
+  if(ls==='food')add('Hunger',-20);else if(ls==='firewood')add('Cold houses',-15);
   const variety=FOOD.filter(k=>r[k]>=1).length;add(variety>=6?'A rich table ('+variety+' foods)':variety>=4?'Varied food ('+variety+' kinds)':variety<=2?'Dull food':'',variety>=6?10:variety>=4?5:variety<=2?-5:0);
   add(RATION[S.pol.ration].m?'Rationing: '+RATION[S.pol.ration].n.toLowerCase():'',RATION[S.pol.ration].m);
   if(has('altar'))add('An altar in the village',4);
@@ -136,7 +136,7 @@ function recalcMorale(){
   const hs=B.filter(b=>b.t==='house');if(hs.length){ad('Better houses',4*(hs.reduce((s,b)=>s+b.lvl,0)/hs.length-1));
     const near=(t,rr)=>hs.filter(h=>B.some(o=>o.t===t&&bDist(h,o)<=rr)).length;
     ad('Houses by the market',Math.min(6,near('market',4)));ad('Houses by the smithy or smokehouse',-Math.min(8,2*(near('smith',2)+near('smoke',2))));}
-  if(S.contam>0)ad('Foul water',-10);
+  if(S.contam>0)ad('Foul river',-10);
   ad(S.pol.borders==='open'?'Open borders':'Closed borders',S.pol.borders==='open'?8:-5);
   if(S.morale>=70)ad('Happy people',5);else if(S.morale<40)ad('Unhappy people',-10);
   S.af=a;S.attr=clamp(a.reduce((s,x)=>s+x.v,0),0,100);
@@ -211,7 +211,7 @@ function peopleDay(short){
   const men=singles.filter(p=>p.g==='m'),women=singles.filter(p=>p.g==='f');
   if(men.length&&women.length&&Math.random()<0.06){const a=pick(men),b=women.find(w=>!(w.pa[0]&&w.pa[0]===a.pa[0]))||null;if(b){marry(a,b);if(a.id===S.jarl||b.id===S.jarl)note(pname(a.id===S.jarl?a:b)+' took a spouse.');}}
   /* births */
-  const room=housing()-S.pop;const fed=!short&&foodUnits()>=eatNeed()*6&&S.res.water>=drinkers()*DRINK*3;
+  const room=housing()-S.pop;const fed=!short&&foodUnits()>=eatNeed()*6;
   if(room>0&&fed&&S.mode!=='x'){
     let bm=(S.morale>=70?1.3:S.morale<40?0.6:1)*(S.gods.freyja>=50?1.15:1)*(S.pol.ration==='normal'?1:0.5);
     for(const w of S.people){if(w.g!=='f'||!w.sp||w.a<16||w.a>=44||w.away)continue;const h=PB(w.sp);if(!h||h.away)continue;

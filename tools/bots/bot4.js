@@ -28,7 +28,7 @@ function build(t){if(LAZY())return false;if(window.__SAVING&&['jarl','camp','ben
   G.assignWorkers();events.push('day '+G.S.day+': built '+t);G.checkMilestones();return true;}
 function staff(){const S=G.S,r=S.res,win=G.isWinter();const list=G.B.filter(b=>G.slotsOf(b)>0);list.forEach(b=>b.desired=0);let free=G.workforce();
   const give=(t,n)=>{for(const b of list.filter(b=>b.t===t)){if(G.DEF[b.t].seasonal&&win)continue;const k=Math.max(0,Math.min(n,G.slotsOf(b)-b.desired,free));b.desired+=k;free-=k;n-=k;if(n<=0)break;}};
-  const pop=S.pop;if(r.iron<30)give('mine',2);give('water',Math.ceil(pop*0.25/6+(r.water<pop?0.6:0)));
+  const pop=S.pop;if(r.iron<30)give('mine',2);
   const need=G.eatNeed()*(G.foodUnits()<G.eatNeed()*10?1.5:1.1);let f=need;
   if(!win){const g=Math.min(Math.ceil(f/4.8),G.count('garden')*2);give('garden',g);f-=g*4.8;const bN=Math.min(Math.max(0,Math.ceil(f/4)),G.count('berry')*2);give('berry',bN);f-=bN*4;}
   const hN=Math.min(Math.max(0,Math.ceil(f/2.4)),G.count('hunter')*2);give('hunter',hN);f-=hN*2.4;
@@ -46,7 +46,7 @@ function staff(){const S=G.S,r=S.res,win=G.isWinter();const list=G.B.filter(b=>G
   G.B.filter(b=>b.t==='shipyard'&&b.proj).forEach(b=>give('shipyard',4));
   if(G.has('market'))give('market',1);
   give('fish',6);give('wood',6);G.assignWorkers();}
-const L1=['berry','water','wood','fish','carp','mine','ware','smith','gran','pres','market','jarl','pyre'];
+const L1=['berry','wood','fish','carp','mine','ware','smith','gran','pres','market','jarl','pyre'];
 const L2=['pen','hay','garden','salt','smoke','altar','train','arsenal'];
 const L3=['shipyard','harbour','trade','weaver','flax','grain','bakery','hunter'];
 let prevPop=G.S.pop,prevMs=0,prevTh=1;const msDay={};
@@ -69,7 +69,7 @@ for(let d=0;d<DAYS;d++){if(G.S.over)break;const S=G.S,r=S.res;
   {const tb=G.B.find(x=>x.t==='tomb');const sh=S.ships.find(s=>!s.away&&s.type==='knarr')||null;if(tb&&!tb.proj&&r.gold>=40&&r.swords>=6&&S.ships.length>=3&&sh){r.gold-=40;r.swords-=6;S.ships=S.ships.filter(s=>s!==sh);tb.proj={done:0};events.push('day '+S.day+': TOMB begun');G.checkMilestones();}
    if(tb&&tb.proj)tb.desired=G.slotsOf(tb);}
   if(G.thLevel()>=5&&!(S.maps&&S.maps.england)&&r.gold>=40){r.gold-=40;S.maps=S.maps||{};S.maps.england=1;events.push('day '+S.day+': bought England map');G.checkMilestones();}
-  if(S.pop>=16)build('fish');if(r.wood<80&&d>20)build('wood');if(S.pop>=24)build('water');if(S.pop>=14)build('berry');
+  if(S.pop>=16)build('fish');if(r.wood<80&&d>20)build('wood');if(S.pop>=14)build('berry');
   if(G.thLevel()>=2){const used=r.wood+r.planks+r.iron+r.salt+r.hay+r.wool+r.flax+r.grain+r.cloth+r.rope+r.hides;if(used>G.capMat()*0.65)build('ware');}
   if(G.thLevel()>=2&&S.pop>=26){build('garden');build('carp');build('mine');build('hay');build('wood');}
   if(G.thLevel()>=3&&S.pop>=36){build('grain');build('hunter');build('fish');build('wood');build('gran');build('ware');}

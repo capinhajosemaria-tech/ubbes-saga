@@ -1,5 +1,5 @@
 /* =================== saves & title =================== */
-const SLOT_KEY=i=>'ubbesaga.b06.slot'+i,LAST_KEY='ubbesaga.b06.last';
+const SLOT_KEY=i=>'ubbesaga.b07.slot'+i,LAST_KEY='ubbesaga.b07.last';
 let curSlot=0;
 function slotMeta(i){try{const s=localStorage.getItem(SLOT_KEY(i));if(!s)return null;const d=JSON.parse(s);return d&&d.meta?d.meta:{name:'Saga',year:1};}catch(e){return null;}}
 function showTitle(screen,arg){titleOn=true;setSpeed(0);closeSheet();$('modal').hidden=true;modalOpen=null;$('title').hidden=false;document.body.classList.add('titled');

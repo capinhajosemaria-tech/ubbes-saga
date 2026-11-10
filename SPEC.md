@@ -1,4 +1,4 @@
-# Ubbe's Saga — specification (Beta 0.6.1)
+# Ubbe's Saga — specification (Beta 0.7.0)
 
 How the game works **today**. Numbers are in `docs/NUMBERS.md` (generated). The long-term vision for Town Hall 6–10 is in `docs/DESIGN.md`.
 
@@ -8,7 +8,7 @@ A cozy-but-harsh Viking village builder for the browser. Year 865, the village o
 ## 2. Modes
 - **Relaxed**, **Challenge** (harsher events and consumption), **Sandbox** (free resources, fast speeds).
 - **Test**: choose Town Hall 1–5 and start with a prebuilt village (every building at its limit and highest level, full population, warriors, ships, herd), with test tools and 8×/16× speed. **Gallery**: every building at levels 1/3/5 and every house colour scheme side by side.
-- Three save slots per device (`localStorage`, keys `ubbesaga.b06.*`), plus Export/Import in the Saga panel.
+- Three save slots per device (`localStorage`, keys `ubbesaga.b07.*`), plus Export/Import in the Saga panel.
 
 ## 3. Time
 - 1 year = 45 days: 30 summer + 15 winter. 1 day ≈ 27 s at 1×. Speeds: pause, ½×, 1×, 2×, 4× (8×/16× in Test/Sandbox).
@@ -17,8 +17,8 @@ A cozy-but-harsh Viking village builder for the browser. Year 865, the village o
 ## 4. Map
 - 132 × 132 tiles, isometric (tile 64 × 32). Village centre `HOME = (63, 60)`.
 - Terrain: sea, beach, grass, forest, berry bushes, river, foothills, iron outcrops, mountains. Islands in the bay, a tarn in the western woods.
-- Mountains are one continuous low-poly heightfield (gentle foot, steep cliff band, broad snowy table top).
-- Land is bought in 6 × 6 zones with **fame**; the 3 × 3 zones around the start are free; cost grows with distance (`30·d − 10`).
+- Mountains are one continuous low-poly heightfield (gentle foot, short cliff band, ridged grey peaks with valleys, snow only on the highest peaks). They stay low and to the north (a short spur north of the village, a small peak to the north-east), leaving open meadow. Locked-land shading and edge mist are lighter over rock.
+- Land is bought in 6 × 6 zones with **fame**; the saga starts with 21 zones (a 5 × 5 block minus its four corners, 30 × 30 tiles); the corners and everything further are bought; cost grows with distance (`30·d − 10`).
 - Edges fade into sea-mist; unbought land is slightly darker with a faint tile grid.
 - Trees can be cleared for good (half their wood). Felled trees regrow in 60 days.
 
@@ -26,7 +26,8 @@ A cozy-but-harsh Viking village builder for the browser. Year 865, the village o
 - Each person has a name, age, gender, traits (~1 in 4), health, a job or a warrior role, and parents. Children (under 14) do not work; people over 50 work at half rate.
 - The **jarl** leads; succession follows the heir (chosen among children). Lineage is meant to be realistic: about 5 jarls by Town Hall 10.
 - **Morale** (0–100) from food variety, housing, firewood, festivals, gods, levy, events. ≥ 70: +10% work and more births; < 40: −15%; < 20 for long: revolt risk. The village glows gold / blue-grey / red with morale.
-- **Attractiveness** draws newcomers when there is room and food.
+- The saga starts with **16 people** (Ubbe's household of 3, four couples one with a child, four young adults) and **4 houses** next to the Town Hall (20 beds).
+- **Attractiveness** draws newcomers when there is room and food; during the first year they come 1.6× faster.
 - Thralls (from raids) work; soft or harsh policy.
 
 ## 6. Economy
@@ -57,7 +58,7 @@ Market with dynamic prices: partners unlock gradually (Skiringssal TH3, Hedeby T
 - Banquets (people / warriors / council) and festivals with fire, pig on a spit and dancers at the plaza.
 
 ## 11. Interface
-- **PC (≥ 900 px wide):** top resource bar grouped (people · food/water · materials · wealth) with daily change and a hover breakdown; date and saga goal under it; speed control and **To do** list on the right; a bottom **dock** with panels (Village, People, War, World, Saga), build categories and Roads/Palisade; the **build tray** shows building pictures; building and panel sheets dock on the left; buildings light up on hover.
+- **PC (≥ 900 px wide):** top resource bar grouped (people · food/water · materials · wealth); each item shows a detailed icon, its name, the amount and the daily change, with a hover breakdown; the To do list warns "Only 1 bed left" / "Every bed is taken" in step with the People counter; date and saga goal under it; speed control and **To do** list on the right; a bottom **dock** with panels (Village, People, War, World, Saga), build categories and Roads/Palisade; the **build tray** shows building pictures; building and panel sheets dock on the left; buildings light up on hover.
 - **Phone:** same top bar (swipe), bottom navigation, Roads/Build buttons, bottom sheets; build menu with pictures; To do list collapsed.
 - **To do list:** Town Hall ready, food/water/firewood shortages, full beds, idle people, buildings in trouble, the current saga goal, next Town Hall requirement, ships ready to sail. Each item moves the camera or opens the right sheet / placement.
 - **Roads and palisade:** click start, click end (the plan is then fixed), Build or Cancel.

@@ -5,11 +5,11 @@ Format: `- [ ] what · why / where seen` — screenshots welcome in the conversa
 
 ## This round — Polish 1: the early game (PC) · approved by José 2026-11-10
 Decisions: old saves may break (bump save keys); start with about 16 people instead of 11 and faster newcomers in year 1; show 1–2 screenshots of the new mountain before rolling it out.
-- [ ] More people at the start (~16) and faster newcomers in the first year; check with the `balance` agent that TH2 does not get too easy.
-- [ ] More land unlocked at the start.
-- [ ] Smaller mountain with a new design, freeing building space (screenshots first).
-- [ ] Resource bar: name next to each number, clearer and more detailed icons.
-- [ ] Fix "Every bed is taken" shown while the bar reads 11/12.
+- [x] More people at the start (~16) and faster newcomers in the first year; check with the `balance` agent that TH2 does not get too easy.
+- [x] More land unlocked at the start.
+- [x] Smaller mountain with a new design, freeing building space (screenshots first).
+- [x] Resource bar: name next to each number, clearer and more detailed icons.
+- [x] Fix "Every bed is taken" shown while the bar reads 11/12.
 
 ## Next rounds (planned)
 - **Polish 2 — organisation:** menus and build categories, clearer wording, explicit icons everywhere.
@@ -20,19 +20,20 @@ Merge José's play feedback here, grouped as visual / balance / organisation. **
 Sources: José's first play feedback (Relaxed mode) and Claude's first review (Beta 0.6.1).
 
 ### Visual
-- [ ] **Resource bar hard to read** (José): show each resource's name next to the number, clearer and more detailed icons.
+- [x] **Resource bar hard to read** (José): show each resource's name next to the number, clearer and more detailed icons.
 - [ ] **Icons in menus too vague** (José): more explicit, detailed icons in build tray, panels and sheets.
-- [ ] Mountain massif dominates the TH5 view (about a third of the screen, a flat white block): make it smaller with a new design (José agrees), freeing land for building.
+- [x] Mountain massif dominates the TH5 view (about a third of the screen, a flat white block): make it smaller with a new design (José agrees), freeing land for building.
 - [ ] World map: labels overlap ("Iona" over "SCOTLAND", "Jutland" over "JUTLAND"); Birka sits on the Norway landmass (should be Sweden); England, the main goal, opens half hidden in mist.
 
 ### Balance
-- [ ] **Too few people at the start / newcomers too slow** (José, Relaxed): buildings get built but workers are always missing. Raise starting population and/or early attractiveness; check with bots that TH2 does not get too fast.
+- [x] **Too few people at the start / newcomers too slow** (José, Relaxed): buildings get built but workers are always missing. Raise starting population and/or early attractiveness; check with bots that TH2 does not get too fast.
+- [ ] **Winter firewood after TH4** (balance bots, Beta 0.7.0): people leave in waves from year ~7, about 90% in winter for lack of firewood (wood 0), when new houses at TH4/TH5 fill up. Ideas: one more woodcutter at TH3–5, or newcomers wait while wood covers less than ~10 days of firewood. Also TH5 has +12 spare workers (target 4–8).
 - [ ] Re-check raiding after TH4 with the new `balance` agent (several runs per profile), together with the Monte Carlo update below.
 
 ### Organisation / gameplay
-- [ ] **More building space** (José): start with more land unlocked (more than the free 3 × 3 zones) and more buildable room overall.
+- [x] **More building space** (José): start with more land unlocked (more than the free 3 × 3 zones) and more buildable room overall.
 - [ ] **Menus not well organised, sometimes unclear** (José): review build categories, panel structure and the wording of sheets; explain what each building does and needs.
-- [ ] To do says "Every bed is taken" at the start while the bar shows 11/12; make the message and the counter agree.
+- [x] To do says "Every bed is taken" at the start while the bar shows 11/12; make the message and the counter agree.
 
 ### Phone (later — after PC is polished)
 - [ ] Convert the PC interface to iPhone 14 once PC is settled.

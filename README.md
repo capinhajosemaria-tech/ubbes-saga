@@ -4,7 +4,7 @@ A Viking village saga for the browser. Build Kaldstrand, year 865, and lead Ubbe
 
 **Play:** https://capinhajosemaria-tech.github.io/ubbes-saga/
 
-Current version: **Beta 0.6.1** (Town Hall levels 1–5). The game stays in beta until Town Hall level 10, which will be 1.0.0.
+Current version: **Beta 0.7.0** (Town Hall levels 1–5). The game stays in beta until Town Hall level 10, which will be 1.0.0.
 
 ## Install it like an app
 - **iPhone (Safari):** open the link, tap Share, then *Add to Home Screen*.

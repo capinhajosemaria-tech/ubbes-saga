@@ -33,13 +33,13 @@ function drawTile(x,y,PL,win){
     if(x+1<N&&ter[i+1]===T.SEA){ctx.beginPath();ctx.moveTo(sx+HW,top);ctx.lineTo(sx,top+HH);ctx.stroke();}
     if(y+1<N&&ter[i+N]===T.SEA){ctx.beginPath();ctx.moveTo(sx,top+HH);ctx.lineTo(sx-HW,top);ctx.stroke();}}
 }
-const ROCK={s:{lo:hex('#8C8778'),hi:hex('#A9A396'),grass:hex('#8E9C7A'),snow:hex('#EEEDE7')},w:{lo:hex('#A9AEAC'),hi:hex('#CDD1CF'),grass:hex('#C9D0CF'),snow:hex('#F6F7F5')}};
+const ROCK={s:{lo:hex('#76726A'),hi:hex('#9A968C'),grass:hex('#8E9C7A'),snow:hex('#EEEDE7')},w:{lo:hex('#A9AEAC'),hi:hex('#CDD1CF'),grass:hex('#C9D0CF'),snow:hex('#F6F7F5')}};
 const LIGHT=(()=>{const v=[-0.55,-0.35,0.76],l=Math.hypot(...v);return v.map(a=>a/l);})();
 function hfTri(a,b,c,R,x,y,k){/* a,b,c = [cx,cy,h] */
   const ux=b[0]-a[0],uy=b[1]-a[1],uz=(b[2]-a[2])/30,vx=c[0]-a[0],vy=c[1]-a[1],vz=(c[2]-a[2])/30;
   let nx=uy*vz-uz*vy,ny=uz*vx-ux*vz,nz=ux*vy-uy*vx;if(nz<0){nx=-nx;ny=-ny;nz=-nz;}const nl=Math.hypot(nx,ny,nz)||1;
   const dl=(nx*LIGHT[0]+ny*LIGHT[1]+nz*LIGHT[2])/nl,flat=nz/nl,hm=(a[2]+b[2]+c[2])/3;
-  const cx0=(a[0]+b[0]+c[0])/3,cy0=(a[1]+b[1]+c[1])/3,snowy=hm/100+(vn(cx0*0.09,cy0*0.09,77)-0.5)*0.55+(flat-0.85)*1.2;
+  const cx0=(a[0]+b[0]+c[0])/3,cy0=(a[1]+b[1]+c[1])/3,snowy=(hm-62)/36+(vn(cx0*0.09,cy0*0.09,77)-0.5)*0.5+(flat-0.85)*0.5;
   let col=hm<24&&flat>0.6?R.grass:(snowy>0.7?R.snow:(hm>40?R.hi:R.lo));
   if(col===R.lo||col===R.hi){const m=sat((hm-14)/70);col=[R.lo[0]+(R.hi[0]-R.lo[0])*m,R.lo[1]+(R.hi[1]-R.lo[1])*m,R.lo[2]+(R.hi[2]-R.lo[2])*m];}
   const f=0.62+0.5*Math.max(0,dl)+(h2(x,y,90+k)-0.5)*0.05;

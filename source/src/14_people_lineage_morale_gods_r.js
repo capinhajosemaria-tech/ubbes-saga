@@ -67,9 +67,9 @@ function randTrait(){return Math.random()<0.25?pick(TRAIT_KEYS):'';}
 function marry(a,b){a.sp=b.id;b.sp=a.id;}
 function freshState(mode,adv){
   mode=mode||'relaxed';
-  const r=EMPTY_RES();Object.assign(r,{fish:40,berries:40,dfish:20,wood:80,planks:20,tools:6,water:100});
+  const r=EMPTY_RES();Object.assign(r,{fish:55,berries:55,dfish:30,wood:80,planks:20,tools:6,water:100});
   S={v:3,mode:mode,gameT:20,day:0,pop:11,fame:0,res:r,woodReserve:40,reserve:{},th:1,herd:{pigs:2,sheep:2},herdAcc:0,warriors:0,train:null,ships:[],trades:0,trader:null,
-     ms:[],avail:START_AVAIL.slice(),saga:[{y:1,t:'Ragnar has fallen. Ubbe, his son, came to this cold shore with eleven souls and raised a hall.'}],bal:null,lastShort:'',
+     ms:[],avail:START_AVAIL.slice(),saga:[{y:1,t:'Ragnar has fallen. Ubbe, his son, came to this cold shore with sixteen souls and raised a hall.'}],bal:null,lastShort:'',
      people:[],nextPid:1,jarl:0,heir:0,gen:1,morale:60,mf:[],attr:35,af:[],mods:[],gods:{odin:40,thor:40,freyja:40,njord:40,loki:30},blessCd:{},blessOn:{},offers:0,
      adv:adv||'',pol:{ration:'normal',rite:'cremation',child:false,borders:'open',loot:'jarl',thralls:'soft'},thralls:0,thrallSave:0,contam:0,
      raids:[],tg:{},raidsDone:0,winter:{hard:false,said:false,told:false},fx:{},modal:[],nextEvt:14,evtSeen:{},yr:{births:0,deaths:0,arrived:0,left:0,raids:0,silver:0,fame:0},
@@ -78,7 +78,7 @@ function freshState(mode,adv){
   B=[];nextId=1;roads=new Uint8Array(N*N);defaultZones();ter.set(TER0);
   for(const t of trees){t.amt=TREE_WOOD;t.regrow=0;t.gone=0;}S.cleared=[];for(const b of bushes)b.amt=15;
   addBuilding('th',TH_POS.fx,TH_POS.fy,0,true);
-  rebuildOcc();[[HOME_X-5,HOME_Y-2],[HOME_X+5,HOME_Y-2]].forEach(q=>{if(canPlace('house',q[0],q[1],0,0).ok)addBuilding('house',q[0],q[1],0,true);rebuildOcc();});
+  rebuildOcc();[[HOME_X-5,HOME_Y-2],[HOME_X+5,HOME_Y-2],[HOME_X-5,HOME_Y-5],[HOME_X-8,HOME_Y-2],[HOME_X-8,HOME_Y-5],[HOME_X+5,HOME_Y-5]].forEach(q=>{if(B.filter(b=>b.t==='house').length<4&&canPlace('house',q[0],q[1],0,0).ok)addBuilding('house',q[0],q[1],0,true);rebuildOcc();});
   {const ry=HOME_Y+1;for(let x=HOME_X-5;x<=HOME_X+6;x++){if(BUILDABLE.has(tAt(x,ry))&&!occ[ry*N+x])roads[ry*N+x]=1;}}[[HOME_X,HOME_Y+2],[HOME_X,HOME_Y+3],[HOME_X,HOME_Y+4]].forEach(p=>{if(BUILDABLE.has(tAt(p[0],p[1])))roads[p[1]*N+p[0]]=1;});
   rebuildOcc();recomputeConn();
   /* the founding household */
@@ -87,7 +87,8 @@ function freshState(mode,adv){
   const son=newPerson({n:'Ubbe',g:'m',a:6,num:2,pa:[ubbe.id,thora.id],look:6});
   S.jarl=ubbe.id;S.heir=son.id;
   [['Arne','m',34,'Gudrun','f',31],['Ketil','m',27,'Sigrid','f',25],['Orm','m',38,'Helga','f',36]].forEach(c=>{const a=newPerson({n:c[0],g:c[1],a:c[2],tr:randTrait()}),b=newPerson({n:c[3],g:c[4],a:c[5],tr:randTrait()});marry(a,b);});
-  newPerson({n:'Leif',g:'m',a:19,tr:'strong'});newPerson({n:'Ylva',g:'f',a:18,tr:randTrait()});
+  {const a=newPerson({n:'Toke',g:'m',a:30,tr:randTrait()}),b=newPerson({n:'Astrid',g:'f',a:27,tr:randTrait()});marry(a,b);newPerson({n:'Eirik',g:'m',a:7,pa:[a.id,b.id]});}
+  newPerson({n:'Leif',g:'m',a:19,tr:'strong'});newPerson({n:'Ylva',g:'f',a:18,tr:randTrait()});newPerson({n:'Sven',g:'m',a:22,tr:randTrait()});newPerson({n:'Ingrid',g:'f',a:20,tr:randTrait()});
   if(mode==='sandbox'){S.fame=5000;Object.keys(DEF).forEach(k=>{if(DEF[k].lvl===1&&!S.avail.includes(k))S.avail.push(k);});}
   syncPop();recalcMorale();
 }
@@ -223,7 +224,7 @@ function peopleDay(short){
         else toast('A child was born in Kaldstrand: '+c.n+'.');syncPop();}}
   }
   /* newcomers */
-  if(housing()-S.pop>0&&fed&&!short){const p=(0.06+S.attr/100*0.16)*(has('market')?1.25:1)*(S.morale<40?0.5:1);
+  if(housing()-S.pop>0&&fed&&!short){const p=(0.06+S.attr/100*0.16)*(has('market')?1.25:1)*(S.morale<40?0.5:1)*(S.gameT<YEAR?1.6:1);
     S.immAcc=(S.immAcc||0)+p;if(S.immAcc>=1){S.immAcc-=1;const pair=Math.random()<0.3&&housing()-S.pop>=2;const a=newPerson({a:Math.round(U(17,36)),tr:randTrait()});S.yr.arrived++;
       if(pair){const b=newPerson({g:a.g==='m'?'f':'m',a:Math.round(U(17,36)),tr:randTrait()});marry(a,b);S.yr.arrived++;toast('A couple, '+a.n+' and '+b.n+', settled in Kaldstrand.');}
       else toast(a.n+' arrived and settled in Kaldstrand.');syncPop();}}

@@ -28,7 +28,7 @@ function render(){
   /* locked overlay (soft) + faint grid + owned-land border */
   const gridT=[],lockP=new Path2D();
   for(let y=0;y<N;y++)for(let x=0;x<N;x++){const sx=(x-y)*HW,sy=(x+y)*HH;if(!vis(sx,sy))continue;const top=sy-elev[y*N+x];
-    if(!isUnl(x,y)){if(ter[y*N+x]!==T.SEA){lockP.moveTo(sx,top-HH);lockP.lineTo(sx+HW,top);lockP.lineTo(sx,top+HH);lockP.lineTo(sx-HW,top);lockP.lineTo(sx,top-HH);gridT.push(sx,top);}}
+    if(!isUnl(x,y)){if(ter[y*N+x]!==T.SEA&&ter[y*N+x]!==T.MOUNT){lockP.moveTo(sx,top-HH);lockP.lineTo(sx+HW,top);lockP.lineTo(sx,top+HH);lockP.lineTo(sx-HW,top);lockP.lineTo(sx,top-HH);gridT.push(sx,top);}}
     else{ctx.strokeStyle='rgba(236,222,178,0.75)';ctx.lineWidth=1.4/zoom+0.5;ctx.beginPath();
       if(!isUnl(x+1,y)||x+1>=N){ctx.moveTo(sx+HW,top);ctx.lineTo(sx,top+HH);}
       if(!isUnl(x-1,y)||x-1<0){ctx.moveTo(sx,top-HH);ctx.lineTo(sx-HW,top);}
@@ -78,7 +78,7 @@ function render(){
 const FOG={s:"#B9C6C8",w:"#CDD6D8"},FOGB=14;const FOGA=new Float32Array(N*N).fill(-1);
 function drawEdgeFog(win,vis){const c=hex(win?FOG.w:FOG.s),cs='rgba('+c[0]+','+c[1]+','+c[2]+',';
   for(let y=0;y<N;y++)for(let x=0;x<N;x++){const de=Math.min(x,y,N-1-x,N-1-y);if(de>=FOGB)continue;const sx=(x-y)*HW,sy=(x+y)*HH;if(!vis(sx,sy))continue;
-    const i=y*N+x;let a=FOGA[i];if(a<0){const n=(vn(x*0.3,y*0.3,79)-0.5)*0.25;a=FOGA[i]=Math.max(0,Math.min(1,Math.pow((FOGB-de)/FOGB,1.5)+n*(de/FOGB)));}if(a<0.02)continue;
+    const i=y*N+x;let a=FOGA[i];if(a<0){const n=(vn(x*0.3,y*0.3,79)-0.5)*0.25;a=Math.max(0,Math.min(1,Math.pow((FOGB-de)/FOGB,1.5)+n*(de/FOGB)));if(ter[i]===T.MOUNT)a=Math.pow(a,2.4)*0.85;FOGA[i]=a;}if(a<0.02)continue;
     const e=elev[y*N+x],top=sy-e;
     poly([sx,top-HH-6,sx+HW+8,top,sx,top+HH+14+Math.max(0,e),sx-HW-8,top],cs+a.toFixed(3)+')');}
 }

@@ -53,7 +53,7 @@ const costOf=k=>FIRST_FREE.includes(k)&&!B.some(b=>b.t===k)?{}:DEF[k].cost;
 const CATS=['Housing','Resources','Food','Farms','Storage','Village','War','Sea','Decor'];
 const BUILDABLE=new Set([T.GRASS,T.BEACH,T.FOOT]);
 const isAvail=k=>{const D=DEF[k];if(D.lvl>1||D.cat==='Decor')return thLevel()>=D.lvl;return S.avail.includes(k);};
-const TH_UP={2:{cost:{wood:90,planks:60,iron:16},pop:17,fame:150,bld:[['gran',1]],ms:['winter']},
+const TH_UP={2:{cost:{wood:90,planks:60,iron:16},pop:22,fame:150,bld:[['gran',1]],ms:['winter']},
              3:{cost:{wood:150,planks:120,iron:42,tools:8},pop:32,fame:450,bld:[['ware',2]],ms:['herd','warriors','smoke']}};
 const slotsOf=b=>(DEF[b.t].slots||0)+(DEF[b.t].slots&&!DEF[b.t].wonder&&!FIELDS.has(b.t)&&b.lvl>=3?1:0);
 const upCost=b=>{const c=DEF[b.t].cost,o={};Object.keys(c).forEach(k=>o[k]=Math.round(c[k]*(b.lvl)*1.0));if(!Object.keys(o).length)o.wood=20*b.lvl;return o;};

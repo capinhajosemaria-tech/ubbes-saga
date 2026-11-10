@@ -23,6 +23,7 @@ function buildTestVillage(L){
   const keys=order.concat(Object.keys(DEF).filter(k=>!order.includes(k)));const missing=[];
   for(const k of keys){const D=DEF[k];if(k==='th'||D.lvl>L||D.hidden)continue;const n=D.cat==='Decor'?1:Math.max(0,limitOf(k)-count(k));
     for(let i=0;i<n;i++){const b=placeAuto(k);if(!b){missing.push(DEF[k].name);break;}if(D.up)b.lvl=Math.min(L,5);b.desired=slotsOf(b);}}
+  for(const b of B)if(DEF[b.t].up&&b.t!=='th')b.lvl=Math.min(L,5);  /* the starting houses too */
   rebuildOcc();recomputeConn();
   const r=S.res;for(const k in r)r[k]=0;FOOD.forEach(k=>r[k]=Math.round(capFood()*0.6/FOOD.length));MAT.forEach(k=>r[k]=Math.round(capMat()*0.5/MAT.length));ARMS.forEach(k=>r[k]=Math.round(capArms()*0.6/ARMS.length));
   r.tools=40;r.water=capWater()*0.8;r.silver=500;r.gold=100;r.wood=Math.max(r.wood,150);r.planks=Math.max(r.planks,150);r.iron=Math.max(r.iron,80);

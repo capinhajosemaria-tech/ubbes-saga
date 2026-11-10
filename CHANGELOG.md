@@ -2,6 +2,14 @@
 
 Versions are `Beta 0.MINOR.PATCH` until Town Hall 10 (`1.0.0`).
 
+## Beta 0.7.0
+- A bigger start: 16 people (a new couple with a child and two young adults) and 4 houses with 20 beds; newcomers arrive faster in the first year. Town Hall 2 now needs 22 people.
+- More land from the start: 21 free zones (a 5 × 5 block minus its corners) instead of 9.
+- New mountains: lower and narrower, grey ridged peaks with snow only on top; the spur north of the village pulled back, opening a wide meadow. Lighter mist and shading over rock.
+- Resource bar: each resource shows its name, and new, more detailed icons.
+- Fix: the To do list said "Every bed is taken" while beds were still free; it now says "Only 1 bed left" when one is free.
+- Old saves do not carry over.
+
 ## Beta 0.6.1
 - World map you can sail around: a larger chart of the north (Iceland to the Baltic, Norway to Frankia); drag or swipe to move, wheel or pinch to zoom, zoom and home buttons; mist at the edges and over lands not yet open.
 

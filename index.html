@@ -254,11 +254,13 @@ textarea,input{-webkit-user-select:text;user-select:text}
 .res{gap:6px;align-items:stretch}
 .rg{display:flex;gap:0;flex:none;border-radius:9px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.06);padding:0 2px}
 .chip{gap:6px;padding:3px 7px;min-height:38px}
-.chip svg{width:17px;height:17px}
-.chip .v{display:flex;flex-direction:column;align-items:flex-start;line-height:1.05}
-.chip .v strong{font-size:14px}
-.chip .v em{font-style:normal;font-size:10.5px;font-weight:600;min-height:11px;opacity:.95}
-.chip .lbl{display:none}
+.chip svg{width:24px;height:24px;flex:none}
+.chip .v{display:flex;flex-direction:column;align-items:flex-start;line-height:1.1}
+.chip .v .lbl{display:block;font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;opacity:.72;font-weight:600}
+.chip .v .n{display:flex;align-items:baseline;gap:4px}
+.chip .v strong{font-size:14.5px}
+.chip .v em{font-style:normal;font-size:10.5px;font-weight:600;opacity:.95}
+@media (max-width:760px){.chip svg{width:18px;height:18px}.chip .v .lbl{display:none}.chip .v .n{flex-direction:column;align-items:flex-start;gap:0}}
 .up{color:#9FCB86}.dn{color:#F0A08C}
 .rtip{position:fixed;z-index:12;width:280px;box-sizing:border-box;background:rgba(36,29,24,.97);color:var(--cream);border:1px solid #5A4A3C;border-radius:10px;padding:10px 12px;box-shadow:0 10px 30px rgba(0,0,0,.35);font-size:13px;pointer-events:none}
 .rtip b{font-family:var(--display);font-weight:400;font-size:17px;color:#FFF6E4}
@@ -374,7 +376,7 @@ textarea,input{-webkit-user-select:text;user-select:text}
 <script>
 (function(){
 'use strict';
-const GAME_VERSION="Beta 0.6.1";
+const GAME_VERSION="Beta 0.7.0";
 /* =================== constants =================== */
 const N=132,OX=30,OY=24,SX=12,SY=6,HW=32,HH=16,TW=64;
 const HOME_X=63,HOME_Y=60;  /* the village centre in tile coords */
@@ -389,14 +391,14 @@ function vn(x,y,s){const xi=Math.floor(x),yi=Math.floor(y),xf=x-xi,yf=y-yi,u=xf*
 /* Map plan (in base coords; the world adds a margin O): town core on a flat meadow west of the river,
    bay to the south-east, mountain spur to the north. River + bay + spur close three sides for a future wall. */
 const coast0=x=>61+2*Math.sin(x*0.2)+1.5*Math.sin(x*0.07+1.3)-22*Math.exp(-(((x-39)/8)**2));
-const mount0=x=>6.5+1.5*Math.sin(x*0.25+2)+Math.sin(x*0.12)+18.5*Math.exp(-(((x-30)/4.5)**2));
+const mount0=x=>3+1.5*Math.sin(x*0.25+2)+Math.sin(x*0.12)+10*Math.exp(-(((x-30)/3.6)**2));
 const river0=y=>41+1.5*Math.sin(y*0.15+0.5);
 const mountW=x=>mount0(x-OX)+OY;
 const ter=new Uint8Array(N*N), elev=new Float32Array(N*N), mdep=new Float32Array(N*N);
 /* Massifs: the northern range (with its spur) and an eastern table-mountain. depth>0 = inside the rock. */
 function massDepth(x,y){const nz=(vn(x*0.09,y*0.09,71)-0.5)*5;
   let d=mount0(x)-y+nz;                                     /* northern range + spur */
-  const ex=(x-86)/15,ey=(y-20)/11;d=Math.max(d,(1-Math.sqrt(ex*ex+ey*ey))*10+nz); /* eastern table mountain */
+  const ex=(x-90)/10,ey=(y-14)/7;d=Math.max(d,(1-Math.sqrt(ex*ex+ey*ey))*8+nz); /* eastern peak */
   const wx=(x+18)/9,wy=(y-6)/8;d=Math.max(d,(1-Math.sqrt(wx*wx+wy*wy))*7+nz);     /* western knoll */
   return d;}
 const ISLES=[[64,84,7,4.5],[86,76,4,3],[24,90,5,3.5],[100,96,6,4],[44,100,3,2.5]];
@@ -416,10 +418,11 @@ for(let Y=0;Y<N;Y++)for(let X=0;X<N;X++){
   if((x-28)**2+(y-40)**2<3.2&&t===T.GRASS)t=T.BERRY;
   ter[Y*N+X]=t;mdep[Y*N+X]=d;
 }
-/* Massifs are one continuous low-poly heightfield: a gentle foot, a steep cliff band, then a broad table top. */
+/* Massifs are one continuous low-poly heightfield: a gentle foot, a short cliff band, then ridged peaks with valleys between (no flat table top). */
 const sat=v=>v<0?0:v>1?1:v;const sstep=(a,b,v)=>{const k=sat((v-a)/(b-a));return k*k*(3-2*k);};
 function mountH(X,Y,d){const n1=vn(X*0.11,Y*0.11,75),n2=vn(X*0.37,Y*0.37,76);
-  return 10+18*sat(d/2.5)+(62+34*n1)*sstep(3,6.5,d)+16*sstep(9,13,d)*n1+n2*7;}
+  const r=1-Math.abs(2*vn(X*0.16,Y*0.16,78)-1);
+  return 8+12*sat(d/2.5)+(24+26*n1)*sstep(2.5,6,d)+(18+30*n1)*sstep(5,10,d)*r*r+n2*6;}
 function elevOf(t,X,Y){switch(t){case T.SEA:return -8;case T.RIVER:return -3;case T.BEACH:return 0;case T.FOOT:case T.IRON:return 6;case T.MOUNT:return mountH(X,Y,mdep[Y*N+X]);default:return 2;}}
 for(let y=0;y<N;y++)for(let x=0;x<N;x++)elev[y*N+x]=elevOf(ter[y*N+x],x,y);
 /* corner heights shared by neighbouring tiles (only rock tiles use them) */
@@ -432,7 +435,8 @@ const tAt=(x,y)=>inMap(x,y)?ter[y*N+x]:-1;
 /* =================== zones =================== */
 const ZN=N/6;
 let unlocked=new Set();
-function defaultZones(){unlocked=new Set();for(let zx=ZC_X-1;zx<=ZC_X+1;zx++)for(let zy=ZC_Y-1;zy<=ZC_Y+1;zy++)unlocked.add(zx+','+zy);}
+/* the saga starts with a 5 × 5 block of zones, minus its four corners (21 zones, 30 × 30 tiles) */
+function defaultZones(){unlocked=new Set();for(let zx=ZC_X-2;zx<=ZC_X+2;zx++)for(let zy=ZC_Y-2;zy<=ZC_Y+2;zy++){if(Math.abs(zx-ZC_X)===2&&Math.abs(zy-ZC_Y)===2)continue;unlocked.add(zx+','+zy);}}
 defaultZones();
 const PRE=['Hrafn','Kald','Bjarkar','Ulfs','Stein','Myrar','Sólar','Asks','Elds','Fjall','Holm','Ís','Járn','Lyng','Odda','Sjó','Þórs','Vind','Ægis','Lunda','Ref'];
 const SUF=['hóll','vík','lundr','dalr','nes','berg','mýrr','haugr','strönd','skógr','á','fell'];
@@ -620,7 +624,7 @@ const costOf=k=>FIRST_FREE.includes(k)&&!B.some(b=>b.t===k)?{}:DEF[k].cost;
 const CATS=['Housing','Resources','Food','Farms','Storage','Village','War','Sea','Decor'];
 const BUILDABLE=new Set([T.GRASS,T.BEACH,T.FOOT]);
 const isAvail=k=>{const D=DEF[k];if(D.lvl>1||D.cat==='Decor')return thLevel()>=D.lvl;return S.avail.includes(k);};
-const TH_UP={2:{cost:{wood:90,planks:60,iron:16},pop:17,fame:150,bld:[['gran',1]],ms:['winter']},
+const TH_UP={2:{cost:{wood:90,planks:60,iron:16},pop:22,fame:150,bld:[['gran',1]],ms:['winter']},
              3:{cost:{wood:150,planks:120,iron:42,tools:8},pop:32,fame:450,bld:[['ware',2]],ms:['herd','warriors','smoke']}};
 const slotsOf=b=>(DEF[b.t].slots||0)+(DEF[b.t].slots&&!DEF[b.t].wonder&&!FIELDS.has(b.t)&&b.lvl>=3?1:0);
 const upCost=b=>{const c=DEF[b.t].cost,o={};Object.keys(c).forEach(k=>o[k]=Math.round(c[k]*(b.lvl)*1.0));if(!Object.keys(o).length)o.wood=20*b.lvl;return o;};
@@ -979,9 +983,9 @@ function randTrait(){return Math.random()<0.25?pick(TRAIT_KEYS):'';}
 function marry(a,b){a.sp=b.id;b.sp=a.id;}
 function freshState(mode,adv){
   mode=mode||'relaxed';
-  const r=EMPTY_RES();Object.assign(r,{fish:40,berries:40,dfish:20,wood:80,planks:20,tools:6,water:100});
+  const r=EMPTY_RES();Object.assign(r,{fish:55,berries:55,dfish:30,wood:80,planks:20,tools:6,water:100});
   S={v:3,mode:mode,gameT:20,day:0,pop:11,fame:0,res:r,woodReserve:40,reserve:{},th:1,herd:{pigs:2,sheep:2},herdAcc:0,warriors:0,train:null,ships:[],trades:0,trader:null,
-     ms:[],avail:START_AVAIL.slice(),saga:[{y:1,t:'Ragnar has fallen. Ubbe, his son, came to this cold shore with eleven souls and raised a hall.'}],bal:null,lastShort:'',
+     ms:[],avail:START_AVAIL.slice(),saga:[{y:1,t:'Ragnar has fallen. Ubbe, his son, came to this cold shore with sixteen souls and raised a hall.'}],bal:null,lastShort:'',
      people:[],nextPid:1,jarl:0,heir:0,gen:1,morale:60,mf:[],attr:35,af:[],mods:[],gods:{odin:40,thor:40,freyja:40,njord:40,loki:30},blessCd:{},blessOn:{},offers:0,
      adv:adv||'',pol:{ration:'normal',rite:'cremation',child:false,borders:'open',loot:'jarl',thralls:'soft'},thralls:0,thrallSave:0,contam:0,
      raids:[],tg:{},raidsDone:0,winter:{hard:false,said:false,told:false},fx:{},modal:[],nextEvt:14,evtSeen:{},yr:{births:0,deaths:0,arrived:0,left:0,raids:0,silver:0,fame:0},
@@ -990,7 +994,7 @@ function freshState(mode,adv){
   B=[];nextId=1;roads=new Uint8Array(N*N);defaultZones();ter.set(TER0);
   for(const t of trees){t.amt=TREE_WOOD;t.regrow=0;t.gone=0;}S.cleared=[];for(const b of bushes)b.amt=15;
   addBuilding('th',TH_POS.fx,TH_POS.fy,0,true);
-  rebuildOcc();[[HOME_X-5,HOME_Y-2],[HOME_X+5,HOME_Y-2]].forEach(q=>{if(canPlace('house',q[0],q[1],0,0).ok)addBuilding('house',q[0],q[1],0,true);rebuildOcc();});
+  rebuildOcc();[[HOME_X-5,HOME_Y-2],[HOME_X+5,HOME_Y-2],[HOME_X-5,HOME_Y-5],[HOME_X-8,HOME_Y-2],[HOME_X-8,HOME_Y-5],[HOME_X+5,HOME_Y-5]].forEach(q=>{if(B.filter(b=>b.t==='house').length<4&&canPlace('house',q[0],q[1],0,0).ok)addBuilding('house',q[0],q[1],0,true);rebuildOcc();});
   {const ry=HOME_Y+1;for(let x=HOME_X-5;x<=HOME_X+6;x++){if(BUILDABLE.has(tAt(x,ry))&&!occ[ry*N+x])roads[ry*N+x]=1;}}[[HOME_X,HOME_Y+2],[HOME_X,HOME_Y+3],[HOME_X,HOME_Y+4]].forEach(p=>{if(BUILDABLE.has(tAt(p[0],p[1])))roads[p[1]*N+p[0]]=1;});
   rebuildOcc();recomputeConn();
   /* the founding household */
@@ -999,7 +1003,8 @@ function freshState(mode,adv){
   const son=newPerson({n:'Ubbe',g:'m',a:6,num:2,pa:[ubbe.id,thora.id],look:6});
   S.jarl=ubbe.id;S.heir=son.id;
   [['Arne','m',34,'Gudrun','f',31],['Ketil','m',27,'Sigrid','f',25],['Orm','m',38,'Helga','f',36]].forEach(c=>{const a=newPerson({n:c[0],g:c[1],a:c[2],tr:randTrait()}),b=newPerson({n:c[3],g:c[4],a:c[5],tr:randTrait()});marry(a,b);});
-  newPerson({n:'Leif',g:'m',a:19,tr:'strong'});newPerson({n:'Ylva',g:'f',a:18,tr:randTrait()});
+  {const a=newPerson({n:'Toke',g:'m',a:30,tr:randTrait()}),b=newPerson({n:'Astrid',g:'f',a:27,tr:randTrait()});marry(a,b);newPerson({n:'Eirik',g:'m',a:7,pa:[a.id,b.id]});}
+  newPerson({n:'Leif',g:'m',a:19,tr:'strong'});newPerson({n:'Ylva',g:'f',a:18,tr:randTrait()});newPerson({n:'Sven',g:'m',a:22,tr:randTrait()});newPerson({n:'Ingrid',g:'f',a:20,tr:randTrait()});
   if(mode==='sandbox'){S.fame=5000;Object.keys(DEF).forEach(k=>{if(DEF[k].lvl===1&&!S.avail.includes(k))S.avail.push(k);});}
   syncPop();recalcMorale();
 }
@@ -1135,7 +1140,7 @@ function peopleDay(short){
         else toast('A child was born in Kaldstrand: '+c.n+'.');syncPop();}}
   }
   /* newcomers */
-  if(housing()-S.pop>0&&fed&&!short){const p=(0.06+S.attr/100*0.16)*(has('market')?1.25:1)*(S.morale<40?0.5:1);
+  if(housing()-S.pop>0&&fed&&!short){const p=(0.06+S.attr/100*0.16)*(has('market')?1.25:1)*(S.morale<40?0.5:1)*(S.gameT<YEAR?1.6:1);
     S.immAcc=(S.immAcc||0)+p;if(S.immAcc>=1){S.immAcc-=1;const pair=Math.random()<0.3&&housing()-S.pop>=2;const a=newPerson({a:Math.round(U(17,36)),tr:randTrait()});S.yr.arrived++;
       if(pair){const b=newPerson({g:a.g==='m'?'f':'m',a:Math.round(U(17,36)),tr:randTrait()});marry(a,b);S.yr.arrived++;toast('A couple, '+a.n+' and '+b.n+', settled in Kaldstrand.');}
       else toast(a.n+' arrived and settled in Kaldstrand.');syncPop();}}
@@ -1467,13 +1472,13 @@ function drawTile(x,y,PL,win){
     if(x+1<N&&ter[i+1]===T.SEA){ctx.beginPath();ctx.moveTo(sx+HW,top);ctx.lineTo(sx,top+HH);ctx.stroke();}
     if(y+1<N&&ter[i+N]===T.SEA){ctx.beginPath();ctx.moveTo(sx,top+HH);ctx.lineTo(sx-HW,top);ctx.stroke();}}
 }
-const ROCK={s:{lo:hex('#8C8778'),hi:hex('#A9A396'),grass:hex('#8E9C7A'),snow:hex('#EEEDE7')},w:{lo:hex('#A9AEAC'),hi:hex('#CDD1CF'),grass:hex('#C9D0CF'),snow:hex('#F6F7F5')}};
+const ROCK={s:{lo:hex('#76726A'),hi:hex('#9A968C'),grass:hex('#8E9C7A'),snow:hex('#EEEDE7')},w:{lo:hex('#A9AEAC'),hi:hex('#CDD1CF'),grass:hex('#C9D0CF'),snow:hex('#F6F7F5')}};
 const LIGHT=(()=>{const v=[-0.55,-0.35,0.76],l=Math.hypot(...v);return v.map(a=>a/l);})();
 function hfTri(a,b,c,R,x,y,k){/* a,b,c = [cx,cy,h] */
   const ux=b[0]-a[0],uy=b[1]-a[1],uz=(b[2]-a[2])/30,vx=c[0]-a[0],vy=c[1]-a[1],vz=(c[2]-a[2])/30;
   let nx=uy*vz-uz*vy,ny=uz*vx-ux*vz,nz=ux*vy-uy*vx;if(nz<0){nx=-nx;ny=-ny;nz=-nz;}const nl=Math.hypot(nx,ny,nz)||1;
   const dl=(nx*LIGHT[0]+ny*LIGHT[1]+nz*LIGHT[2])/nl,flat=nz/nl,hm=(a[2]+b[2]+c[2])/3;
-  const cx0=(a[0]+b[0]+c[0])/3,cy0=(a[1]+b[1]+c[1])/3,snowy=hm/100+(vn(cx0*0.09,cy0*0.09,77)-0.5)*0.55+(flat-0.85)*1.2;
+  const cx0=(a[0]+b[0]+c[0])/3,cy0=(a[1]+b[1]+c[1])/3,snowy=(hm-62)/36+(vn(cx0*0.09,cy0*0.09,77)-0.5)*0.5+(flat-0.85)*0.5;
   let col=hm<24&&flat>0.6?R.grass:(snowy>0.7?R.snow:(hm>40?R.hi:R.lo));
   if(col===R.lo||col===R.hi){const m=sat((hm-14)/70);col=[R.lo[0]+(R.hi[0]-R.lo[0])*m,R.lo[1]+(R.hi[1]-R.lo[1])*m,R.lo[2]+(R.hi[2]-R.lo[2])*m];}
   const f=0.62+0.5*Math.max(0,dl)+(h2(x,y,90+k)-0.5)*0.05;
@@ -2073,7 +2078,7 @@ function render(){
   /* locked overlay (soft) + faint grid + owned-land border */
   const gridT=[],lockP=new Path2D();
   for(let y=0;y<N;y++)for(let x=0;x<N;x++){const sx=(x-y)*HW,sy=(x+y)*HH;if(!vis(sx,sy))continue;const top=sy-elev[y*N+x];
-    if(!isUnl(x,y)){if(ter[y*N+x]!==T.SEA){lockP.moveTo(sx,top-HH);lockP.lineTo(sx+HW,top);lockP.lineTo(sx,top+HH);lockP.lineTo(sx-HW,top);lockP.lineTo(sx,top-HH);gridT.push(sx,top);}}
+    if(!isUnl(x,y)){if(ter[y*N+x]!==T.SEA&&ter[y*N+x]!==T.MOUNT){lockP.moveTo(sx,top-HH);lockP.lineTo(sx+HW,top);lockP.lineTo(sx,top+HH);lockP.lineTo(sx-HW,top);lockP.lineTo(sx,top-HH);gridT.push(sx,top);}}
     else{ctx.strokeStyle='rgba(236,222,178,0.75)';ctx.lineWidth=1.4/zoom+0.5;ctx.beginPath();
       if(!isUnl(x+1,y)||x+1>=N){ctx.moveTo(sx+HW,top);ctx.lineTo(sx,top+HH);}
       if(!isUnl(x-1,y)||x-1<0){ctx.moveTo(sx,top-HH);ctx.lineTo(sx-HW,top);}
@@ -2123,7 +2128,7 @@ function render(){
 const FOG={s:"#B9C6C8",w:"#CDD6D8"},FOGB=14;const FOGA=new Float32Array(N*N).fill(-1);
 function drawEdgeFog(win,vis){const c=hex(win?FOG.w:FOG.s),cs='rgba('+c[0]+','+c[1]+','+c[2]+',';
   for(let y=0;y<N;y++)for(let x=0;x<N;x++){const de=Math.min(x,y,N-1-x,N-1-y);if(de>=FOGB)continue;const sx=(x-y)*HW,sy=(x+y)*HH;if(!vis(sx,sy))continue;
-    const i=y*N+x;let a=FOGA[i];if(a<0){const n=(vn(x*0.3,y*0.3,79)-0.5)*0.25;a=FOGA[i]=Math.max(0,Math.min(1,Math.pow((FOGB-de)/FOGB,1.5)+n*(de/FOGB)));}if(a<0.02)continue;
+    const i=y*N+x;let a=FOGA[i];if(a<0){const n=(vn(x*0.3,y*0.3,79)-0.5)*0.25;a=Math.max(0,Math.min(1,Math.pow((FOGB-de)/FOGB,1.5)+n*(de/FOGB)));if(ter[i]===T.MOUNT)a=Math.pow(a,2.4)*0.85;FOGA[i]=a;}if(a<0.02)continue;
     const e=elev[y*N+x],top=sy-e;
     poly([sx,top-HH-6,sx+HW+8,top,sx,top+HH+14+Math.max(0,e),sx-HW-8,top],cs+a.toFixed(3)+')');}
 }
@@ -2171,20 +2176,20 @@ function update(dt){
 /* =================== HUD =================== */
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const ICON={food:'<svg width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="6" fill="#B5733F"></circle></svg>',
-  wood:'<svg width="14" height="14" aria-hidden="true"><rect x="1" y="3" width="12" height="8" fill="#8E6F52"></rect></svg>',
-  planks:'<svg width="14" height="14" aria-hidden="true"><rect x="1" y="2" width="12" height="4" fill="#C9A87A"></rect><rect x="1" y="8" width="12" height="4" fill="#C9A87A"></rect></svg>',
-  iron:'<svg width="14" height="14" aria-hidden="true"><polygon points="2,11 7,3 12,11" fill="#4E4A45"></polygon></svg>',
-  tools:'<svg width="14" height="14" aria-hidden="true"><path d="M3 12 L9 6" stroke="#5A4636" stroke-width="2"></path><path d="M7 2 L12 2 L12 5 L9 6 Z" fill="#8C9398"></path></svg>',
-  water:'<svg width="14" height="14" aria-hidden="true"><path d="M7 1 Q12 7 12 9 A5 5 0 0 1 2 9 Q2 7 7 1 Z" fill="#5E7F8C"></path></svg>',
-  fame:'<svg width="14" height="14" aria-hidden="true"><polygon points="7,1 9,5 13,5.5 10,8.5 11,13 7,10.8 3,13 4,8.5 1,5.5 5,5" fill="#A34A3A"></polygon></svg>',
-  people:'<svg width="14" height="14" aria-hidden="true"><circle cx="7" cy="4" r="3" fill="#56636A"></circle><path d="M2 13 Q7 5 12 13 Z" fill="#56636A"></path></svg>'};
-ICON.warriors='<svg width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="6" fill="#A34A3A"></circle><circle cx="7" cy="7" r="2" fill="#C9C2B2"></circle></svg>';
-ICON.morale='<svg width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="6" fill="#C9A64A"></circle><path d="M4 8 Q7 11 10 8" stroke="#263035" stroke-width="1.4" fill="none"></path><circle cx="5" cy="5.5" r="0.9" fill="#263035"></circle><circle cx="9" cy="5.5" r="0.9" fill="#263035"></circle></svg>';
-ICON.silver='<svg width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="6" fill="#B7BCBF"></circle><circle cx="7" cy="7" r="3" fill="none" stroke="#8C9398"></circle></svg>';
+const ICON={food:'<svg width="14" height="14" viewBox="0 0 20 20" aria-hidden="true"><path d="M2 11 H18 Q17 17 10 17 Q3 17 2 11 Z" fill="#8E6F52"/><path d="M3.5 12.5 H16.5" stroke="#6E5440" stroke-width="0.8"/><ellipse cx="7.5" cy="8.6" rx="4" ry="2.4" fill="#D9A55A"/><path d="M5.6 8 L6.6 9.4 M7.6 7.6 L8.6 9 M9.4 7.8 L10.2 9" stroke="#A9773A" stroke-width="0.7"/><path d="M11 9.6 Q14 5.4 17 8.2 L18.6 6.6 L18.4 10.6 L17 9.4 Q14 12 11 9.6 Z" fill="#9FB4BC" stroke="#5E7F8C" stroke-width="0.6"/><circle cx="12.7" cy="8.6" r="0.6" fill="#263035"/></svg>',
+  water:'<svg width="14" height="14" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 6 H16 L14.6 17 H5.4 Z" fill="#8E6F52"/><path d="M4.5 9.6 H15.5 M4.9 13.4 H15.1" stroke="#5A4636" stroke-width="1"/><ellipse cx="10" cy="6" rx="6" ry="1.6" fill="#7FB0C2" stroke="#5A4636" stroke-width="0.8"/><path d="M4 6 Q10 -1 16 6" fill="none" stroke="#5A4636" stroke-width="0.9"/><path d="M10 9.8 Q12.2 12.6 12.2 13.6 A2.2 2.2 0 0 1 7.8 13.6 Q7.8 12.6 10 9.8 Z" fill="#B9DCE8"/></svg>',
+  wood:'<svg width="14" height="14" viewBox="0 0 20 20" aria-hidden="true"><rect x="2" y="6" width="13" height="5" rx="1" fill="#8E6F52"/><rect x="5" y="11.5" width="13" height="5" rx="1" fill="#7A5D44"/><ellipse cx="15" cy="8.5" rx="2.2" ry="2.5" fill="#D8B98A" stroke="#7A5D44" stroke-width="0.7"/><ellipse cx="18" cy="14" rx="2" ry="2.5" fill="#D8B98A" stroke="#6B503A" stroke-width="0.7"/><circle cx="15" cy="8.5" r="0.9" fill="none" stroke="#A9865C" stroke-width="0.6"/><circle cx="18" cy="14" r="0.9" fill="none" stroke="#A9865C" stroke-width="0.6"/><path d="M7 4 L9 6" stroke="#5E7F4E" stroke-width="1.2" stroke-linecap="round"/></svg>',
+  planks:'<svg width="14" height="14" viewBox="0 0 20 20" aria-hidden="true"><path d="M1.5 6 L17 3 L18.5 6 L3 9 Z" fill="#D8B784"/><path d="M1.5 11 L17 8 L18.5 11 L3 14 Z" fill="#C9A87A"/><path d="M1.5 16 L17 13 L18.5 16 L3 19 Z" fill="#B8956A"/><path d="M4 7.4 L13 5.6 M5 12.4 L15 10.4 M4 17.4 L12 15.8" stroke="#8E6F52" stroke-width="0.6"/></svg>',
+  iron:'<svg width="14" height="14" viewBox="0 0 20 20" aria-hidden="true"><path d="M2 15 L5 8 H15 L18 15 Z" fill="#8A8F94"/><path d="M5 8 H15 L13.6 6 H6.4 Z" fill="#C3C8CC"/><path d="M6 9.4 H13" stroke="#D9DDE0" stroke-width="1" stroke-linecap="round"/><path d="M2 15 H18 L17.4 16.4 H2.6 Z" fill="#5E6468"/><circle cx="6" cy="4" r="1.2" fill="#B5733F"/><circle cx="9" cy="3" r="0.8" fill="#9C5E32"/></svg>',
+  tools:'<svg width="14" height="14" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 17 L13 6" stroke="#7A5D44" stroke-width="2" stroke-linecap="round"/><path d="M10 3 L16.5 3 L16.5 6.5 L13.5 7.5 L11 5.6 Z" fill="#8C9398" stroke="#5E6468" stroke-width="0.6"/><path d="M16 17 L7 7" stroke="#7A5D44" stroke-width="2" stroke-linecap="round"/><path d="M4.4 4.2 Q2.6 7.6 5 9.6 L8.4 6.2 Q6.6 3.8 4.4 4.2 Z" fill="#B7BCBF" stroke="#5E6468" stroke-width="0.6"/></svg>',
+  fame:'<svg width="14" height="14" viewBox="0 0 20 20" aria-hidden="true"><polygon points="10,1.5 12.4,7 18.4,7.5 13.8,11.4 15.3,17.4 10,14.2 4.7,17.4 6.2,11.4 1.6,7.5 7.6,7" fill="#C9A64A" stroke="#8C6A24" stroke-width="0.9" stroke-linejoin="round"/><polygon points="10,5 11.2,8.2 14.4,8.4 12,10.5 12.8,13.7 10,12 7.2,13.7 8,10.5 5.6,8.4 8.8,8.2" fill="#E8CF7A"/></svg>',
+  people:'<svg width="14" height="14" viewBox="0 0 20 20" aria-hidden="true"><circle cx="13.5" cy="5.6" r="2.6" fill="#7E8C92"/><path d="M8.6 17 Q9.2 9.4 13.5 9.4 Q17.8 9.4 18.4 17 Z" fill="#7E8C92"/><circle cx="7" cy="6.2" r="3" fill="#C9C2B2"/><path d="M1.4 18 Q2 10.6 7 10.6 Q12 10.6 12.6 18 Z" fill="#B5733F"/><path d="M4.2 5.2 Q7 2 9.8 5.2" fill="none" stroke="#8E6F52" stroke-width="1.2"/></svg>',
+  warriors:'<svg width="14" height="14" viewBox="0 0 20 20" aria-hidden="true"><path d="M15 2 L15 18" stroke="#7A5D44" stroke-width="1.3"/><path d="M15 0.8 L16.6 4 L13.4 4 Z" fill="#8C9398"/><circle cx="8.5" cy="11" r="7" fill="#A34A3A" stroke="#5A4636" stroke-width="1"/><path d="M8.5 4 V18 M1.5 11 H15.5" stroke="#E9E2D0" stroke-width="1.6"/><circle cx="8.5" cy="11" r="2.2" fill="#B7BCBF" stroke="#5E6468" stroke-width="0.7"/></svg>',
+  morale:'<svg width="14" height="14" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8.4" fill="#C9A64A" stroke="#8C6A24" stroke-width="0.9"/><path d="M5.8 11.4 Q10 15.6 14.2 11.4" stroke="#263035" stroke-width="1.5" fill="none" stroke-linecap="round"/><circle cx="7.2" cy="7.8" r="1.1" fill="#263035"/><circle cx="12.8" cy="7.8" r="1.1" fill="#263035"/></svg>',
+  silver:'<svg width="14" height="14" viewBox="0 0 20 20" aria-hidden="true"><ellipse cx="9" cy="14.5" rx="6.5" ry="2.6" fill="#8C9398"/><rect x="2.5" y="11" width="13" height="3.5" fill="#8C9398"/><ellipse cx="9" cy="11" rx="6.5" ry="2.6" fill="#C9CED1" stroke="#8C9398" stroke-width="0.6"/><ellipse cx="13" cy="7" rx="5" ry="4.6" fill="#DDE1E3" stroke="#8C9398" stroke-width="0.9"/><path d="M11 7 H15 M13 5 V9" stroke="#8C9398" stroke-width="0.9"/></svg>'};
 const CHIPS=[['food','Food'],['wood','Wood'],['planks','Planks'],['iron','Iron'],['tools','Tools'],['water','Water'],['fame','Fame'],['people','People'],['morale','Morale'],['warriors','Warriors'],['silver','Silver']];
 const RGROUPS=[['people','morale'],['food','water'],['wood','planks','iron','tools'],['silver','fame','warriors']];
-$('res').innerHTML=RGROUPS.map(g=>'<div class="rg">'+g.map(k=>{const c=CHIPS.find(q=>q[0]===k);return '<button type="button" class="chip" id="chip-'+k+'" data-res="'+k+'" aria-label="'+c[1]+'">'+ICON[k]+'<span class="v"><strong id="r-'+k+'">0</strong><em id="d-'+k+'"></em></span><span class="lbl">'+c[1]+'</span></button>';}).join('')+'</div>').join('');
+$('res').innerHTML=RGROUPS.map(g=>'<div class="rg">'+g.map(k=>{const c=CHIPS.find(q=>q[0]===k);return '<button type="button" class="chip" id="chip-'+k+'" data-res="'+k+'" aria-label="'+c[1]+'">'+ICON[k]+'<span class="v"><span class="lbl">'+c[1]+'</span><span class="n"><strong id="r-'+k+'">0</strong><em id="d-'+k+'"></em></span></span></button>';}).join('')+'</div>').join('');
 {const tip=document.createElement('div');tip.id='rtip';tip.className='rtip';tip.hidden=true;document.body.appendChild(tip);}
 const RTIP={food:'Everything people eat. Each person eats about 1 a day, more in winter.',water:'Carried from wells. Each person drinks every day.',wood:'Felled by woodcutters. Burned as firewood in winter and turned into planks.',planks:'Sawn from wood at the carpenter.',iron:'Dug at the mine.',tools:'Forged by the smith. Workers wear them out.',silver:'From trade and plunder.',fame:'Earned by deeds. Spend it on land.',people:'People living in Kaldstrand / beds in houses.',morale:'How content the village is.',warriors:'Trained fighters (+ in training).'};
 function tipHtml(k){const c=CHIPS.find(q=>q[0]===k),r=S.res,bal=(S.bal||{})[k],L=(S.prodLog||{})[k]||{};
@@ -2509,7 +2514,7 @@ function suggestions(){const out=[],r=S.res,win=isWinter();
   if(fd<6)out.push({p:1,ic:'Food',t:'Food for only '+Math.floor(fd)+' days',sub:'Put more people on fishers, hunters or berries',go:()=>{const b=B.find(b=>['fish','berry','hunter','garden'].includes(b.t)&&b.workers<slotsOf(b));if(b)focusOn(b,true);else placeType(has('fish')?'berry':'fish');},cls:'bad'});
   if(r.water<S.pop*2)out.push({p:1,ic:'Food',t:'Water is running low',go:()=>{const b=B.find(b=>b.t==='water'&&b.workers<slotsOf(b));if(b)focusOn(b,true);else placeType('water');},cls:'bad'});
   if(win&&r.wood<fireNeed()*4)out.push({p:1,ic:'Resources',t:'Firewood for only '+Math.floor(r.wood/Math.max(1,fireNeed()))+' days',go:()=>{const b=B.find(b=>b.t==='wood'&&b.workers<slotsOf(b));if(b)focusOn(b,true);else placeType('wood');},cls:'bad'});
-  if(S.pop>=housing()-1&&canBuildNow('house'))out.push({p:2,ic:'Housing',t:'Every bed is taken',sub:'Build a house so newcomers can stay',go:()=>placeType('house')});
+  {const fr=housing()-S.pop;if(fr<=1&&canBuildNow('house'))out.push({p:2,ic:'Housing',t:fr<=0?'Every bed is taken':'Only 1 bed left',sub:fr<=0?'Build a house so newcomers can stay':'Build a house so more newcomers can stay',go:()=>placeType('house')});}
   if(freeWorkers>0)out.push({p:2,ic:'Village',t:freeWorkers+' '+(freeWorkers>1?'people have':'person has')+' no work',sub:'Open the work overview',go:()=>openPanel('village')});
   /* buildings in trouble */
   const bad=B.filter(b=>slotsOf(b)&&b.status&&!(b.status==='Working'||b.status==='Drawing newcomers'||b.status.indexOf('Resting')===0||b.status.indexOf('Holding')===0||b.status==='Paused'));
@@ -2911,7 +2916,7 @@ function advisorsHtml(on){S.advs=S.advs||(S.adv?[S.adv]:[]);let h='<h3>Council</
   on.push(()=>{$('sheet-card').querySelectorAll('[data-adv]').forEach(x=>x.onclick=()=>{S.advs.push(x.dataset.adv);S.saga.push({y:yearNow(),t:ADVISORS[x.dataset.adv].n+' joined the council of Kaldstrand.'});toast(ADVISORS[x.dataset.adv].n+' joins the council.');sagaPanel();save();});});return h;}
 
 /* =================== saves & title =================== */
-const SLOT_KEY=i=>'ubbesaga.b06.slot'+i,LAST_KEY='ubbesaga.b06.last';
+const SLOT_KEY=i=>'ubbesaga.b07.slot'+i,LAST_KEY='ubbesaga.b07.last';
 let curSlot=0;
 function slotMeta(i){try{const s=localStorage.getItem(SLOT_KEY(i));if(!s)return null;const d=JSON.parse(s);return d&&d.meta?d.meta:{name:'Saga',year:1};}catch(e){return null;}}
 function showTitle(screen,arg){titleOn=true;setSpeed(0);closeSheet();$('modal').hidden=true;modalOpen=null;$('title').hidden=false;document.body.classList.add('titled');
@@ -2969,6 +2974,7 @@ function buildTestVillage(L){
   const keys=order.concat(Object.keys(DEF).filter(k=>!order.includes(k)));const missing=[];
   for(const k of keys){const D=DEF[k];if(k==='th'||D.lvl>L||D.hidden)continue;const n=D.cat==='Decor'?1:Math.max(0,limitOf(k)-count(k));
     for(let i=0;i<n;i++){const b=placeAuto(k);if(!b){missing.push(DEF[k].name);break;}if(D.up)b.lvl=Math.min(L,5);b.desired=slotsOf(b);}}
+  for(const b of B)if(DEF[b.t].up&&b.t!=='th')b.lvl=Math.min(L,5);  /* the starting houses too */
   rebuildOcc();recomputeConn();
   const r=S.res;for(const k in r)r[k]=0;FOOD.forEach(k=>r[k]=Math.round(capFood()*0.6/FOOD.length));MAT.forEach(k=>r[k]=Math.round(capMat()*0.5/MAT.length));ARMS.forEach(k=>r[k]=Math.round(capArms()*0.6/ARMS.length));
   r.tools=40;r.water=capWater()*0.8;r.silver=500;r.gold=100;r.wood=Math.max(r.wood,150);r.planks=Math.max(r.planks,150);r.iron=Math.max(r.iron,80);

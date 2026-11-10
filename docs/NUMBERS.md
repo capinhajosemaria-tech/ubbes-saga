@@ -1,4 +1,4 @@
-# Ubbe's Saga: numbers (Beta 0.6.1)
+# Ubbe's Saga: numbers (Beta 0.7.0)
 
 Generated from the game by `tools/gen_numbers.py`. Do not edit by hand.
 
@@ -6,7 +6,7 @@ Generated from the game by `tools/gen_numbers.py`. Do not edit by hand.
 
 | To level | Materials | People | Fame earned | Buildings | Saga goals |
 |---|---|---|---|---|---|
-| 2 | 90 wood, 60 planks, 16 iron | 17 | 150 | Granary | Ready for winter |
+| 2 | 90 wood, 60 planks, 16 iron | 22 | 150 | Granary | Ready for winter |
 | 3 | 150 wood, 120 planks, 42 iron, 8 tools | 32 | 450 | Warehouse lv2 | Pigs and sheep, The first warriors, Salt and smoke |
 | 4 | 260 wood, 220 planks, 80 iron, 15 tools, 100 silver | 48 | 950 | Granary lv3, Warehouse lv3 | The first ship, The first raid, Bread on the table |
 | 5 | 380 wood, 320 planks, 140 iron, 25 tools, 250 silver, 20 gold | 80 | 1700 | Brewery, House lv4 | Ale and mead, True vikings, The swift serpent, The Northern Isles, A tomb for Ragnar |

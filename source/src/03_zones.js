@@ -1,7 +1,8 @@
 /* =================== zones =================== */
 const ZN=N/6;
 let unlocked=new Set();
-function defaultZones(){unlocked=new Set();for(let zx=ZC_X-1;zx<=ZC_X+1;zx++)for(let zy=ZC_Y-1;zy<=ZC_Y+1;zy++)unlocked.add(zx+','+zy);}
+/* the saga starts with a 5 × 5 block of zones, minus its four corners (21 zones, 30 × 30 tiles) */
+function defaultZones(){unlocked=new Set();for(let zx=ZC_X-2;zx<=ZC_X+2;zx++)for(let zy=ZC_Y-2;zy<=ZC_Y+2;zy++){if(Math.abs(zx-ZC_X)===2&&Math.abs(zy-ZC_Y)===2)continue;unlocked.add(zx+','+zy);}}
 defaultZones();
 const PRE=['Hrafn','Kald','Bjarkar','Ulfs','Stein','Myrar','Sólar','Asks','Elds','Fjall','Holm','Ís','Járn','Lyng','Odda','Sjó','Þórs','Vind','Ægis','Lunda','Ref'];
 const SUF=['hóll','vík','lundr','dalr','nes','berg','mýrr','haugr','strönd','skógr','á','fell'];

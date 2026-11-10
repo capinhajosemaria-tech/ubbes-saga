@@ -41,6 +41,14 @@ José's second play session (Relaxed, 2026-11-10, after Polish 1) added the item
 - [ ] **Menus not well organised, sometimes unclear** (José): review build categories, panel structure and the wording of sheets; explain what each building does and needs.
 - [x] To do says "Every bed is taken" at the start while the bar shows 11/12; make the message and the counter agree.
 
+### Play 3 feedback (José, 2026-11-10)
+- [ ] **Event choices: unclear gain or loss** (UI): cost/gain hints like "(+23 meals, −80 wood)" are ambiguous, e.g. the before-winter event ("skip this year" vs feast/meals): you can't tell whether meals are gained or spent. Show clear signed amounts with icons, green for gain and red for cost, and say "you get" / "you pay".
+- [ ] **Walls never implemented** (gameplay): walls and the sea palisades should work like Clash of Clans walls: raiders must break through them (wall HP, upgrade levels, paths blocked), and they visibly protect the village.
+- [ ] **More close-up detail** (visual): buildings, ground textures, roads, walls and palisades should show more detail when zoomed in.
+- [ ] **Fisher's Hut placement** (gameplay): replace "needs water within X tiles" with a productivity falloff: 100% up to 5 tiles from any water tile (sea or river), less beyond that.
+- [ ] **Town Hall 1 unlocks too slow / tutorial** (balance + UX): in one save the Preserver and other winter essentials only unlocked once winter had already started. Rethink the TH1 saga steps: winter essentials buildable earlier, fewer steps to unlock buildings overall. Add a short, dynamic written tutorial at the start of each save: how the game works, what each TH1 building does and why it matters, how to prepare for winter, and other basics.
+- [ ] **Road texture breaks from grass to sand** (visual, minor): the road texture is discontinuous where it crosses from grass to sand.
+
 ### Phone (later — after PC is polished)
 - [ ] Convert the PC interface to iPhone 14 once PC is settled.
 - [ ] Speed buttons cover the saga goal text; with 8×/16× (Test/Sandbox) the column is very tall. Consider a single speed button that opens the choices.

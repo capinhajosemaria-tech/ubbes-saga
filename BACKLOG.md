@@ -3,8 +3,17 @@
 José adds feedback here while playing (or tells Claude, who adds it). At the start of a round, pick 3–6 items and move them to "This round".
 Format: `- [ ] what · why / where seen` — screenshots welcome in the conversation.
 
-## This round
-(empty — choose at the start of the next conversation)
+## This round — Polish 1: the early game (PC) · approved by José 2026-11-10
+Decisions: old saves may break (bump save keys); start with about 16 people instead of 11 and faster newcomers in year 1; show 1–2 screenshots of the new mountain before rolling it out.
+- [ ] More people at the start (~16) and faster newcomers in the first year; check with the `balance` agent that TH2 does not get too easy.
+- [ ] More land unlocked at the start.
+- [ ] Smaller mountain with a new design, freeing building space (screenshots first).
+- [ ] Resource bar: name next to each number, clearer and more detailed icons.
+- [ ] Fix "Every bed is taken" shown while the bar reads 11/12.
+
+## Next rounds (planned)
+- **Polish 2 — organisation:** menus and build categories, clearer wording, explicit icons everywhere.
+- **Polish 3 — world map and raids:** overlapping labels, Birka in Sweden, England visible, raid balance after TH4 (with the Monte Carlo update).
 
 ## Polish after Town Hall 5 (beta polish rounds)
 Merge José's play feedback here, grouped as visual / balance / organisation. **PC only for now** (decided 2026-11-10): tune everything on PC, then convert to iPhone; phone items wait in "Phone (later)".

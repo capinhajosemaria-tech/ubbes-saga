@@ -113,6 +113,13 @@ textarea{width:100%;box-sizing:border-box;min-height:84px;border:1px solid var(-
 .mhd{font-family:var(--display);font-size:22px;color:var(--ink)}
 .mtext{margin:0;font-family:var(--display);font-size:16px;line-height:1.5;color:var(--ink)}
 .mopts{display:flex;flex-direction:column;gap:8px}
+.mopts .btn.wfx{display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left}
+.fxs{display:flex;flex-direction:column;gap:3px;font-size:12px;font-weight:500;line-height:1.3}
+.fx{display:flex;flex-wrap:wrap;align-items:center;gap:3px 10px;padding:2px 7px;border-radius:6px}
+.fx i{font-style:normal;font-weight:700;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;min-width:56px}
+.fx span{display:inline-flex;align-items:center;gap:3px}.fx svg{width:15px;height:15px}.fx b{font-family:var(--display);font-weight:400;font-size:13px}
+.fx.pay{background:#F6E3DE;color:#8E2F22}.fx.get{background:#E4EEDB;color:#3E5E2F}
+.btn:disabled .fx{opacity:.7}
 .mport{display:flex;justify-content:center}
 .mport svg,.pcard svg,.prow svg,.adv svg{border-radius:10px;flex:none}
 input[type=range]{width:100%;accent-color:var(--accent);min-height:32px}
@@ -303,6 +310,12 @@ textarea,input{-webkit-user-select:text;user-select:text}
 .htip{position:fixed;z-index:11;pointer-events:none;background:rgba(36,29,24,.95);color:var(--cream);border:1px solid #5A4A3C;border-radius:8px;padding:6px 10px;font-size:12.5px;box-shadow:0 6px 18px rgba(0,0,0,.3);max-width:250px}
 .htip b{font-family:var(--display);font-weight:400;font-size:15px;color:#FFF6E4}.htip span{color:var(--gold2);font-size:11.5px}.htip em{display:block;font-style:normal;color:var(--cream2);margin-top:2px}
 @media (pointer:coarse){.htip{display:none}}
+.guide{width:260px;pointer-events:auto;border-radius:10px;border:1px solid var(--woodline);background:rgba(251,248,241,.97);color:var(--ink);box-shadow:0 3px 10px rgba(30,24,18,.18);overflow:hidden;font-family:var(--body)}
+.guide .gh{display:flex;align-items:center;gap:8px;padding:6px 8px 6px 12px;background:rgba(47,38,32,.94);color:var(--cream)}.guide .gh b{font-family:var(--display);font-weight:400;font-size:16px;letter-spacing:.03em;flex:1}.guide .gh span{font-family:var(--display);font-size:12px;color:var(--gold2)}
+.guide .gx{border:0;background:none;color:var(--cream);font-size:18px;line-height:1;cursor:pointer;padding:0 4px}.guide .gx:hover{color:var(--gold2)}
+.guide .gb{padding:9px 12px 10px}.guide .gb strong{display:block;font-size:13.5px;font-weight:600;margin-bottom:3px}.guide .gb p{margin:0 0 6px;font-size:12.5px;line-height:1.42}.guide .gb .gw{font-size:11.5px;color:var(--muted);font-style:italic}
+.guide .ga{display:flex;gap:6px;flex-wrap:wrap}.guide .ga .btn{padding:5px 10px;font-size:12px}
+@media (max-width:899px){.guide{width:210px}.guide .gb p{font-size:11.5px}}
 .todo{width:260px;display:flex;flex-direction:column;gap:6px;pointer-events:auto}
 .tdh{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 12px;border-radius:10px;border:1px solid var(--woodline);background:rgba(47,38,32,.94);color:var(--cream);cursor:pointer;font:600 13px var(--body)}
 .tdh b{font-family:var(--display);font-weight:400;font-size:16px;letter-spacing:.03em}.tdh span{background:var(--gold);color:#2F2620;border-radius:9px;padding:0 7px;font-size:12px;line-height:18px}
@@ -335,6 +348,9 @@ textarea,input{-webkit-user-select:text;user-select:text}
   .tcard{background:#fff;border:1px solid #E3DAC8;border-radius:8px}
   .tcard:hover{border-color:var(--gold)}
 }
+
+.ci{display:inline-flex;align-items:center;gap:2px;margin-right:6px;white-space:nowrap}.ci svg{width:13px;height:13px;flex:none}
+.td svg{width:16px;height:16px}
 </style>
 
 <canvas id="map" aria-label="Mapa isométrico de Kaldstrand"></canvas>
@@ -390,7 +406,7 @@ textarea,input{-webkit-user-select:text;user-select:text}
 <script>
 (function(){
 'use strict';
-const GAME_VERSION="Beta 0.8.0";
+const GAME_VERSION="Beta 0.9.0";
 /* =================== constants =================== */
 const N=132,OX=30,OY=24,SX=12,SY=6,HW=32,HH=16,TW=64;
 const HOME_X=63,HOME_Y=60;  /* the village centre in tile coords */
@@ -657,18 +673,16 @@ Object.assign(LIMITS,{house:[6,10,14,18,22],wood:[2,3,4,4,5],mine:[1,2,2,2,3],ca
   pen:[0,1,2,2,3],hay:[0,2,3,3,4],garden:[0,2,3,4,4],smoke:[0,1,2,2,2],grain:[0,0,3,4,5],flax:[0,0,2,3,3],hunter:[0,0,2,2,3],salt:[0,1,1,2,2],
   brewery:[0,0,0,1,2],hives:[0,0,0,3,4],tomb:[0,0,0,1,1],tailor:[0,0,0,0,1],hof:[0,0,0,0,1],tower:[0,0,0,0,2],camp:[4,6,8,10,12],bench:[6,8,10,12,14],rune:[0,4,6,8,10],herbs:[0,4,6,8,10],prow:[0,0,3,4,6],nets:[0,0,4,5,6]});
 /* Beta 0.6: limits tuned so a full village always has 4–8 more workers than jobs, with every warrior place filled */
-Object.assign(LIMITS,{house:[11,15,22,25,27],wood:[2,3,3,3,4],carp:[1,2,2,2,2],mine:[1,1,2,2,2],smith:[1,1,1,2,2],berry:[2,2,2,2,2],pres:[1,1,1,1,2],pen:[0,1,1,2,2],hay:[0,1,1,2,3],garden:[0,2,2,3,3],salt:[0,1,1,1,1],smoke:[0,1,1,1,2],grain:[0,0,2,2,3],flax:[0,0,1,2,2],hunter:[0,0,1,2,2],brewery:[0,0,0,1,1],hives:[0,0,0,2,3]});
+Object.assign(LIMITS,{house:[11,15,22,25,27],wood:[2,3,4,4,5],carp:[1,2,2,2,2],mine:[1,1,2,2,2],smith:[1,1,1,2,2],berry:[2,2,2,2,2],pres:[1,1,1,1,2],pen:[0,1,1,2,2],hay:[0,1,1,2,3],garden:[0,2,2,3,3],salt:[0,1,1,1,1],smoke:[0,1,1,1,2],grain:[0,0,2,2,3],flax:[0,0,1,2,2],hunter:[0,0,1,2,2],brewery:[0,0,0,1,1],hives:[0,0,0,2,3]});
 TH_UP[4]={cost:{wood:260,planks:220,iron:80,tools:15,silver:100},pop:48,fame:950,bld:[['gran',3],['ware',3]],ms:['ship','raid','bread']};
 TH_UP[5]={cost:{wood:380,planks:320,iron:140,tools:25,silver:250,gold:20},pop:80,fame:1700,bld:[['brewery',1],['house',4]],ms:['ale','vikings','snekkja','isles','tomb']};
 
 /* =================== saga milestones =================== */
 const MS=[
-  {id:'settle',lv:1,title:'Settle the shore',goal:'Build a berry gatherer and a woodcutter’s lodge (the first of each is free)',fame:20,unlock:['carp','pyre'],test:()=>has('berry')&&has('wood'),saga:'Ubbe sent the women to the berry slopes, men to the river with buckets, and axes into the grove.'},
-  {id:'planks',lv:1,title:'Timber and planks',goal:'Build a carpenter and store 40 planks',fame:20,unlock:['mine','ware'],test:()=>has('carp')&&S.res.planks>=40,saga:'Planks were sawn for better halls.'},
-  {id:'iron',lv:1,title:'Iron from the hills',goal:'Build an iron mine and store 20 iron',fame:20,unlock:['smith','gran'],test:()=>has('mine')&&S.res.iron>=20,saga:'Ore was dug below the mountain.'},
-  {id:'tools',lv:1,title:'The first tools',goal:'Build a smithy and stock 12 tools',fame:30,unlock:['pres'],test:()=>has('smith')&&S.res.tools>=12,saga:'The first tools came hot from the anvil.'},
-  {id:'winter',lv:1,title:'Ready for winter',goal:'Build a preserver, a granary and a warehouse, and store 35 preserved food',fame:30,unlock:['market','jarl'],test:()=>has('pres')&&has('gran')&&has('ware')&&S.res.dfish+S.res.jam+S.res.pickles>=35,saga:'Fish hung to dry and the storehouses filled before the dark months.'},
-  {id:'roof',lv:1,title:'A roof for every family',goal:'Have 4 houses',fame:20,unlock:[],test:()=>count('house')>=4,saga:'New houses rose along the shore of Kaldstrand.'},
+  {id:'settle',lv:1,title:'Settle the shore',goal:'Build a berry gatherer and a woodcutter’s lodge (the first of each is free)',fame:20,unlock:['carp','pres','pyre'],test:()=>has('berry')&&has('wood'),saga:'Ubbe sent the women to the berry slopes, men to the river with nets, and axes into the grove.'},
+  {id:'planks',lv:1,title:'Timber and planks',goal:'Build a carpenter and store 40 planks',fame:20,unlock:['gran','ware','mine','smith'],test:()=>has('carp')&&S.res.planks>=40,saga:'Planks were sawn for better halls.'},
+  {id:'winter',lv:1,title:'Ready for winter',goal:'Build a preserver, a granary and a warehouse, and store 35 preserved food',fame:40,unlock:['market','jarl'],test:()=>has('pres')&&has('gran')&&has('ware')&&S.res.dfish+S.res.jam+S.res.pickles>=35,saga:'Fish hung to dry and the storehouses filled before the dark months.'},
+  {id:'iron',lv:1,title:'Iron and tools',goal:'Build an iron mine and a smithy, and stock 12 tools',fame:50,unlock:[],test:()=>has('mine')&&has('smith')&&S.res.tools>=12,saga:'Ore was dug below the mountain, and the first tools came hot from the anvil.'},
   {id:'firstwinter',lv:1,title:'The first winter',goal:'Survive the first winter',fame:50,unlock:[],test:()=>Math.floor(S.gameT/YEAR)>=1,saga:'The first winter passed. Kaldstrand still stood when the ice broke.'},
   {id:'market',lv:1,title:'A gathering place',goal:'Build the market square',fame:30,unlock:[],test:()=>has('market'),saga:'Traders and neighbours met in the new square.'},
   {id:'twenty',lv:1,title:'A growing village',goal:'Reach 20 people',fame:30,unlock:[],test:()=>S.pop>=20,saga:'Twenty souls now called Kaldstrand home.'},
@@ -795,6 +809,8 @@ let PRODLOG=null,PRODSRC='other';
 function afford(cost){return Object.keys(cost).every(k=>(S.res[k]||0)>=cost[k]);}
 function pay(cost,sign){Object.keys(cost).forEach(k=>{S.res[k]=(S.res[k]||0)-cost[k]*sign;});}
 const fmt=n=>Math.floor(n+1e-9).toString();
+/* cost with resource icons (names on hover); falls back to words for goods without an icon */
+const costIco=c=>Object.keys(c).length?Object.keys(c).map(k=>typeof ICON!=='undefined'&&ICON[k]?'<span class="ci" title="'+(RNAME[k]||k)+'">'+ICON[k]+c[k]+'</span>':'<span class="ci">'+c[k]+' '+(RNAME[k]||k).toLowerCase()+'</span>').join(''):'free';
 const costStr=c=>Object.keys(c).length?Object.keys(c).map(k=>c[k]+' '+(RNAME[k]||k).toLowerCase()).join(', '):'free';
 
 /* =================== workers =================== */
@@ -906,6 +922,7 @@ function dayTick(){
   checkMilestones();
 }
 function checkMilestones(){
+  for(const m of MS)if(S.ms.includes(m.id))m.unlock.forEach(u=>{if(!S.avail.includes(u))S.avail.push(u);});/* older saves: grant unlocks moved to earlier goals */
   for(const m of MS){if(S.ms.includes(m.id))continue;if(m.test()){S.ms.push(m.id);addFame(m.fame);m.unlock.forEach(u=>{if(!S.avail.includes(u))S.avail.push(u);});
     S.saga.push({y:Math.floor(S.gameT/YEAR)+1,t:m.saga});
     const un=m.unlock.length?' Unlocked: '+m.unlock.map(u=>DEF[u].name).join(', ')+'.':'';
@@ -1155,7 +1172,9 @@ function peopleDay(short){
         else toast('A child was born in Kaldstrand: '+c.n+'.');syncPop();}}
   }
   /* newcomers */
-  if(housing()-S.pop>0&&fed&&!short){const p=(0.06+S.attr/100*0.16)*(has('market')?1.25:1)*(S.morale<40?0.5:1)*(S.gameT<YEAR?1.6:1);
+  /* from Town Hall 3, newcomers wait near and in winter while the wood would not warm them for 5 days */
+  const woodOk=thLevel()<3||((S.gameT%YEAR)<SUMMER-DAY*10)||S.res.wood>=fireNeed()*5;
+  if(housing()-S.pop>0&&fed&&!short&&woodOk){const p=(0.06+S.attr/100*0.16)*(has('market')?1.25:1)*(S.morale<40?0.5:1)*(S.gameT<YEAR?1.6:1);
     S.immAcc=(S.immAcc||0)+p;if(S.immAcc>=1){S.immAcc-=1;const pair=Math.random()<0.3&&housing()-S.pop>=2;const a=newPerson({a:Math.round(U(17,36)),tr:randTrait()});S.yr.arrived++;
       if(pair){const b=newPerson({g:a.g==='m'?'f':'m',a:Math.round(U(17,36)),tr:randTrait()});marry(a,b);S.yr.arrived++;toast('A couple, '+a.n+' and '+b.n+', settled in Kaldstrand.');}
       else toast(a.n+' arrived and settled in Kaldstrand.');syncPop();}}
@@ -1355,7 +1374,7 @@ function eventDay(){if(S.day<S.nextEvt||S.modal.length)return;
   S.nextEvt=S.day+Math.round(U(11,20)/lokiW);if(!pool.length)return;
   let tot=pool.reduce((a,x)=>a+x[1],0),r=Math.random()*tot;let id=pool[0][0];for(const x of pool){r-=x[1];if(r<=0){id=x[0];break;}}
   const e=EVTS[id];const args=e.mk();S.evtSeen[id]=S.day;queueModal({k:'evt',id:id,a:args,text:e.t(args)});}
-function evtOpts(m){const e=EVTS[m.id];if(!e)return null;const cruel=jt('cruel');return {title:e.cat,text:m.text,opts:e.o.filter(o=>!o.cruel||cruel||S.mode==='sandbox'||true).filter(o=>!o.cruel||cruel).map(o=>({l:o.l,dis:o.ok&&!o.ok(m.a),f:()=>o.f(m.a)}))};}
+function evtOpts(m){const e=EVTS[m.id];if(!e)return null;const cruel=jt('cruel');return {title:e.cat,text:m.text,opts:e.o.filter(o=>!o.cruel||cruel||S.mode==='sandbox'||true).filter(o=>!o.cruel||cruel).map(o=>{const fx=(EVT_FX[m.id]||[])[e.o.indexOf(o)]||[];return {l:o.l,pay:fxItems(fx[0],m.a),get:fxItems(fx[1],m.a),dis:o.ok&&!o.ok(m.a),f:()=>o.f(m.a)};})};}
 
 /* ---------- year summary ---------- */
 function yearRoll(){const y=yearNow()-1;const s=S.yr;
@@ -1438,6 +1457,43 @@ function mercDay(){for(const p of S.people.slice())if(p.merc&&p.merc<=S.day&&!p.
 
 EVTS.sails={cat:'War',c:()=>thLevel()>=5,w:0.7,mk:()=>({n:pick(['Hrolf the Grey','Sigvard of Jutland','the Orkney jarl'])}),t:a=>'Scouts on the headland saw the sails of '+a.n+' off the coast. They lay there a day, counting your defences, and turned away.',
   o:[{l:'Note it in the saga',f:()=>{const d=defenceValue();return 'Defence of Kaldstrand: '+d+'. From Town Hall 6, such fleets will land.';}}]};
+
+/* =================== event choices: what you pay and what you get =================== */
+/* per event: one [pay, get] pair per option, in the same order as EVTS[id].o. Items: [amount, resource] or plain text; a function gets the event args. */
+const EVT_FX={
+  storm:[[[[15,'planks']],['Roofs repaired']],[['Morale −6 for 15 days','2 people fall sick'],[]]],
+  dry:[[[[10,'Freyja’s favour']],['Rain comes back']],[['Farms and gatherers bring in less for 15 days'],[]]],
+  herring:[[[],[[60,'fish']]],[[],[]]],
+  wolves:[[['A man may be hurt'],[[2,'hides'],'The herd is safe']],[['Lose 1 sheep and 1 pig'],[]]],
+  bear:[[['A hunter may be hurt'],[[30,'meat'],[2,'hides']]],[['Woodcutters at half pace for 5 days'],[]]],
+  aurora:[[[[10,'food']],['All gods +5 favour']],[[],['Morale +3 for 10 days']]],
+  twins:[[[],['2 children','Freyja +5 favour']]],
+  holmgang:[[['One of them may die'],['Morale +3 if both live']],[[[20,'food']],['The quarrel ends']],[['Morale −4 for 15 days'],[[10,'silver']]]],
+  feud:[[[[25,'food']],['The families make peace']],[['Morale −8 for 20 days'],[]]],
+  prodigy:[[[],['The child gains Steady Hand']]],
+  oldwarrior:[[[[1,'spears']],['+1 warrior','Odin +4 favour']],[[],[]]],
+  monk:[[['Takes a free bed'],[[1,'people']]],[[],[]],[[],['+1 thrall','Odin +2 favour']]],
+  peddler:[[[[30,'silver']],[[5,'tools']]],[[[40,'food']],[[5,'tools']]],[[],[]]],
+  skald:[[[[20,'food']],[[15,'fame'],'Morale +4 for 15 days']],[[],[]]],
+  refugees:[[[[30,'food']],[[3,'people']]],[['Morale −3 for 15 days'],[]]],
+  messenger:[[[[20,'planks']],[[15,'silver'],[10,'fame']]],[['Hrolf will hold a grudge'],[[15,'silver']]]],
+  wreck:[[[],[[30,'planks'],[10,'iron'],[5,'misc']]],[['Takes 2 free beds'],[[2,'people'],'Njord +4 favour']],[[],['+2 thralls']]],
+  whale:[[[],[[60,'meat'],[8,'misc']]]],
+  amber:[[[],[[10,'misc']]]],
+  fever:[[['2 people fall sick'],[]],[[[10,'Freyja’s favour'],'1 person falls sick'],[]]],
+  fire:[[['15% of the wood','A man may be burned'],[]],[['Half the wood'],[]]],
+  thrallflee:[[[],[a=>'About '+Math.round(a.n*0.7)+' of '+a.n+' brought back']],[[a=>'Lose '+a.n+' thrall'+(a.n>1?'s':'')],[]]],
+  rumours:[[[()=>[S.pop,'food']],['Morale +10 for 15 days']],[['Morale −4 for 20 days'],['The muttering stops']],[['The unrest goes on'],[]]],
+  freedom:[[['−1 thrall'],[[10,'silver'],'+1 free man']],[['Morale −2 for 10 days'],[]]],
+  curse:[[['The god’s anger falls on the village'],[]]]};
+const FX_NAME={food:'meals',misc:'odds and ends',people:'people'};
+function fxItems(list,a){return (list||[]).map(x=>typeof x==='function'?x(a):x).map(x=>Array.isArray(x)?{n:x[0],k:x[1]}:{t:x});}
+/* labels keep only the action; the amounts move to the pay / get lines */
+const fxLabel=l=>l.replace(/\s*\([^)]*\)\s*$/,'');
+function fxHtml(pay,get){const one=(it,sign)=>{if(it.t)return '<span>'+esc(it.t)+'</span>';const ic=ICON[it.k]||'';return '<span>'+ic+'<b>'+sign+fmt(it.n)+'</b> '+esc(FX_NAME[it.k]||it.k)+'</span>';};
+  let h='';if(pay&&pay.length)h+='<span class="fx pay"><i>You pay</i>'+pay.map(it=>one(it,'−')).join('')+'</span>';
+  if(get&&get.length)h+='<span class="fx get"><i>You get</i>'+get.map(it=>one(it,'+')).join('')+'</span>';
+  return h?'<span class="fxs">'+h+'</span>':'';}
 
 /* =================== canvas & camera =================== */
 const cv=document.getElementById('map');let ctx=cv.getContext('2d');
@@ -1792,17 +1848,18 @@ function drawRoads(win,vis){
     for(const q of list){const x=q[0],y=q[1],sx=q[2],sy=q[3];const ww=w+(jit?(h2(x,y,140)-0.5)*jit:0);
       addP(p,[g(sx,sy,-ww,-ww),g(sx,sy,ww,-ww),g(sx,sy,ww,ww),g(sx,sy,-ww,ww)]);
       for(const a of arms){const nx=x+a[0],ny=y+a[1];if(!inMap(nx,ny)||!roads[ny*N+nx])continue;const ww2=w+(jit?(h2(nx,ny,140)-0.5)*jit:0),wm=(ww+ww2)/2;
-        let c;if(a[0])c=[g(sx,sy,0,-ww),g(sx,sy,a[0]*0.5,-wm),g(sx,sy,a[0]*0.5,wm),g(sx,sy,0,ww)];else c=[g(sx,sy,-ww,0),g(sx,sy,-wm,a[1]*0.5),g(sx,sy,wm,a[1]*0.5),g(sx,sy,ww,0)];
+        const dz=(elev[y*N+x]-elev[ny*N+nx])/2,m=(u,v)=>{const r=g(sx,sy,u,v);r[1]+=dz;return r;};/* meet the neighbour half way in height, so slopes (grass to sand) stay joined */
+        let c;if(a[0])c=[g(sx,sy,0,-ww),m(a[0]*0.5,-wm),m(a[0]*0.5,wm),g(sx,sy,0,ww)];else c=[g(sx,sy,-ww,0),m(-wm,a[1]*0.5),m(wm,a[1]*0.5),g(sx,sy,ww,0)];
         addP(p,c);}}
     ctx.fillStyle=col;ctx.fill(p,'nonzero');};
   pass(0.45,win?'rgba(150,150,140,0.14)':'rgba(110,108,70,0.14)',0.08);
-  pass(0.36,win?'rgba(170,166,154,0.8)':'rgba(128,108,76,0.7)',0.05);
+  pass(0.36,win?'rgba(170,166,154,0.9)':'rgba(128,108,76,0.88)',0.05);
   pass(0.32,win?'#D6D2C6':'#C5B28C',0.04);
   pass(0.18,win?'#E0DCD2':'#D0BF9C',0.05);
   /* worn wheel ruts along straight runs */
   ctx.strokeStyle=win?'rgba(170,164,150,0.55)':'rgba(140,121,90,0.45)';ctx.lineWidth=1.1;ctx.beginPath();
   for(const q of list){const x=q[0],y=q[1],sx=q[2],sy=q[3];for(const a of [[1,0],[0,1]]){const nx=x+a[0],ny=y+a[1];if(!inMap(nx,ny)||!roads[ny*N+nx])continue;
-    for(const o of [-0.1,0.1]){const A=a[0]?g(sx,sy,0,o):g(sx,sy,o,0),Bp=a[0]?g(sx,sy,1,o):g(sx,sy,o,1);ctx.moveTo(A[0],A[1]);ctx.lineTo(Bp[0],Bp[1]);}}}
+    for(const o of [-0.1,0.1]){const A=a[0]?g(sx,sy,0,o):g(sx,sy,o,0),Bp=a[0]?g(sx,sy,1,o):g(sx,sy,o,1);ctx.moveTo(A[0],A[1]);ctx.lineTo(Bp[0],Bp[1]+elev[y*N+x]-elev[ny*N+nx]);}}}
   ctx.stroke();
   ctx.lineCap='butt';
   for(let y=0;y<N;y++)for(let x=0;x<N;x++){const i=y*N+x;if(!roads[i]||ter[i]===T.RIVER)continue;const sx=(x-y)*HW,sy=(x+y)*HH-elev[i];if(!vis(sx,sy))continue;
@@ -2592,7 +2649,7 @@ function buildingSheet(b){
   h+='<p>'+esc(D.desc)+'</p>';
   if(D.up){const nx=b.lvl+1;if(b.lvl>=5)h+='<div class="meta">Highest level reached.</div>';
     else{const c=upCost(b),need=canUpgrade(b);const eff=b.t==='house'?('+1 resident'+(nx===3?', better insulated: −25% firewood':nx===5?', a carved hall that draws newcomers':'')):D.store?'+150 storage':nx===2?'+20% output':nx===3?(FIELDS.has(b.t)?'+30% output in all':'+1 worker slot'):nx===4?'+40% output in all':'Finest work: +55% output in all';
-      h+='<div class="wk">'+btn('b-up','Upgrade to level '+nx,{cls:'primary',dis:!need||!afford(c)})+'<span class="meta">'+esc(eff)+' · '+esc(costStr(c))+(need?'':' · raise the Town Hall first')+'</span></div>';
+      h+='<div class="wk">'+btn('b-up','Upgrade to level '+nx,{cls:'primary',dis:!need||!afford(c)})+'<span class="meta">'+esc(eff)+' · '+costIco(c)+(need?'':' · raise the Town Hall first')+'</span></div>';
       on.push(()=>{$('b-up').onclick=()=>{if(!canUpgrade(b)||!afford(upCost(b)))return;pay(upCost(b),1);b.lvl++;assignWorkers();toast(D.name+' upgraded to level '+b.lvl+'.');buildingSheet(b);save();};});}}
   if(!D.fixed){h+='<div class="acts"><button type="button" class="btn danger" id="b-demo">'+(demolishArmed===b.id?'Tap again to demolish':'Demolish (50% back)')+'</button><button type="button" class="btn" id="b-move">Move</button></div>';
     on.push(()=>{$('b-demo').onclick=()=>{if(demolishArmed!==b.id){demolishArmed=b.id;buildingSheet(b);return;}demolishArmed=0;
@@ -2625,7 +2682,7 @@ function renderBuild(){if(isWide()){if(mode!=='view')endMode();closeSheet();open
   h+='<div class="tabs" role="group" aria-label="Categories">'+CATS.map(c=>'<button type="button" data-cat="'+c+'" aria-pressed="'+(c===buildCat)+'">'+c+'</button>').join('')+'</div><div class="blist">';
   Object.keys(DEF).filter(k=>DEF[k].cat===buildCat).forEach(k=>{const D=DEF[k],av=isAvail(k),lim=limitOf(k),cnt=count(k),uq=cnt>=lim,cst=costOf(k),free=!Object.keys(cst).length&&Object.keys(D.cost).length,ok=av&&!uq&&afford(cst);
     const lock=D.lvl>thLevel()?'Needs Town Hall level '+D.lvl:!av?'Unlocks with: '+(MS.find(m=>m.unlock.includes(k))||{title:'?'}).title:uq?'Limit reached for this level':'';
-    h+='<button type="button" class="bcard'+(ok?'':' no')+'" data-b="'+k+'"><img class="bth" alt="" src="'+buildThumb(k,1)+'"><b>'+esc(D.name)+'</b>'+(D.lvl<=thLevel()?'<span class="lim">Built '+cnt+' / '+lim+'</span>':'')+'<span>'+D.w+'×'+D.h+(D.slots?' · '+D.slots+' workers':'')+(D.housing?' · '+D.housing+' people':'')+'</span><span class="cost'+(av&&!afford(cst)?' bad':'')+'">'+esc(free?'First one free':costStr(cst))+'</span>'+(lock?'<span>'+esc(lock)+'</span>':'')+'</button>';});
+    h+='<button type="button" class="bcard'+(ok?'':' no')+'" data-b="'+k+'"><img class="bth" alt="" src="'+buildThumb(k,1)+'"><b>'+esc(D.name)+'</b>'+(D.lvl<=thLevel()?'<span class="lim">Built '+cnt+' / '+lim+'</span>':'')+'<span>'+D.w+'×'+D.h+(D.slots?' · '+D.slots+' workers':'')+(D.housing?' · '+D.housing+' people':'')+'</span><span class="cost'+(av&&!afford(cst)?' bad':'')+'">'+(free?'First one free':costIco(cst))+'</span>'+(lock?'<span>'+esc(lock)+'</span>':'')+'</button>';});
   h+='</div>';openSheet(h,'build');
   $('sheet-card').querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{buildCat=b.dataset.cat;renderBuild();});
   $('sheet-card').querySelectorAll('.bcard').forEach(c=>c.onclick=()=>{const k=c.dataset.b,D=DEF[k];
@@ -2765,24 +2822,31 @@ function buildThumb(t,lvl){const key=t+':'+(lvl||1);if(THUMBS[key])return THUMBS
 
 /* --- category icons --- */
 const CAT_ICON={
-  Housing:'<path d="M3 11 L10 4 L17 11 M5 10 V16 H15 V10" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linejoin="round"/>',
-  Resources:'<path d="M4 16 L10 6 L16 16 Z M8 12 h4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linejoin="round"/>',
-  Food:'<path d="M5 9 Q10 18 15 9 Z M7 9 Q7 4 10 4 Q13 4 13 9" stroke="currentColor" stroke-width="1.8" fill="none"/>',
-  Farms:'<path d="M3 15 Q10 9 17 15 M6 13 V7 M10 11 V5 M14 13 V7" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/>',
-  Storage:'<path d="M4 8 L10 5 L16 8 V15 L10 18 L4 15 Z M4 8 L10 11 L16 8 M10 11 V18" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/>',
-  Village:'<path d="M10 3 V17 M5 7 Q10 4 15 7 M6 17 H14" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/>',
-  War:'<path d="M5 15 L15 5 M12 5 H15 V8 M15 15 L5 5 M8 5 H5 V8" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/>',
-  Sea:'<path d="M3 13 Q10 18 17 13 L15 11 H5 Z M10 11 V3 L15 8 H10" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/>',
-  Decor:'<path d="M10 3 L12 8 L17 8 L13 11 L15 16 L10 13 L5 16 L7 11 L3 8 L8 8 Z" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="round"/>',
-  Roads:'<path d="M6 17 L9 3 M14 17 L11 3 M10 6 V7.5 M10 10.5 V12 M10 15 V16.5" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/>'};
+  Housing:'<path d="M2 10.5 L10 4 L18 10.5 L16.6 11.2 L10 6 L3.4 11.2 Z" fill="#6E8B4E" stroke="#4D6438" stroke-width="0.6" stroke-linejoin="round"/><path d="M4 10.4 L10 5.8 L16 10.4 V17 H4 Z" fill="#B08A62" stroke="#6E5440" stroke-width="0.7"/><path d="M4 13 H16 M4 15 H16" stroke="#8E6F52" stroke-width="0.5"/><rect x="8.4" y="12" width="3.2" height="5" rx="1.4" fill="#4A3828"/><path d="M13.5 3 V6.4" stroke="#8E877D" stroke-width="1.4"/><path d="M13 2.4 Q14.6 1 13.8 0" stroke="#C9C2B2" stroke-width="0.8" fill="none"/>',
+  Resources:'<path d="M2 15 L13 9 L15 12.6 L4 18.6 Z" fill="#8E6F52" stroke="#5A4636" stroke-width="0.6"/><ellipse cx="14" cy="10.8" rx="1.6" ry="2" transform="rotate(-28 14 10.8)" fill="#D8B98A" stroke="#7A5D44" stroke-width="0.6"/><path d="M6.4 13.2 L13.6 2.4" stroke="#7A5D44" stroke-width="1.6" stroke-linecap="round"/><path d="M11.2 3.2 Q13 0.4 16.4 2 L14.6 6 Q13 4.4 11.2 5.6 Z" fill="#B7BCBF" stroke="#5E6468" stroke-width="0.6"/>',
+  Food:'<path d="M1.6 10 Q6 4.4 12.6 7.4 L17.6 4 L16.6 10 L18 15.4 L12.6 12.4 Q6 15.6 1.6 10 Z" fill="#9FB4BC" stroke="#5E7F8C" stroke-width="0.8" stroke-linejoin="round"/><path d="M7.6 6.8 Q9 10 7.6 13.2" stroke="#5E7F8C" stroke-width="0.7" fill="none"/><circle cx="4.6" cy="9.2" r="0.9" fill="#263035"/><path d="M9.6 9.4 L11.4 10.4 M10 11.2 L11.2 11.6" stroke="#C9D6DA" stroke-width="0.6"/>',
+  Farms:'<path d="M10 18 V7 M10 18 L6 8 M10 18 L14 8 M10 18 L3.6 10.4 M10 18 L16.4 10.4" stroke="#B08A3E" stroke-width="1.1" stroke-linecap="round"/><ellipse cx="10" cy="5" rx="1.4" ry="2.8" fill="#D9B45A"/><ellipse cx="5.6" cy="6.4" rx="1.2" ry="2.4" transform="rotate(-22 5.6 6.4)" fill="#D9B45A"/><ellipse cx="14.4" cy="6.4" rx="1.2" ry="2.4" transform="rotate(22 14.4 6.4)" fill="#D9B45A"/><ellipse cx="3" cy="9.2" rx="1" ry="2" transform="rotate(-45 3 9.2)" fill="#C9A64A"/><ellipse cx="17" cy="9.2" rx="1" ry="2" transform="rotate(45 17 9.2)" fill="#C9A64A"/><path d="M6.6 14 H13.4" stroke="#8E5A2E" stroke-width="1.6"/>',
+  Storage:'<path d="M4.4 3.6 H15.6 Q17.4 10 15.6 16.4 H4.4 Q2.6 10 4.4 3.6 Z" fill="#A9825A" stroke="#5A4636" stroke-width="0.7"/><path d="M3.4 6.6 H16.6 M3.2 13.4 H16.8" stroke="#5E6468" stroke-width="1.4"/><path d="M7.6 3.8 Q6.8 10 7.6 16.2 M12.4 3.8 Q13.2 10 12.4 16.2" stroke="#8E6F52" stroke-width="0.6" fill="none"/><ellipse cx="10" cy="3.6" rx="5.6" ry="1.2" fill="#C9A87A" stroke="#5A4636" stroke-width="0.6"/>',
+  Village:'<path d="M1 11 Q10 4.4 19 11 L17.4 11.6 Q10 6.6 2.6 11.6 Z" fill="#6E8B4E" stroke="#4D6438" stroke-width="0.6"/><path d="M2.6 11.4 Q10 6.6 17.4 11.4 V17 H2.6 Z" fill="#9C7A54" stroke="#5A4636" stroke-width="0.7"/><rect x="8.4" y="12.4" width="3.2" height="4.6" fill="#4A3828"/><path d="M1.6 9.6 Q0.6 7.6 2.4 6.6 M18.4 9.6 Q19.4 7.6 17.6 6.6" stroke="#5A4636" stroke-width="1" fill="none" stroke-linecap="round"/><path d="M4.4 13.6 H7 M13 13.6 H15.6" stroke="#C9A64A" stroke-width="0.9"/>',
+  War:'<path d="M14.6 2 L16 3.4 L7 12.4 L5.6 11 Z" fill="#C3C8CC" stroke="#5E6468" stroke-width="0.6"/><path d="M4 10 L8 14 M3.2 15 L5 16.8" stroke="#7A5D44" stroke-width="1.6" stroke-linecap="round"/><circle cx="12.6" cy="12.6" r="5.8" fill="#A34A3A" stroke="#5A4636" stroke-width="0.8"/><path d="M12.6 6.8 V18.4 M6.8 12.6 H18.4" stroke="#E9E2D0" stroke-width="1.3"/><circle cx="12.6" cy="12.6" r="1.8" fill="#B7BCBF" stroke="#5E6468" stroke-width="0.6"/>',
+  Sea:'<path d="M1.6 12.6 Q10 16.4 18.4 12.6 L16.4 16.4 Q10 18.4 3.6 16.4 Z" fill="#8E6F52" stroke="#5A4636" stroke-width="0.7"/><path d="M1.6 12.6 Q0.6 10.6 2 9.4 M18.4 12.6 Q19.4 10.6 18 9.4" stroke="#5A4636" stroke-width="1.1" fill="none" stroke-linecap="round"/><path d="M10 13.4 V1.6" stroke="#5A4636" stroke-width="0.9"/><path d="M4.6 3 H15.4 V11 Q10 9.8 4.6 11 Z" fill="#E9E2D0" stroke="#8E877D" stroke-width="0.6"/><path d="M6.4 3 V10.6 M10 3 V10.2 M13.6 3 V10.6" stroke="#A34A3A" stroke-width="1.6"/>',
+  Decor:'<path d="M6.4 18 L7 4 Q10 1.6 13 4 L13.6 18 Z" fill="#9AA0A4" stroke="#5E6468" stroke-width="0.7"/><path d="M10 5.4 V13 M10 7 L12 5.4 M10 9.4 L8 7.8 M10 11.4 L12 9.8" stroke="#A34A3A" stroke-width="0.9" fill="none" stroke-linecap="round"/><path d="M2 18 Q3.4 14.6 4.6 18 M15.4 18 Q16.6 14.6 18 18" stroke="#5E7A4E" stroke-width="1.2" fill="none"/><circle cx="3.4" cy="14.6" r="1.1" fill="#D9A55A"/><circle cx="16.6" cy="14.6" r="1.1" fill="#C98AA0"/>',
+  Roads:'<path d="M3 18.6 L8.4 2 H11.6 L17 18.6 Z" fill="#C5B28C" stroke="#8E7A58" stroke-width="0.7"/><path d="M10 4 V6 M10 8.6 V11 M10 13.6 V16.4" stroke="#F1E7D2" stroke-width="1.2" stroke-linecap="round"/><path d="M1 18.6 Q2 15 3.4 13 M19 18.6 Q18 15 16.6 13" stroke="#5E7A4E" stroke-width="1.2" fill="none" stroke-linecap="round"/>',
+  Palisade:'<path d="M2.6 18 V6 L4 3.6 L5.4 6 V18 Z M7.4 18 V5 L8.8 2.6 L10.2 5 V18 Z M12.2 18 V6 L13.6 3.6 L15 6 V18 Z" fill="#9C7A54" stroke="#5A4636" stroke-width="0.6"/><path d="M15.6 18 V7 L17 4.6 L18.4 7 V18 Z" fill="#8E6F52" stroke="#5A4636" stroke-width="0.6"/><path d="M1.6 9 H19.2 M1.6 14 H19.2" stroke="#6B503A" stroke-width="1.1"/>'};
+/* explicit colour icons for the panel buttons in the PC dock */
+const PANEL_ICON={village:CAT_ICON.Village,
+  people:'<circle cx="13.4" cy="5.4" r="2.6" fill="#E3C9A6"/><path d="M11 4.4 Q13.4 1.6 15.8 4.4" fill="#C9A64A"/><path d="M8.6 17.6 Q9 9.4 13.4 9.4 Q17.8 9.4 18.4 17.6 Z" fill="#5E7F8C"/><circle cx="6.8" cy="6.4" r="3" fill="#E3C9A6"/><path d="M3.8 6 Q4 2.8 6.8 2.8 Q9.6 2.8 9.8 6 Q8.4 4.6 6.8 4.8 Q5 4.6 3.8 6 Z" fill="#8E5A2E"/><path d="M1.2 18.4 Q1.8 10.8 6.8 10.8 Q11.8 10.8 12.4 18.4 Z" fill="#A34A3A"/><path d="M6.8 10.8 V14" stroke="#C9A64A" stroke-width="1"/>',
+  war:CAT_ICON.War,
+  world:'<rect x="1.6" y="2.6" width="16.8" height="14.8" rx="1" fill="#E3D3AE" stroke="#8E6F52" stroke-width="0.8"/><path d="M1.6 2.6 Q0.4 4 1.6 5.4 M18.4 14.6 Q19.6 16 18.4 17.4" stroke="#8E6F52" stroke-width="0.8" fill="none"/><path d="M4 6 Q6 4.4 7.6 6.4 Q7 9.6 5 10.4 Q3.6 8.6 4 6 Z M11 9 Q14 7.4 16 9.6 Q15.4 13.6 12.4 14.4 Q10.4 12 11 9 Z" fill="#9AAE7E" stroke="#5E7A4E" stroke-width="0.5"/><path d="M6 12.6 Q9 15.6 12.4 11.4" stroke="#A34A3A" stroke-width="0.9" stroke-dasharray="1.4 1" fill="none"/><path d="M13.2 4.4 L15.4 6.6 M15.4 4.4 L13.2 6.6" stroke="#A34A3A" stroke-width="1.1"/>',
+  saga:'<path d="M3.4 3.4 H14.6 V16.6 H3.4 Z" fill="#E9DDC0" stroke="#8E6F52" stroke-width="0.8"/><path d="M2.4 2.4 Q3.4 1.4 4.4 2.4 V4.4 H2.4 Z M2.4 15.6 H4.4 V17.6 Q3.4 18.6 2.4 17.6 Z" fill="#B08A62"/><path d="M5.6 6.4 H12.4 M5.6 8.8 H12.4 M5.6 11.2 H10.4" stroke="#8E7A58" stroke-width="0.8"/><path d="M17.6 2 L11.6 13.6 L10.8 15.4 L12.4 14.2 L18.6 2.6 Z" fill="#E9E2D0" stroke="#5A4636" stroke-width="0.6"/>'};
 const ico=(k,sz)=>'<svg width="'+(sz||20)+'" height="'+(sz||20)+'" viewBox="0 0 20 20" aria-hidden="true">'+(CAT_ICON[k]||'')+'</svg>';
 
 /* --- the dock (PC): panels on the left, build categories and roads on the right --- */
 let trayCat=null;
 function renderDock(){let d=$('dock');if(!d){d=document.createElement('div');d.id='dock';d.className='dock';document.body.appendChild(d);const tr=document.createElement('div');tr.id='tray';tr.className='tray';tr.hidden=true;document.body.appendChild(tr);}
-  const navs=[...document.querySelectorAll('.nav button')].map(b=>'<button type="button" class="dk'+(b.classList.contains('locked')?' locked':'')+'" data-dp="'+b.dataset.panel+'">'+b.innerHTML+'</button>').join('');
+  const navs=[...document.querySelectorAll('.nav button')].map(b=>{const pi=PANEL_ICON[b.dataset.panel];return '<button type="button" class="dk'+(b.classList.contains('locked')?' locked':'')+'" data-dp="'+b.dataset.panel+'">'+(pi?'<svg width="22" height="22" viewBox="0 0 20 20" aria-hidden="true">'+pi+'</svg>'+esc(b.textContent.trim()):b.innerHTML)+'</button>';}).join('');
   const cats=CATS.map(c=>{const any=Object.keys(DEF).some(k=>DEF[k].cat===c&&DEF[k].lvl<=thLevel());return '<button type="button" class="dk cat'+(trayCat===c?' on':'')+(any?'':' locked')+'" data-dc="'+c+'">'+ico(c)+'<span>'+c+'</span></button>';}).join('');
-  d.innerHTML='<div class="dgrp">'+navs+'</div><div class="dsep"></div><div class="dgrp">'+cats+'</div><div class="dsep"></div><div class="dgrp"><button type="button" class="dk'+(mode==='road'&&roadKind==='road'?' on':'')+'" id="dk-road">'+ico('Roads')+'<span>Roads</span></button>'+(thLevel()>=5?'<button type="button" class="dk'+(mode==='road'&&roadKind==='wall'?' on':'')+'" id="dk-wall">'+ico('War')+'<span>Palisade</span></button>':'')+'</div>';
+  d.innerHTML='<div class="dgrp">'+navs+'</div><div class="dsep"></div><div class="dgrp">'+cats+'</div><div class="dsep"></div><div class="dgrp"><button type="button" class="dk'+(mode==='road'&&roadKind==='road'?' on':'')+'" id="dk-road">'+ico('Roads')+'<span>Roads</span></button>'+(thLevel()>=5?'<button type="button" class="dk'+(mode==='road'&&roadKind==='wall'?' on':'')+'" id="dk-wall">'+ico('Palisade')+'<span>Palisade</span></button>':'')+'</div>';
   d.querySelectorAll('[data-dp]').forEach(b=>b.onclick=()=>{closeTray();const nb=document.querySelector('.nav button[data-panel="'+b.dataset.dp+'"]');if(nb)nb.click();});
   d.querySelectorAll('[data-dc]').forEach(b=>b.onclick=()=>{if(mode!=='view')endMode();closeSheet();if(trayCat===b.dataset.dc){closeTray();return;}openTray(b.dataset.dc);});
   $('dk-road').onclick=()=>{closeTray();closeSheet();if(mode==='road'&&roadKind==='road'){endMode();}else startRoad();renderDock();};
@@ -2793,7 +2857,7 @@ function openTray(cat){trayCat=cat;buildCat=cat;const tr=$('tray');
   let h='<div class="trh"><b>'+esc(cat)+'</b><span>Town Hall level '+thLevel()+' · click a building, then choose its spot</span><button type="button" class="x" id="tray-x" aria-label="Close">×</button></div><div class="trl">';
   for(const k of keys){const D=DEF[k],av=isAvail(k),lim=limitOf(k),cnt=count(k),uq=cnt>=lim,cst=costOf(k),free=!Object.keys(cst).length&&Object.keys(D.cost).length,ok=av&&!uq&&afford(cst)&&D.lvl<=thLevel();
     const lock=D.lvl>thLevel()?'Town Hall '+D.lvl:!av?'Saga: '+(MS.find(m=>m.unlock.includes(k))||{title:'?'}).title:uq?'Limit reached':'';
-    h+='<button type="button" class="tcard'+(ok?'':' no')+(lock?' lk':'')+'" data-b="'+k+'" title="'+esc(D.desc||'')+'"><img alt="" src="'+buildThumb(k,1)+'"><b>'+esc(D.name)+'</b><span class="tc2">'+(D.lvl<=thLevel()?cnt+' / '+lim:'')+(D.slots?' · '+D.slots+' workers':'')+(D.housing?' · '+D.housing+' people':'')+'</span><span class="cost'+(av&&!afford(cst)?' bad':'')+'">'+esc(lock||(free?'First one free':costStr(cst)))+'</span></button>';}
+    h+='<button type="button" class="tcard'+(ok?'':' no')+(lock?' lk':'')+'" data-b="'+k+'" title="'+esc(D.desc||'')+'"><img alt="" src="'+buildThumb(k,1)+'"><b>'+esc(D.name)+'</b><span class="tc2">'+(D.lvl<=thLevel()?cnt+' / '+lim:'')+(D.slots?' · '+D.slots+' workers':'')+(D.housing?' · '+D.housing+' people':'')+'</span><span class="cost'+(av&&!afford(cst)?' bad':'')+'">'+(lock?esc(lock):free?'First one free':costIco(cst))+'</span></button>';}
   tr.innerHTML=h+'</div>';tr.hidden=false;
   $('tray-x').onclick=closeTray;
   tr.querySelectorAll('.tcard').forEach(c=>c.onclick=()=>{const k=c.dataset.b,D=DEF[k];
@@ -2828,16 +2892,17 @@ function suggestions(){const out=[],r=S.res,win=isWinter();
   if(q&&q.ok)out.push({p:0,ic:'Village',t:'The Town Hall can be raised to level '+q.lv,go:()=>focusOn(th,true),cls:'good'});
   /* shortages */
   const ed=eatNeed(),fd=foodUnits()/Math.max(1,ed);
-  if(fd<6)out.push({p:1,ic:'Food',t:'Food for only '+Math.floor(fd)+' days',sub:'Put more people on fishers, hunters or berries',go:()=>{const b=B.find(b=>['fish','berry','hunter','garden'].includes(b.t)&&b.workers<slotsOf(b));if(b)focusOn(b,true);else placeType(has('fish')?'berry':'fish');},cls:'bad'});
-  if(win&&r.wood<fireNeed()*4)out.push({p:1,ic:'Resources',t:'Firewood for only '+Math.floor(r.wood/Math.max(1,fireNeed()))+' days',go:()=>{const b=B.find(b=>b.t==='wood'&&b.workers<slotsOf(b));if(b)focusOn(b,true);else placeType('wood');},cls:'bad'});
+  if(fd<6)out.push({p:1,ic:'food',t:'Food for only '+Math.floor(fd)+' days',sub:'Put more people on fishers, hunters or berries',go:()=>{const b=B.find(b=>['fish','berry','hunter','garden'].includes(b.t)&&b.workers<slotsOf(b));if(b)focusOn(b,true);else placeType(has('fish')?'berry':'fish');},cls:'bad'});
+  {const yt=S.gameT%YEAR,left=Math.ceil((SUMMER-yt)/DAY),need=Math.ceil(fireNeed()*15);if(!win&&left<=10&&r.wood<need)out.push({p:2,ic:'wood',t:'Winter in '+left+' day'+(left>1?'s':'')+': '+Math.floor(r.wood)+' of '+need+' firewood',sub:'Put more people on woodcutting, or build less until winter.',go:()=>{const b=B.find(b=>b.t==='wood'&&b.workers<slotsOf(b));if(b)focusOn(b,true);else placeType('wood');},cls:'warn'});}
+  if(win&&r.wood<fireNeed()*4)out.push({p:1,ic:'wood',t:'Firewood for only '+Math.floor(r.wood/Math.max(1,fireNeed()))+' days',go:()=>{const b=B.find(b=>b.t==='wood'&&b.workers<slotsOf(b));if(b)focusOn(b,true);else placeType('wood');},cls:'bad'});
   {const fr=housing()-S.pop;if(fr<=1&&canBuildNow('house'))out.push({p:2,ic:'Housing',t:fr<=0?'Every bed is taken':'Only 1 bed left',sub:fr<=0?'Build a house so newcomers can stay':'Build a house so more newcomers can stay',go:()=>placeType('house')});}
-  if(freeWorkers>0)out.push({p:2,ic:'Village',t:freeWorkers+' '+(freeWorkers>1?'people have':'person has')+' no work',sub:'Open the work overview',go:()=>openPanel('village')});
+  if(freeWorkers>0)out.push({p:2,ic:'people',t:freeWorkers+' '+(freeWorkers>1?'people have':'person has')+' no work',sub:'Open the work overview',go:()=>openPanel('village')});
   /* buildings in trouble */
   const bad=B.filter(b=>slotsOf(b)&&b.status&&!(b.status==='Working'||b.status==='Drawing newcomers'||b.status.indexOf('Resting')===0||b.status.indexOf('Holding')===0||b.status==='Paused'));
   for(const b of bad.slice(0,3))out.push({p:3,ic:DEF[b.t].cat,t:DEF[b.t].name+': '+b.status,go:()=>focusOn(b,true),cls:'warn'});
   /* the saga goal */
   const g=currentGoal();if(g){const lo=g.goal.toLowerCase();const want=Object.keys(DEF).filter(k=>k!=='th'&&(lo.indexOf(DEF[k].name.toLowerCase().replace('’',"'"))>=0||lo.indexOf(DEF[k].name.toLowerCase())>=0)).filter(k=>!has(k));
-    out.push({p:4,ic:'Decor',t:g.title,sub:g.goal,go:()=>{if(want.length)placeType(want[0]);else openPanel('saga');}});}
+    out.push({p:4,ic:'fame',t:g.title,sub:g.goal,go:()=>{if(want.length)placeType(want[0]);else openPanel('saga');}});}
   if(q&&!q.ok&&!out.some(o=>o.p===0)){const miss=q.items.filter(i=>!i.ok);if(miss.length)out.push({p:5,ic:'Village',t:'Next Town Hall: '+miss.length+' thing'+(miss.length>1?'s':'')+' left',sub:miss[0].t,go:()=>focusOn(th,true)});}
   if(thLevel()>=3&&S.ships.some(s=>!s.away)&&S.warriors>=5&&!S.raids.length&&!canRaid())out.push({p:6,ic:'Sea',t:'Ships and warriors are ready to sail',go:()=>worldPanel()});
   return out.sort((a,b)=>a.p-b.p).slice(0,6);}
@@ -2845,11 +2910,40 @@ let todoOpen=innerWidth>=900,todoKey='';
 function renderTodo(){let el=$('todo');if(!el){el=document.createElement('div');el.id='todo';el.className='todo';document.querySelector('.side').appendChild(el);}
   if(titleOn){el.hidden=true;return;}el.hidden=false;
   const L=suggestions();const key=todoOpen+'|'+L.map(o=>o.t+(o.sub||'')).join('|');if(key===todoKey)return;todoKey=key;
-  el.innerHTML='<button type="button" class="tdh" id="todo-h" aria-expanded="'+todoOpen+'"><b>To do</b><span>'+L.length+'</span></button>'+(todoOpen?'<div class="tdl">'+L.map((o,i)=>'<button type="button" class="td '+(o.cls||'')+'" data-td="'+i+'">'+ico(o.ic,16)+'<span><b>'+esc(o.t)+'</b>'+(o.sub?'<em>'+esc(o.sub)+'</em>':'')+'</span></button>').join('')+'</div>':'');
+  el.innerHTML='<button type="button" class="tdh" id="todo-h" aria-expanded="'+todoOpen+'"><b>To do</b><span>'+L.length+'</span></button>'+(todoOpen?'<div class="tdl">'+L.map((o,i)=>'<button type="button" class="td '+(o.cls||'')+'" data-td="'+i+'">'+(ICON[o.ic]?ICON[o.ic].replace(/width="14" height="14"/,'width="16" height="16"'):ico(o.ic,16))+'<span><b>'+esc(o.t)+'</b>'+(o.sub?'<em>'+esc(o.sub)+'</em>':'')+'</span></button>').join('')+'</div>':'');
   $('todo-h').onclick=()=>{todoOpen=!todoOpen;todoKey='';renderTodo();};
   el.querySelectorAll('[data-td]').forEach(b=>b.onclick=()=>{const o=L[+b.dataset.td];if(mode!=='view')endMode();o.go();todoKey='';});}
 setInterval(()=>{try{renderTodo();if(isWide()&&!$('dock'))renderDock();if($('dock')){const lv=thLevel();if(renderDock.lv!==lv||renderDock.m!==mode+roadKind){renderDock.lv=lv;renderDock.m=mode+roadKind;renderDock();}}}catch(e){}},700);
 window.addEventListener('resize',()=>{if(isWide())renderDock();});
+
+/* =================== guide: short dynamic tutorial at the start of a new saga =================== */
+/* S.guide: step index while the guide runs, -1 when finished or closed, undefined in old saves and test villages */
+const GUIDE=[
+  {h:'Welcome to Kaldstrand',t:()=>'A year has 30 days of summer and 15 of winter. In summer your people gather and build. In winter they live on what you stored, and every house burns wood to keep warm.',next:true},
+  {h:'Food and wood',t:()=>'Pick a Berry Gatherer and a Woodcutter’s Lodge from the bar at the bottom (the first of each is free). Berries feed people in summer; wood builds everything and heats the houses.',done:()=>has('berry')&&has('wood'),go:()=>placeType(has('berry')?'wood':'berry'),btn:()=>'Place '+DEF[has('berry')?'wood':'berry'].name},
+  {h:'Workers',t:()=>'People take jobs on their own. Click a building to see what it makes and what it needs, and use − and + to choose how many work there. Idle people show up in the To do list.',next:true},
+  {h:'Fish',t:()=>'The Fisher’s Hut is your steadiest food: 4 fish per worker a day. Place it within 5 tiles of the river or the sea for the full catch; the placement shows how much it will get.',done:()=>has('fish'),go:()=>placeType('fish'),btn:()=>'Place a Fisher’s Hut'},
+  {h:'Planks',t:()=>'The Carpenter saws wood into planks. Storing 40 planks opens the Granary, Warehouse, Iron Mine and Smithy.',done:()=>has('carp'),go:()=>placeType('carp'),btn:()=>'Place a Carpenter'},
+  {h:'Food for the winter',t:()=>'Fresh food loses 3% a day. The Preserver turns fish and berries into dried fish and jam that never spoil and feed twice as much. A Granary holds 300 more food.',done:()=>has('pres')&&has('gran'),go:()=>placeType(has('pres')?'gran':'pres'),btn:()=>has('pres')?(isAvail('gran')?'Place a Granary':''):'Place a Preserver'},
+  {h:'Firewood',t:()=>{const w=Math.ceil(fireNeed()*15);return 'Each house burns about 1 wood a day in winter. Your village needs about '+w+' wood to get through this winter, on top of what you build with. Keep the woodcutters busy and don’t saw all of it into planks.';},next:true},
+  {h:'Tools and the Town Hall',t:()=>'Work slows down without tools: build an Iron Mine and a Smithy. Follow the goal at the top and the To do list on the right. When every requirement is met, click the Town Hall to raise it.',next:true,last:true}];
+function guideStep(){if(typeof S.guide!=='number'||S.guide<0)return null;while(S.guide<GUIDE.length&&GUIDE[S.guide].done&&GUIDE[S.guide].done())S.guide++;if(S.guide>=GUIDE.length){S.guide=-1;return null;}return GUIDE[S.guide];}
+function winterIn(){const yt=S.gameT%YEAR;return yt<SUMMER?Math.max(1,Math.ceil((SUMMER-yt)/DAY)):0;}
+let guideKey='';
+function renderGuide(){const side=document.querySelector('.side');if(!side)return;let el=$('guide');
+  const g=titleOn?null:guideStep();
+  if(!g){if(el)el.hidden=true;return;}
+  if(!el){el=document.createElement('div');el.id='guide';el.className='guide';side.insertBefore(el,side.firstChild);}
+  el.hidden=false;
+  const wi=winterIn(),body=g.t(),b=g.btn?g.btn():'';
+  const key=S.guide+'|'+body+'|'+b+'|'+wi;if(key===guideKey)return;guideKey=key;
+  el.innerHTML='<div class="gh"><b>Guide</b><span>'+(S.guide+1)+' / '+GUIDE.length+'</span><button type="button" class="gx" id="g-x" aria-label="Close the guide" title="Close the guide">×</button></div>'+
+    '<div class="gb"><strong>'+esc(g.h)+'</strong><p>'+esc(body)+'</p>'+(wi?'<p class="gw">Winter comes in '+wi+' day'+(wi>1?'s':'')+'.</p>':'<p class="gw">It is winter now.</p>')+
+    '<div class="ga">'+(b&&g.go?'<button type="button" class="btn primary" id="g-go">'+esc(b)+'</button>':'')+(g.next?'<button type="button" class="btn'+(g.go?'':' primary')+'" id="g-next">'+(g.last?'Done':'Next')+'</button>':'')+'</div></div>';
+  $('g-x').onclick=()=>{S.guide=-1;guideKey='';renderGuide();toast('Guide closed. You can open it again from the Saga panel.',3200);};
+  if($('g-go'))$('g-go').onclick=()=>{if(mode!=='view')endMode();g.go();};
+  if($('g-next'))$('g-next').onclick=()=>{S.guide++;guideKey='';renderGuide();};}
+setInterval(()=>{try{renderGuide();}catch(e){}},700);
 
 /* =================== portraits =================== */
 const SKIN=[['#E2B99A','#CFA383','#C2957A'],['#D9A988','#C29274','#B4856A'],['#EAC6AA','#D6AE92','#C9A185']];
@@ -2930,12 +3024,12 @@ function modalSpec(m){
   if(m.k==='evt')return evtOpts(m);
   if(m.k==='raid')return raidOpts(m);
   if(m.k==='fest'){const F=FESTS[m.f],c=F.cost();const ok=foodUnits()>=c.meals&&(!c.wood||S.res.wood>=c.wood);
-    return {title:F.n,text:F.t,opts:[{l:'Hold the '+F.n+' ('+c.meals+' meals'+(c.wood?', '+c.wood+' wood':'')+')',dis:!ok,f:()=>{spendMeals(c.meals);if(c.wood)S.res.wood-=c.wood;F.fx();S.feast={until:S.gameT+DAY*1.5};return 'The '+F.n+' was held. Spirits rise and the gods take note.';}},{l:'Skip it this year',f:()=>{addMod('nofest','No '+F.n+' this year',-3,10);return '';}}]};}
+    return {title:F.n,text:F.t,opts:[{l:'Hold the '+F.n,pay:[{n:c.meals,k:'food'}].concat(c.wood?[{n:c.wood,k:'wood'}]:[]),get:[{t:'Morale rises and the gods take note'}],dis:!ok,f:()=>{spendMeals(c.meals);if(c.wood)S.res.wood-=c.wood;F.fx();S.feast={until:S.gameT+DAY*1.5};return 'The '+F.n+' was held. Spirits rise and the gods take note.';}},{l:'Skip it this year',pay:[{t:'Morale −3 for 10 days'}],get:[{t:'Keep the food and wood'}],f:()=>{addMod('nofest','No '+F.n+' this year',-3,10);return '';}}]};}
   if(m.k==='funeral'){const h=PB(m.heir);if(m.cause==='deposed')return {title:'A New Jarl',portrait:h,text:pname(h)+' takes the high seat. The old Jarl lives on, a man without a hall.',opts:[{l:'So be it',f:()=>''}]};
     return {title:'The Jarl Is Dead',portrait:h,text:'The old Jarl is dead. '+pname(h)+' takes the high seat of Kaldstrand. How shall the Jarl be sent to the gods?',opts:[
-      {l:'Burn him in a ship (40 wood, 20 planks)',dis:S.res.wood<40||S.res.planks<20,f:()=>{S.res.wood-=40;S.res.planks-=20;addMod('funeral','A ship-burial for the Jarl',10,30);addFavor('odin',10);addFame(10);return 'The burning ship drifted out into the bay.';}},
-      {l:'Burn him on the pyre (20 wood)',dis:S.res.wood<20,f:()=>{S.res.wood-=20;addMod('funeral','The Jarl’s pyre',4,20);addFavor('odin',4);return 'The pyre burned all night.';}},
-      {l:'Bury him in a mound',f:()=>{S.contam=Math.max(S.contam,10);return 'A mound was raised above the shore.';}}]};}
+      {l:'Burn him in a ship',pay:[{n:40,k:'wood'},{n:20,k:'planks'}],get:[{t:'Morale +10 for 30 days'},{t:'Odin +10 favour'},{n:10,k:'fame'}],dis:S.res.wood<40||S.res.planks<20,f:()=>{S.res.wood-=40;S.res.planks-=20;addMod('funeral','A ship-burial for the Jarl',10,30);addFavor('odin',10);addFame(10);return 'The burning ship drifted out into the bay.';}},
+      {l:'Burn him on the pyre',pay:[{n:20,k:'wood'}],get:[{t:'Morale +4 for 20 days'},{t:'Odin +4 favour'}],dis:S.res.wood<20,f:()=>{S.res.wood-=20;addMod('funeral','The Jarl’s pyre',4,20);addFavor('odin',4);return 'The pyre burned all night.';}},
+      {l:'Bury him in a mound',pay:[{t:'The river turns foul for a while'}],f:()=>{S.contam=Math.max(S.contam,10);return 'A mound was raised above the shore.';}}]};}
   if(m.k==='info')return {title:m.title,text:m.text,opts:[{l:'So be it',f:()=>''}]};
   if(m.k==='report')return {title:m.title,text:m.text,table:[['Brought home',m.got.length?m.got.join(', '):'nothing'],['Dead',m.dead.length?m.dead.join(', '):'none'],['Wounded',String(m.wounded||0)]],opts:[{l:'To the hall',f:()=>''}]};
   if(m.k==='year')return {title:'The Year '+(864+m.y)+' Ends',text:'Year '+m.y+' of Kaldstrand is over. The skald adds it to the saga.',table:[['The skalds’ song of the year','+'+(m.yf||0)+' fame'],['Born',m.s.births],['Died',m.s.deaths],['Came to live here',m.s.arrived],['Left',m.s.left],['Raids',m.s.raids],['Silver won',m.s.silver],['Fame earned',Math.round(m.s.fame)],['People now',m.pop]],opts:[{l:'Onward',f:()=>''}]};
@@ -2949,7 +3043,7 @@ function modalTick(){if(titleOn||!S||!S.modal||!S.modal.length)return;if(modalOp
   h+='<p class="mtext">'+esc(sp.text)+'</p>';
   if(sp.table)h+='<table class="t">'+sp.table.map(r=>'<tr><td>'+esc(r[0])+'</td><td>'+esc(String(r[1]))+'</td></tr>').join('')+'</table>';
   if(sp.slider){const sl=sp.slider;h+='<label class="meta" for="m-sl">Prisoners to take: <strong id="m-slv">0</strong> of '+sl.max+' · plunder carried: <strong id="m-slp">'+Math.round(Math.min(100,100*sl.cap/Math.max(1,sl.lu)))+'%</strong></label><input type="range" id="m-sl" min="0" max="'+sl.max+'" value="0" step="1">';}
-  h+='<div class="mopts">'+sp.opts.map((o,i)=>'<button type="button" class="btn'+(i===0?' primary':'')+'" data-mo="'+i+'"'+(o.dis?' disabled':'')+'>'+esc(o.l)+'</button>').join('')+'</div>';
+  h+='<div class="mopts">'+sp.opts.map((o,i)=>{const fx=(o.pay||o.get)?fxHtml(o.pay,o.get):'';return '<button type="button" class="btn'+(i===0?' primary':'')+(fx?' wfx':'')+'" data-mo="'+i+'"'+(o.dis?' disabled':'')+'><span class="ol">'+esc(fx?fxLabel(o.l):o.l)+'</span>'+fx+'</button>';}).join('')+'</div>';
   $('modal-card').innerHTML=h;$('modal').hidden=false;
   if(sp.slider){const sl=sp.slider,inp=$('m-sl');inp.oninput=()=>{const v=+inp.value;$('m-slv').textContent=v;$('m-slp').textContent=Math.round(Math.min(100,100*Math.max(0,sl.cap-v*4)/Math.max(1,sl.lu)))+'%';};}
   $('modal-card').querySelectorAll('[data-mo]').forEach(b=>b.onclick=()=>{const v=sp.slider?+$('m-sl').value:0;const res=applyModal(+b.dataset.mo,v);$('modal').hidden=true;modalOpen=null;if(res)toast(res,3600);if(!S.modal.length&&!titleOn)setSpeed(speedBefore||1);save();});
@@ -3066,6 +3160,7 @@ function planSheet(){const t=TG(plan.tgt);const home=S.ships.filter(s=>!s.away);
 function sagaPanel(){const g=currentGoal();
   let h=head('Saga of Kaldstrand','Fame '+fmt(S.fame)+' · '+MODES[S.mode].n+' · slot '+(curSlot||1));
   h+='<h3>Goals</h3>'+MS.filter(m=>m.lv<=thLevel()).map(m=>{const done=S.ms.includes(m.id),now=g&&g.id===m.id;return '<div class="ms'+(done?' done':now?' now':'')+'"><i aria-hidden="true"></i><div><strong>'+esc(m.title)+'</strong><br><span class="meta">'+esc(m.goal)+(m.unlock.length?' · unlocks '+esc(m.unlock.map(u=>DEF[u].name).join(', ')):'')+'</span></div><span class="f">+'+m.fame+'</span></div>';}).join('');
+  if(S.guide===-1)h+='<p><button type="button" class="btn" id="sg-guide">Show the guide again</button></p>';
   const onA=[];h+=advisorsHtml(onA);h+=testToolsHtml(onA);
   h+='<h3>The gods</h3><table class="t">'+GOD_KEYS.map(k=>'<tr><td>'+GODS[k].n+'</td><td>'+bar(S.gods[k],S.gods[k]<20?'#A34A3A':S.gods[k]>=50?'#5E7A4E':'#C9A64A')+' '+Math.round(S.gods[k])+'</td></tr>').join('')+'</table><p class="meta">50+: the god’s gift is active. 80+: you may ask a blessing at the altar. Below 20: the god may curse you.</p>';
   h+='<h3>The saga so far</h3>'+S.saga.slice().reverse().slice(0,40).map(e=>'<p class="saga">Year '+e.y+'. '+esc(e.t)+'</p>').join('');
@@ -3073,6 +3168,7 @@ function sagaPanel(){const g=currentGoal();
   h+='<p class="meta">Ubbe’s Saga '+esc(GAME_VERSION)+'</p>';
   h+='<h3>Save</h3><p>The saga saves itself in this browser. Export a code to keep a copy or move it to another device.</p><div class="acts"><button type="button" class="btn" id="sv-title">Title screen</button><button type="button" class="btn" id="sv-imp">Import</button><button type="button" class="btn primary" id="sv-exp">Export</button></div><div id="sv-box"></div>';
   openSheet(h,'panel');$('sheet-card').dataset.p='saga';onA.forEach(f=>f());
+  if($('sg-guide'))$('sg-guide').onclick=()=>{S.guide=0;guideKey='';closeSheet();renderGuide();};
   $('sv-exp').onclick=()=>{save();const code=exportCode();$('sv-box').innerHTML='<textarea id="sv-code" readonly aria-label="Save code"></textarea><div class="acts"><button type="button" class="btn small" id="sv-copy">Copy</button></div>';$('sv-code').value=code;$('sv-copy').onclick=()=>{const ta=$('sv-code');try{navigator.clipboard.writeText(code).then(()=>toast('Save code copied.'),()=>{ta.select();toast('Select the code and copy it.');});}catch(e){ta.select();toast('Select the code and copy it.');}};};
   $('sv-imp').onclick=()=>{$('sv-box').innerHTML='<textarea id="sv-in" aria-label="Paste a save code" placeholder="Paste a save code here"></textarea><div class="acts"><button type="button" class="btn small primary" id="sv-load">Load into this slot</button></div>';$('sv-load').onclick=()=>{const ok=importCode($('sv-in').value.trim());if(ok){closeSheet();toast('Saga loaded.');}else toast('That code could not be read. Check it was copied whole.');};};
   $('sv-title').onclick=()=>{save();closeSheet();showTitle('home');};}
@@ -3254,15 +3350,14 @@ function showTitle(screen,arg){titleOn=true;setSpeed(0);closeSheet();$('modal').
   if(screen==='intro'){const SL=[
       {h:'The year 865',art:ART_FLEET,t:'Ragnar Lothbrok is dead, thrown into a pit of serpents by King Ælla of Northumbria. His sons swear vengeance and gather the greatest fleet the north has seen. The English will call it the Great Heathen Army.'},
       {h:'Ubbe, son of Ragnar',art:'<div class="iport">'+UBBE_SVG+'</div>',t:'Ubbe will fight beside his brothers. But he wants something his father never built: a home that outlasts him. He is ambitious, and devout. He bears a scar from his first raid, and a Mjölnir at his throat.'},
-      {h:'Kaldstrand',art:ART_SHORE,t:'A cold shore between the mountains and the sea. A river, a forest, berry slopes, iron in the hills. Eleven souls step off the ship: Ubbe, his wife Thora, their son, and eight who chose to follow.'},
+      {h:'Kaldstrand',art:ART_SHORE,t:'A cold shore between the mountains and the sea. A river, a forest, berry slopes, iron in the hills. Sixteen souls step off the ship: Ubbe, his wife Thora, their son, and thirteen who chose to follow.'},
       {h:'How to rule',art:'',t:'',list:['Build, then give each workplace people with − and +.','Every winter tests your stores: food and firewood. The Völva warns you when a hard one comes.','Keep spirits high. Honour the gods. Name an heir: Jarls die.','Raise the Town Hall to open new ages: herds and fields, warriors, and at last ships, merchants and raids.']}];
     const i=arg.i,s=SL[i];h='<div class="intro"><div class="step">'+(i+1)+' / '+(SL.length+1)+'</div><h2 class="t2">'+esc(s.h)+'</h2>'+(s.art?'<div class="art">'+s.art+'</div>':'')+(s.t?'<p class="lead">'+esc(s.t)+'</p>':'')+(s.list?'<ol class="rules">'+s.list.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ol>':'')+'</div><div class="tacts"><button type="button" class="btn" id="t-back">Back</button><button type="button" class="btn" id="t-skip">Skip</button><button type="button" class="btn primary" id="t-next">Next</button></div>';
     T.innerHTML=h;$('t-back').onclick=()=>i?showTitle('intro',Object.assign({},arg,{i:i-1})):showTitle('mode',{slot:arg.slot});$('t-skip').onclick=()=>showTitle('advisor',arg);$('t-next').onclick=()=>i<SL.length-1?showTitle('intro',Object.assign({},arg,{i:i+1})):showTitle('advisor',arg);return;}
   if(screen==='advisor'){h='<div class="step">5 / 5</div><h2 class="t2">Choose your first advisor</h2><p class="lead">One voice at Ubbe’s side. More join the council when the hall grows great.</p><div class="advs">'+Object.keys(ADVISORS).map(k=>{const A=ADVISORS[k];return '<button type="button" class="adv" data-ad="'+k+'">'+portrait(ADV_P[k],64)+'<span><b>'+esc(A.n)+'</b> · '+esc(A.role)+'<br><span class="meta">'+esc(A.b)+'</span><br><i>'+esc(A.q)+'</i></span></button>';}).join('')+'</div><div class="tacts"><button type="button" class="btn" id="t-back">Back</button></div>';
     T.innerHTML=h;$('t-back').onclick=()=>showTitle('intro',Object.assign({},arg,{i:3}));T.querySelectorAll('[data-ad]').forEach(b=>b.onclick=()=>startSaga(arg.slot,arg.mode,b.dataset.ad));return;}}
 function hideTitle(){titleOn=false;$('title').hidden=true;document.body.classList.remove('titled');}
-function startSaga(slot,mode,adv){freshState(mode,adv);curSlot=slot;S.saga.push({y:1,t:ADVISORS[adv].n+' the '+ADVISORS[adv].role.toLowerCase()+' stood at Ubbe’s side.'});syncWalkers();assignWorkers();hideTitle();const p=iso(HOME_X,HOME_Y);camX=p[0];camY=p[1];zoom=Math.min(1.1,Math.max(0.6,W/520));save();setSpeed(1);
-  setTimeout(()=>toast(isWide()?'Your first goal is at the top of the screen. Pick a building from the bar at the bottom, or follow the To do list.':'Your first goal is at the top of the screen. Tap Build to begin.',6000),400);}
+function startSaga(slot,mode,adv){freshState(mode,adv);curSlot=slot;S.saga.push({y:1,t:ADVISORS[adv].n+' the '+ADVISORS[adv].role.toLowerCase()+' stood at Ubbe’s side.'});syncWalkers();assignWorkers();hideTitle();const p=iso(HOME_X,HOME_Y);camX=p[0];camY=p[1];zoom=Math.min(1.1,Math.max(0.6,W/520));S.guide=0;save();setSpeed(1);}
 function loadSlot(i){try{const s=localStorage.getItem(SLOT_KEY(i));if(s&&apply(JSON.parse(s))){curSlot=i;try{localStorage.setItem(LAST_KEY,String(i));}catch(e){}syncWalkers();hideTitle();const p=iso(HOME_X,HOME_Y);camX=p[0];camY=p[1];setSpeed(1);return true;}}catch(e){}toast('That saga could not be loaded.');return false;}
 
 /* =================== planner, test mode and test tools =================== */

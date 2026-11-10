@@ -1,4 +1,4 @@
-# Ubbe's Saga: numbers (Beta 0.8.0)
+# Ubbe's Saga: numbers (Beta 0.9.0)
 
 Generated from the game by `tools/gen_numbers.py`. Do not edit by hand.
 
@@ -21,7 +21,7 @@ Limits are per Town Hall level 1 / 2 / 3 / 4 / 5. Workers: +1 at building level 
 | house | House | Housing | 1 | 2×2 | 20 wood | 0 |  | 11 / 15 / 22 / 25 / 27 |
 | jarl | Jarl’s House | Housing | 1 | 3×3 | 60 wood, 30 planks | 0 |  | 1 / 1 / 1 / 1 / 1 |
 | pyre | Funeral Pyre | Housing | 1 | 2×2 | 10 wood | 0 |  | 1 / 1 / 2 / 2 / 2 |
-| wood | Woodcutter’s Lodge | Resources | 1 | 2×2 | 15 wood | 3 | 3 wood per worker a day | 2 / 3 / 3 / 3 / 4 |
+| wood | Woodcutter’s Lodge | Resources | 1 | 2×2 | 15 wood | 3 | 3 wood per worker a day | 2 / 3 / 4 / 4 / 5 |
 | carp | Carpenter | Resources | 1 | 2×2 | 25 wood | 2 | 4 wood → 2 planks per worker a day | 1 / 2 / 2 / 2 / 2 |
 | mine | Iron Mine | Resources | 1 | 2×2 | 30 wood, 10 planks | 3 | 2 iron per worker a day | 1 / 1 / 2 / 2 / 2 |
 | smith | Smithy | Resources | 1 | 2×2 | 15 wood, 20 planks, 10 iron | 2 | Tools, and later weapons | 1 / 1 / 1 / 2 / 2 |
@@ -66,12 +66,10 @@ Limits are per Town Hall level 1 / 2 / 3 / 4 / 5. Workers: +1 at building level 
 
 | Age | Goal | Task | Fame | Unlocks |
 |---|---|---|---|---|
-| 1 | Settle the shore | Build a berry gatherer and a woodcutter’s lodge (the first of each is free) | 20 | Carpenter, Funeral Pyre |
-| 1 | Timber and planks | Build a carpenter and store 40 planks | 20 | Iron Mine, Warehouse |
-| 1 | Iron from the hills | Build an iron mine and store 20 iron | 20 | Smithy, Granary |
-| 1 | The first tools | Build a smithy and stock 12 tools | 30 | Preserver |
-| 1 | Ready for winter | Build a preserver, a granary and a warehouse, and store 35 preserved food | 30 | Market Square, Jarl’s House |
-| 1 | A roof for every family | Have 4 houses | 20 |  |
+| 1 | Settle the shore | Build a berry gatherer and a woodcutter’s lodge (the first of each is free) | 20 | Carpenter, Preserver, Funeral Pyre |
+| 1 | Timber and planks | Build a carpenter and store 40 planks | 20 | Granary, Warehouse, Iron Mine, Smithy |
+| 1 | Ready for winter | Build a preserver, a granary and a warehouse, and store 35 preserved food | 40 | Market Square, Jarl’s House |
+| 1 | Iron and tools | Build an iron mine and a smithy, and stock 12 tools | 50 |  |
 | 1 | The first winter | Survive the first winter | 50 |  |
 | 1 | A gathering place | Build the market square | 30 |  |
 | 1 | A growing village | Reach 20 people | 30 |  |

@@ -17,4 +17,6 @@ let PRODLOG=null,PRODSRC='other';
 function afford(cost){return Object.keys(cost).every(k=>(S.res[k]||0)>=cost[k]);}
 function pay(cost,sign){Object.keys(cost).forEach(k=>{S.res[k]=(S.res[k]||0)-cost[k]*sign;});}
 const fmt=n=>Math.floor(n+1e-9).toString();
+/* cost with resource icons (names on hover); falls back to words for goods without an icon */
+const costIco=c=>Object.keys(c).length?Object.keys(c).map(k=>typeof ICON!=='undefined'&&ICON[k]?'<span class="ci" title="'+(RNAME[k]||k)+'">'+ICON[k]+c[k]+'</span>':'<span class="ci">'+c[k]+' '+(RNAME[k]||k).toLowerCase()+'</span>').join(''):'free';
 const costStr=c=>Object.keys(c).length?Object.keys(c).map(k=>c[k]+' '+(RNAME[k]||k).toLowerCase()).join(', '):'free';

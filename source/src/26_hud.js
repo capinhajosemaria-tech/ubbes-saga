@@ -104,7 +104,7 @@ function buildingSheet(b){
   h+='<p>'+esc(D.desc)+'</p>';
   if(D.up){const nx=b.lvl+1;if(b.lvl>=5)h+='<div class="meta">Highest level reached.</div>';
     else{const c=upCost(b),need=canUpgrade(b);const eff=b.t==='house'?('+1 resident'+(nx===3?', better insulated: −25% firewood':nx===5?', a carved hall that draws newcomers':'')):D.store?'+150 storage':nx===2?'+20% output':nx===3?(FIELDS.has(b.t)?'+30% output in all':'+1 worker slot'):nx===4?'+40% output in all':'Finest work: +55% output in all';
-      h+='<div class="wk">'+btn('b-up','Upgrade to level '+nx,{cls:'primary',dis:!need||!afford(c)})+'<span class="meta">'+esc(eff)+' · '+esc(costStr(c))+(need?'':' · raise the Town Hall first')+'</span></div>';
+      h+='<div class="wk">'+btn('b-up','Upgrade to level '+nx,{cls:'primary',dis:!need||!afford(c)})+'<span class="meta">'+esc(eff)+' · '+costIco(c)+(need?'':' · raise the Town Hall first')+'</span></div>';
       on.push(()=>{$('b-up').onclick=()=>{if(!canUpgrade(b)||!afford(upCost(b)))return;pay(upCost(b),1);b.lvl++;assignWorkers();toast(D.name+' upgraded to level '+b.lvl+'.');buildingSheet(b);save();};});}}
   if(!D.fixed){h+='<div class="acts"><button type="button" class="btn danger" id="b-demo">'+(demolishArmed===b.id?'Tap again to demolish':'Demolish (50% back)')+'</button><button type="button" class="btn" id="b-move">Move</button></div>';
     on.push(()=>{$('b-demo').onclick=()=>{if(demolishArmed!==b.id){demolishArmed=b.id;buildingSheet(b);return;}demolishArmed=0;
@@ -137,7 +137,7 @@ function renderBuild(){if(isWide()){if(mode!=='view')endMode();closeSheet();open
   h+='<div class="tabs" role="group" aria-label="Categories">'+CATS.map(c=>'<button type="button" data-cat="'+c+'" aria-pressed="'+(c===buildCat)+'">'+c+'</button>').join('')+'</div><div class="blist">';
   Object.keys(DEF).filter(k=>DEF[k].cat===buildCat).forEach(k=>{const D=DEF[k],av=isAvail(k),lim=limitOf(k),cnt=count(k),uq=cnt>=lim,cst=costOf(k),free=!Object.keys(cst).length&&Object.keys(D.cost).length,ok=av&&!uq&&afford(cst);
     const lock=D.lvl>thLevel()?'Needs Town Hall level '+D.lvl:!av?'Unlocks with: '+(MS.find(m=>m.unlock.includes(k))||{title:'?'}).title:uq?'Limit reached for this level':'';
-    h+='<button type="button" class="bcard'+(ok?'':' no')+'" data-b="'+k+'"><img class="bth" alt="" src="'+buildThumb(k,1)+'"><b>'+esc(D.name)+'</b>'+(D.lvl<=thLevel()?'<span class="lim">Built '+cnt+' / '+lim+'</span>':'')+'<span>'+D.w+'×'+D.h+(D.slots?' · '+D.slots+' workers':'')+(D.housing?' · '+D.housing+' people':'')+'</span><span class="cost'+(av&&!afford(cst)?' bad':'')+'">'+esc(free?'First one free':costStr(cst))+'</span>'+(lock?'<span>'+esc(lock)+'</span>':'')+'</button>';});
+    h+='<button type="button" class="bcard'+(ok?'':' no')+'" data-b="'+k+'"><img class="bth" alt="" src="'+buildThumb(k,1)+'"><b>'+esc(D.name)+'</b>'+(D.lvl<=thLevel()?'<span class="lim">Built '+cnt+' / '+lim+'</span>':'')+'<span>'+D.w+'×'+D.h+(D.slots?' · '+D.slots+' workers':'')+(D.housing?' · '+D.housing+' people':'')+'</span><span class="cost'+(av&&!afford(cst)?' bad':'')+'">'+(free?'First one free':costIco(cst))+'</span>'+(lock?'<span>'+esc(lock)+'</span>':'')+'</button>';});
   h+='</div>';openSheet(h,'build');
   $('sheet-card').querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{buildCat=b.dataset.cat;renderBuild();});
   $('sheet-card').querySelectorAll('.bcard').forEach(c=>c.onclick=()=>{const k=c.dataset.b,D=DEF[k];

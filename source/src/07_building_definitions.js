@@ -72,6 +72,6 @@ Object.assign(LIMITS,{house:[6,10,14,18,22],wood:[2,3,4,4,5],mine:[1,2,2,2,3],ca
   pen:[0,1,2,2,3],hay:[0,2,3,3,4],garden:[0,2,3,4,4],smoke:[0,1,2,2,2],grain:[0,0,3,4,5],flax:[0,0,2,3,3],hunter:[0,0,2,2,3],salt:[0,1,1,2,2],
   brewery:[0,0,0,1,2],hives:[0,0,0,3,4],tomb:[0,0,0,1,1],tailor:[0,0,0,0,1],hof:[0,0,0,0,1],tower:[0,0,0,0,2],camp:[4,6,8,10,12],bench:[6,8,10,12,14],rune:[0,4,6,8,10],herbs:[0,4,6,8,10],prow:[0,0,3,4,6],nets:[0,0,4,5,6]});
 /* Beta 0.6: limits tuned so a full village always has 4–8 more workers than jobs, with every warrior place filled */
-Object.assign(LIMITS,{house:[11,15,22,25,27],wood:[2,3,3,3,4],carp:[1,2,2,2,2],mine:[1,1,2,2,2],smith:[1,1,1,2,2],berry:[2,2,2,2,2],pres:[1,1,1,1,2],pen:[0,1,1,2,2],hay:[0,1,1,2,3],garden:[0,2,2,3,3],salt:[0,1,1,1,1],smoke:[0,1,1,1,2],grain:[0,0,2,2,3],flax:[0,0,1,2,2],hunter:[0,0,1,2,2],brewery:[0,0,0,1,1],hives:[0,0,0,2,3]});
+Object.assign(LIMITS,{house:[11,15,22,25,27],wood:[2,3,4,4,5],carp:[1,2,2,2,2],mine:[1,1,2,2,2],smith:[1,1,1,2,2],berry:[2,2,2,2,2],pres:[1,1,1,1,2],pen:[0,1,1,2,2],hay:[0,1,1,2,3],garden:[0,2,2,3,3],salt:[0,1,1,1,1],smoke:[0,1,1,1,2],grain:[0,0,2,2,3],flax:[0,0,1,2,2],hunter:[0,0,1,2,2],brewery:[0,0,0,1,1],hives:[0,0,0,2,3]});
 TH_UP[4]={cost:{wood:260,planks:220,iron:80,tools:15,silver:100},pop:48,fame:950,bld:[['gran',3],['ware',3]],ms:['ship','raid','bread']};
 TH_UP[5]={cost:{wood:380,planks:320,iron:140,tools:25,silver:250,gold:20},pop:80,fame:1700,bld:[['brewery',1],['house',4]],ms:['ale','vikings','snekkja','isles','tomb']};

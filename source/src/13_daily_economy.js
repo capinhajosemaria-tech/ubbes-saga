@@ -97,6 +97,7 @@ function dayTick(){
   checkMilestones();
 }
 function checkMilestones(){
+  for(const m of MS)if(S.ms.includes(m.id))m.unlock.forEach(u=>{if(!S.avail.includes(u))S.avail.push(u);});/* older saves: grant unlocks moved to earlier goals */
   for(const m of MS){if(S.ms.includes(m.id))continue;if(m.test()){S.ms.push(m.id);addFame(m.fame);m.unlock.forEach(u=>{if(!S.avail.includes(u))S.avail.push(u);});
     S.saga.push({y:Math.floor(S.gameT/YEAR)+1,t:m.saga});
     const un=m.unlock.length?' Unlocked: '+m.unlock.map(u=>DEF[u].name).join(', ')+'.':'';

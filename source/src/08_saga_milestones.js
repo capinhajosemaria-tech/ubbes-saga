@@ -1,11 +1,9 @@
 /* =================== saga milestones =================== */
 const MS=[
-  {id:'settle',lv:1,title:'Settle the shore',goal:'Build a berry gatherer and a woodcutter’s lodge (the first of each is free)',fame:20,unlock:['carp','pyre'],test:()=>has('berry')&&has('wood'),saga:'Ubbe sent the women to the berry slopes, men to the river with buckets, and axes into the grove.'},
-  {id:'planks',lv:1,title:'Timber and planks',goal:'Build a carpenter and store 40 planks',fame:20,unlock:['mine','ware'],test:()=>has('carp')&&S.res.planks>=40,saga:'Planks were sawn for better halls.'},
-  {id:'iron',lv:1,title:'Iron from the hills',goal:'Build an iron mine and store 20 iron',fame:20,unlock:['smith','gran'],test:()=>has('mine')&&S.res.iron>=20,saga:'Ore was dug below the mountain.'},
-  {id:'tools',lv:1,title:'The first tools',goal:'Build a smithy and stock 12 tools',fame:30,unlock:['pres'],test:()=>has('smith')&&S.res.tools>=12,saga:'The first tools came hot from the anvil.'},
-  {id:'winter',lv:1,title:'Ready for winter',goal:'Build a preserver, a granary and a warehouse, and store 35 preserved food',fame:30,unlock:['market','jarl'],test:()=>has('pres')&&has('gran')&&has('ware')&&S.res.dfish+S.res.jam+S.res.pickles>=35,saga:'Fish hung to dry and the storehouses filled before the dark months.'},
-  {id:'roof',lv:1,title:'A roof for every family',goal:'Have 4 houses',fame:20,unlock:[],test:()=>count('house')>=4,saga:'New houses rose along the shore of Kaldstrand.'},
+  {id:'settle',lv:1,title:'Settle the shore',goal:'Build a berry gatherer and a woodcutter’s lodge (the first of each is free)',fame:20,unlock:['carp','pres','pyre'],test:()=>has('berry')&&has('wood'),saga:'Ubbe sent the women to the berry slopes, men to the river with nets, and axes into the grove.'},
+  {id:'planks',lv:1,title:'Timber and planks',goal:'Build a carpenter and store 40 planks',fame:20,unlock:['gran','ware','mine','smith'],test:()=>has('carp')&&S.res.planks>=40,saga:'Planks were sawn for better halls.'},
+  {id:'winter',lv:1,title:'Ready for winter',goal:'Build a preserver, a granary and a warehouse, and store 35 preserved food',fame:40,unlock:['market','jarl'],test:()=>has('pres')&&has('gran')&&has('ware')&&S.res.dfish+S.res.jam+S.res.pickles>=35,saga:'Fish hung to dry and the storehouses filled before the dark months.'},
+  {id:'iron',lv:1,title:'Iron and tools',goal:'Build an iron mine and a smithy, and stock 12 tools',fame:50,unlock:[],test:()=>has('mine')&&has('smith')&&S.res.tools>=12,saga:'Ore was dug below the mountain, and the first tools came hot from the anvil.'},
   {id:'firstwinter',lv:1,title:'The first winter',goal:'Survive the first winter',fame:50,unlock:[],test:()=>Math.floor(S.gameT/YEAR)>=1,saga:'The first winter passed. Kaldstrand still stood when the ice broke.'},
   {id:'market',lv:1,title:'A gathering place',goal:'Build the market square',fame:30,unlock:[],test:()=>has('market'),saga:'Traders and neighbours met in the new square.'},
   {id:'twenty',lv:1,title:'A growing village',goal:'Reach 20 people',fame:30,unlock:[],test:()=>S.pop>=20,saga:'Twenty souls now called Kaldstrand home.'},

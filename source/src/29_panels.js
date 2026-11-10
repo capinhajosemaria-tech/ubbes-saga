@@ -109,6 +109,7 @@ function planSheet(){const t=TG(plan.tgt);const home=S.ships.filter(s=>!s.away);
 function sagaPanel(){const g=currentGoal();
   let h=head('Saga of Kaldstrand','Fame '+fmt(S.fame)+' · '+MODES[S.mode].n+' · slot '+(curSlot||1));
   h+='<h3>Goals</h3>'+MS.filter(m=>m.lv<=thLevel()).map(m=>{const done=S.ms.includes(m.id),now=g&&g.id===m.id;return '<div class="ms'+(done?' done':now?' now':'')+'"><i aria-hidden="true"></i><div><strong>'+esc(m.title)+'</strong><br><span class="meta">'+esc(m.goal)+(m.unlock.length?' · unlocks '+esc(m.unlock.map(u=>DEF[u].name).join(', ')):'')+'</span></div><span class="f">+'+m.fame+'</span></div>';}).join('');
+  if(S.guide===-1)h+='<p><button type="button" class="btn" id="sg-guide">Show the guide again</button></p>';
   const onA=[];h+=advisorsHtml(onA);h+=testToolsHtml(onA);
   h+='<h3>The gods</h3><table class="t">'+GOD_KEYS.map(k=>'<tr><td>'+GODS[k].n+'</td><td>'+bar(S.gods[k],S.gods[k]<20?'#A34A3A':S.gods[k]>=50?'#5E7A4E':'#C9A64A')+' '+Math.round(S.gods[k])+'</td></tr>').join('')+'</table><p class="meta">50+: the god’s gift is active. 80+: you may ask a blessing at the altar. Below 20: the god may curse you.</p>';
   h+='<h3>The saga so far</h3>'+S.saga.slice().reverse().slice(0,40).map(e=>'<p class="saga">Year '+e.y+'. '+esc(e.t)+'</p>').join('');
@@ -116,6 +117,7 @@ function sagaPanel(){const g=currentGoal();
   h+='<p class="meta">Ubbe’s Saga '+esc(GAME_VERSION)+'</p>';
   h+='<h3>Save</h3><p>The saga saves itself in this browser. Export a code to keep a copy or move it to another device.</p><div class="acts"><button type="button" class="btn" id="sv-title">Title screen</button><button type="button" class="btn" id="sv-imp">Import</button><button type="button" class="btn primary" id="sv-exp">Export</button></div><div id="sv-box"></div>';
   openSheet(h,'panel');$('sheet-card').dataset.p='saga';onA.forEach(f=>f());
+  if($('sg-guide'))$('sg-guide').onclick=()=>{S.guide=0;guideKey='';closeSheet();renderGuide();};
   $('sv-exp').onclick=()=>{save();const code=exportCode();$('sv-box').innerHTML='<textarea id="sv-code" readonly aria-label="Save code"></textarea><div class="acts"><button type="button" class="btn small" id="sv-copy">Copy</button></div>';$('sv-code').value=code;$('sv-copy').onclick=()=>{const ta=$('sv-code');try{navigator.clipboard.writeText(code).then(()=>toast('Save code copied.'),()=>{ta.select();toast('Select the code and copy it.');});}catch(e){ta.select();toast('Select the code and copy it.');}};};
   $('sv-imp').onclick=()=>{$('sv-box').innerHTML='<textarea id="sv-in" aria-label="Paste a save code" placeholder="Paste a save code here"></textarea><div class="acts"><button type="button" class="btn small primary" id="sv-load">Load into this slot</button></div>';$('sv-load').onclick=()=>{const ok=importCode($('sv-in').value.trim());if(ok){closeSheet();toast('Saga loaded.');}else toast('That code could not be read. Check it was copied whole.');};};
   $('sv-title').onclick=()=>{save();closeSheet();showTitle('home');};}

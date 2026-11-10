@@ -2,6 +2,15 @@
 
 Versions are `Beta 0.MINOR.PATCH` until Town Hall 10 (`1.0.0`).
 
+## Beta 0.9.0
+- Town Hall 1 is quicker to get ready for winter: the Preserver unlocks with the first goal and the Granary and Warehouse with the planks goal. Iron and tools are now one goal, and the "4 houses" goal is gone (you start with 4).
+- A short guide for new sagas: a card next to the To do list walks you through seasons, food, wood, workers, fish, planks, winter stores and firewood, and moves on as you build. Close it any time; reopen it from the Saga panel.
+- Event choices now say clearly what you pay (red, −) and what you get (green, +), with icons. Festivals and the jarl's funeral too.
+- Firewood: one more woodcutter's lodge allowed at Town Hall 3, 4 and 5; from Town Hall 3 newcomers wait before winter while firewood is short; a To do warning 10 days before winter when the wood will not last it.
+- Roads stay joined where they run from grass down onto sand.
+- New colour icons for the dock panels, build categories, roads and palisade; build costs shown with resource icons.
+- The intro now says sixteen settlers, as in the game.
+
 ## Beta 0.8.0
 - Water is gone: no more wells, water carriers or water stock — the village lives by the river. Fisher's Huts catch fully within 5 tiles of the sea or the river and less further away; the placement shows the catch.
 - New buildings: the Town Hall is a great bowed longhouse with dragon heads that grows a raised roof from level 3, on a cobblestone plaza. Workshops and houses get their own shapes: round huts, open sheds, a granary on posts, a stone forge, hipped and bowed halls.

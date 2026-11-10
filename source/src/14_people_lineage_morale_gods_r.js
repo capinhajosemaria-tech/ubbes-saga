@@ -224,7 +224,9 @@ function peopleDay(short){
         else toast('A child was born in Kaldstrand: '+c.n+'.');syncPop();}}
   }
   /* newcomers */
-  if(housing()-S.pop>0&&fed&&!short){const p=(0.06+S.attr/100*0.16)*(has('market')?1.25:1)*(S.morale<40?0.5:1)*(S.gameT<YEAR?1.6:1);
+  /* from Town Hall 3, newcomers wait near and in winter while the wood would not warm them for 5 days */
+  const woodOk=thLevel()<3||((S.gameT%YEAR)<SUMMER-DAY*10)||S.res.wood>=fireNeed()*5;
+  if(housing()-S.pop>0&&fed&&!short&&woodOk){const p=(0.06+S.attr/100*0.16)*(has('market')?1.25:1)*(S.morale<40?0.5:1)*(S.gameT<YEAR?1.6:1);
     S.immAcc=(S.immAcc||0)+p;if(S.immAcc>=1){S.immAcc-=1;const pair=Math.random()<0.3&&housing()-S.pop>=2;const a=newPerson({a:Math.round(U(17,36)),tr:randTrait()});S.yr.arrived++;
       if(pair){const b=newPerson({g:a.g==='m'?'f':'m',a:Math.round(U(17,36)),tr:randTrait()});marry(a,b);S.yr.arrived++;toast('A couple, '+a.n+' and '+b.n+', settled in Kaldstrand.');}
       else toast(a.n+' arrived and settled in Kaldstrand.');syncPop();}}
@@ -424,7 +426,7 @@ function eventDay(){if(S.day<S.nextEvt||S.modal.length)return;
   S.nextEvt=S.day+Math.round(U(11,20)/lokiW);if(!pool.length)return;
   let tot=pool.reduce((a,x)=>a+x[1],0),r=Math.random()*tot;let id=pool[0][0];for(const x of pool){r-=x[1];if(r<=0){id=x[0];break;}}
   const e=EVTS[id];const args=e.mk();S.evtSeen[id]=S.day;queueModal({k:'evt',id:id,a:args,text:e.t(args)});}
-function evtOpts(m){const e=EVTS[m.id];if(!e)return null;const cruel=jt('cruel');return {title:e.cat,text:m.text,opts:e.o.filter(o=>!o.cruel||cruel||S.mode==='sandbox'||true).filter(o=>!o.cruel||cruel).map(o=>({l:o.l,dis:o.ok&&!o.ok(m.a),f:()=>o.f(m.a)}))};}
+function evtOpts(m){const e=EVTS[m.id];if(!e)return null;const cruel=jt('cruel');return {title:e.cat,text:m.text,opts:e.o.filter(o=>!o.cruel||cruel||S.mode==='sandbox'||true).filter(o=>!o.cruel||cruel).map(o=>{const fx=(EVT_FX[m.id]||[])[e.o.indexOf(o)]||[];return {l:o.l,pay:fxItems(fx[0],m.a),get:fxItems(fx[1],m.a),dis:o.ok&&!o.ok(m.a),f:()=>o.f(m.a)};})};}
 
 /* ---------- year summary ---------- */
 function yearRoll(){const y=yearNow()-1;const s=S.yr;

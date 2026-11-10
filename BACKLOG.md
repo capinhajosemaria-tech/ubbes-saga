@@ -3,19 +3,18 @@
 José adds feedback here while playing (or tells Claude, who adds it). At the start of a round, pick 3–6 items and move them to "This round".
 Format: `- [ ] what · why / where seen` — screenshots welcome in the conversation.
 
-## This round — Polish 2: look and simplification (PC) · approved by José 2026-11-10
-Decisions: Town Hall option A (bowed great hall; raised roof must grow out of the main roof seamlessly), cobblestone plaza; menu option M1 (classic 0.5 colours and sheets) but keep the current central dock on PC (panels + build categories + roads), no separate Build/Roads buttons; PC only; old saves will not load (water removed).
-- [x] Remove water and wells; Fisher's Hut works at 100% within 5 tiles of water (sea or river), less further away.
-- [x] Building revamp: new Town Hall (A), cobblestone plaza, own silhouettes for workshops and houses, loose log props removed (logs only at the Woodlodge, round at both ends).
-- [x] Menus in the classic look (M1); fix building pictures missing or off-centre in the build tray.
-- [x] Title font (Marcellus SC) for resource numbers and other figures.
-- [x] 6 × 6 land blocks visible (subdued) in the grid.
+## This round — Polish 3: Town Hall 1, tutorial and clarity (PC) · approved by José 2026-11-10
+- [x] Town Hall 1: winter essentials (Preserver etc.) buildable earlier, fewer steps to unlock buildings.
+- [x] Short, dynamic written tutorial at the start of each save (how the game works, TH1 buildings, preparing for winter).
+- [x] Event choices: signed amounts with icons, green gain / red cost, "you get" / "you pay".
+- [x] Winter firewood after TH4: stop the waves of people leaving; TH5 spare workers back to 4–8.
+- [x] Road texture continuous from grass to sand; more explicit icons in build tray, panels and sheets.
 
 ## Done rounds
 - Polish 1 — the early game (Beta 0.7.0).
+- Polish 2 — look and simplification (Beta 0.8.0).
 
 ## Next rounds (planned)
-- **Polish 3 — Town Hall 1 and tutorial:** faster TH1 unlocks for winter essentials, short dynamic tutorial (see Play 3 feedback).
 - **Later — walls:** walls and sea palisades working like Clash of Clans walls.
 - **Later — organisation:** build categories, clearer wording, explicit icons everywhere.
 - **Later — world map and raids:** overlapping labels, Birka in Sweden, England visible, raid balance after TH4 (with the Monte Carlo update).
@@ -27,7 +26,7 @@ José's second play session (Relaxed, 2026-11-10, after Polish 1) added the item
 
 ### Visual
 - [x] **Resource bar hard to read** (José): show each resource's name next to the number, clearer and more detailed icons.
-- [ ] **Icons in menus too vague** (José): more explicit, detailed icons in build tray, panels and sheets.
+- [x] **Icons in menus too vague** (José): more explicit, detailed icons in build tray, panels and sheets.
 - [x] Mountain massif dominates the TH5 view (about a third of the screen, a flat white block): make it smaller with a new design (José agrees), freeing land for building.
 - [x] **Log-pile props look wrong** *(play 2)*: remove the loose firewood/log props from the village; keep logs only at the Woodlodge, and redraw them properly (round end at the back as well as the front, not cut flat).
 - [x] **Menu look** *(play 2)*: menus are better organised now, but José prefers a look closer to the original option, more like Bad North (clean, minimal, light panels).
@@ -37,7 +36,7 @@ José's second play session (Relaxed, 2026-11-10, after Polish 1) added the item
 
 ### Balance
 - [x] **Too few people at the start / newcomers too slow** (José, Relaxed): buildings get built but workers are always missing. Raise starting population and/or early attractiveness; check with bots that TH2 does not get too fast.
-- [ ] **Winter firewood after TH4** (balance bots, Beta 0.7.0): people leave in waves from year ~7, about 90% in winter for lack of firewood (wood 0), when new houses at TH4/TH5 fill up. Ideas: one more woodcutter at TH3–5, or newcomers wait while wood covers less than ~10 days of firewood. Also TH5 has +12 spare workers (target 4–8).
+- [x] **Winter firewood after TH4** (balance bots, Beta 0.7.0): people leave in waves from year ~7, about 90% in winter for lack of firewood (wood 0), when new houses at TH4/TH5 fill up. Ideas: one more woodcutter at TH3–5, or newcomers wait while wood covers less than ~10 days of firewood. Also TH5 has +12 spare workers (target 4–8).
 - [ ] Re-check raiding after TH4 with the new `balance` agent (several runs per profile), together with the Monte Carlo update below.
 
 ### Organisation / gameplay
@@ -47,12 +46,15 @@ José's second play session (Relaxed, 2026-11-10, after Polish 1) added the item
 - [x] To do says "Every bed is taken" at the start while the bar shows 11/12; make the message and the counter agree.
 
 ### Play 3 feedback (José, 2026-11-10)
-- [ ] **Event choices: unclear gain or loss** (UI): cost/gain hints like "(+23 meals, −80 wood)" are ambiguous, e.g. the before-winter event ("skip this year" vs feast/meals): you can't tell whether meals are gained or spent. Show clear signed amounts with icons, green for gain and red for cost, and say "you get" / "you pay".
+- [x] **Event choices: unclear gain or loss** (UI): cost/gain hints like "(+23 meals, −80 wood)" are ambiguous, e.g. the before-winter event ("skip this year" vs feast/meals): you can't tell whether meals are gained or spent. Show clear signed amounts with icons, green for gain and red for cost, and say "you get" / "you pay".
 - [ ] **Walls never implemented** (gameplay): walls and the sea palisades should work like Clash of Clans walls: raiders must break through them (wall HP, upgrade levels, paths blocked), and they visibly protect the village.
 - [ ] **More close-up detail** (visual): buildings, ground textures, roads, walls and palisades should show more detail when zoomed in.
 - [x] **Fisher's Hut placement** (gameplay): replace "needs water within X tiles" with a productivity falloff: 100% up to 5 tiles from any water tile (sea or river), less beyond that.
-- [ ] **Town Hall 1 unlocks too slow / tutorial** (balance + UX): in one save the Preserver and other winter essentials only unlocked once winter had already started. Rethink the TH1 saga steps: winter essentials buildable earlier, fewer steps to unlock buildings overall. Add a short, dynamic written tutorial at the start of each save: how the game works, what each TH1 building does and why it matters, how to prepare for winter, and other basics.
-- [ ] **Road texture breaks from grass to sand** (visual, minor): the road texture is discontinuous where it crosses from grass to sand.
+- [x] **Town Hall 1 unlocks too slow / tutorial** (balance + UX): in one save the Preserver and other winter essentials only unlocked once winter had already started. Rethink the TH1 saga steps: winter essentials buildable earlier, fewer steps to unlock buildings overall. Add a short, dynamic written tutorial at the start of each save: how the game works, what each TH1 building does and why it matters, how to prepare for winter, and other basics.
+- [x] **Road texture breaks from grass to sand** (visual, minor): the road texture is discontinuous where it crosses from grass to sand.
+
+### Play 4 feedback (José, Beta 0.8.0)
+- [ ] **Houses: one shape for all** (visual): houses should all keep the same shape (no round small houses); keep the varied shapes for the other buildings.
 
 ### Phone (later — after PC is polished)
 - [ ] Convert the PC interface to iPhone 14 once PC is settled.
@@ -63,6 +65,7 @@ José's second play session (Relaxed, 2026-11-10, after Polish 1) added the item
 
 
 ## Bugs
+- [ ] **Round houses break when rotated or moved** (José, Beta 0.8.0): rotating or moving a round house turns it square, or the rotation doesn't update, or it draws wrong.
 
 ## Wanted
 - [ ] Hof: the raised upper roof reads as a flat stripe; redraw as a proper stave-church tier.

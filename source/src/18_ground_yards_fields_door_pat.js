@@ -52,17 +52,18 @@ function drawRoads(win,vis){
     for(const q of list){const x=q[0],y=q[1],sx=q[2],sy=q[3];const ww=w+(jit?(h2(x,y,140)-0.5)*jit:0);
       addP(p,[g(sx,sy,-ww,-ww),g(sx,sy,ww,-ww),g(sx,sy,ww,ww),g(sx,sy,-ww,ww)]);
       for(const a of arms){const nx=x+a[0],ny=y+a[1];if(!inMap(nx,ny)||!roads[ny*N+nx])continue;const ww2=w+(jit?(h2(nx,ny,140)-0.5)*jit:0),wm=(ww+ww2)/2;
-        let c;if(a[0])c=[g(sx,sy,0,-ww),g(sx,sy,a[0]*0.5,-wm),g(sx,sy,a[0]*0.5,wm),g(sx,sy,0,ww)];else c=[g(sx,sy,-ww,0),g(sx,sy,-wm,a[1]*0.5),g(sx,sy,wm,a[1]*0.5),g(sx,sy,ww,0)];
+        const dz=(elev[y*N+x]-elev[ny*N+nx])/2,m=(u,v)=>{const r=g(sx,sy,u,v);r[1]+=dz;return r;};/* meet the neighbour half way in height, so slopes (grass to sand) stay joined */
+        let c;if(a[0])c=[g(sx,sy,0,-ww),m(a[0]*0.5,-wm),m(a[0]*0.5,wm),g(sx,sy,0,ww)];else c=[g(sx,sy,-ww,0),m(-wm,a[1]*0.5),m(wm,a[1]*0.5),g(sx,sy,ww,0)];
         addP(p,c);}}
     ctx.fillStyle=col;ctx.fill(p,'nonzero');};
   pass(0.45,win?'rgba(150,150,140,0.14)':'rgba(110,108,70,0.14)',0.08);
-  pass(0.36,win?'rgba(170,166,154,0.8)':'rgba(128,108,76,0.7)',0.05);
+  pass(0.36,win?'rgba(170,166,154,0.9)':'rgba(128,108,76,0.88)',0.05);
   pass(0.32,win?'#D6D2C6':'#C5B28C',0.04);
   pass(0.18,win?'#E0DCD2':'#D0BF9C',0.05);
   /* worn wheel ruts along straight runs */
   ctx.strokeStyle=win?'rgba(170,164,150,0.55)':'rgba(140,121,90,0.45)';ctx.lineWidth=1.1;ctx.beginPath();
   for(const q of list){const x=q[0],y=q[1],sx=q[2],sy=q[3];for(const a of [[1,0],[0,1]]){const nx=x+a[0],ny=y+a[1];if(!inMap(nx,ny)||!roads[ny*N+nx])continue;
-    for(const o of [-0.1,0.1]){const A=a[0]?g(sx,sy,0,o):g(sx,sy,o,0),Bp=a[0]?g(sx,sy,1,o):g(sx,sy,o,1);ctx.moveTo(A[0],A[1]);ctx.lineTo(Bp[0],Bp[1]);}}}
+    for(const o of [-0.1,0.1]){const A=a[0]?g(sx,sy,0,o):g(sx,sy,o,0),Bp=a[0]?g(sx,sy,1,o):g(sx,sy,o,1);ctx.moveTo(A[0],A[1]);ctx.lineTo(Bp[0],Bp[1]+elev[y*N+x]-elev[ny*N+nx]);}}}
   ctx.stroke();
   ctx.lineCap='butt';
   for(let y=0;y<N;y++)for(let x=0;x<N;x++){const i=y*N+x;if(!roads[i]||ter[i]===T.RIVER)continue;const sx=(x-y)*HW,sy=(x+y)*HH-elev[i];if(!vis(sx,sy))continue;

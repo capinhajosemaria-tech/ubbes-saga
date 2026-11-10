@@ -1,4 +1,4 @@
-# Ubbe's Saga — specification (Beta 0.8.0)
+# Ubbe's Saga — specification (Beta 0.9.0)
 
 How the game works **today**. Numbers are in `docs/NUMBERS.md` (generated). The long-term vision for Town Hall 6–10 is in `docs/DESIGN.md`.
 
@@ -27,7 +27,7 @@ A cozy-but-harsh Viking village builder for the browser. Year 865, the village o
 - The **jarl** leads; succession follows the heir (chosen among children). Lineage is meant to be realistic: about 5 jarls by Town Hall 10.
 - **Morale** (0–100) from food variety, housing, firewood, festivals, gods, levy, events. ≥ 70: +10% work and more births; < 40: −15%; < 20 for long: revolt risk. The village glows gold / blue-grey / red with morale.
 - The saga starts with **16 people** (Ubbe's household of 3, four couples one with a child, four young adults) and **4 houses** next to the Town Hall (20 beds).
-- **Attractiveness** draws newcomers when there is room and food; during the first year they come 1.6× faster.
+- **Attractiveness** draws newcomers when there is room and food; during the first year they come 1.6× faster. From Town Hall 3, in the last 10 days of summer and in winter, newcomers wait while the wood would not cover 5 days of firewood.
 - Thralls (from raids) work; soft or harsh policy.
 
 ## 6. Economy
@@ -41,7 +41,8 @@ A cozy-but-harsh Viking village builder for the browser. Year 865, the village o
 - **Keep materials for the next hall** (Town Hall sheet, on by default): once every other requirement is met, workshops stop using the wood, planks and iron the next level needs.
 
 ## 7. Town Hall progression
-Requirements per level: population, fame earned, specific buildings (some at a level), saga goals, materials. **No "survive N winters" requirement.** Each level unlocks buildings and raises limits. At level 3, if no shore is free for a shipyard, the jarl claims a coastal zone for free.
+Requirements per level: population, fame earned, specific buildings (some at a level), saga goals, materials. **No "survive N winters" requirement.** Each level unlocks buildings and raises limits.
+- Town Hall 1 goals, in order: Settle the shore (berry gatherer + woodcutter → unlocks Carpenter, Preserver, Funeral Pyre) · Timber and planks (40 planks → Granary, Warehouse, Iron Mine, Smithy) · Ready for winter (preserver, granary, warehouse, 35 preserved food → Market, Jarl's House) · Iron and tools (mine, smithy, 12 tools) · The first winter · A gathering place · A growing village · Town Hall 2. Older saves get any unlocks that moved to earlier goals. At level 3, if no shore is free for a shipyard, the jarl claims a coastal zone for free.
 
 ## 8. War, ships, raids
 - Troops: skirmisher, spearman, warrior, archer, viking (TH4), berserk (TH5), mercenaries (hired, not trained). Trained at the training ground; gear from the smithy.
@@ -61,7 +62,10 @@ Market with dynamic prices: partners unlock gradually (Skiringssal TH3, Hedeby T
 ## 11. Interface
 - **PC (≥ 900 px wide):** top resource bar grouped (people · food · materials · wealth); each item shows a detailed icon, its name and the amount (in the title font) side by side and the daily change, with a hover breakdown; the To do list warns "Only 1 bed left" / "Every bed is taken" in step with the People counter; date and saga goal under it; speed control and **To do** list on the right; a bottom **dock** with panels (Village, People, War, World, Saga), build categories and Roads/Palisade; the **build tray** shows building pictures; building and panel sheets dock on the left; buildings light up on hover.
 - **Phone:** same top bar (swipe), bottom navigation, Roads/Build buttons, bottom sheets; build menu with pictures; To do list collapsed.
-- **To do list:** Town Hall ready, food/firewood shortages, full beds, idle people, buildings in trouble, the current saga goal, next Town Hall requirement, ships ready to sail. Each item moves the camera or opens the right sheet / placement.
+- **Guide** (new sagas only): a short card above the To do list with 8 steps (seasons, food and wood, workers, fish, planks, food for winter, firewood with this winter's wood need, tools and the Town Hall). Steps with a task move on by themselves when it is done and have a button that starts the placement; the card says how many days until winter. It can be closed and reopened from the Saga panel.
+- **Event choices:** each choice shows the action, then a red "You pay" line and a green "You get" line with signed amounts and resource icons (also for festivals and the jarl's funeral).
+- **Icons:** colour pictograms for the dock panels, build categories, roads and palisade; build cards and upgrade lines show costs as icon + amount (name on hover).
+- **To do list:** Town Hall ready, food/firewood shortages, firewood for the coming winter (last 10 days of summer), full beds, idle people, buildings in trouble, the current saga goal, next Town Hall requirement, ships ready to sail. Each item moves the camera or opens the right sheet / placement.
 - **Roads and palisade:** click start, click end (the plan is then fixed), Build or Cancel.
 - **World map:** full screen, large chart (Iceland to the Baltic, Norway to Frankia); drag/swipe to move, wheel/pinch to zoom; mist at the edges and over lands not yet open, their places still visible.
 - Fonts: Marcellus SC for titles and for numbers (resource bar, tables, counters), Inter for text. Classic look: dark wood bars, parchment sheets with dark headers, white building cards whose pictures are cropped and centred automatically. PC keeps the central bottom dock (panels, build categories, roads).

@@ -9,7 +9,7 @@ const HOUSE_STY=[
 function roofPoint(c,wh,H,o,u,v){/* a point on the visible roof plane: u along the ridge, v from eave (0) to ridge (1) */
   const a=o.alongX?lerp(up(c.L,wh),up(c.Bt,wh),u):lerp(up(c.Bt,wh),up(c.R,wh),u),b=o.alongX?lerp(up(o.M1,H),up(o.M2,H),u):lerp(up(o.M2,H),up(o.M1,H),u);return lerp(a,b,v);}
 function drawHouse(b,win){
-  const L=Math.min(5,b.lvl),v=Math.floor(h2(b.id,b.fx*7+b.fy,77)*3),st=HOUSE_STY[L-1][v],alongX=b.rot%2===0;
+  const L=Math.min(5,b.lvl||1),v=Math.floor(h2(b.id||0,b.fx*7+b.fy,77)*3),st=HOUSE_STY[L-1][v],alongX=b.rot%2===0;
   const c0=fp(b),c=inset(c0,L>=4?0.08:L>=2?0.13:0.17);
   const wh=[9,11,13,14,15][L-1],rh=[15,14,16,17,18][L-1];
   if(L>=5){poly(P(c.L,c.Bt,[c.Bt[0],c.Bt[1]+4],[c.L[0],c.L[1]+4]),'#8E877D');poly(P(c.Bt,c.R,[c.R[0],c.R[1]+4],[c.Bt[0],c.Bt[1]+4]),'#77716A');}

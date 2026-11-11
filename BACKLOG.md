@@ -13,22 +13,16 @@ Finished items are removed from this file; what each version changed is in `CHAN
 - Art 1 — "Frost & Ember" light and the fjord map (Beta 0.12.0).
 - Urgent fixes 1 — village centre, unlock hints, worker output, bottom bar, roads and ground (Beta 0.13.0).
 - Round 1 — economy, resources and first art (Beta 0.14.0).
+- Round 1C — production panel, reserves, chains, upgrades list (Beta 0.15.0).
 
 ## 1. Core redesign (decided with José, 2026-11-11)
 Goal: fewer systems, each one counts more; decisions matter, but the player stays free to build his own way and can always progress (maybe more slowly). City building and resources first; the lineage matters later, when resources are less of a worry.
-Order: Round 1 (done, 0.14.0) → **1C** → 1H → 1D → 1I → 1E → 1F → 1G → 1J. Balance fixes 1 items E1 (Smokehouse) and A2 (Bakery) are replaced by Round 1; re-check the rest after it.
+Order: Round 1 (done, 0.14.0) → 1C (done, 0.15.0) → **1H** → 1D → 1I → 1E → 1F → 1G → 1J. Balance fixes 1 items E1 (Smokehouse) and A2 (Bakery) are replaced by Round 1; re-check the rest after it.
 
 ## This round
-- (none — José plays Beta 0.14.0 first: **checkpoint** before 1C. Firewood option A was assumed; tune after play.)
+- (none — next is 1H. Firewood option A was assumed in 0.14.0; tune after José plays.)
 
 ## Next rounds (in this order)
-
-### 1C. Production panel (new dock section)
-- [ ] For every resource: total production, total use, and how many winter days it lasts (counting winter output losses).
-- [ ] **Reserve** per resource (not spent below it), plus a manual "Reserve for next Town Hall" button that fills them once.
-- [ ] **Production chain graph** for each resource (e.g. 4 wood → 2 planks), nicely drawn.
-- [ ] **Upgrades list**: a floating panel of buildings that can be upgraded, affordable ones first; click moves the camera.
-- [ ] **Build menu clarity**: locked cards clearly say what unlocks them (already in 0.13.0 — check José sees it), cost as large icon + amount at the bottom of every card.
 
 ### 1H. Living village (José, 2026-11-11)
 - [ ] **Real people walk**: each villager is a walker (today only 3–10 decorative ones wander near the hall). At dawn they walk from their own house to their workplace along roads, at dusk back home; children play near home, warriors at the Training Ground, elders walk slower. Commute follows the light cycle (3 game days), not every 27-second day.

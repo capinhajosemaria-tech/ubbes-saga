@@ -56,7 +56,7 @@ $('goal').addEventListener('click',()=>openPanel('saga'));
 
 /* ---------- sheet ---------- */
 let sheetKind=null;
-function openSheet(html,kind){$('sheet-card').innerHTML=html;$('sheet').hidden=false;sheetKind=kind||'info';const x=$('sheet-card').querySelector('[data-close]');if(x)x.addEventListener('click',closeSheet);}
+function openSheet(html,kind){$('sheet-card').innerHTML=html;$('sheet').hidden=false;$('sheet').classList.toggle('wide',kind==='prod');sheetKind=kind||'info';const x=$('sheet-card').querySelector('[data-close]');if(x)x.addEventListener('click',closeSheet);}
 function closeSheet(){$('sheet').hidden=true;sheetKind=null;sel=null;}
 const head=(title,meta)=>'<div class="hd"><div><h2>'+esc(title)+'</h2>'+(meta?'<div class="meta">'+esc(meta)+'</div>':'')+'</div><button type="button" class="x" data-close aria-label="Close">×</button></div>';
 function statusClass(s){if(s==='Working'||s==='Drawing newcomers')return '';if(s.indexOf('Resting')===0||s.indexOf('Holding')===0||s.indexOf('Idle')===0||s==='Paused'||s==='')return 'idle';return 'bad';}
@@ -78,7 +78,7 @@ function buildingSheet(b){
   }
   if(b.t==='smith')h+=smithHtml(b,on);
   if(b.t==='carp'){h+='<div class="wk"><span class="meta">Wood reserve</span><button type="button" class="btn small" id="rv-minus" aria-label="Lower the wood reserve">−10</button><span class="num">'+S.woodReserve+'</span><button type="button" class="btn small" id="rv-plus" aria-label="Raise the wood reserve">+10</button><span class="meta">never sawn</span></div>';
-    on.push(()=>{$('rv-minus').onclick=()=>{S.woodReserve=Math.max(0,S.woodReserve-10);buildingSheet(b);save();};$('rv-plus').onclick=()=>{S.woodReserve=Math.min(300,S.woodReserve+10);buildingSheet(b);save();};});}
+    on.push(()=>{$('rv-minus').onclick=()=>{S.woodReserve=Math.max(0,S.woodReserve-10);buildingSheet(b);save();};$('rv-plus').onclick=()=>{S.woodReserve=Math.min(1000,S.woodReserve+10);buildingSheet(b);save();};});}
   if(b.t==='pigpen'||b.t==='sheeppen'){const sheep=b.t==='sheeppen',hn=herdTotal()*0.4;h+='<table class="t"><tr><td>'+(sheep?'Sheep':'Pigs')+'</td><td>'+(sheep?S.herd.sheep:S.herd.pigs)+' / '+(sheep?sheepCap():pigCap())+'</td></tr><tr><td>Fodder in store</td><td>'+fmt(S.res.fodder)+'</td></tr><tr><td>Fodder eaten per winter day (all animals)</td><td>'+hn.toFixed(1)+' ('+fmt(hn*15)+' for a whole winter)</td></tr></table><p>'+(sheep?'Sheep above the pens’ room are slaughtered for 8 meat and a hide each.':'Pigs above the pens’ room are slaughtered for 10 meat and a hide each.')+'</p>';}
   if(b.t==='altar')h+=altarHtml(on);
   if(b.t==='train')h+=trainHtml(b,on);

@@ -2,6 +2,14 @@
 
 Versions are `Beta 0.MINOR.PATCH` until Town Hall 10 (`1.0.0`).
 
+## Beta 0.15.0 — Round 1C: production panel
+- New **Production** panel in the bottom bar: for every good, what is in store, made and used each day, the net, and how many **winter days** it lasts (counting what stops in winter: fields, berries, bees and herds rest, fishing falls, firewood rises).
+- **Reserves** for every good a workshop uses, in the same table. Workshops never go below them (now also wood for the smithy, smokehouse, bakery and brewery). New buttons: **Reserve for next Town Hall** (reserves its wood, planks and iron once) and **Clear reserves**.
+- Click a good to see its **production chain**: the buildings that make it, with pictures, what one worker makes and arrows with the amounts, from raw goods to the finished one. Also "Made by" and "Used by", and what a winter day will look like.
+- New **Upgrades** list in the bottom bar: every building that can be upgraded, affordable ones first, with a green count on the button; click one to fly to it.
+- Build menu: the lock line stands out, and every card ends with its cost as large icons; goods you lack are red.
+- Old saves still load.
+
 ## Beta 0.14.0 — Round 1: economy, resources and first art
 - **Old saves do not load** (the economy changed too much).
 - Trees, berry bushes, iron outcrops and fishing water now give a fixed amount each year (tree 8 wood, bush 25 berries, iron tile 60, sea tile 20 fish, river tile 12), refilled every spring. Buildings that share sources split them; placing shows how much a building will get, and its sheet shows the % of full output.

@@ -10,6 +10,7 @@ function openPanel(p){
   if(p==='war'&&thLevel()<2){toast('War opens at Town Hall level 2 with the training ground.');return;}
   if(p==='world'&&thLevel()<3){toast('The world map opens at Town Hall level 3, when Kaldstrand turns to the sea.');return;}
   if(p==='village')return villagePanel();
+  if(p==='prod')return prodPanel();
   if(p==='people')return peoplePanel();
   if(p==='war')return warPanel();
   if(p==='world')return worldPanel();
@@ -22,7 +23,7 @@ function villagePanel(){const r=S.res,bal=S.bal||{},win=isWinter();const sgn=v=>
     h+='<h3>Food · '+fmt(foodUnits())+' meals · '+variety+' kinds</h3><table class="t">'+FOOD.filter(k=>r[k]>=0.5||['fish','berries'].includes(k)).map(k=>'<tr><td>'+RNAME[k]+(FRESH.includes(k)?' <span class="meta">spoils</span>':'')+' <span class="meta">×'+MEAL[k]+'</span></td><td>'+fmt(r[k])+'</td></tr>').join('')+'<tr><td>Granary space</td><td>'+fmt(foodItems())+' / '+capFood()+'</td></tr><tr><td>Lasts at today’s eating</td><td>'+fmt(days)+' days</td></tr><tr><td>Change yesterday</td><td>'+sgn(bal.food)+'</td></tr></table>';
     h+='<h3>Goods</h3><table class="t">'+MAT.filter(k=>r[k]>=0.5||['wood','planks','iron','tools'].includes(k)).map(k=>'<tr><td>'+RNAME[k]+'</td><td>'+(k==='tools'?r[k].toFixed(1):fmt(r[k]))+(bal[k]!==undefined?' <span class="meta">'+sgn(bal[k])+'</span>':'')+'</td></tr>').join('')+'<tr><td>Storage space <span class="meta">(tools are kept at the smithy)</span></td><td>'+fmt(matItems())+' / '+capMat()+'</td></tr><tr><td>Silver</td><td>'+fmt(r.silver)+'</td></tr></table>';
     if(thLevel()>=2)h+='<h3>Weapons</h3><table class="t">'+ARMS.filter(k=>r[k]>=0.5||k==='spears').map(k=>'<tr><td>'+RNAME[k]+'</td><td>'+fmt(r[k])+'</td></tr>').join('')+'<tr><td>Arsenal space</td><td>'+fmt(armsItems())+' / '+capArms()+'</td></tr></table>';
-    h+='<h3>Reserves</h3><p>Workshops never use the last units you reserve here.</p><table class="t">'+RESV.map(k=>'<tr><td>'+RNAME[k]+'</td><td><button type="button" class="btn small" data-rv="'+k+'" data-d="-10" aria-label="Lower reserve">−</button> <strong>'+(k==='wood'?S.woodReserve:(S.reserve[k]||0))+'</strong> <button type="button" class="btn small" data-rv="'+k+'" data-d="10" aria-label="Raise reserve">+</button></td></tr>').join('')+'</table>';}
+    h+='<h3>Production and reserves</h3><p>What every good makes and uses each day, how long it lasts in winter, the reserves and how each good is made.</p><button type="button" class="btn" id="v-prod">Open the production panel</button>';}
   if(tabV==='Winter'){const fw=fireNeed()*(S.winter.hard&&win?1.3:1),dr=drinkers()*DRINK;
     h+='<h3>Provisions</h3><table class="t"><tr><td>Food</td><td>'+fmt(foodUnits()/Math.max(0.5,eatNeed()))+' days</td></tr><tr><td>Firewood ('+fw.toFixed(0)+' a winter day)</td><td>'+fmt(r.wood/Math.max(1,fw))+' winter days</td></tr><tr><td>A whole winter needs</td><td>'+fmt(eatNeed()*15)+' meals, '+fmt(fw*15)+' wood</td></tr></table>';
     h+='<p>'+(S.winter.told?'The Völva says: '+(S.winter.said?'<strong>a hard winter is coming</strong>.':'the winter will be mild.'):'The Völva reads the signs near the end of summer.')+(S.adv==='thorbjorg'?' Thorbjörg is never wrong.':' She is right four times in five.')+'</p>';
@@ -36,7 +37,7 @@ function villagePanel(){const r=S.res,bal=S.bal||{},win=isWinter();const sgn=v=>
   openSheet(h,'panel');const card=$('sheet-card');card.dataset.p='village';
   card.querySelectorAll('[data-tv]').forEach(b=>b.onclick=()=>{tabV=b.dataset.tv;villagePanel();});
   card.querySelectorAll('[data-pol]').forEach(b=>b.onclick=()=>{const k=b.dataset.pol;let v=b.dataset.v;if(v==='true')v=true;if(v==='false')v=false;S.pol[k]=v;recalcMorale();assignWorkers();villagePanel();save();});
-  card.querySelectorAll('[data-rv]').forEach(b=>b.onclick=()=>{const k=b.dataset.rv,d=+b.dataset.d;if(k==='wood')S.woodReserve=clamp(S.woodReserve+d,0,300);else S.reserve[k]=clamp((S.reserve[k]||0)+d,0,300);villagePanel();save();});}
+  if($('v-prod'))$('v-prod').onclick=()=>prodPanel();}
 const RESV=['wood','iron','planks','fish','meat','grain','wool','flax'];
 function personRow(p){return '<button type="button" class="prow" data-pid="'+p.id+'">'+portrait(p,40)+'<span><b>'+esc(pname(p))+'</b><span class="meta">'+Math.floor(p.a)+' · '+esc(roleOf(p))+(p.tr?' · '+esc(TRAITS[p.tr].n):'')+'</span></span></button>';}
 function personSheet(p){const sp=p.sp?PB(p.sp):null,fa=PB(p.pa[0]),mo=PB(p.pa[1]),kids=kidsOf(p.id);

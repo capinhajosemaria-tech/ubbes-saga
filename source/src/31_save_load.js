@@ -9,7 +9,7 @@ function apply(d){
   const base=S;S=Object.assign(base,d.S);S.res=Object.assign(EMPTY_RES(),d.S.res||{});for(const k in S.res)S.res[k]=Math.max(0,num(S.res[k],0));
   S.pol=Object.assign({ration:'normal',rite:'cremation',child:false,borders:'open',loot:'jarl',thralls:'soft'},d.S.pol||{});S.gods=Object.assign({odin:40,thor:40,freyja:40,njord:40,loki:30},d.S.gods||{});
   S.bal=null;S.modal=Array.isArray(S.modal)?S.modal:[];S.people=Array.isArray(S.people)?S.people:[];S.ships=Array.isArray(S.ships)?S.ships:[];S.raids=Array.isArray(S.raids)?S.raids:[];
-  S.reserve=S.reserve||{};S.tg=S.tg||{};S.blessCd=S.blessCd||{};S.blessOn=S.blessOn||{};S.fx=S.fx||{};S.mods=S.mods||[];S.evtSeen=S.evtSeen||{};S.yr=S.yr||{births:0,deaths:0,arrived:0,left:0,raids:0,silver:0,fame:0};S.winter=S.winter||{hard:false,said:false,told:false};
+  S.reserve=S.reserve||{};S.flow=S.flow||{};S.tg=S.tg||{};S.blessCd=S.blessCd||{};S.blessOn=S.blessOn||{};S.fx=S.fx||{};S.mods=S.mods||[];S.evtSeen=S.evtSeen||{};S.yr=S.yr||{births:0,deaths:0,arrived:0,left:0,raids:0,silver:0,fame:0};S.winter=S.winter||{hard:false,said:false,told:false};
   B=[];nextId=1;for(const a of d.b){if(!DEF[a[0]])continue;const b=addBuilding(a[0],a[1]|0,a[2]|0,(a[3]|0)&3,true);
     b.lvl=Math.min(5,Math.max(1,a[5]|0||1));b.anvil=num(a[6],100);b.mode=SMITH[a[7]]?a[7]:'tools';b.proj=a[8]&&SHIPS[a[8].type]?{type:a[8].type,done:num(a[8].done,0)}:(a[8]&&b.t==='tomb'?{done:num(a[8].done,0)}:null);if(a[9]!==null&&a[9]!==undefined&&HOUSE_SCH[a[9]])b.sch=a[9]|0;if(a[10]&&typeof a[10]==='object')b.cons={k:a[10].k,days:num(a[10].days,1),w:num(a[10].w,1),done:num(a[10].done,0),lv:num(a[10].lv,b.lvl),builders:0};
     b.desired=Math.min(slotsOf(b),Math.max(0,a[4]|0));}

@@ -1,4 +1,4 @@
-# Ubbe's Saga: numbers (Beta 0.14.0)
+# Ubbe's Saga: numbers (Beta 0.15.0)
 
 Generated from the game by `tools/gen_numbers.py`. Do not edit by hand.
 

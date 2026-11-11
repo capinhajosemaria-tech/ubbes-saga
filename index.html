@@ -352,6 +352,60 @@ textarea,input{-webkit-user-select:text;user-select:text}
 
 .ci{display:inline-flex;align-items:center;gap:2px;margin-right:6px;white-space:nowrap}.ci svg{width:13px;height:13px;flex:none}
 .td svg{width:16px;height:16px}
+/* ---- build cards: lock banner and big costs at the bottom ---- */
+.tcard .lkb{margin-top:auto;font-size:11.5px;font-weight:600;line-height:1.25;color:#7A4E1E;background:#F3E6C4;border:1px solid #D9C08A;border-radius:6px;padding:3px 6px}
+.tcard .lkb.lim{color:#5C4634;background:#ECE4D4;border-color:#D3C6AE}
+.tcard .cost.big{margin-top:auto;padding-top:5px;border-top:1px solid #E6DCC8;display:flex;flex-wrap:wrap;gap:2px 0;font-family:var(--display);font-weight:400;font-size:16px;color:#3E3026}
+.tcard .lkb+.cost.big{margin-top:4px}
+.tcard .cost.big .ci svg{width:20px;height:20px}.tcard .cost.big .ci{gap:3px;margin-right:9px}
+.ci.lack{color:var(--accent)}
+/* ---- production panel ---- */
+@media (min-width:900px){.sheet.wide{width:660px}}
+.prbtns{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px}.prbtns .meta{flex:1 1 220px;font-size:12px}
+table.prodt{font-size:13px;border-collapse:collapse;width:100%}
+table.prodt th{font:600 11px var(--body);text-transform:uppercase;letter-spacing:.04em;color:var(--muted);text-align:right;padding:2px 4px;border-bottom:1px solid var(--line2)}
+table.prodt th:first-child{text-align:left}
+table.prodt td{padding:3px 4px;text-align:right;white-space:nowrap;font-family:var(--display);font-weight:400}
+table.prodt td:first-child{text-align:left;font-family:var(--body)}table.prodt .rn{display:inline-flex;align-items:center;gap:5px}
+table.prodt tr.grp td{font:600 12px var(--display);color:#5C4634;padding-top:9px;border-bottom:1px solid #E1D5BC}
+table.prodt tr.pr{cursor:pointer}table.prodt tr.pr:hover td{background:rgba(201,166,74,.12)}
+table.prodt tr.pr.on td{background:rgba(201,166,74,.26)}table.prodt tr.tot td{font-weight:600}
+table.prodt .up{color:#3F5A35}table.prodt .dn{color:#8E3B2F}
+.rvc{display:inline-flex;align-items:center;gap:4px}.rvc b{min-width:28px;text-align:center;font-weight:400}.rvc .btn.small{min-width:24px;min-height:22px;padding:0 6px}
+.prcols{display:grid;grid-template-columns:1fr 1fr;gap:12px}.prcols .up{color:#3F5A35}.prcols .dn{color:#8E3B2F}
+h3 svg{vertical-align:-3px}
+/* chain picture */
+.chain{overflow-x:auto;padding:8px 6px;background:#F2EAD6;border:1px solid #DCCDAE;border-radius:10px;box-shadow:inset 0 1px 4px rgba(60,44,30,.12)}
+.chn{display:flex;align-items:center}
+.chalt{display:flex;flex-direction:column;align-items:flex-end;gap:2px}
+.chor{align-self:center;font:italic 12px var(--body);color:var(--muted);padding:1px 0}
+.chi{display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+.chr{display:flex;align-items:center}
+.char{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:46px;padding:0 4px;font:12px var(--display);color:#4A3C30}
+.char i{font-style:normal;line-height:1}.char svg{margin:1px 0}
+.char s{display:block;width:100%;height:2px;background:#8E6F52;position:relative;margin-top:2px}
+.char s::after{content:'';position:absolute;right:-1px;top:-4px;border:5px solid transparent;border-left:7px solid #8E6F52;border-right:0}
+.chb{flex:none;width:104px;display:flex;flex-direction:column;align-items:center;gap:1px;padding:4px 5px 5px;background:#fff;border:1px solid #D9CBB0;border-radius:8px;box-shadow:0 2px 5px rgba(60,44,30,.12);text-align:center}
+.chb.none{opacity:.72;border-style:dashed}
+.chb img{width:72px;height:54px;object-fit:contain}
+.chb b{font:400 12.5px var(--display);line-height:1.1}
+.chb em{font-style:normal;font-size:11px;color:#4A3C30;display:flex;align-items:center;gap:2px;flex-wrap:wrap;justify-content:center}
+.chb span{font-size:10.5px;color:var(--muted)}
+.chl{flex:none;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 6px;font-size:11px;color:#4A3C30;max-width:90px;text-align:center}
+.chl.end{background:#fff;border:2px solid var(--gold);border-radius:999px;padding:6px 10px;font:400 13px var(--display)}
+/* ---- upgrades list ---- */
+.upl{position:fixed;z-index:6;right:16px;bottom:96px;width:300px;max-height:min(60vh,520px);display:flex;flex-direction:column;background:var(--parch);border:1px solid var(--line2);border-radius:12px;box-shadow:0 10px 30px rgba(30,24,18,.3),inset 0 0 0 3px var(--parch),inset 0 0 0 4px rgba(201,166,74,.35);overflow:hidden}
+.uph{display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--wood);color:var(--cream)}
+.uph b{font:400 17px var(--display)}.uph span{flex:1;font-size:12px;color:var(--cream2)}.uph .x{color:var(--cream)}
+.upb{overflow:auto;padding:6px;display:flex;flex-direction:column;gap:5px;scrollbar-width:thin}
+.upi{display:flex;gap:8px;align-items:center;text-align:left;padding:5px 7px;border:1px solid #DDD0B6;border-radius:9px;background:#F6F0E2;cursor:pointer;font-family:var(--body);color:var(--ink)}
+.upi.ok{background:#fff;border-color:#B9C79E;box-shadow:inset 3px 0 0 #6E8B4E}
+.upi:hover{border-color:var(--gold)}
+.upi img{width:54px;height:42px;object-fit:contain;flex:none}
+.upi>span{display:flex;flex-direction:column;gap:1px;min-width:0}
+.upi b{font:400 14px var(--display)}.upi em{font-style:normal;font-size:11.5px;color:var(--muted)}.upi em.dn{color:var(--accent)}
+.upi .cost{font:400 13px var(--display)}
+.dk{position:relative}.dk .bdg{position:absolute;top:3px;right:6px;min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:#6E8B4E;color:#fff;font:600 10.5px/16px var(--body);font-style:normal}
 </style>
 
 <canvas id="map" aria-label="Mapa isométrico de Kaldstrand"></canvas>
@@ -407,7 +461,7 @@ textarea,input{-webkit-user-select:text;user-select:text}
 <script>
 (function(){
 'use strict';
-const GAME_VERSION="Beta 0.14.0";
+const GAME_VERSION="Beta 0.15.0";
 /* =================== constants =================== */
 const N=132,OX=30,OY=24,SX=12,SY=6,HW=32,HH=16,TW=64;
 const HOME_X=63,HOME_Y=60;  /* the village centre in tile coords */
@@ -904,6 +958,8 @@ function pay(cost,sign){Object.keys(cost).forEach(k=>{S.res[k]=(S.res[k]||0)-cos
 const fmt=n=>Math.floor(n+1e-9).toString();
 /* cost with resource icons (names on hover); falls back to words for goods without an icon */
 const costIco=c=>Object.keys(c).length?Object.keys(c).map(k=>typeof ICON!=='undefined'&&ICON[k]?'<span class="ci" title="'+(RNAME[k]||k)+'">'+ICON[k]+c[k]+'</span>':'<span class="ci">'+c[k]+' '+(RNAME[k]||k).toLowerCase()+'</span>').join(''):'free';
+/* the same, each good marked when the stores hold too little of it */
+const costHave=c=>Object.keys(c).length?Object.keys(c).map(k=>{const lack=(S.res[k]||0)<c[k];return '<span class="ci'+(lack?' lack':'')+'" title="'+(RNAME[k]||k)+(lack?': you have '+Math.floor(S.res[k]||0):'')+'">'+(typeof resIco==='function'?resIco(k,14):(ICON[k]||''))+c[k]+'</span>';}).join(''):'free';
 const costStr=c=>Object.keys(c).length?Object.keys(c).map(k=>c[k]+' '+(RNAME[k]||k).toLowerCase()).join(', '):'free';
 
 /* =================== workers =================== */
@@ -949,7 +1005,7 @@ function consHtml(b){const c=b.cons;if(!c)return '';const pc=Math.min(99,Math.fl
 /* =================== daily economy =================== */
 function dayTick(){
   S.day++;const win=isWinter(),r=S.res;assignWorkers();
-  const before={food:foodUnits(),wood:r.wood,planks:r.planks,iron:r.iron,tools:r.tools,water:r.water,silver:r.silver,fame:S.fame};PRODLOG={};
+  const before={food:foodUnits(),wood:r.wood,planks:r.planks,iron:r.iron,tools:r.tools,water:r.water,silver:r.silver,fame:S.fame};PRODLOG={};flowStart();
   let marketOn=false,tavernOn=0;
   for(const b of B){const D=DEF[b.t];b.made='';PRODSRC=b.t;
     if(underCons(b)){b.status=consStatus(b);continue;}
@@ -957,19 +1013,19 @@ function dayTick(){
     if(D.seasonal&&win){b.status='Resting for winter: workers free for other jobs';continue;}
     if(!b.conn&&D.road!==false){b.status='No road to the Town Hall';continue;}
     if(b.workers===0){b.status='No workers: tap + to assign';continue;}
-    const n=b.workers;let tf=1;
+    const n=b.workers;let tf=1;const f0=flowSnap();
     if(D.tools){if(r.tools<=0)tf=D.farm?0.15:0.6;else r.tools=Math.max(0,r.tools-n/60);}
     const E=tf*(b.lvl>=5?1.55:b.lvl>=4?1.4:FIELDS.has(b.t)&&b.lvl>=3?1.3:b.lvl>=2?1.2:1)*prodMult(b);
     b.status=tf<1?'Working slowly: no tools':'Working';
     const mk=(k,a)=>{const g=addRes(k,a);b.made=(b.made?b.made+', ':'')+'+'+g.toFixed(1)+' '+(RNAME[k]||k).toLowerCase();if(a>0.01&&g<a*0.5)b.status='Storage full';return g;};
     switch(b.t){
       case 'wood':{const got=harvest(b,n*3*E);if(got<=0.001)b.status=srcList(b).length?'Trees in range used up until spring':'No trees in range';mk('wood',got);break;}
-      case 'carp':{const av=Math.max(0,r.wood-S.woodReserve),p=Math.min(n*2*E,av/2);if(p<=0.05){b.status='Holding: wood is at the reserve ('+S.woodReserve+')';break;}r.wood-=p*2;mk('planks',p);break;}
+      case 'carp':{const av=Math.max(0,r.wood-S.woodReserve),p=Math.min(n*2*E,av/2);if(p<=0.05){b.status=holdMsg(['wood']);break;}r.wood-=p*2;mk('planks',p);break;}
       case 'mine':{const got=harvest(b,n*2*E);if(got<=0.001)b.status='Ore in range dug out until spring';mk('iron',got);break;}
       case 'smith':{if(b.anvil<=0){if(r.iron>=10){r.iron-=10;b.anvil=100;toast('The smith forged a new anvil (10 iron).');}else{b.status='Anvil broken: needs 10 iron';break;}}
         let md=b.mode;if(!SMITH[md]||SMITH[md].lv>thLevel())md='tools';const sm=SMITH[md];let make=n*sm.per*E;
-        for(const k in sm.c){const have=(k==='wood')?r.wood:resv(k);make=Math.min(make,have/sm.c[k]);}
-        if(make<=0.01){b.status='Waiting for '+Object.keys(sm.c).map(k=>RNAME[k].toLowerCase()).join(' and ');break;}
+        for(const k in sm.c){make=Math.min(make,resv(k)/sm.c[k]);}
+        if(make<=0.01){b.status=holdMsg(Object.keys(sm.c));break;}
         const g=mk(md,make);for(const k in sm.c)r[k]-=g*sm.c[k];b.anvil-=1;if(miscUse())addRes('misc',g*0.03*(md==='arrows'?0.1:1));break;}
       case 'fish':{const sea=waterDist(b,t=>t===T.SEA)<=3?1:0,got=harvest(b,n*4*E*(win?(sea>0?0.4:0.25):1));if(got<=0.001)b.status='Fishing water in range fished out until spring';mk('fish',got);if(sea>0&&miscUse())addRes('misc',n*0.02);break;}
       case 'berry':{const got=harvest(b,n*4*E);if(got<=0.001)b.status='Bushes picked clean until next summer';mk('berries',got);break;}
@@ -983,11 +1039,11 @@ function dayTick(){
       case 'flax':mk('flax',n*4*E);break;
       case 'smoke':{/* fractions carry over day to day, so every level counts */
         b.acc=(b.acc||0)+n*E;let made=0;
-        while(b.acc>=1){if(resv('meat')>=2&&r.wood>=0.5){r.meat-=2;r.wood-=0.5;made+=addRes('smoked',1);}else if(resv('fish')>=2&&r.wood>=0.5){r.fish-=2;r.wood-=0.5;made+=addRes('smoked',1);}else break;b.acc-=1;}
+        while(b.acc>=1){if(resv('meat')>=2&&resv('wood')>=0.5){r.meat-=2;r.wood-=0.5;made+=addRes('smoked',1);}else if(resv('fish')>=2&&resv('wood')>=0.5){r.fish-=2;r.wood-=0.5;made+=addRes('smoked',1);}else break;b.acc-=1;}
         if(b.acc>1)b.acc=1;
-        if(!made&&!(b.acc>0&&b.acc<1))b.status='Waiting for meat or fish';else b.made='+'+made+' smoked';break;}
-      case 'mill':{const u=Math.min(n*4*E,resv('grain'));if(u<=0.05){b.status='Waiting for grain';break;}r.grain-=u;mk('flour',u);break;}
-      case 'bakery':{const u=Math.min(n*3*E,resv('flour'),r.wood*6);if(u<=0.05){b.status='Waiting for flour';break;}r.flour-=u;r.wood-=u/6;mk('bread',u);break;}
+        if(!made&&!(b.acc>0&&b.acc<1))b.status=resv('wood')<0.5&&r.wood>=0.5?holdMsg(['wood']):'Waiting for meat or fish';else b.made='+'+made+' smoked';break;}
+      case 'mill':{const u=Math.min(n*4*E,resv('grain'));if(u<=0.05){b.status=holdMsg(['grain']);break;}r.grain-=u;mk('flour',u);break;}
+      case 'bakery':{const u=Math.min(n*3*E,resv('flour'),resv('wood')*6);if(u<=0.05){b.status=holdMsg(['flour','wood']);break;}r.flour-=u;r.wood-=u/6;mk('bread',u);break;}
       case 'tavern':{/* drinks: 1 ale a day for every 15 people; mead counts double and cheers more */
         const need=Math.max(0.5,S.pop/15);let bonus=0;
         if(resv('mead')>=need/2){r.mead-=need/2;bonus=8;b.made='Mead flows';}else if(resv('ale')>=need){r.ale-=need;bonus=5;b.made='Ale flows';}
@@ -999,11 +1055,11 @@ function dayTick(){
       case 'sheeppen':{const f=Math.min(1,n/2)*E;
         if(!win){if(S.herd.sheep>=2)S.herdAccS=(S.herdAccS||0)+S.herd.sheep*0.035*f/count('sheeppen');if(woolUse())mk('wool',S.herd.sheep*0.25*f/count('sheeppen'));else b.made='Sheep unshorn: wool waits for a weaver or a merchant';}
         b.made=(b.made?b.made+' · ':'')+S.herd.sheep+' sheep';break;}
-      case 'brewery':{let made='';const ua=Math.min(n*E,resv('grain')/2,r.wood*2);if(ua>0.05){r.grain-=ua*2;r.wood-=ua*0.5;addRes('ale',ua*2);made='ale';}
+      case 'brewery':{let made='';const ua=Math.min(n*E,resv('grain')/2,resv('wood')*2);if(ua>0.05){r.grain-=ua*2;r.wood-=ua*0.5;addRes('ale',ua*2);made='ale';}
         if(resv('honey')>=2){const um=Math.min(n*E*0.5,resv('honey')/2);r.honey-=um*2;addRes('mead',um);made=made?made+' and mead':'mead';}
         if(!made)b.status='Waiting for grain or honey';else b.made='Brewing '+made;break;}
       case 'hives':mk('honey',n*3*E);break;
-      case 'tailor':{const u=Math.min(n*E*0.8,resv('wool')/2,r.hides);if(u<=0.05){b.status='Waiting for wool and hides';break;}r.wool-=u*2;r.hides-=u;mk('clothes',u);break;}
+      case 'tailor':{const u=Math.min(n*E*0.8,resv('wool')/2,resv('hides'));if(u<=0.05){b.status=holdMsg(['wool','hides']);break;}r.wool-=u*2;r.hides-=u;mk('clothes',u);break;}
       case 'hof':{const g=GOD_KEYS.slice().sort((a,c)=>S.gods[a]-S.gods[c])[0];addFavor(g,0.6*n);b.made='The gothi honours '+GODS[g].n;break;}
       case 'tomb':{if(!b.proj){b.status='Waiting to begin: needs 40 gold, 6 swords and a ship';break;}if(b.proj.done>=TOMB_WORK){b.status='Finished';b.made='Ragnar rests here';break;}b.proj.done+=n*E;b.made=Math.floor(100*b.proj.done/TOMB_WORK)+'% raised';
         if(b.proj.done>=TOMB_WORK){S.tombDone=1;S.saga.push({y:yearNow(),t:'Ragnar’s ship-tomb was finished. Its mound can be seen from the sea.'});queueModal({k:'info',title:'Ragnar’s Ship-Tomb',text:'The mound is closed over the ship. From now on, Odin’s favour never falls below 30, and the tomb adds to Kaldstrand’s fame every day.'});}break;}
@@ -1012,9 +1068,10 @@ function dayTick(){
           S.saga.push({y:Math.floor(S.gameT/YEAR)+1,t:'The '+SHIPS[b.proj.type].name.toLowerCase()+' '+nm+' slid down the slipway into the bay.'});b.proj=null;}
         else b.made=Math.floor(100*b.proj.done/SHIPS[b.proj.type].work)+'% built';break;}
     }
+    flowDiff(f0,b.t);
   }
   S.tavernOn=tavernOn;
-  PRODSRC='pen';/* herds: births, winter fodder, slaughter above the pens' room */
+  PRODSRC='pen';let f0=flowSnap();/* herds: births, winter fodder, slaughter above the pens' room */
   if(has('pigpen')||has('sheeppen')){
     while((S.herdAccP||0)>=1){S.herdAccP-=1;S.herd.pigs++;}
     while((S.herdAccS||0)>=1){S.herdAccS-=1;S.herd.sheep++;}
@@ -1022,16 +1079,16 @@ function dayTick(){
     while(S.herd.pigs>pigCap()){S.herd.pigs--;addRes('meat',10);if(hideUse())addRes('hides',1);if(miscUse())addRes('misc',0.5);}
     while(S.herd.sheep>sheepCap()){S.herd.sheep--;addRes('meat',8);if(hideUse())addRes('hides',1);}
   }
-  PRODSRC='other';/* trader: in summer, every 12 days for 4 days, needs a trading house and a harbour */
+  flowDiff(f0,'pen');PRODSRC='other';/* trader: in summer, every 12 days for 4 days, needs a trading house and a harbour */
   if(has('trade')&&has('harbour')&&!win){const d=S.day%12;if(d===1&&!S.trader){const tr=newTrader();if(tr){S.trader=tr;toast('A merchant ship from '+PARTNERS[tr.from].n+' is moored at the harbour. Open the trading house to trade.',4500);}}}
   if(S.trader&&(S.day>=S.trader.until||win))S.trader=null;
   /* consumption: fresh first, then bread, then preserved */
   let short='';
-  let need=eatNeed();
+  let need=eatNeed();f0=flowSnap();
   for(const k of ['fish','berries','meat','bread','dfish','jam','smoked']){if(need<=0)break;const e=Math.min(r[k],need/MEAL[k]);r[k]-=e;need-=e*MEAL[k];}
-  if(need>0.01)short='food';
-  if(!burnFire(fireToday()))short=short||'firewood';
-  ['fish','berries','meat'].forEach(k=>r[k]*=0.97);r.bread*=0.98;
+  if(need>0.01)short='food';flowDiff(f0,'eat');f0=flowSnap();
+  if(!burnFire(fireToday()))short=short||'firewood';flowDiff(f0,'fire');f0=flowSnap();
+  ['fish','berries','meat'].forEach(k=>r[k]*=0.97);r.bread*=0.98;flowDiff(f0,'spoil');
   for(const k in r)if(r[k]<0)r[k]=0;
   /* people */
   if(short)S.lastShort=short;else{S.lastShort='';
@@ -1039,7 +1096,7 @@ function dayTick(){
     else if(win&&r.wood+Math.max(0,r.planks-((S.reserve&&S.reserve.planks)||0))*2<fireNeed()*3)toast('Firewood runs out in under 3 days.',3600);
     else if(matItems()>capMat()*0.95)toast('The storehouses are full. Build or upgrade a warehouse, or spend some goods.',3600);
     else if(r.tools<2&&B.some(b=>DEF[b.t].tools&&b.workers>0))toast(has('smith')?'Tools are almost gone. Put workers in the smithy.':'Tools are almost gone. Work will slow down until a smithy forges more.',3600);}
-  p2Day(short);
+  f0=flowSnap();p2Day(short);flowDiff(f0,'other');flowEnd(win);
   /* nature */
   const yt=S.gameT%YEAR;if(yt<DAY*1.01&&S.day>1)refillSources();
   S.bal={food:foodUnits()-before.food,wood:r.wood-before.wood,planks:r.planks-before.planks,iron:r.iron-before.iron,tools:r.tools-before.tools,water:r.water-before.water,silver:r.silver-before.silver,fame:S.fame-before.fame};S.prodLog=PRODLOG;PRODLOG=null;PRODSRC='other';
@@ -1071,6 +1128,83 @@ function upgradeTH(){const q=thReq();if(!q||!q.ok)return false;pay(q.cost,1);con
 function finishTH(lv){const q={lv:lv};S.th=q.lv;assignWorkers();checkMilestones();
   if(q.lv===3){const c=claimShore();if(c)S.shoreClaimed=true;if(c)setTimeout(()=>toast('Your jarl claims a stretch of shore for the shipyard: '+zoneName(c.zx,c.zy)+' is now yours.',6000),6200);}
   toast('The Town Hall reached level '+q.lv+'! New buildings are in the Build menu.'+(q.lv===2?' Keep a stretch of the bay shore free: at level 3 it will hold a shipyard.':''),6000);}
+
+/* =================== production flows: what each building made and used, averaged per season =================== */
+/* S.flow = {s:{n,p,u}, w:{n,p,u}}: s = summer days, w = winter days; p/u = {resource:{source:amount a day}}.
+   Sources are building types plus 'pen' (herds), 'eat', 'fire', 'spoil' and 'other'. */
+let FLOW_T=null;
+const flowSnap=()=>Object.assign({},S.res);
+function flowStart(){FLOW_T={p:{},u:{}};}
+function flowDiff(s0,src){if(!FLOW_T)return;const r=S.res;
+  for(const k in r){const d=r[k]-(s0[k]||0);if(Math.abs(d)<1e-6)continue;const L=d>0?FLOW_T.p:FLOW_T.u,o=L[k]||(L[k]={});o[src]=(o[src]||0)+Math.abs(d);}}
+function flowEnd(win){if(!FLOW_T)return;S.flow=S.flow||{};const key=win?'w':'s',F=S.flow[key]||(S.flow[key]={n:0,p:{},u:{}});
+  const a=Math.max(0.2,1/(F.n+1));
+  for(const side of ['p','u']){const A=F[side],T=FLOW_T[side];
+    for(const k in A)for(const s in A[k])A[k][s]*=1-a;
+    for(const k in T)for(const s in T[k]){const o=A[k]||(A[k]={});o[s]=(o[s]||0)+a*T[k][s];}
+    for(const k in A){for(const s in A[k])if(A[k][s]<0.005)delete A[k][s];if(!Object.keys(A[k]).length)delete A[k];}}
+  F.n++;F.last=S.day;FLOW_T=null;}
+/* a workshop waiting on inputs: say so when only the reserve holds it back */
+function holdMsg(keys){const held=keys.filter(k=>S.res[k]>=0.5&&resv(k)<0.5);
+  if(held.length){const k=held[0];return 'Holding: '+RNAME[k].toLowerCase()+' is at the reserve ('+resvOf(k)+')';}
+  return 'Waiting for '+keys.map(k=>RNAME[k].toLowerCase()).join(' and ');}
+const resvOf=k=>k==='wood'?S.woodReserve:((S.reserve&&S.reserve[k])||0);
+function setResv(k,v){v=clamp(Math.round(v),0,1000);if(k==='wood')S.woodReserve=v;else S.reserve[k]=v;}
+/* goods a workshop takes from the stores: these can be held back by a reserve */
+const RESV_ALL=['wood','planks','iron','fish','berries','meat','grain','flour','honey','wool','flax','hides','ale','mead'];
+const FLOW_NAME={pen:'Herds',eat:'Eaten',fire:'Burned as firewood',spoil:'Spoiled',other:'Events, rites and trade'};
+const flowName=s=>FLOW_NAME[s]||(DEF[s]?DEF[s].name:s);
+/* the season's average for one resource: {p:{src:v}, u:{src:v}} */
+function flowOf(k,key){const F=S.flow&&S.flow[key||(isWinter()?'w':'s')];if(!F||!F.n)return null;return {p:F.p[k]||{},u:F.u[k]||{}};}
+const sumV=o=>Object.values(o||{}).reduce((a,v)=>a+v,0);
+/* winter output of a building type, as a share of its summer output */
+function winterFactor(t){const D=DEF[t];if(!D)return t==='pen'?0:1;if(D.seasonal)return 0;
+  if(t==='fish'){const fs=B.filter(b=>b.t==='fish');if(!fs.length)return 0.3;return fs.reduce((a,b)=>a+(waterDist(b,q=>q===T.SEA)<=3?0.4:0.25),0)/fs.length;}
+  return 1;}
+/* expected made / used on a winter day: the winter average when it is winter, otherwise this summer scaled by the winter losses.
+   Eating and firewood are always worked out from today's village. Returns {p,u} per source. */
+function winterFlow(k){const win=isWinter(),f=flowOf(k,win?'w':'s');if(!f&&!['wood','fodder'].includes(k)&&!FOOD.includes(k))return null;
+  const p={},u={},src=f||{p:{},u:{}};
+  for(const s in src.p){const v=src.p[s]*(win?1:winterFactor(s));if(v>0.005)p[s]=v;}
+  for(const s in src.u){if(s==='eat'||s==='fire'||s==='pen')continue;const v=src.u[s]*(win?1:(winterFactor(s)?1:0));if(v>0.005)u[s]=v;}
+  /* spoilage of fresh food: 3% of what is in store, the bread 2% */
+  if(FRESH.includes(k)&&S.res[k]>0)u.spoil=S.res[k]*(k==='bread'?0.02:0.03);
+  if(k==='wood'){const fw=fireNeed()*(S.winter&&S.winter.told&&S.winter.said?1.3:1);u.fire=fw;}
+  if(k==='fodder'&&(has('pigpen')||has('sheeppen')))u.pen=herdTotal()*0.4;
+  return {p:p,u:u};}
+/* food counted in meals, all kinds together */
+function foodFlow(key){const p={},u={};for(const k of FOOD){const f=key==='winter'?winterFlow(k):flowOf(k,key);if(!f)continue;
+    for(const s in f.p)p[s]=(p[s]||0)+f.p[s]*MEAL[k];for(const s in f.u)u[s]=(u[s]||0)+f.u[s]*MEAL[k];}
+  if(key==='winter'){u.eat=eatNeed();}
+  return {p:p,u:u};}
+/* winter days left (whole winter if it is summer) */
+const winterLeft=()=>{const yt=S.gameT%YEAR;return isWinter()?Math.max(1,Math.ceil((YEAR-yt)/DAY)):Math.round((YEAR-SUMMER)/DAY);};
+/* how many winter days a store lasts: Infinity if it does not shrink */
+function winterDays(k){if(k==='food'){const f=foodFlow('winter'),net=sumV(f.p)-sumV(f.u);return net>=-0.01?Infinity:foodUnits()/(-net);}
+  const f=winterFlow(k);if(!f)return null;const net=sumV(f.p)-sumV(f.u);if(net>=-0.01)return Infinity;
+  let have=S.res[k];if(k==='wood')have+=Math.max(0,S.res.planks-resvOf('planks'))*2;return have/(-net);}
+
+/* --- production recipes, per worker a day at level 1 (for the chain pictures) --- */
+const RECIPES=[
+  {b:'wood',out:{wood:3}},{b:'carp',in:{wood:4},out:{planks:2}},{b:'mine',out:{iron:2}},
+  {b:'fish',out:{fish:4}},{b:'berry',out:{berries:4},note:'summer'},
+  {b:'pres',in:{fish:2},out:{dfish:1}},{b:'pres',in:{berries:2},out:{jam:1}},
+  {b:'smoke',in:{meat:2,wood:0.5},out:{smoked:1}},{b:'smoke',in:{fish:2,wood:0.5},out:{smoked:1}},
+  {b:'fodder',out:{fodder:5},note:'summer'},{b:'grain',out:{grain:4},note:'summer'},{b:'flax',out:{flax:4},note:'summer'},
+  {b:'mill',in:{grain:4},out:{flour:4}},{b:'bakery',in:{flour:3,wood:0.5},out:{bread:3}},
+  {b:'brewery',in:{grain:2,wood:0.5},out:{ale:2}},{b:'brewery',in:{honey:2},out:{mead:1}},
+  {b:'hives',out:{honey:3},note:'summer'},
+  {b:'weaver',in:{wool:2},out:{cloth:1}},{b:'weaver',in:{flax:2},out:{rope:1}},
+  {b:'tailor',in:{wool:2,hides:1},out:{clothes:1}},
+  {b:'pigpen',in:{fodder:0.4},out:{meat:10,hides:1},note:'per pig slaughtered · fodder per animal in winter'},
+  {b:'sheeppen',in:{fodder:0.4},out:{wool:0.25,meat:8,hides:1},note:'wool per sheep a day in summer · meat per sheep slaughtered'}];
+function recipesFor(k){const out=RECIPES.filter(r=>r.out[k]&&DEF[r.b]);
+  if(typeof SMITH!=='undefined'&&SMITH[k]){const sm=SMITH[k],inp={};for(const j in sm.c)inp[j]=+(sm.c[j]*sm.per).toFixed(2);out.push({b:'smith',in:inp,out:{[k]:sm.per},lv:sm.lv});}
+  return out;}
+const RCOL={fish:'#7FA3B0',berries:'#A34A6A',meat:'#B0574A',bread:'#C99A5A',dfish:'#9A8566',jam:'#8E3B5A',smoked:'#7A4E32',fodder:'#A8B060',flour:'#E6DCC4',wool:'#E9E2D0',flax:'#8FA6C0',grain:'#D9B45A',cloth:'#D8CCB0',rope:'#A9875A',hides:'#9C6E48',honey:'#E0A43A',clothes:'#6F7F9A',ale:'#C98E3A',mead:'#D7B04A',misc:'#8E877D',spears:'#8C949A',shields:'#A34A3A',bows:'#8E6A45',arrows:'#7A6A55',swords:'#B7BCBF',axes:'#9AA0A4',armour:'#6E7478',gold:'#D9B45A'};
+/* a resource picture: the drawn icon if there is one, otherwise a small tinted sack */
+function resIco(k,sz){sz=sz||16;if(ICON[k])return ICON[k].replace(/width="14" height="14"/,'width="'+sz+'" height="'+sz+'"');
+  const c=RCOL[k]||'#9C8A6E';return '<svg width="'+sz+'" height="'+sz+'" viewBox="0 0 20 20" aria-hidden="true"><path d="M6 4 H14 L12.6 6.4 Q17.6 9 17 14.6 Q16.4 18 10 18 Q3.6 18 3 14.6 Q2.4 9 7.4 6.4 Z" fill="'+c+'" stroke="#4A3C30" stroke-width="0.8" stroke-linejoin="round"/><path d="M7.4 6.4 H12.6" stroke="#4A3C30" stroke-width="1"/></svg>';}
 
 /* =================== people, lineage, morale, gods, raids, events =================== */
 const YDAYS=45;
@@ -3468,7 +3602,7 @@ $('goal').addEventListener('click',()=>openPanel('saga'));
 
 /* ---------- sheet ---------- */
 let sheetKind=null;
-function openSheet(html,kind){$('sheet-card').innerHTML=html;$('sheet').hidden=false;sheetKind=kind||'info';const x=$('sheet-card').querySelector('[data-close]');if(x)x.addEventListener('click',closeSheet);}
+function openSheet(html,kind){$('sheet-card').innerHTML=html;$('sheet').hidden=false;$('sheet').classList.toggle('wide',kind==='prod');sheetKind=kind||'info';const x=$('sheet-card').querySelector('[data-close]');if(x)x.addEventListener('click',closeSheet);}
 function closeSheet(){$('sheet').hidden=true;sheetKind=null;sel=null;}
 const head=(title,meta)=>'<div class="hd"><div><h2>'+esc(title)+'</h2>'+(meta?'<div class="meta">'+esc(meta)+'</div>':'')+'</div><button type="button" class="x" data-close aria-label="Close">×</button></div>';
 function statusClass(s){if(s==='Working'||s==='Drawing newcomers')return '';if(s.indexOf('Resting')===0||s.indexOf('Holding')===0||s.indexOf('Idle')===0||s==='Paused'||s==='')return 'idle';return 'bad';}
@@ -3490,7 +3624,7 @@ function buildingSheet(b){
   }
   if(b.t==='smith')h+=smithHtml(b,on);
   if(b.t==='carp'){h+='<div class="wk"><span class="meta">Wood reserve</span><button type="button" class="btn small" id="rv-minus" aria-label="Lower the wood reserve">−10</button><span class="num">'+S.woodReserve+'</span><button type="button" class="btn small" id="rv-plus" aria-label="Raise the wood reserve">+10</button><span class="meta">never sawn</span></div>';
-    on.push(()=>{$('rv-minus').onclick=()=>{S.woodReserve=Math.max(0,S.woodReserve-10);buildingSheet(b);save();};$('rv-plus').onclick=()=>{S.woodReserve=Math.min(300,S.woodReserve+10);buildingSheet(b);save();};});}
+    on.push(()=>{$('rv-minus').onclick=()=>{S.woodReserve=Math.max(0,S.woodReserve-10);buildingSheet(b);save();};$('rv-plus').onclick=()=>{S.woodReserve=Math.min(1000,S.woodReserve+10);buildingSheet(b);save();};});}
   if(b.t==='pigpen'||b.t==='sheeppen'){const sheep=b.t==='sheeppen',hn=herdTotal()*0.4;h+='<table class="t"><tr><td>'+(sheep?'Sheep':'Pigs')+'</td><td>'+(sheep?S.herd.sheep:S.herd.pigs)+' / '+(sheep?sheepCap():pigCap())+'</td></tr><tr><td>Fodder in store</td><td>'+fmt(S.res.fodder)+'</td></tr><tr><td>Fodder eaten per winter day (all animals)</td><td>'+hn.toFixed(1)+' ('+fmt(hn*15)+' for a whole winter)</td></tr></table><p>'+(sheep?'Sheep above the pens’ room are slaughtered for 8 meat and a hide each.':'Pigs above the pens’ room are slaughtered for 10 meat and a hide each.')+'</p>';}
   if(b.t==='altar')h+=altarHtml(on);
   if(b.t==='train')h+=trainHtml(b,on);
@@ -3746,6 +3880,8 @@ const PANEL_ICON={village:CAT_ICON.Village,
   war:CAT_ICON.War,
   world:'<rect x="1.6" y="2.6" width="16.8" height="14.8" rx="1" fill="#E3D3AE" stroke="#8E6F52" stroke-width="0.8"/><path d="M1.6 2.6 Q0.4 4 1.6 5.4 M18.4 14.6 Q19.6 16 18.4 17.4" stroke="#8E6F52" stroke-width="0.8" fill="none"/><path d="M4 6 Q6 4.4 7.6 6.4 Q7 9.6 5 10.4 Q3.6 8.6 4 6 Z M11 9 Q14 7.4 16 9.6 Q15.4 13.6 12.4 14.4 Q10.4 12 11 9 Z" fill="#9AAE7E" stroke="#5E7A4E" stroke-width="0.5"/><path d="M6 12.6 Q9 15.6 12.4 11.4" stroke="#A34A3A" stroke-width="0.9" stroke-dasharray="1.4 1" fill="none"/><path d="M13.2 4.4 L15.4 6.6 M15.4 4.4 L13.2 6.6" stroke="#A34A3A" stroke-width="1.1"/>',
   saga:'<path d="M3.4 3.4 H14.6 V16.6 H3.4 Z" fill="#E9DDC0" stroke="#8E6F52" stroke-width="0.8"/><path d="M2.4 2.4 Q3.4 1.4 4.4 2.4 V4.4 H2.4 Z M2.4 15.6 H4.4 V17.6 Q3.4 18.6 2.4 17.6 Z" fill="#B08A62"/><path d="M5.6 6.4 H12.4 M5.6 8.8 H12.4 M5.6 11.2 H10.4" stroke="#8E7A58" stroke-width="0.8"/><path d="M17.6 2 L11.6 13.6 L10.8 15.4 L12.4 14.2 L18.6 2.6 Z" fill="#E9E2D0" stroke="#5A4636" stroke-width="0.6"/>'};
+PANEL_ICON.prod='<rect x="2" y="2.4" width="16" height="15.2" rx="1.2" fill="#E9DDC0" stroke="#8E6F52" stroke-width="0.8"/><path d="M4.6 15 V10.6 M8 15 V7.4 M11.4 15 V9.2 M14.8 15 V5" stroke-width="2.2" stroke-linecap="round" stroke="#6E8B4E"/><path d="M14.8 15 V11" stroke-width="2.2" stroke-linecap="round" stroke="#C9A64A"/><path d="M3.6 6.6 L7 4.6 L10.4 6.2 L15.6 3.4" stroke="#A34A3A" stroke-width="0.9" fill="none" stroke-linejoin="round"/>';
+CAT_ICON.Upgrades='<path d="M10 2 L16.4 8.6 H12.6 V13 H7.4 V8.6 H3.6 Z" fill="#C9A64A" stroke="#7A5D24" stroke-width="0.7" stroke-linejoin="round"/><path d="M4 15.4 H16 M5.6 18 H14.4" stroke="#8E6F52" stroke-width="1.6" stroke-linecap="round"/>';
 CAT_ICON.Housing=CAT_ICON.Homes;CAT_ICON.Community=CAT_ICON.Village;CAT_ICON.Military=CAT_ICON.War;CAT_ICON.Resources=CAT_ICON.Materials;
 CAT_ICON.Crafts='<path d="M3 9.6 H14.6 Q17.6 9.6 18 7.6 H11.4 V6 H3 Z" fill="#6E7478" stroke="#3E4448" stroke-width="0.7" stroke-linejoin="round"/><path d="M7 9.6 L6 14.6 H12 L11 9.6 Z" fill="#5A6064" stroke="#3E4448" stroke-width="0.6"/><path d="M4.4 14.6 H13.6 V17.4 H4.4 Z" fill="#8E6F52" stroke="#5A4636" stroke-width="0.6"/><path d="M13.4 1.6 L17.8 4.4 L16.8 5.8 L12.4 3 Z" fill="#A9AFB3" stroke="#3E4448" stroke-width="0.5"/><path d="M14.8 3.6 L11 9" stroke="#8E6F52" stroke-width="1.4" stroke-linecap="round"/>';
 const ico=(k,sz)=>'<svg width="'+(sz||20)+'" height="'+(sz||20)+'" viewBox="0 0 20 20" aria-hidden="true">'+(CAT_ICON[k]||'')+'</svg>';
@@ -3755,11 +3891,14 @@ let trayCat=null;
 function renderDock(){let d=$('dock');if(!d){d=document.createElement('div');d.id='dock';d.className='dock';document.body.appendChild(d);const tr=document.createElement('div');tr.id='tray';tr.className='tray';tr.hidden=true;document.body.appendChild(tr);}
   const navs=[...document.querySelectorAll('.nav button')].map(b=>{const pi=PANEL_ICON[b.dataset.panel];return '<button type="button" class="dk'+(b.classList.contains('locked')?' locked':'')+'" data-dp="'+b.dataset.panel+'">'+(pi?'<svg width="22" height="22" viewBox="0 0 20 20" aria-hidden="true">'+pi+'</svg>'+esc(b.textContent.trim()):b.innerHTML)+'</button>';}).join('');
   const cats=CATS.map(c=>{const any=Object.keys(DEF).some(k=>DEF[k].cat===c&&DEF[k].lvl<=thLevel());return '<button type="button" class="dk cat'+(trayCat===c?' on':'')+(any?'':' locked')+'" data-dc="'+c+'">'+ico(c)+'<span>'+c+'</span></button>';}).join('');
-  d.innerHTML='<div class="dgrp">'+navs+'</div><div class="dsep"></div><div class="dgrp">'+cats+'</div><div class="dsep"></div><div class="dgrp"><button type="button" class="dk'+(mode==='road'&&roadKind==='road'?' on':'')+'" id="dk-road">'+ico('Roads')+'<span>Roads</span></button><button type="button" class="dk'+(mode==='remove'?' on':'')+'" id="dk-rem">'+ico('Remove')+'<span>Remove</span></button>'+(thLevel()>=5?'<button type="button" class="dk'+(mode==='road'&&roadKind==='wall'?' on':'')+'" id="dk-wall">'+ico('Palisade')+'<span>Palisade</span></button>':'')+'</div>';
+  const prodB='<button type="button" class="dk'+(sheetKind==='prod'&&!$('sheet').hidden?' on':'')+'" id="dk-prod"><svg width="22" height="22" viewBox="0 0 20 20" aria-hidden="true">'+PANEL_ICON.prod+'</svg>Production</button>';
+  d.innerHTML='<div class="dgrp">'+navs+prodB+'</div><div class="dsep"></div><div class="dgrp">'+cats+'</div><div class="dsep"></div><div class="dgrp"><button type="button" class="dk'+(mode==='road'&&roadKind==='road'?' on':'')+'" id="dk-road">'+ico('Roads')+'<span>Roads</span></button><button type="button" class="dk'+(mode==='remove'?' on':'')+'" id="dk-rem">'+ico('Remove')+'<span>Remove</span></button><button type="button" class="dk'+(uplOpen?' on':'')+'" id="dk-upl">'+ico('Upgrades')+'<span>Upgrades</span><i class="bdg" hidden></i></button>'+(thLevel()>=5?'<button type="button" class="dk'+(mode==='road'&&roadKind==='wall'?' on':'')+'" id="dk-wall">'+ico('Palisade')+'<span>Palisade</span></button>':'')+'</div>';
   d.querySelectorAll('[data-dp]').forEach(b=>b.onclick=()=>{closeTray();const nb=document.querySelector('.nav button[data-panel="'+b.dataset.dp+'"]');if(nb)nb.click();});
   d.querySelectorAll('[data-dc]').forEach(b=>b.onclick=()=>{if(mode!=='view')endMode();closeSheet();if(trayCat===b.dataset.dc){closeTray();return;}openTray(b.dataset.dc);});
   $('dk-road').onclick=()=>{closeTray();closeSheet();if(mode==='road'&&roadKind==='road'){endMode();}else startRoad();renderDock();};
   $('dk-rem').onclick=()=>{closeTray();closeSheet();if(mode==='remove')endMode();else{if(mode!=='view')endMode();startRemove();}renderDock();};
+  $('dk-prod').onclick=()=>{closeTray();if(mode!=='view')endMode();if(sheetKind==='prod'&&!$('sheet').hidden)closeSheet();else prodPanel();renderDock();};
+  $('dk-upl').onclick=()=>{uplOpen=!uplOpen;uplKey='';renderUpl(true);renderDock();};
   if($('dk-wall'))$('dk-wall').onclick=()=>{closeTray();closeSheet();startWall();renderDock();};}
 function closeTray(){trayCat=null;const t=$('tray');if(t)t.hidden=true;if($('dock'))$('dock').querySelectorAll('.cat').forEach(b=>b.classList.remove('on'));}
 function openTray(cat){trayCat=cat;buildCat=cat;const tr=$('tray');
@@ -3767,7 +3906,7 @@ function openTray(cat){trayCat=cat;buildCat=cat;const tr=$('tray');
   let h='<div class="trh"><b>'+esc(cat)+'</b><span>Town Hall level '+thLevel()+' · click a building, then choose its spot</span><button type="button" class="x" id="tray-x" aria-label="Close">×</button></div><div class="trl">';
   for(const k of keys){const D=DEF[k],av=isAvail(k),lim=limitOf(k),cnt=count(k),uq=cnt>=lim,cst=costOf(k),free=!Object.keys(cst).length&&Object.keys(D.cost).length,ok=av&&!uq&&afford(cst)&&D.lvl<=thLevel();
     const msU=MS.find(m=>m.unlock.includes(k)),lkP=[];if(D.lvl>thLevel())lkP.push('Town Hall '+D.lvl);if(!av&&msU)lkP.push('saga goal “'+msU.title+'”');const lock=lkP.length?'🔒 Unlocks with: '+lkP.join(' + '):uq?'Limit reached':'';
-    h+='<button type="button" class="tcard'+(ok?'':' no')+(lock?' lk':'')+'" data-b="'+k+'" title="'+esc((D.desc||'')+(needsOf(k).length?' Needs: '+needsOf(k).join(', ')+'.':''))+'"><img alt="" src="'+buildThumb(k,1)+'"><b>'+esc(D.name)+'</b><span class="tc3">'+esc(roleOf(k))+'</span><span class="tc2">'+(D.lvl<=thLevel()?cnt+(UNLIMITED.has(k)?' built':' / '+lim):'')+(D.slots?' · '+D.slots+' workers':'')+(D.housing?' · '+D.housing+' beds':'')+(needsShort(k)?'<br>Needs '+esc(needsShort(k)):'')+'</span><span class="cost'+(lock&&lock!=='Limit reached'?' unl':av&&!afford(cst)?' bad':'')+'">'+(lock?esc(lock):free?'First one free':costIco(cst))+'</span></button>';}
+    h+='<button type="button" class="tcard'+(ok?'':' no')+(lock?' lk':'')+'" data-b="'+k+'" title="'+esc((D.desc||'')+(needsOf(k).length?' Needs: '+needsOf(k).join(', ')+'.':''))+'"><img alt="" src="'+buildThumb(k,1)+'"><b>'+esc(D.name)+'</b><span class="tc3">'+esc(roleOf(k))+'</span><span class="tc2">'+(D.lvl<=thLevel()?cnt+(UNLIMITED.has(k)?' built':' / '+lim):'')+(D.slots?' · '+D.slots+' workers':'')+(D.housing?' · '+D.housing+' beds':'')+(needsShort(k)?'<br>Needs '+esc(needsShort(k)):'')+'</span>'+(lock?'<span class="lkb'+(uq?' lim':'')+'">'+esc(lock)+'</span>':'')+'<span class="cost big'+(!lock&&av&&!afford(cst)?' bad':'')+'">'+(free?'First one free':costHave(cst))+'</span></button>';}
   tr.innerHTML=h+'</div>';tr.hidden=false;
   $('tray-x').onclick=closeTray;
   tr.querySelectorAll('.tcard').forEach(c=>c.onclick=()=>{const k=c.dataset.b,D=DEF[k];
@@ -3996,6 +4135,7 @@ function openPanel(p){
   if(p==='war'&&thLevel()<2){toast('War opens at Town Hall level 2 with the training ground.');return;}
   if(p==='world'&&thLevel()<3){toast('The world map opens at Town Hall level 3, when Kaldstrand turns to the sea.');return;}
   if(p==='village')return villagePanel();
+  if(p==='prod')return prodPanel();
   if(p==='people')return peoplePanel();
   if(p==='war')return warPanel();
   if(p==='world')return worldPanel();
@@ -4008,7 +4148,7 @@ function villagePanel(){const r=S.res,bal=S.bal||{},win=isWinter();const sgn=v=>
     h+='<h3>Food · '+fmt(foodUnits())+' meals · '+variety+' kinds</h3><table class="t">'+FOOD.filter(k=>r[k]>=0.5||['fish','berries'].includes(k)).map(k=>'<tr><td>'+RNAME[k]+(FRESH.includes(k)?' <span class="meta">spoils</span>':'')+' <span class="meta">×'+MEAL[k]+'</span></td><td>'+fmt(r[k])+'</td></tr>').join('')+'<tr><td>Granary space</td><td>'+fmt(foodItems())+' / '+capFood()+'</td></tr><tr><td>Lasts at today’s eating</td><td>'+fmt(days)+' days</td></tr><tr><td>Change yesterday</td><td>'+sgn(bal.food)+'</td></tr></table>';
     h+='<h3>Goods</h3><table class="t">'+MAT.filter(k=>r[k]>=0.5||['wood','planks','iron','tools'].includes(k)).map(k=>'<tr><td>'+RNAME[k]+'</td><td>'+(k==='tools'?r[k].toFixed(1):fmt(r[k]))+(bal[k]!==undefined?' <span class="meta">'+sgn(bal[k])+'</span>':'')+'</td></tr>').join('')+'<tr><td>Storage space <span class="meta">(tools are kept at the smithy)</span></td><td>'+fmt(matItems())+' / '+capMat()+'</td></tr><tr><td>Silver</td><td>'+fmt(r.silver)+'</td></tr></table>';
     if(thLevel()>=2)h+='<h3>Weapons</h3><table class="t">'+ARMS.filter(k=>r[k]>=0.5||k==='spears').map(k=>'<tr><td>'+RNAME[k]+'</td><td>'+fmt(r[k])+'</td></tr>').join('')+'<tr><td>Arsenal space</td><td>'+fmt(armsItems())+' / '+capArms()+'</td></tr></table>';
-    h+='<h3>Reserves</h3><p>Workshops never use the last units you reserve here.</p><table class="t">'+RESV.map(k=>'<tr><td>'+RNAME[k]+'</td><td><button type="button" class="btn small" data-rv="'+k+'" data-d="-10" aria-label="Lower reserve">−</button> <strong>'+(k==='wood'?S.woodReserve:(S.reserve[k]||0))+'</strong> <button type="button" class="btn small" data-rv="'+k+'" data-d="10" aria-label="Raise reserve">+</button></td></tr>').join('')+'</table>';}
+    h+='<h3>Production and reserves</h3><p>What every good makes and uses each day, how long it lasts in winter, the reserves and how each good is made.</p><button type="button" class="btn" id="v-prod">Open the production panel</button>';}
   if(tabV==='Winter'){const fw=fireNeed()*(S.winter.hard&&win?1.3:1),dr=drinkers()*DRINK;
     h+='<h3>Provisions</h3><table class="t"><tr><td>Food</td><td>'+fmt(foodUnits()/Math.max(0.5,eatNeed()))+' days</td></tr><tr><td>Firewood ('+fw.toFixed(0)+' a winter day)</td><td>'+fmt(r.wood/Math.max(1,fw))+' winter days</td></tr><tr><td>A whole winter needs</td><td>'+fmt(eatNeed()*15)+' meals, '+fmt(fw*15)+' wood</td></tr></table>';
     h+='<p>'+(S.winter.told?'The Völva says: '+(S.winter.said?'<strong>a hard winter is coming</strong>.':'the winter will be mild.'):'The Völva reads the signs near the end of summer.')+(S.adv==='thorbjorg'?' Thorbjörg is never wrong.':' She is right four times in five.')+'</p>';
@@ -4022,7 +4162,7 @@ function villagePanel(){const r=S.res,bal=S.bal||{},win=isWinter();const sgn=v=>
   openSheet(h,'panel');const card=$('sheet-card');card.dataset.p='village';
   card.querySelectorAll('[data-tv]').forEach(b=>b.onclick=()=>{tabV=b.dataset.tv;villagePanel();});
   card.querySelectorAll('[data-pol]').forEach(b=>b.onclick=()=>{const k=b.dataset.pol;let v=b.dataset.v;if(v==='true')v=true;if(v==='false')v=false;S.pol[k]=v;recalcMorale();assignWorkers();villagePanel();save();});
-  card.querySelectorAll('[data-rv]').forEach(b=>b.onclick=()=>{const k=b.dataset.rv,d=+b.dataset.d;if(k==='wood')S.woodReserve=clamp(S.woodReserve+d,0,300);else S.reserve[k]=clamp((S.reserve[k]||0)+d,0,300);villagePanel();save();});}
+  if($('v-prod'))$('v-prod').onclick=()=>prodPanel();}
 const RESV=['wood','iron','planks','fish','meat','grain','wool','flax'];
 function personRow(p){return '<button type="button" class="prow" data-pid="'+p.id+'">'+portrait(p,40)+'<span><b>'+esc(pname(p))+'</b><span class="meta">'+Math.floor(p.a)+' · '+esc(roleOf(p))+(p.tr?' · '+esc(TRAITS[p.tr].n):'')+'</span></span></button>';}
 function personSheet(p){const sp=p.sp?PB(p.sp):null,fa=PB(p.pa[0]),mo=PB(p.pa[1]),kids=kidsOf(p.id);
@@ -4139,6 +4279,78 @@ function smithHtml(b,on){const modes=Object.keys(SMITH).filter(k=>SMITH[k].lv<=t
   if(modes.length>1){h+='<h3>Forging</h3><div class="tabs" role="group">'+modes.map(k=>'<button type="button" data-m="'+k+'" aria-pressed="'+(b.mode===k)+'">'+SMITH[k].n+'</button>').join('')+'</div><p class="meta">'+SMITH[b.mode].per+' per worker a day from '+esc(costStr(SMITH[b.mode].c))+' each. In store: '+fmt(S.res[b.mode])+'.</p>';
     on.push(()=>{$('sheet-card').querySelectorAll('[data-m]').forEach(x=>x.onclick=()=>{b.mode=x.dataset.m;buildingSheet(b);save();});});}
   return h;}
+
+/* =================== production panel and upgrades list =================== */
+let prodSel='food';
+const PROD_GROUPS=[['Food',['food'].concat(FOOD)],['Materials',['wood','planks','iron','tools']],
+  ['Farms and herds',['fodder','grain','flax','honey','wool','hides']],['Crafts',['flour','cloth','rope','clothes','ale','mead']],['Weapons',ARMS]];
+const fmtA=v=>v>=10?Math.round(v).toString():v>=1?(+v.toFixed(1)).toString():v>=0.05?(+v.toFixed(2)).toString():'0';
+function prodRowData(k,key){if(k==='food'){const f=foodFlow(key);return {stock:foodUnits(),p:sumV(f.p),u:sumV(f.u)};}
+  const f=flowOf(k,key)||{p:{},u:{}};return {stock:S.res[k]||0,p:sumV(f.p),u:sumV(f.u)};}
+function prodShown(k){if(k==='food'||['wood','planks','iron','tools','fish','berries'].includes(k))return true;
+  if(ARMS.includes(k)&&thLevel()<2)return false;const d=prodRowData(k);return d.stock>=0.5||d.p>0.01||d.u>0.01||resvOf(k)>0;}
+function winterCell(k){if(FOOD.includes(k))return '<span class="meta" title="Counted for all food together">·</span>';const d=winterDays(k);if(d===null)return '<span class="meta">—</span>';const need=winterLeft();
+  if(d>=need)return '<span class="up">all winter</span>';
+  return '<span class="'+(d>=need?'up':'dn')+'">'+Math.floor(d)+' day'+(Math.floor(d)===1?'':'s')+'</span>';}
+function resvCell(k){if(!RESV_ALL.includes(k))return '<span class="meta">—</span>';
+  return '<span class="rvc"><button type="button" class="btn small" data-rv="'+k+'" data-d="-10" aria-label="Lower the '+esc(RNAME[k])+' reserve">−</button><b>'+resvOf(k)+'</b><button type="button" class="btn small" data-rv="'+k+'" data-d="10" aria-label="Raise the '+esc(RNAME[k])+' reserve">+</button></span>';}
+/* the chain picture: raw goods on the left, the chosen good on the right */
+function chainNode(r){const D=DEF[r.b],n=count(r.b),k=Object.keys(r.out)[0];
+  const lockLv=r.lv||D.lvl,locked=lockLv>thLevel();
+  return '<div class="chb'+(n?'':' none')+'" title="'+esc(D.desc||'')+'"><img alt="" src="'+buildThumb(r.b,1)+'"><b>'+esc(D.name)+'</b><em>makes '+Object.keys(r.out).map(j=>fmtA(r.out[j])+' '+resIco(j,13)).join(' ')+'</em><span>'+(n?n+' built':locked?'Town Hall '+lockLv:'not built')+'</span></div>';}
+function chainHtml(k,depth,seen){const rs=recipesFor(k);
+  if(!rs.length)return '<div class="chl">'+resIco(k,18)+'<span>'+(k==='silver'||k==='gold'?'Trade and raids':'Trade, raids and events')+'</span></div>';
+  return '<div class="chalt">'+rs.map(r=>{const ins=Object.keys(r.in||{});
+    const left=ins.length?'<div class="chi">'+ins.map(j=>'<div class="chr">'+(depth<3&&!seen.has(j)?chainHtml(j,depth+1,new Set([...seen,j])):'<div class="chl">'+resIco(j,18)+'<span>'+esc(RNAME[j])+'</span></div>')+'<span class="char"><i>'+fmtA(r.in[j])+'</i>'+resIco(j,14)+'<s></s></span></div>').join('')+'</div>':'';
+    return '<div class="chn">'+left+chainNode(r)+'</div>';}).join('<div class="chor">or</div>')+'</div>';}
+function chainBox(k){if(k==='food')return '<p class="meta">Food is every kind together. Pick a kind of food in the table to see how it is made.</p>';
+  return '<div class="chain"><div class="chn">'+chainHtml(k,1,new Set([k]))+'<span class="char"><i></i><s></s></span><div class="chl end">'+resIco(k,22)+'<span>'+esc(RNAME[k])+'</span></div></div></div><p class="meta">Amounts per worker a day at level 1. Upgrades add 20–55%.</p>';}
+function flowList(o,cls,meals){const e=Object.entries(o).sort((a,b)=>b[1]-a[1]);if(!e.length)return '<p class="meta">Nothing yet.</p>';
+  return '<table class="t">'+e.map(x=>'<tr><td>'+esc(flowName(x[0]))+'</td><td class="'+cls+'">'+(cls==='up'?'+':'−')+fmtA(x[1])+'</td></tr>').join('')+'</table>';}
+function prodPanel(){const key=isWinter()?'w':'s',F=S.flow&&S.flow[key],win=isWinter();
+  const sc=$('sheet-card')&&$('sheet-card').dataset.p==='prod'?$('sheet-card').scrollTop:0;
+  let h=head('Production',(win?'Winter':'Summer')+' average a day'+(F&&F.n?' · '+Math.min(F.n,30)+' day'+(F.n>1?'s':'')+' counted':' · counted from tomorrow'));
+  const nx=TH_UP[thLevel()+1];
+  h+='<div class="prbtns">'+(nx?'<button type="button" class="btn small" id="pr-th">Reserve for next Town Hall</button>':'')+'<button type="button" class="btn small" id="pr-clr">Clear reserves</button><span class="meta">Workshops never use goods below the reserve. Building and firewood still may.</span></div>';
+  h+='<table class="t prodt"><thead><tr><th>Good</th><th>Store</th><th>Made</th><th>Used</th><th>Net</th><th title="How long the store lasts in winter, counting what stops in winter">Winter</th><th>Reserve</th></tr></thead><tbody>';
+  for(const g of PROD_GROUPS){const ks=g[1].filter(prodShown);if(!ks.length)continue;
+    h+='<tr class="grp"><td colspan="7">'+esc(g[0])+'</td></tr>';
+    for(const k of ks){const d=prodRowData(k),net=d.p-d.u,nm=k==='food'?'All food (meals)':RNAME[k];
+      h+='<tr class="pr'+(k===prodSel?' on':'')+(k==='food'?' tot':'')+'" data-pk="'+k+'"><td><span class="rn">'+resIco(k,16)+esc(nm)+'</span></td><td>'+fmt(d.stock)+'</td><td class="up">'+(d.p>0.01?'+'+fmtA(d.p):'')+'</td><td class="dn">'+(d.u>0.01?'−'+fmtA(d.u):'')+'</td><td class="'+(net>=0?'up':'dn')+'">'+(Math.abs(net)>=0.05?(net>0?'+':'−')+fmtA(Math.abs(net)):'0')+'</td><td>'+winterCell(k)+'</td><td>'+resvCell(k)+'</td></tr>';}}
+  h+='</tbody></table>';
+  const k=prodSel,nm=k==='food'?'Food':RNAME[k];
+  h+='<h3>'+resIco(k,18)+' '+esc(nm)+': how it is made</h3>'+chainBox(k);
+  const cur=k==='food'?foodFlow(key):(flowOf(k,key)||{p:{},u:{}});
+  h+='<div class="prcols"><div><h3>Made by</h3>'+flowList(cur.p,'up')+'</div><div><h3>Used by</h3>'+flowList(cur.u,'dn')+'</div></div>';
+  if(!win){const w=k==='food'?foodFlow('winter'):winterFlow(k);if(w)h+='<h3>On a winter day</h3><p class="meta">Expected from today’s village: fields, berries and bees rest, fishing falls, firewood triples.</p><div class="prcols"><div>'+flowList(w.p,'up')+'</div><div>'+flowList(w.u,'dn')+'</div></div>';}
+  openSheet(h,'prod');const card=$('sheet-card');card.dataset.p='prod';card.scrollTop=sc;prodPanel.day=S.day;
+  card.querySelectorAll('[data-pk]').forEach(r=>r.onclick=e=>{if(e.target.closest('[data-rv]'))return;prodSel=r.dataset.pk;prodPanel();});
+  card.querySelectorAll('[data-rv]').forEach(b=>b.onclick=e=>{e.stopPropagation();const k=b.dataset.rv;setResv(k,resvOf(k)+(+b.dataset.d));prodPanel();save();});
+  if($('pr-th'))$('pr-th').onclick=()=>{const c=TH_UP[thLevel()+1].cost,set=[];for(const j in c)if(RESV_ALL.includes(j)&&resvOf(j)<c[j]){setResv(j,c[j]);set.push(c[j]+' '+RNAME[j].toLowerCase());}
+    toast(set.length?'Reserved for the next Town Hall: '+set.join(', ')+'. Workshops will leave these alone.':'The reserves already cover the next Town Hall.',4200);prodPanel();save();};
+  $('pr-clr').onclick=()=>{for(const j of RESV_ALL)setResv(j,0);toast('All reserves cleared.');prodPanel();save();};}
+
+/* --- upgrades list: a floating panel beside the dock --- */
+let uplOpen=false,uplKey='',uplIdx={};
+function upgradeItems(){const out=[],q=thReq(),th=B.find(b=>b.t==='th');
+  const lack=c=>Object.keys(c).filter(j=>(S.res[j]||0)<c[j]).map(j=>Math.ceil(c[j]-(S.res[j]||0))+' '+RNAME[j].toLowerCase());
+  if(q&&th&&!q.busy){const other=q.items.slice(0,2).filter(i=>!i.ok).map(i=>i.t),m=lack(q.cost);
+    out.push({id:'th',name:'Town Hall',from:thLevel(),cost:q.cost,ok:q.ok,why:q.ok?'':other.concat(m.length?['Needs '+m.join(', ')+' more']:[]).join(' · '),bs:[th]});}
+  const g={};for(const b of B){if(!canUpgrade(b))continue;const k=b.t+':'+b.lvl;(g[k]||(g[k]={t:b.t,lvl:b.lvl,bs:[]})).bs.push(b);}
+  for(const k in g){const o=g[k],c=upCost(o.bs[0]),ok=afford(c);
+    const miss=lack(c);
+    out.push({id:k,name:DEF[o.t].name,from:o.lvl,cost:c,ok:ok,why:ok?'':'Needs '+miss.join(', ')+' more',bs:o.bs});}
+  return out.sort((a,b)=>(b.ok-a.ok)||(a.id==='th'?-1:b.id==='th'?1:0)||a.name.localeCompare(b.name));}
+function renderUpl(force){let el=$('upl');if(!uplOpen||titleOn||!isWide()||($('tray')&&!$('tray').hidden)){if(el)el.hidden=true;return;}
+  if(!el){el=document.createElement('div');el.id='upl';el.className='upl';document.body.appendChild(el);}
+  const L=upgradeItems(),key=L.map(o=>o.id+o.ok+o.bs.length+(o.why||'')).join('|');el.hidden=false;if(key===uplKey&&!force)return;uplKey=key;
+  el.innerHTML='<div class="uph"><b>Upgrades</b><span>'+L.filter(o=>o.ok).length+' ready</span><button type="button" class="x" id="upl-x" aria-label="Close">×</button></div><div class="upb">'+(L.length?L.map((o,i)=>'<button type="button" class="upi'+(o.ok?' ok':'')+'" data-ui="'+i+'"><img alt="" src="'+buildThumb(o.bs[0].t,o.from)+'"><span><b>'+esc(o.name)+(o.bs.length>1?' ×'+o.bs.length:'')+'</b><em>level '+o.from+' → '+(o.from+1)+'</em><span class="cost">'+costHave(o.cost)+'</span>'+(o.why?'<em class="dn">'+esc(o.why)+'</em>':'')+'</span></button>').join(''):'<p class="meta">Nothing can be upgraded now. Buildings can rise one level below the Town Hall’s level.</p>')+'</div>';
+  $('upl-x').onclick=()=>{uplOpen=false;renderUpl();renderDock();};
+  el.querySelectorAll('[data-ui]').forEach(b=>b.onclick=()=>{const o=L[+b.dataset.ui],i=(uplIdx[o.id]||0)%o.bs.length;uplIdx[o.id]=i+1;if(mode!=='view')endMode();closeTray();focusOn(o.bs[i],true);});}
+const upReady=()=>upgradeItems().filter(o=>o.ok).length;
+setInterval(()=>{try{renderUpl();
+  const bd=$('dk-upl')&&$('dk-upl').querySelector('.bdg');if(bd){const n=upReady();bd.textContent=n||'';bd.hidden=!n;}
+  if(!$('sheet').hidden&&sheetKind==='prod'&&prodPanel.day!==S.day)prodPanel();}catch(e){}},700);
 
 /* =================== world map (Bad North style), trade market, level 4–5 sheets =================== */
 /* World chart: 1000 × 800 units, north up. Drag or swipe to move, wheel or pinch to zoom. */
@@ -4395,7 +4607,7 @@ function apply(d){
   const base=S;S=Object.assign(base,d.S);S.res=Object.assign(EMPTY_RES(),d.S.res||{});for(const k in S.res)S.res[k]=Math.max(0,num(S.res[k],0));
   S.pol=Object.assign({ration:'normal',rite:'cremation',child:false,borders:'open',loot:'jarl',thralls:'soft'},d.S.pol||{});S.gods=Object.assign({odin:40,thor:40,freyja:40,njord:40,loki:30},d.S.gods||{});
   S.bal=null;S.modal=Array.isArray(S.modal)?S.modal:[];S.people=Array.isArray(S.people)?S.people:[];S.ships=Array.isArray(S.ships)?S.ships:[];S.raids=Array.isArray(S.raids)?S.raids:[];
-  S.reserve=S.reserve||{};S.tg=S.tg||{};S.blessCd=S.blessCd||{};S.blessOn=S.blessOn||{};S.fx=S.fx||{};S.mods=S.mods||[];S.evtSeen=S.evtSeen||{};S.yr=S.yr||{births:0,deaths:0,arrived:0,left:0,raids:0,silver:0,fame:0};S.winter=S.winter||{hard:false,said:false,told:false};
+  S.reserve=S.reserve||{};S.flow=S.flow||{};S.tg=S.tg||{};S.blessCd=S.blessCd||{};S.blessOn=S.blessOn||{};S.fx=S.fx||{};S.mods=S.mods||[];S.evtSeen=S.evtSeen||{};S.yr=S.yr||{births:0,deaths:0,arrived:0,left:0,raids:0,silver:0,fame:0};S.winter=S.winter||{hard:false,said:false,told:false};
   B=[];nextId=1;for(const a of d.b){if(!DEF[a[0]])continue;const b=addBuilding(a[0],a[1]|0,a[2]|0,(a[3]|0)&3,true);
     b.lvl=Math.min(5,Math.max(1,a[5]|0||1));b.anvil=num(a[6],100);b.mode=SMITH[a[7]]?a[7]:'tools';b.proj=a[8]&&SHIPS[a[8].type]?{type:a[8].type,done:num(a[8].done,0)}:(a[8]&&b.t==='tomb'?{done:num(a[8].done,0)}:null);if(a[9]!==null&&a[9]!==undefined&&HOUSE_SCH[a[9]])b.sch=a[9]|0;if(a[10]&&typeof a[10]==='object')b.cons={k:a[10].k,days:num(a[10].days,1),w:num(a[10].w,1),done:num(a[10].done,0),lv:num(a[10].lv,b.lvl),builders:0};
     b.desired=Math.min(slotsOf(b),Math.max(0,a[4]|0));}

@@ -29,4 +29,6 @@ function pay(cost,sign){Object.keys(cost).forEach(k=>{S.res[k]=(S.res[k]||0)-cos
 const fmt=n=>Math.floor(n+1e-9).toString();
 /* cost with resource icons (names on hover); falls back to words for goods without an icon */
 const costIco=c=>Object.keys(c).length?Object.keys(c).map(k=>typeof ICON!=='undefined'&&ICON[k]?'<span class="ci" title="'+(RNAME[k]||k)+'">'+ICON[k]+c[k]+'</span>':'<span class="ci">'+c[k]+' '+(RNAME[k]||k).toLowerCase()+'</span>').join(''):'free';
+/* the same, each good marked when the stores hold too little of it */
+const costHave=c=>Object.keys(c).length?Object.keys(c).map(k=>{const lack=(S.res[k]||0)<c[k];return '<span class="ci'+(lack?' lack':'')+'" title="'+(RNAME[k]||k)+(lack?': you have '+Math.floor(S.res[k]||0):'')+'">'+(typeof resIco==='function'?resIco(k,14):(ICON[k]||''))+c[k]+'</span>';}).join(''):'free';
 const costStr=c=>Object.keys(c).length?Object.keys(c).map(k=>c[k]+' '+(RNAME[k]||k).toLowerCase()).join(', '):'free';

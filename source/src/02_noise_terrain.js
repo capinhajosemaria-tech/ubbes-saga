@@ -1,36 +1,52 @@
 /* =================== noise & terrain =================== */
 function h2(x,y,s){let n=(Math.imul(x|0,374761393)+Math.imul(y|0,668265263)+Math.imul((s||0)|0,982451653))|0;n=Math.imul(n^(n>>>13),1274126177);n^=n>>>16;return (n>>>0)/4294967295;}
 function vn(x,y,s){const xi=Math.floor(x),yi=Math.floor(y),xf=x-xi,yf=y-yi,u=xf*xf*(3-2*xf),v=yf*yf*(3-2*yf);const a=h2(xi,yi,s),b=h2(xi+1,yi,s),c=h2(xi,yi+1,s),d=h2(xi+1,yi+1,s);return a+(b-a)*u+(c-a)*v+(a-b-c+d)*u*v;}
-/* Map plan (in base coords; the world adds a margin O): town core on a flat meadow west of the river,
-   bay to the south-east, mountain spur to the north. River + bay + spur close three sides for a future wall. */
-const coast0=x=>61+2*Math.sin(x*0.2)+1.5*Math.sin(x*0.07+1.3)-22*Math.exp(-(((x-39)/8)**2));
-const mount0=x=>3+1.5*Math.sin(x*0.25+2)+Math.sin(x*0.12)+10*Math.exp(-(((x-30)/3.6)**2));
-const river0=y=>41+1.5*Math.sin(y*0.15+0.5);
-const mountW=x=>mount0(x-OX)+OY;
-const ter=new Uint8Array(N*N), elev=new Float32Array(N*N), mdep=new Float32Array(N*N);
-/* Massifs: the northern range (with its spur) and an eastern table-mountain. depth>0 = inside the rock. */
-function massDepth(x,y){const nz=(vn(x*0.09,y*0.09,71)-0.5)*5;
-  let d=mount0(x)-y+nz;                                     /* northern range + spur */
-  const ex=(x-90)/10,ey=(y-14)/7;d=Math.max(d,(1-Math.sqrt(ex*ex+ey*ey))*8+nz); /* eastern peak */
-  const wx=(x+18)/9,wy=(y-6)/8;d=Math.max(d,(1-Math.sqrt(wx*wx+wy*wy))*7+nz);     /* western knoll */
+/* Map plan (world tile coords; HOME=(63,60)): "the fjord" (Beta 0.12). Kaldstrand sits at the head of a narrow fjord
+   that winds south-east to the open sea; cliffs flank the outer fjord, a range closes the north, a river comes down
+   from it and enters the fjord by the village. An iron knoll lies just north-west of the village, a ridge runs
+   south-west, islands sit at the fjord mouth and a lake in the western woods. The starting land always holds iron,
+   berries, forest and water (see the guarantee below). */
+const fbm=(x,y,s)=>vn(x,y,s)*.6+vn(x*2.1,y*2.1,s+1)*.28+vn(x*4.3,y*4.3,s+2)*.12;
+function dPoly(x,y,P){let m=1e9;for(let i=0;i<P.length-1;i++){const a=P[i][0],b=P[i][1],c=P[i+1][0],d=P[i+1][1];const vx=c-a,vy=d-b,l=vx*vx+vy*vy;let t=((x-a)*vx+(y-b)*vy)/l;t=t<0?0:t>1?1:t;m=Math.min(m,Math.hypot(a+t*vx-x,b+t*vy-y));}return m;}
+const FJORD=[[70,63],[76,67],[82,70],[88,76],[92,84],[100,90],[110,96],[122,104],[140,112]];
+const RIVERS=[{p:[[58,30],[60,38],[62,45],[67,49],[71,53],[72,58],[71,62]],w:0.8},{p:[[95,44],[93,52],[90,60],[88,70],[86,74]],w:0.7}];
+const LAKES=[[40,52,5,3.5]];
+const ISLES=[[100,98,4,2.6],[112,104,3,2],[94,88,2.2,1.6],[118,118,6,4],[86,112,5,3.2]];
+function seaDepth(X,Y){const d=dPoly(X,Y,FJORD);const t=Math.min(1,Math.max(0,(X-70)/70));const w=2.6+t*13+(vn(X*.12,Y*.12,11)-.5)*3;
+  return Math.max(w-d,(Y-112)+(vn(X*.08,0,12)-.5)*8,(X-118)+(vn(0,Y*.08,13)-.5)*8);}
+function massDepth(X,Y){const nz=(fbm(X*.06,Y*.06,21)-.5)*6;const df=dPoly(X,Y,FJORD);let d=-20;
+  if(X>78)d=Math.max(d,6-Math.abs(df-11)*.9+nz-(X<88?(88-X)*.5:0));           /* cliffs along the outer fjord */
+  d=Math.max(d,(30-Y)*.55+nz+3*Math.sin(X*.13));                              /* northern range */
+  d=Math.max(d,(1-Math.hypot((X-46)/9,(Y-43)/7))*16+nz*.6);                    /* iron knoll north-west of the village */
+  d=Math.max(d,(1-Math.hypot((X-28-(Y-70)*.6)/6,(Y-70)/16))*11+nz);            /* south-western ridge */
   return d;}
-const ISLES=[[64,84,7,4.5],[86,76,4,3],[24,90,5,3.5],[100,96,6,4],[44,100,3,2.5]];
-for(let Y=0;Y<N;Y++)for(let X=0;X<N;X++){
-  const x=X-OX,y=Y-OY,c=coast0(x),d=massDepth(x,y);let t;
-  if(y>c){t=T.SEA;for(const I of ISLES){const q=((x-I[0])/I[2])**2+((y-I[1])/I[3])**2+(vn(x*0.4,y*0.4,72)-0.5)*0.5;if(q<1)t=q>0.62?T.BEACH:(h2(X,Y,73)>0.45?T.FOREST:T.GRASS);}}
-  else if(y>c-1.6)t=T.BEACH;else if(d>1)t=T.MOUNT;else if(d>-1.2)t=T.FOOT;else t=T.GRASS;
-  if(t!==T.SEA&&t!==T.MOUNT&&d<-0.5&&y<c-1&&Math.abs(x-river0(y))<0.8)t=T.RIVER;
-  if(t===T.FOOT&&h2(X,Y,3)>(Math.abs(x-30)<6||Math.abs(x-86)<10?0.3:0.6))t=T.IRON;
-  if(t===T.GRASS){const fn=vn(x*0.15,y*0.15,1);const west=x<13+4*vn(x*0.06,y*0.06,2);const ne=x>52&&y<40;
-    const grove=((x-22)**2)/10+((y-34)**2)/32<1;
-    if((west||ne)&&fn>0.32)t=T.FOREST;else if(grove&&fn>0.18)t=T.FOREST;else if(fn>0.55&&h2(X,Y,4)>0.9)t=T.FOREST;
-    else if(vn(x*0.3,y*0.3,5)>0.76&&x<44)t=T.BERRY;}
-  /* a tarn in the western woods */
-  if(t!==T.MOUNT&&((x+12)/5.5)**2+((y-40)/4)**2+(vn(x*0.5,y*0.5,74)-0.5)*0.6<1)t=T.SEA;
-  if(x>=26&&x<=40&&y>=26&&y<=46&&(t===T.FOREST||t===T.BERRY))t=T.GRASS;
-  if((x-28)**2+(y-40)**2<3.2&&t===T.GRASS)t=T.BERRY;
-  ter[Y*N+X]=t;mdep[Y*N+X]=d;
-}
+const ter=new Uint8Array(N*N), elev=new Float32Array(N*N), mdep=new Float32Array(N*N);
+for(let Y=0;Y<N;Y++)for(let X=0;X<N;X++){const sd=seaDepth(X,Y),d=massDepth(X,Y);let t;
+  if(sd>0){t=T.SEA;for(const I of ISLES){const q=((X-I[0])/I[2])**2+((Y-I[1])/I[3])**2+(vn(X*.4,Y*.4,72)-.5)*.5;if(q<1)t=q>.6?T.BEACH:(h2(X,Y,73)>.45?T.FOREST:T.GRASS);}}
+  else if(sd>-1.4)t=T.BEACH;else if(d>1)t=T.MOUNT;else if(d>-1.2)t=T.FOOT;else t=T.GRASS;
+  ter[Y*N+X]=t;mdep[Y*N+X]=d;}
+for(const R of RIVERS)for(let Y=0;Y<N;Y++)for(let X=0;X<N;X++){const t=ter[Y*N+X];if(t===T.SEA||t===T.MOUNT)continue;if(dPoly(X+.5,Y+.5,R.p)<R.w)ter[Y*N+X]=T.RIVER;}
+for(const L of LAKES)for(let Y=0;Y<N;Y++)for(let X=0;X<N;X++){const i=Y*N+X;if(ter[i]===T.MOUNT)continue;const q=((X-L[0])/L[2])**2+((Y-L[1])/L[3])**2+(vn(X*.45,Y*.45,74)-.5)*.6;if(q<1)ter[i]=T.SEA;else if(q<1.25&&ter[i]===T.GRASS&&h2(X,Y,81)>.5)ter[i]=T.BEACH;}
+for(let Y=0;Y<N;Y++)for(let X=0;X<N;X++){const i=Y*N+X;let t=ter[i];
+  if(t===T.FOOT){const near=Math.hypot(X-49,Y-46)<10||Math.hypot(X-84,Y-56)<10;if(h2(X,Y,3)>(near?.45:.8))t=T.IRON;}
+  if(t===T.GRASS){const f=fbm(X*.09,Y*.09,31);
+    if((X<54&&f>.42)||(Y<44&&f>.4)||(X>74&&Y<62&&f>.44)||(f>.62&&h2(X,Y,4)>.85))t=T.FOREST;
+    else if(vn(X*.3,Y*.3,5)>.74&&Math.hypot(X-HOME_X,Y-HOME_Y)<26)t=T.BERRY;}
+  ter[i]=t;}
+/* keep the village core an open meadow */
+for(let Y=HOME_Y-9;Y<=HOME_Y+6;Y++)for(let X=HOME_X-11;X<=HOME_X+9;X++){const i=Y*N+X;if((ter[i]===T.FOREST||ter[i]===T.BERRY)&&((X-HOME_X)/11)**2+((Y-HOME_Y+1.5)/7.5)**2<1)ter[i]=T.GRASS;}
+/* guarantee: the starting land (zones 8–12 × 7–11 minus corners) has iron, berries and forest near the village */
+function startStamp(cx,cy,r,kind){for(let Y=Math.floor(cy-r-1);Y<=cy+r+1;Y++)for(let X=Math.floor(cx-r-1);X<=cx+r+1;X++){const i=Y*N+X,q=Math.hypot((X-cx)/r,(Y-cy)/(r*.8))+(vn(X*.6,Y*.6,90)-.5)*.35;if(q>=1)continue;const t=ter[i];if(t===T.SEA||t===T.RIVER||t===T.BEACH)continue;
+  if(kind==='iron'){ter[i]=h2(X,Y,91)<.55?T.IRON:T.FOOT;mdep[i]=0;}
+  else if(kind==='berry'){if(t===T.GRASS&&h2(X,Y,92)<.75)ter[i]=T.BERRY;}
+  else if(t===T.GRASS||t===T.BERRY)ter[i]=T.FOREST;}}
+{const near=(k,r)=>{let n=0;for(let Y=HOME_Y-r;Y<=HOME_Y+r;Y++)for(let X=HOME_X-r;X<=HOME_X+r;X++)if(ter[Y*N+X]===k&&Math.hypot(X-HOME_X,Y-HOME_Y)<=r)n++;return n;};
+  if(near(T.IRON,14)<10)startStamp(54,52,3.3,'iron');
+  if(near(T.BERRY,12)<10){startStamp(56,63,2.4,'berry');startStamp(69,52,2.4,'berry');}
+  if(near(T.FOREST,12)<40)startStamp(52,56,4.5,'forest');}
+/* ocean = sea joined to the map edge (raiders land only there, never on the lake) */
+const OCEAN=new Uint8Array(N*N);{const q=[];for(let i=0;i<N;i++)for(const j of [i,(N-1)*N+i,i*N,i*N+N-1])if(ter[j]===T.SEA&&!OCEAN[j]){OCEAN[j]=1;q.push(j);}
+  while(q.length){const j=q.pop(),x=j%N,y=(j/N)|0;for(const s of [[1,0],[-1,0],[0,1],[0,-1]]){const xx=x+s[0],yy=y+s[1];if(xx<0||yy<0||xx>=N||yy>=N)continue;const k=yy*N+xx;if(!OCEAN[k]&&ter[k]===T.SEA){OCEAN[k]=1;q.push(k);}}}}
 /* Massifs are one continuous low-poly heightfield: a gentle foot, a short cliff band, then ridged peaks with valleys between (no flat table top). */
 const sat=v=>v<0?0:v>1?1:v;const sstep=(a,b,v)=>{const k=sat((v-a)/(b-a));return k*k*(3-2*k);};
 function mountH(X,Y,d){const n1=vn(X*0.11,Y*0.11,75),n2=vn(X*0.37,Y*0.37,76);

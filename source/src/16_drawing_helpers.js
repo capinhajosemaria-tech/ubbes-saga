@@ -6,7 +6,7 @@ function drawSprite(s,wx,wy,k,alpha,flip){if(!s.ready)return;if(alpha<1)ctx.glob
   else ctx.drawImage(s.cv,wx-s.ax*k,wy-s.ay*k,s.w*k,s.h*k);if(alpha<1)ctx.globalAlpha=1;}
 function hex(h){return [parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];}
 function sh(c,f){return 'rgb('+Math.min(255,c[0]*f|0)+','+Math.min(255,c[1]*f|0)+','+Math.min(255,c[2]*f|0)+')';}
-const C={s:{sea:hex('#6F8F9B'),river:hex('#7FA1AC'),beach:hex('#D8CCAE'),grass:hex('#93A97E'),forest:hex('#86A070'),foot:hex('#A39D93'),iron:hex('#8E877D'),mount:hex('#A7A298'),soil:hex('#7C6E58'),rock:hex('#857C71'),sand:hex('#B8AC8E')},
+const C={s:{sea:hex('#6F8F9B'),river:hex('#7FA1AC'),beach:hex('#DEC9A4'),grass:hex('#9DAA76'),forest:hex('#8DA06B'),foot:hex('#A39D93'),iron:hex('#8E877D'),mount:hex('#A7A298'),soil:hex('#7C6E58'),rock:hex('#857C71'),sand:hex('#B8AC8E')},
          w:{sea:hex('#53717D'),river:hex('#CFE0E5'),beach:hex('#D9DDDA'),grass:hex('#E6EBEC'),forest:hex('#DCE3E3'),foot:hex('#C9CCC8'),iron:hex('#B9BBB6'),mount:hex('#D9DCDA'),soil:hex('#8A7E6C'),rock:hex('#8E877D'),sand:hex('#B9BCB8')}};
 function tileColor(tt,PL){switch(tt){case T.SEA:return PL.sea;case T.RIVER:return PL.river;case T.BEACH:return PL.beach;case T.FOREST:return PL.forest;case T.FOOT:return PL.foot;case T.IRON:return PL.iron;case T.MOUNT:return PL.mount;default:return PL.grass;}}
 function faceColor(tt,PL){if(tt===T.MOUNT||tt===T.FOOT||tt===T.IRON)return PL.rock;if(tt===T.BEACH)return PL.sand;return PL.soil;}
@@ -14,7 +14,7 @@ function faceColor(tt,PL){if(tt===T.MOUNT||tt===T.FOOT||tt===T.IRON)return PL.ro
 /* per-tile colour cache: noise is costly, terrain rarely changes */
 const TF=new Float32Array(N*N).fill(-1),TDRY=new Float32Array(N*N),TCOL=new Array(N*N),TKEY=new Int16Array(N*N).fill(-1);
 function tileF(x,y,i){let f=TF[i];if(f<0){f=TF[i]=1+(vn(x*0.13,y*0.13,11)-0.5)*0.11+(vn(x*0.5,y*0.5,12)-0.5)*0.035+(h2(x,y,11)-0.5)*0.012;TDRY[i]=sat((vn(x*0.09,y*0.09,13)-0.42)*2.2)*0.55;}return f;}
-const DRYC=hex('#A9AC80');
+const DRYC=hex('#B5AA78');
 function drawTile(x,y,PL,win){
   const i=y*N+x,tt=ter[i],e=elev[i];const sx=(x-y)*HW,sy=(x+y)*HH,top=sy-e;
   let f=tileF(x,y,i);

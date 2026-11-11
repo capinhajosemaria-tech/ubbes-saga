@@ -13,10 +13,10 @@ async def main():
             await pg.keyboard.press('Escape');await pg.keyboard.press('Escape')
             if mob: await ctx.close();continue
             # road flow with mouse
-            await pg.evaluate("__G.setView(1.0,51,48)");await pg.wait_for_timeout(200)
+            await pg.evaluate("__G.setView(1.0,53,64)");await pg.wait_for_timeout(200)
             await pg.click('#dk-road');await pg.wait_for_timeout(200);await pg.screenshot(path='shots/pc_roadstart.png');print('ERRS',errs,'MB',await pg.evaluate("[document.getElementById('modebar').hidden,document.getElementById('mode-msg').innerHTML.slice(0,80)]"))
             cx,cy=vp['width']//2,vp['height']//2
-            A=await pg.evaluate('''(()=>{const G=__G,N=G.N;const ok=(x,y)=>G.isUnl(x,y)&&!G.occ[y*N+x]&&G.BUILDABLE.has(G.ter[y*N+x])&&!G.roads[y*N+x];for(let r=0;r<10;r++)for(let dy=-r;dy<=r;dy++)for(let dx=-r;dx<=r;dx++){const x=51+dx,y=48+dy;let g=true;for(let k=0;k<5;k++)if(!ok(x+k,y))g=false;if(g)return [dx,dy];}return null;})()''')
+            A=await pg.evaluate('''(()=>{const G=__G,N=G.N;const ok=(x,y)=>G.isUnl(x,y)&&!G.occ[y*N+x]&&G.ter[y*N+x]===2&&!G.roads[y*N+x];for(let r=0;r<14;r++)for(let dy=-r;dy<=r;dy++)for(let dx=-r;dx<=r;dx++){if((dx+dy+4)*16>140||Math.abs(dx-dy+2)*32>560)continue;const x=53+dx,y=64+dy;let g=true;for(let k=0;k<5;k++)if(!ok(x+k,y))g=false;if(g)return [dx,dy];}return null;})()''')
             print('A',A);sp=lambda dx,dy:(cx+(dx-dy)*32,cy+(dx+dy)*16)
             p1=sp(A[0],A[1]);p2=sp(A[0]+4,A[1])
             await pg.mouse.click(*p1);await pg.wait_for_timeout(100)

@@ -1,4 +1,4 @@
-# Ubbe's Saga — specification (Beta 0.11.0)
+# Ubbe's Saga — specification (Beta 0.12.0)
 
 How the game works **today**. Numbers are in `docs/NUMBERS.md` (generated). The long-term vision for Town Hall 6–10 is in `docs/DESIGN.md`.
 
@@ -8,16 +8,18 @@ A cozy-but-harsh Viking village builder for the browser. Year 865, the village o
 ## 2. Modes
 - **Relaxed**, **Challenge** (harsher events and consumption), **Sandbox** (free resources, fast speeds).
 - **Test**: choose Town Hall 1–5 and start with a prebuilt village (every building at its limit and highest level, full population, warriors, ships, herd), with test tools and 8×/16× speed. **Gallery**: every building at levels 1/3/5 and every house colour scheme side by side.
-- Three save slots per device (`localStorage`, keys `ubbesaga.b07.*`), plus Export/Import in the Saga panel.
+- Three save slots per device (`localStorage`, keys `ubbesaga.b09.*`), plus Export/Import in the Saga panel.
 
 ## 3. Time
 - 1 year = 45 days: 30 summer + 15 winter. 1 day ≈ 27 s at 1×. Speeds: pause, ½×, 1×, 2×, 4× (8×/16× in Test/Sandbox).
 - Winter: firewood needed, seasonal buildings rest, fishing drops, sickness rises (warm clothes halve it).
 
 ## 4. Map
-- 132 × 132 tiles, isometric (tile 64 × 32). Village centre `HOME = (63, 60)`.
-- Terrain: sea, beach, grass, forest, berry bushes, river, foothills, iron outcrops, mountains. Islands in the bay, a tarn in the western woods.
-- Mountains are one continuous low-poly heightfield (gentle foot, short cliff band, ridged grey peaks with valleys, snow only on the highest peaks). They stay low and to the north (a short spur north of the village, a small peak to the north-east), leaving open meadow. Locked-land shading and edge mist are lighter over rock.
+- 132 × 132 tiles, isometric (tile 64 × 32). Village centre `HOME = (63, 60)`. The map is fixed (same for every saga): **the fjord** (Beta 0.12).
+- Kaldstrand sits at the head of a narrow fjord that winds south-east to the open sea; cliffs flank the outer fjord, a range closes the north, a river comes down from it and enters the fjord by the village, a second river feeds the outer fjord. A rocky iron hill rises just north-west of the village, a ridge runs south-west, islands sit at the fjord mouth and a lake lies in the western woods.
+- Terrain: sea, beach, grass, forest, berry bushes, river, foothills, iron outcrops, mountains. Mountains are one low-poly heightfield (gentle foot, short cliff band, ridged grey peaks, snow only on the highest).
+- **Starting land guarantee:** the generator makes sure the free starting land has iron (at least 10 iron tiles within 14 of the village; about 14 today), berries and forest near the village, and water within a few tiles for fishers; the village core is kept an open meadow.
+- Raiders land only on sea joined to the map edge (never on the lake).
 - Land is bought in 6 × 6 zones with **fame**; the saga starts with 21 zones (a 5 × 5 block minus its four corners, 30 × 30 tiles); the corners and everything further are bought; cost grows with distance (`30·d − 10`).
 - Edges fade into sea-mist; unbought land is slightly darker with a faint tile grid, and each 6 × 6 block is outlined (brighter for blocks next to owned land).
 - Trees can be cleared for good (half their wood). Felled trees regrow in 60 days.
@@ -75,7 +77,11 @@ Market with dynamic prices: partners unlock gradually (Skiringssal TH3, Hedeby T
 - Fonts: Marcellus SC for titles and for numbers (resource bar, tables, counters), Inter for text. Classic look: dark wood bars, parchment sheets with dark headers, white building cards whose pictures are cropped and centred automatically. PC keeps the central bottom dock (panels, build categories, roads).
 
 ## 12. Art direction
-Low-poly, flat-shaded, muted Nordic palette. Each building type has its own silhouette as well as wall (planks, logs, stone, timber frame), roof (turf, thatch, shingle) and colours: gable halls, hipped and bowed longhouses (Jarl's House, Trading House), round huts (Berry Gatherer, Hunter), open sheds (Woodcutter's Lodge, Carpenter, Smithy front), a raised storehouse on posts (Granary), pyramid roofs (Mine, Bakery, Smokehouse). The Town Hall is a great bowed longhouse with a hipped turf roof (shingle from level 4), dragon heads, an entrance gable, an annex from level 2 and a raised louvred roof from level 3; its plot is a cobblestone plaza. Logs lie only at the Woodcutter's Lodge, stacked with round ends; all houses share one gable shape and have six colour schemes (per house or whole village); a house keeps its look when moved or rotated. The Hof rises in stave-church tiers: stacked steep shingle roofs with gilded dragon heads and a weathervane. Close up (zoom above ~1.45) roads show gravel and hoof prints, grass gets more blades, clover and flowers, walls show wood grain and knots, footings single stones, and the palisade rope lashings and bark; palisade levels show as a plank rail (Double) and iron bands (Iron-bound), damage as missing stakes. Roads lie on the ground as worn dirt paths; bridges are plank decks with rails. Props never stand on roads, water or another plot. Winter turns everything to snow.
+**Style: "Frost & Ember"** (chosen Beta 0.12; inspiration Frostpunk, Valheim, Banished): low-poly, flat-shaded, a warm golden summer and a cold blue winter, cast shadows, a slow time-of-day cycle and warm lights in the dark. The style board is the artifact "Ubbe's Saga — 6 estilos de arte".
+- **Time of day** (`24_zlight.js`): one light cycle lasts 3 game days. Summer: short night, short dawn, a long warm day, short dusk; winter: shorter day, longer night. The whole scene is graded (soft-light colour, a multiply tint at night, a coloured haze at the top, a sun glow, a vignette). Night stays readable (blue, not black).
+- **Shadows:** buildings, trees and the palisade cast soft shadows that swing with the sun (long at dawn and dusk, short at noon).
+- **Lights:** from dusk to dawn every building's door glows, fires and the Town Hall more strongly.
+ Each building type has its own silhouette as well as wall (planks, logs, stone, timber frame), roof (turf, thatch, shingle) and colours: gable halls, hipped and bowed longhouses (Jarl's House, Trading House), round huts (Berry Gatherer, Hunter), open sheds (Woodcutter's Lodge, Carpenter, Smithy front), a raised storehouse on posts (Granary), pyramid roofs (Mine, Bakery, Smokehouse). The Town Hall is a great bowed longhouse with a hipped turf roof (shingle from level 4), dragon heads, an entrance gable, an annex from level 2 and a raised louvred roof from level 3; its plot is a cobblestone plaza. Logs lie only at the Woodcutter's Lodge, stacked with round ends; all houses share one gable shape and have six colour schemes (per house or whole village); a house keeps its look when moved or rotated. The Hof rises in stave-church tiers: stacked steep shingle roofs with gilded dragon heads and a weathervane. Close up (zoom above ~1.45) roads show gravel and hoof prints, grass gets more blades, clover and flowers, walls show wood grain and knots, footings single stones, and the palisade rope lashings and bark; palisade levels show as a plank rail (Double) and iron bands (Iron-bound), damage as missing stakes. Roads lie on the ground as worn dirt paths; bridges are plank decks with rails. Props never stand on roads, water or another plot. Winter turns everything to snow.
 
 ## 13. Technical
 - One HTML file built from `source/src` modules; canvas 2D renderer; no libraries. Installable PWA (manifest + service worker, offline after first load).

@@ -55,7 +55,7 @@ function vrInside(g){const ins=new Uint8Array(N*N),q=g.slice();for(const i of g)
 function vrStart(){const th=B.find(b=>b.t==='th');if(!th){S.vr=null;return;}recomputeWalls();
   const cx=th.fx+th.w/2,cy=th.fy+th.h/2;let best=null;const ins=walls.some(v=>v)?vrInside(thRing()):null;
   for(let y=1;y<N-1;y++)for(let x=1;x<N-1;x++){const i=y*N+x;if(!vrPass(i)||occ[i]||walls[i]||(ins&&ins[i]&&S.wallClosed))continue;
-    if(![[1,0],[-1,0],[0,1],[0,-1]].some(s=>ter[(y+s[1])*N+x+s[0]]===T.SEA))continue;const d=Math.hypot(x-cx,y-cy);if(d<12)continue;const sc=Math.abs(d-20)+h2(x,y,S.day)*6;if(!best||sc<best.sc)best={sc:sc,i:i};}
+    if(![[1,0],[-1,0],[0,1],[0,-1]].some(s=>OCEAN[(y+s[1])*N+x+s[0]]))continue;const d=Math.hypot(x-cx,y-cy);if(d<12)continue;const sc=Math.abs(d-20)+h2(x,y,S.day)*6;if(!best||sc<best.sc)best={sc:sc,i:i};}
   if(!best){S.vr=null;return;}
   S.vr.on=true;S.wdmg=S.wdmg||{};const lx=best.i%N,ly=(best.i/N)|0;
   VR={t:0,land:best.i,u:[],fx:[],broke:0,killed:0,loot:{},lost:[],stolen:{},arch:0};

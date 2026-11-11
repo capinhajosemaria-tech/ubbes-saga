@@ -9,6 +9,7 @@ Format: `- [ ] what · why / where seen` — screenshots welcome in the conversa
 - Polish 3 — Town Hall 1, tutorial and clarity (Beta 0.9.0, fix 0.9.1).
 - Polish 4 — buildings, menus, detail and walls (Beta 0.10.0).
 - World map and raids (Beta 0.11.0).
+- Art 1 — "Frost & Ember" light and the fjord map (Beta 0.12.0).
 
 ## Polish after Town Hall 5 (beta polish rounds)
 Merge José's play feedback here, grouped as visual / balance / organisation. **PC only for now** (decided 2026-11-10): tune everything on PC, then convert to iPhone; phone items wait in "Phone (later)".
@@ -54,6 +55,12 @@ José's second play session (Relaxed, 2026-11-10, after Polish 1) added the item
 - [ ] World map uses only the top half of the screen: bigger map area or a toggle to hide the target list.
 - [ ] Phone version of the dock, build tray and docked inspector.
 
+
+## Art (after Beta 0.12.0 — style 5 "Frost & Ember" chosen)
+- [ ] Bring building materials closer to the style board: darker shingle and thatch roofs, proper timber framing, more contrast between building kinds so a big village reads at a glance.
+- [ ] Night and winter tuning after José plays (how dark, how often, how long); maybe a setting to turn the cycle off.
+- [ ] Ships, palisade and walls: warm rim light at dusk, torches on gates and towers at night.
+- [ ] Fjord map polish after play: island placement, fjord width, forests, where raiders land.
 
 ## Bugs
 - [x] **Houses change when moved or rotated — still there after 0.9.1** (José, 2026-11-11, top priority next round): moving a house changes its type (shape and colour); rotating it still gives the crossed / broken roof. Likely the house look is picked from position or id (hash) instead of being stored with the house, and the round/other house shapes have their own rotation bug that 0.9.1 did not cover.

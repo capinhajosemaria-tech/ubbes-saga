@@ -2,6 +2,13 @@
 
 Versions are `Beta 0.MINOR.PATCH` until Town Hall 10 (`1.0.0`).
 
+## Beta 0.12.0
+- New look, "Frost & Ember": a warm, golden summer, cast shadows that move with the sun, and a slow time-of-day cycle (dawn, a long day, dusk and a short night) over every 3 game days, longer nights in winter. From dusk to dawn doors and fires glow.
+- New map, the fjord: Kaldstrand lies at the head of a winding fjord with cliffs, a river from the northern range, a rocky iron hill next to the village, a ridge, a lake and islands at the fjord mouth.
+- The starting land now always has iron close by (there was none before), plus berries, forest and water.
+- Raiders only land from the open sea, never on the lake.
+- Old saves do not carry over.
+
 ## Beta 0.11.0
 - World map: names no longer overlap, Sweden is named and Birka sits on its island off the Swedish coast, England stays in sight under a light mist, and the map opens showing every place you can reach.
 - Raids no longer starve the village: provisions not eaten come home as dried fish, and ships only sail if the village keeps enough food (the whole winter's when winter is near).

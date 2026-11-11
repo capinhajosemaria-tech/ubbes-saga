@@ -39,6 +39,7 @@ function render(){
   ctx.fillStyle='rgba(38,48,53,0.13)';ctx.fill(lockP,'nonzero');
   ctx.lineWidth=1.3/zoom+0.4;ctx.strokeStyle=win?'rgba(60,70,76,0.22)':'rgba(255,250,232,0.42)';ctx.stroke(zoneA);ctx.strokeStyle=win?'rgba(60,70,76,0.12)':'rgba(255,250,232,0.2)';ctx.stroke(zoneB);
   if(gridT.length&&zoom>0.5){ctx.strokeStyle=win?'rgba(60,70,76,0.08)':'rgba(255,255,255,'+(0.11*Math.min(1,(zoom-0.5)*3)).toFixed(3)+')';ctx.lineWidth=1/zoom;ctx.beginPath();for(let k=0;k<gridT.length;k+=2){const sx=gridT[k],top=gridT[k+1];ctx.moveTo(sx-HW,top);ctx.lineTo(sx,top-HH);ctx.lineTo(sx+HW,top);}ctx.stroke();}
+  drawShadows(win,vis);
   /* placement ghost footprint & range */
   let ghost=null;
   if(mode==='place'&&place){const ct=w2t(camX,camY),d=dims(place.t,place.rot),fx=ct[0]-Math.floor((d.w-1)/2),fy=ct[1]-Math.floor((d.h-1)/2);
@@ -73,9 +74,10 @@ function render(){
     else if(o.kind==='bush'&&!o.gone)drawSprite(SP.bush[win?1:(o.amt>0.5?0:2)],sx+o.ox,sy-elev[o.y*N+o.x]+o.oy,o.s,a,false);}
   flushDyn(Infinity);
   drawShipsAtHarbour(win);drawAnims(win);vrDraw(win);drawHover();
-  for(const b of B)drawBadge(b);
   for(const p of smoke){ctx.fillStyle='rgba(220,225,224,'+(p.a*0.75).toFixed(3)+')';ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,6.3);ctx.fill();}
   drawEdgeFog(win,vis);
+  drawLight(win,vis);
+  for(const b of B)drawBadge(b);
   if(win){ctx.setTransform(dpr,0,0,dpr,0,0);ctx.fillStyle='rgba(243,245,243,0.85)';for(const f of flakes){ctx.beginPath();ctx.arc(f.x*W+Math.sin(f.p)*6,f.y*H,f.s,0,6.3);ctx.fill();}}
 }
 

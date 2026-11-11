@@ -14,7 +14,7 @@ Format: `- [ ] what · why / where seen` — screenshots welcome in the conversa
 ## Next round — Balance fixes 1 (from the audit)
 Audit done 2026-11-11: data in `tools/balance/audit_data.md` (48 bot runs × 900 days), report in `tools/balance/audit_report.md` (finding IDs below refer to it; read the finding before applying). Key result: TH1–TH2 are sound; most TH3–TH5 bot data reflects bot weaknesses (22/48 runs stuck at TH3 because the bot boxes in its own shore — Shipyard placement is fine for a player).
 Claude's suggested round (José still has to pick; ask him about item A1 because fewer babies changes the feel):
-- [ ] **B1, B2 — fix the bot first**: keep shore reachable (`yardFits()` guard), staff every free worker, plank target = hall cost + 60. Needed so confirmation runs are trustworthy.
+- [x] **B1, B2 — fix the bot first** (done 2026-11-11, `tools/bots/bot4.js` only): every planner build keeps the shore and the road-reachable land open (`placeSafe`); wood target = hall wood + 100 before carpenters; plank target = hall planks + 60; all farm/hunter slots staffed, spare workers to lodges with trees → mines → carpenters → fishers; spot search covers all unlocked land. Result, 24 runs × 900 days: TH5 24/24 (audit 21/48) — planner d510–586, warlord 434–545, challenge 509–587, lazy 513–586; no fail keys. Open: warlord now fastest (planner should be a bit faster); summer spare workers at TH5 mostly 0–10 (rule 4–8, see A8).
 - [ ] **E1 — rounding bugs**: Preserver levels 4/5 → 5/6 items a day; Smokehouse carries fractions (levels 2 and 4 add nothing now).
 - [ ] **E2 — ale and mead out of the meal count** (counted as meals, never eaten).
 - [ ] **A2 — Bakery 2 → 4 bread per worker a day** (weak link of TH5 winter food).

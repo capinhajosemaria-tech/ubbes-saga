@@ -9,7 +9,7 @@ function setRoadPath(b){G.recomputeConn();if(b.conn)return true;const R=G.roads,
   let found=-1;while(q.length){const k=q.shift();if(R[k]&&C[k]){found=k;break;}const x=k%N,y=(k/N)|0;for(const d of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+d[0],ny=y+d[1];if(!ok(nx,ny))continue;const nk=ny*N+nx;if(prev.has(nk))continue;prev.set(nk,k);q.push(nk);}}
   if(found<0)return false;let k=found;while(k!==-1){R[k]=1;k=prev.get(k);}G.recomputeConn();return true;}
 function findSpot(t){const D=G.DEF[t];let best=null;
-  for(let y=18;y<66;y++)for(let x=18;x<66;x++)for(const rot of [0,1]){if(rot&&D.w===D.h)continue;if(BAD.has(t+':'+x+','+y))continue;if(t!=='shipyard'){const dd0=G.dims(t,rot);if(inRes(x,y,dd0.w,dd0.h))continue;}if(!['shipyard','harbour','salt'].includes(t)){let sea=false;const dd=G.dims(t,rot);for(let yy=y-1;yy<=y+dd.h&&!sea;yy++)for(let xx=x-1;xx<=x+dd.w;xx++)if(G.inMap(xx,yy)&&G.ter[yy*N+xx]===G.T.SEA){sea=true;break;}if(sea)continue;}const c=G.canPlace(t,x,y,rot,0);if(!c.ok)continue;
+  for(let y=0;y<N;y++)for(let x=0;x<N;x++)if(G.isUnl(x,y))for(const rot of [0,1]){if(rot&&D.w===D.h)continue;if(BAD.has(t+':'+x+','+y))continue;if(t!=='shipyard'){const dd0=G.dims(t,rot);if(inRes(x,y,dd0.w,dd0.h))continue;}if(!['shipyard','harbour','salt'].includes(t)){let sea=false;const dd=G.dims(t,rot);for(let yy=y-1;yy<=y+dd.h&&!sea;yy++)for(let xx=x-1;xx<=x+dd.w;xx++)if(G.inMap(xx,yy)&&G.ter[yy*N+xx]===G.T.SEA){sea=true;break;}if(sea)continue;}const c=G.canPlace(t,x,y,rot,0);if(!c.ok)continue;
     const d=G.dims(t,rot);const b={fx:x,fy:y,w:d.w,h:d.h};const dist=Math.hypot(x+d.w/2-38.5,y+d.h/2-38.5);
     let sc=D.need?Math.min(G.needCount(b,D.need).n,25)*3-dist*0.4:-dist;if(G.DEF[t].farm||t==='pen')sc=-Math.abs(dist-15)-(x>38?3:0);
     if(G.DEF[t].road!==false&&!G.DEF[t].farm){let near=99;for(let yy=y-3;yy<y+d.h+3;yy++)for(let xx=x-3;xx<x+d.w+3;xx++)if(G.inMap(xx,yy)&&G.conn[yy*N+xx])near=Math.min(near,Math.max(Math.abs(xx-x),Math.abs(yy-y)));if(near>2&&!D.need)continue;sc-=near*2;}
@@ -17,35 +17,49 @@ function findSpot(t){const D=G.DEF[t];let best=null;
 function oracle(t){const S=G.S;let any=false;for(let y=0;y<G.N&&!any;y++)for(let x=0;x<G.N&&!any;x++)for(const rot of [0,1]){if(G.canPlace(t,x,y,rot,0).ok){any=true;break;}}
   if(any)return 'bot';let cheap=1e9;const U=G.unlockedSet();for(let zx=0;zx<18;zx++)for(let zy=0;zy<18;zy++){const k=zx+','+zy;if(U.has(k)||!G.zoneAdj(zx,zy))continue;cheap=Math.min(cheap,G.zoneCost(zx,zy));}
   return S.fame>=cheap?'land-affordable':'game-no-fame';}
-const FAIL={};
+const FAIL={};let GUARD=0;
+function shoreOpen(){return G.count('shipyard')===0||G.count('harbour')===0;}
+function reachCount(){G.recomputeConn();const R=G.roads,C=G.conn,O=G.occ,W=G.walls(),T=G.ter,BU=G.BUILDABLE,RV=G.T.RIVER;const seen=new Uint8Array(N*N),q=[];
+  for(let i=0;i<N*N;i++)if(R[i]&&C[i]){seen[i]=1;q.push(i);}let n=0,qi=0;
+  while(qi<q.length){const k=q[qi++],x=k%N,y=(k/N)|0;for(const d of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+d[0],ny=y+d[1];if(!G.inMap(nx,ny))continue;const nk=ny*N+nx;
+    if(seen[nk]||O[nk]||(W&&W[nk]===1)||!G.isUnl(nx,ny))continue;if(!(R[nk]||BU.has(T[nk])||T[nk]===RV))continue;seen[nk]=1;q.push(nk);if(!R[nk]&&BU.has(T[nk]))n++;}}return n;}
+// place t at the best planner spot that keeps the shore reachable (B1) and does not cut off road-reachable land
+function placeSafe(t){const yard=t!=='shipyard'&&shoreOpen()&&G.yardFits();const R=G.roads,list=G.planSpot(t,true);const before=reachCount();let best=null,n=0;
+  const tryAt=sp=>{const r0=Array.from(R);const b=G.addBuilding(t,sp.x,sp.y,sp.rot,false);let ok=G.DEF[t].road===false||setRoadPath(b);let loss=1e9;
+    if(ok&&yard&&!G.yardFits())ok=false;if(ok){let nr=0;for(let i=0;i<r0.length;i++)if(R[i]&&!r0[i])nr++;loss=before-reachCount()-b.w*b.h-nr;}
+    return {b,ok,loss,undo(){G.B.splice(G.B.indexOf(b),1);for(let i=0;i<r0.length;i++)R[i]=r0[i];G.rebuildOcc();G.recomputeConn();}};};
+  for(const sp of list){if(n++>40)break;const a=tryAt(sp);if(a.ok&&a.loss<=20)return a.b;if(a.ok&&(!best||a.loss<best.loss))best={sp,loss:a.loss};a.undo();GUARD++;}
+  if(best){const a=tryAt(best.sp);if(a.ok){FAIL[t+':cut-'+(best.loss>100?'big':'small')]=(FAIL[t+':cut-'+(best.loss>100?'big':'small')]||0)+1;return a.b;}a.undo();}
+  FAIL[t+':shore-guard']=(FAIL[t+':shore-guard']||0)+1;return null;}
 function build(t){if(LAZY())return false;if(window.__SAVING&&['jarl','camp','bench','wattle','rune','herbs','prow','nets','tomb','hof','tower','thrall','tailor','hives'].includes(t))return false;
   if(O.planner){if(G.DEF[t].lvl>G.thLevel())return false;if(G.DEF[t].lvl===1&&!G.S.avail.includes(t))return false;if(G.count(t)>=G.limitOf(t))return false;const cst=G.costOf(t);if(!G.afford(cst))return false;
-    const nb=G.placeAuto(t);if(!nb){if(t==='shipyard'&&!window.__YD){window.__YD=1;const L=G.planSpot(t,true);events.push('day '+G.S.day+': YARDFAIL cands '+L.length+' '+JSON.stringify(L.slice(0,3))+' unl '+G.unlockedSet().size);}const k=t+':'+oracle(t);FAIL[k]=(FAIL[k]||0)+1;NOSPOT=5;return false;}G.pay(cst,1);nb.paid=cst;G.assignWorkers();nb.desired=Math.min(G.slotsOf(nb),G.free);G.assignWorkers();events.push('day '+G.S.day+': built '+t);G.checkMilestones();return true;}if(G.DEF[t].lvl>G.thLevel())return false;if(G.DEF[t].lvl===1&&!G.S.avail.includes(t))return false;if(G.count(t)>=G.limitOf(t))return false;
+    const nb=placeSafe(t);if(!nb){if(t==='shipyard'&&!window.__YD){window.__YD=1;const L=G.planSpot(t,true);events.push('day '+G.S.day+': YARDFAIL cands '+L.length+' '+JSON.stringify(L.slice(0,3))+' unl '+G.unlockedSet().size);}const k=t+':'+oracle(t);FAIL[k]=(FAIL[k]||0)+1;NOSPOT=5;if(!/:bot$/.test(k))return false;}if(nb){G.pay(cst,1);nb.paid=cst;G.assignWorkers();nb.desired=Math.min(G.slotsOf(nb),G.free);G.assignWorkers();events.push('day '+G.S.day+': built '+t);G.checkMilestones();return true;}}if(G.DEF[t].lvl>G.thLevel())return false;if(G.DEF[t].lvl===1&&!G.S.avail.includes(t))return false;if(G.count(t)>=G.limitOf(t))return false;
   const cst=G.costOf(t);if(!G.afford(cst))return false;const sp=findSpot(t);if(!sp){if(!G.__nospot)G.__nospot={};if(!G.__nospot[t]){G.__nospot[t]=1;events.push('day '+G.S.day+': no spot for '+t);const k=t+':'+oracle(t);FAIL[k]=(FAIL[k]||0)+1;}NOSPOT=5;return false;}
   let b=null;for(let tries=0;tries<6;tries++){const s2=tries?findSpot(t):sp;if(!s2)break;b=G.addBuilding(t,s2.x,s2.y,s2.rot,false);
     if(G.DEF[t].road===false||setRoadPath(b))break;G.B.splice(G.B.indexOf(b),1);G.rebuildOcc();G.recomputeConn();BAD.add(t+':'+s2.x+','+s2.y);b=null;}
   if(!b){events.push('day '+G.S.day+': no road for '+t);return false;}G.pay(cst,1);b.paid=cst;
-  G.assignWorkers();events.push('day '+G.S.day+': built '+t);G.checkMilestones();return true;}
+  G.assignWorkers();events.push('day '+G.S.day+': built '+t);if(O.planner)FAIL[t+':fallback-ok']=(FAIL[t+':fallback-ok']||0)+1;G.checkMilestones();return true;}
 function staff(){const S=G.S,r=S.res,win=G.isWinter();const list=G.B.filter(b=>G.slotsOf(b)>0);list.forEach(b=>b.desired=0);let free=G.workforce();
-  const give=(t,n)=>{for(const b of list.filter(b=>b.t===t)){if(G.DEF[b.t].seasonal&&win)continue;const k=Math.max(0,Math.min(n,G.slotsOf(b)-b.desired,free));b.desired+=k;free-=k;n-=k;if(n<=0)break;}};
+  const give=(t,n)=>{const f0=free;for(const b of list.filter(b=>b.t===t)){if(G.DEF[b.t].seasonal&&win)continue;if(b.t==='wood'&&/No trees/.test(b.status||''))continue;const k=Math.max(0,Math.min(n,G.slotsOf(b)-b.desired,free));b.desired+=k;free-=k;n-=k;if(n<=0)break;}return f0-free;};
   const pop=S.pop;if(r.iron<30)give('mine',2);
   const need=G.eatNeed()*(G.foodUnits()<G.eatNeed()*10?1.5:1.1);let f=need;
-  if(!win){const g=Math.min(Math.ceil(f/4.8),G.count('garden')*2);give('garden',g);f-=g*4.8;const bN=Math.min(Math.max(0,Math.ceil(f/4)),G.count('berry')*2);give('berry',bN);f-=bN*4;}
-  const hN=Math.min(Math.max(0,Math.ceil(f/2.4)),G.count('hunter')*2);give('hunter',hN);f-=hN*2.4;
+  if(!win){const g=give('garden',99);f-=g*4.8;const bN=Math.min(Math.max(0,Math.ceil(f/4)),G.count('berry')*2);give('berry',bN);f-=bN*4;}
+  const hN=give('hunter',99);f-=hN*2.4;
   give('fish',Math.max(0,Math.ceil(f/(win?1.6:4))));
   if(G.has('pen'))give('pen',2);if(G.has('hay')&&r.hay<G.herdTotal()*9)give('hay',4);
   const spearsWanted0=G.thLevel()>=2&&r.spears<12;{const tq=G.TH_UP[G.thLevel()+1];const tn=Math.max(10,(tq&&tq.cost.tools||0)+3);if(r.tools<tn)give('smith',2);}
-  const TQ=(G.TH_UP[G.thLevel()+1]||{cost:{}}).cost;const needW=(TQ.wood||0)+60;give('wood',r.wood<200||(window.__SAVING&&r.wood<needW)?6:2);if(window.__SAVING){if(r.planks<(TQ.planks||0)+20)give('carp',3);if(r.iron<(TQ.iron||0)+20)give('mine',3);}
+  const TQ=(G.TH_UP[G.thLevel()+1]||{cost:{}}).cost;const WT=Math.max(200,(TQ.wood||0)+100);give('wood',r.wood<WT?99:2);const PT=(TQ.planks||0)+60;if(window.__SAVING){if(r.iron<(TQ.iron||0)+20)give('mine',3);}
   const roomy=(r.wood+r.planks+r.iron+r.salt+r.hay+r.wool+r.flax+r.grain+r.cloth+r.rope+r.hides)<G.capMat()*0.85;
-  if(r.planks<250&&(roomy||r.planks<170))give('carp',3);if((r.iron<80||r.tools<10)&&(roomy||r.iron<70))give('mine',3);
+  if(r.planks<PT&&r.wood>40)give('carp',r.wood<WT?2:99);if((r.iron<80||r.tools<10)&&(roomy||r.iron<70))give('mine',3);
   let wantW=null;if(G.thLevel()>=2&&S.warriors<G.warCap()&&!O.noWar){if(G.thLevel()>=3){if(r.shields<8)wantW='shields';else if(G.thLevel()>=4&&r.axes<8)wantW='axes';else if(G.thLevel()>=5&&r.armour<5&&r.hides>=1)wantW='armour';else if(r.swords<8)wantW=(r.iron>40?'swords':'spears');}else if(r.spears<8)wantW='spears';}
   const spearsWanted=!!wantW;G.B.filter(b=>b.t==='smith').forEach((b,i)=>b.mode=(r.tools>=Math.max(12,((G.TH_UP[G.thLevel()+1]||{cost:{}}).cost.tools||0)+3)&&wantW)?(i===0||!G.SMITH[wantW]?wantW:wantW):'tools');
   if(r.tools<14||spearsWanted)give('smith',2);
   if(G.has('salt')&&r.salt<40)give('salt',1);if(G.has('smoke')&&(r.meat>4||r.fish>10))give('smoke',2);if(G.has('pres')&&(r.fish>8||r.berries>8||r.veg>8))give('pres',2);
-  if(G.has('grain'))give('grain',2);if(G.has('brewery')&&r.grain>6&&(r.ale||0)<40)give('brewery',2);if(G.has('bakery')&&r.grain>(G.has('brewery')&&(r.ale||0)<25?30:4))give('bakery',2);if(G.has('flax'))give('flax',2);if(G.has('weaver')&&(r.wool>=2||r.flax>=2))give('weaver',2);
+  if(G.has('grain'))give('grain',99);if(G.has('brewery')&&r.grain>6&&(r.ale||0)<40)give('brewery',2);if(G.has('bakery')&&r.grain>(G.has('brewery')&&(r.ale||0)<25?30:4))give('bakery',2);if(G.has('flax'))give('flax',99);if(G.has('weaver')&&(r.wool>=2||r.flax>=2))give('weaver',2);
   G.B.filter(b=>b.t==='shipyard'&&b.proj).forEach(b=>give('shipyard',4));
   if(G.has('market'))give('market',1);
-  give('fish',6);give('wood',6);G.assignWorkers();}
+  give('fish',6);give('wood',6);
+  give('wood',99);if(roomy)give('mine',99);if(r.wood>WT&&roomy)give('carp',99);give('fish',99);G.assignWorkers();}
 const L1=['berry','wood','fish','carp','mine','ware','smith','gran','pres','market','jarl','pyre'];
 const L2=['pen','hay','garden','salt','smoke','altar','train','arsenal'];
 const L3=['shipyard','harbour','trade','weaver','flax','grain','bakery','hunter'];
@@ -69,7 +83,7 @@ for(let d=0;d<DAYS;d++){if(G.S.over)break;const S=G.S,r=S.res;
   {const tb=G.B.find(x=>x.t==='tomb');const sh=S.ships.find(s=>!s.away&&s.type==='knarr')||null;if(tb&&!tb.proj&&r.gold>=40&&r.swords>=6&&S.ships.length>=3&&sh){r.gold-=40;r.swords-=6;S.ships=S.ships.filter(s=>s!==sh);tb.proj={done:0};events.push('day '+S.day+': TOMB begun');G.checkMilestones();}
    if(tb&&tb.proj)tb.desired=G.slotsOf(tb);}
   if(G.thLevel()>=5&&!(S.maps&&S.maps.england)&&r.gold>=40){r.gold-=40;S.maps=S.maps||{};S.maps.england=1;events.push('day '+S.day+': bought England map');G.checkMilestones();}
-  if(S.pop>=16)build('fish');if(r.wood<80&&d>20)build('wood');if(S.pop>=14)build('berry');
+  if(G.count('wood')&&G.B.filter(b=>b.t==='wood').every(b=>/No trees/.test(b.status||'')))build('wood');if(S.pop>=16)build('fish');if(r.wood<80&&d>20)build('wood');if(S.pop>=14)build('berry');
   if(G.thLevel()>=2){const used=r.wood+r.planks+r.iron+r.salt+r.hay+r.wool+r.flax+r.grain+r.cloth+r.rope+r.hides;if(used>G.capMat()*0.65)build('ware');}
   if(G.thLevel()>=2&&S.pop>=26){build('garden');build('carp');build('mine');build('hay');build('wood');}
   if(G.thLevel()>=3&&S.pop>=36){build('grain');build('hunter');build('fish');build('wood');build('gran');build('ware');}
@@ -126,5 +140,5 @@ for(let d=0;d<DAYS;d++){if(G.S.over)break;const S=G.S,r=S.res;
 function FOOD_KINDS(){const r=G.S.res;return ['fish','berries','meat','veg','bread','dfish','jam','smoked','pickles','sausage'].filter(k=>r[k]>=1).length;}
 const st=G.B.filter(b=>G.slotsOf(b)).map(b=>b.t+(b.lvl>1?'L'+b.lvl:'')+':'+b.workers+'/'+G.slotsOf(b)+' '+b.status).join(' | ');
 AUD.P=window.__P;AUD.evtc={};for(const e of events){const m=/: evt:(\w+)/.exec(e);if(m)AUD.evtc[m[1]]=(AUD.evtc[m[1]]||0)+1;const f=/: fest:(\w+) -> (\w+)/.exec(e);if(f)AUD.evtc['fest_'+f[1]+'_'+f[2]]=(AUD.evtc['fest_'+f[1]+'_'+f[2]]||0)+1;}
-return {fail:FAIL,aud:AUD,log,events,final:st,ms:msDay,ships:G.S.ships,thr:G.thReq()?G.thReq().items.filter(i=>!i.ok).map(i=>i.t):[]};
+return {guard:GUARD,fail:FAIL,aud:AUD,log,events,final:st,ms:msDay,ships:G.S.ships,thr:G.thReq()?G.thReq().items.filter(i=>!i.ok).map(i=>i.t):[]};
 })

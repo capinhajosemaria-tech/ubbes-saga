@@ -2,6 +2,10 @@
 
 Versions are `Beta 0.MINOR.PATCH` until Town Hall 10 (`1.0.0`).
 
+## Beta 0.15.3
+- Trees, berry bushes, iron and fishing water never run out: one source in reach is enough for full output.
+- Houses burn 30% less firewood (about 0.35 a day in summer, 0.84 in winter).
+
 ## Beta 0.15.2
 - The small paths from building doors to the roads are gone.
 - The palisade is now a closed wall of upright split pine logs, sharpened at the top and set in an earth bank (iron bands on the strongest level), and the gate has heavy log posts and a plank walkway. It no longer looks like a fence.

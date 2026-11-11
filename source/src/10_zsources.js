@@ -2,6 +2,8 @@
 /* Trees, berry bushes, iron outcrops and fishing water give a fixed amount each year and stay on the map.
    Everything refills at the start of summer (spring), so winter draws on what is left.
    A building works the sources within its radius; buildings of the same kind sharing a source split it. */
+/* 0.15.3 (José): sources never run out; a building only needs one source in range for full output */
+const SRC_ENDLESS=true;
 const SRC_Y={tree:8,bush:25,iron:60,sea:20,river:12};
 const SRC_OF={wood:'tree',berry:'bush',mine:'iron',fish:'water'};
 const SRC_R={wood:6,berry:5,mine:4,fish:3};
@@ -32,14 +34,16 @@ function srcInfo(b,planned){const t=b.t,list=srcList(b);let share=0,shared=0;
   for(const o of list){const k=srcShare(o,t,planned?null:b,planned);share+=o.cap/k;if(k>1)shared++;}
   const sl=planned?(DEF[t].slots||0):slotsOf(b),mx=maxYear(t,planned?1:b.lvl,Math.max(1,sl));
   let left=0;for(const o of list)left+=o.amt/srcShare(o,t,planned?null:b,planned);
+  if(SRC_ENDLESS)return {n:list.length,shared:shared,share:share,pct:list.length?1:0,left:Infinity,list:list};
   return {n:list.length,shared:shared,share:share,pct:mx>0?Math.min(1,share/mx):0,left:left,list:list};}
 function srcLabel(b,planned){const k=SRC_OF[b.t],w=SRC_WORD[k],I=srcInfo(b,planned);
   if(!I.n)return {n:0,label:'No '+w[1]+' in range'};
+  if(SRC_ENDLESS)return {n:I.n,label:I.n+' '+(I.n===1?w[0]:w[1])+' in range · full output',pct:1};
   let s=I.n+' '+(I.n===1?w[0]:w[1])+' in range'+(I.shared?' ('+I.shared+' shared)':'')+' · '+Math.round(I.pct*100)+'% of full output';
   if(!planned)s+=' · '+fmt(I.left)+' '+RNAME[SRC_RES[b.t]].toLowerCase()+' left this year';
   return {n:I.n,label:s,pct:I.pct};}
 /* take up to `want` from the building's sources, each shared source split between the buildings using it */
-function harvest(b,want){if(want<=0)return 0;const list=srcList(b).filter(o=>o.amt>0.001);if(!list.length)return 0;
+function harvest(b,want){if(want<=0)return 0;if(SRC_ENDLESS)return srcList(b).length?want:0;const list=srcList(b).filter(o=>o.amt>0.001);if(!list.length)return 0;
   const w=list.map(o=>1/srcShare(o,b.t,b,false)),ws=w.reduce((a,c)=>a+c,0);let got=0;
   list.forEach((o,i)=>{const take=Math.min(o.amt,want*w[i]/ws);o.amt-=take;got+=take;});
   let rest=want-got;for(const o of list){if(rest<=0.001)break;const take=Math.min(o.amt,rest);o.amt-=take;got+=take;rest-=take;}

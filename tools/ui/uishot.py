@@ -10,7 +10,7 @@ async def main():
             await pg.evaluate("__G.setSpeed(0);document.querySelectorAll('.modal').forEach(m=>m.hidden=true)");await pg.wait_for_timeout(900)
             await pg.screenshot(path=f'shots/ui_{n}0.png')
             if not m:
-                await pg.click('[data-dc="Resources"]');await pg.wait_for_timeout(600);await pg.screenshot(path=f'shots/ui_{n}1.png')
+                await pg.click('[data-dc="Materials"]');await pg.wait_for_timeout(600);await pg.screenshot(path=f'shots/ui_{n}1.png')
                 await pg.click('#tray-x')
                 th=await pg.evaluate("(()=>{const b=__G.B.find(b=>b.t==='th');const p=[(b.fx+1-(b.fy+1))*32,(b.fx+1+b.fy+1)*16];return p})()")
                 await pg.mouse.move(720,450);await pg.wait_for_timeout(200)

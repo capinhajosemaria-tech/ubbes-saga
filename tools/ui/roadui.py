@@ -8,7 +8,7 @@ async def main():
             await pg.goto('file://'+os.path.abspath('test.html'));await pg.wait_for_timeout(500)
             await pg.click('#t-new');await pg.click('[data-sl="1"]');await pg.click('[data-md="test"]');await pg.click('[data-tl="3"]');await pg.wait_for_timeout(1200)
             await pg.evaluate("__G.setSpeed(0)")
-            await pg.click('#btn-build' if mob else '[data-dc="Housing"]');await pg.wait_for_timeout(300);await pg.screenshot(path=f'shots/{name}_buildmenu.png')
+            await pg.click('#btn-build' if mob else '[data-dc="Homes"]');await pg.wait_for_timeout(300);await pg.screenshot(path=f'shots/{name}_buildmenu.png')
             vis=await pg.evaluate("(()=>{const b=document.querySelector('[data-cat=\"Sea\"]')||document.querySelector('[data-dc=\"Sea\"]');const r=b.getBoundingClientRect();return [r.left,r.right,innerWidth]})()");print(name,'Sea tab',vis)
             await pg.keyboard.press('Escape');await pg.keyboard.press('Escape')
             if mob: await ctx.close();continue

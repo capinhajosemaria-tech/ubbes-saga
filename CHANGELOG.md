@@ -2,6 +2,14 @@
 
 Versions are `Beta 0.MINOR.PATCH` until Town Hall 10 (`1.0.0`).
 
+## Beta 0.10.0
+- Raiders land at Kaldstrand from Town Hall 5: scouts warn you 5 days ahead, then you watch the fight. Raiders head for the Town Hall and hack through the palisade where they must; your warriors strike over the stakes, archers shoot from manned towers. Raiders who get in carry off goods to their ships. A report follows.
+- The palisade has hit points and three levels (Stakes, Double stakes, Iron-bound stakes), upgraded in War → Defence. Damaged stakes are patched in a few days; broken segments must be repaired.
+- Fix: houses no longer change shape or colour when moved, and all houses share one gable shape again (colour schemes kept). Every building checked in all four rotations.
+- The Hof has a proper stave-church top: stacked steep roofs, gilded dragons and a weathervane.
+- Build menu reorganised: Homes, Food, Farms, Materials, Crafts, Storage, Community, Military, Sea, Decor (no more two "Village" and two "War" buttons). Each card says what the building does and what it needs; building sheets explain it too.
+- More detail close up: gravel and hoof prints on roads, grass and flowers, wood grain on walls, stones in footings, rope lashings on the palisade.
+
 ## Beta 0.9.1
 - Fix: roofs of buildings facing the other way (for example after rotating them) were drawn crossed, so the ground showed through. They are solid again.
 

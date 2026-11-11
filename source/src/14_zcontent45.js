@@ -63,4 +63,4 @@ function hireMercs(){if(thLevel()<4)return 'Mercenaries come at Town Hall level 
 function mercDay(){for(const p of S.people.slice())if(p.merc&&p.merc<=S.day&&!p.away){removePerson(p,'left');toast('A mercenary’s year is up. He takes his pay and sails south.');}}
 
 EVTS.sails={cat:'War',c:()=>thLevel()>=5,w:0.7,mk:()=>({n:pick(['Hrolf the Grey','Sigvard of Jutland','the Orkney jarl'])}),t:a=>'Scouts on the headland saw the sails of '+a.n+' off the coast. They lay there a day, counting your defences, and turned away.',
-  o:[{l:'Note it in the saga',f:()=>{const d=defenceValue();return 'Defence of Kaldstrand: '+d+'. From Town Hall 6, such fleets will land.';}}]};
+  o:[{l:'Note it in the saga',f:()=>{const d=defenceValue();return 'Defence of Kaldstrand: '+d+'. Next time they may land.';}}]};

@@ -30,9 +30,23 @@ function drawExtra2(b,win,c0,alongX){const L=b.lvl||1;
   case 'hof':{const c=inset(c0,0.1);
     /* a stave hall with a raised, second roof and gilded dragon gables */
     hall(c,20,18,alongX,{},win);
-    const c2=inset(c,0.42);ctx.save();ctx.translate(0,-30);hall(c2,10,14,alongX,{door:false},win);ctx.restore();
-    const m=alongX?lerp(c2.Bt,c2.R,0.5):lerp(c2.L,c2.Bt,0.5);const top=[m[0],m[1]-30-10-14];
-    ctx.strokeStyle='#C9A64A';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(top[0],top[1]);ctx.quadraticCurveTo(top[0]+10,top[1]-8,top[0]+8,top[1]-16);ctx.moveTo(top[0],top[1]);ctx.quadraticCurveTo(top[0]-10,top[1]-8,top[0]-8,top[1]-16);ctx.stroke();
+    /* stave-church tiers rising from the ridge: stacked steep roofs, gilded dragons, a spire */
+    {const W0=c.R[0]-c.L[0],cx=(c.L[0]+c.R[0])/2,cy=(c.T[1]+c.Bt[1])/2,RL=win?'#EEF1F0':'#4A433C',RD=win?'#D3DAD9':'#2E2925',WL='#4A3626',WD='#33251A',G='#C9A64A';
+      const tier=(by,a,wh,rh,dr)=>{const L=[cx-a,by],R=[cx+a,by],Bt=[cx,by+a/2];
+        poly(P(L,Bt,up(Bt,wh),up(L,wh)),WL);poly(P(Bt,R,up(R,wh),up(Bt,wh)),WD);
+        ctx.strokeStyle='rgba(20,14,10,0.35)';ctx.lineWidth=0.7;ctx.beginPath();for(let k=1;k<6;k++){const q=lerp(L,Bt,k/6),r=lerp(Bt,R,k/6);ctx.moveTo(q[0],q[1]);ctx.lineTo(q[0],q[1]-wh);ctx.moveTo(r[0],r[1]);ctx.lineTo(r[0],r[1]-wh);}ctx.stroke();
+        if(!win&&wh>=8){ctx.fillStyle='#1E1611';for(const u of [0.35,0.65]){const q=lerp(L,Bt,u),r=lerp(Bt,R,u);ctx.fillRect(q[0]-1,q[1]-wh*0.7,2,3);ctx.fillRect(r[0]-1,r[1]-wh*0.7,2,3);}}
+        const e=1.25,eb=by-wh,EL=[cx-a*e,eb],ER=[cx+a*e,eb],EB=[cx,eb+a*e/2],ap=[cx,eb-rh];
+        poly(P(EL,EB,ap),RL);poly(P(EB,ER,ap),RD);
+        if(!win){ctx.strokeStyle='rgba(15,12,10,0.4)';ctx.lineWidth=0.6;ctx.beginPath();for(let k=1;k<5;k++){const v=k/5,a1=lerp(EL,ap,v),b1=lerp(EB,ap,v),c1=lerp(ER,ap,v);ctx.moveTo(a1[0],a1[1]);ctx.lineTo(b1[0],b1[1]);ctx.lineTo(c1[0],c1[1]);}ctx.stroke();}
+        ctx.strokeStyle=G;ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(EL[0],EL[1]);ctx.lineTo(EB[0],EB[1]);ctx.lineTo(ER[0],ER[1]);ctx.stroke();
+        if(dr){dragonHead(EL,-1,G,dr);dragonHead(ER,1,G,dr);}
+        return eb-rh;};
+      const a1=W0*0.17;let y=cy-26;
+      y=tier(y,a1,14,13,0.8)+9;
+      y=tier(y,a1*0.7,10,11,0.6)+8;
+      const top=tier(y,a1*0.4,7,26,0);
+      ctx.strokeStyle=G;ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(cx,top);ctx.lineTo(cx,top-9);ctx.stroke();poly([cx,top-9,cx+6,top-7.5,cx+5,top-5,cx,top-5.5],G);/* gilded weathervane */}
     /* posts with offerings and a fire bowl */
     const f=c.Bt;ctx.strokeStyle='#3E3028';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(f[0]-26,f[1]+2);ctx.lineTo(f[0]-26,f[1]-22);ctx.stroke();ctx.fillStyle='#C9A64A';ctx.beginPath();ctx.arc(f[0]-26,f[1]-24,3,0,6.3);ctx.fill();
     ctx.fillStyle='#4E4A45';ctx.beginPath();ctx.ellipse(f[0]+16,f[1]+2,7,3,0,0,6.3);ctx.fill();if(!win){ctx.fillStyle='#F07A30';ctx.beginPath();ctx.moveTo(f[0]+11,f[1]+1);ctx.quadraticCurveTo(f[0]+16,f[1]-12-Math.sin(t*6)*2,f[0]+21,f[1]+1);ctx.fill();}

@@ -65,6 +65,10 @@ function drawRoads(win,vis){
   for(const q of list){const x=q[0],y=q[1],sx=q[2],sy=q[3];for(const a of [[1,0],[0,1]]){const nx=x+a[0],ny=y+a[1];if(!inMap(nx,ny)||!roads[ny*N+nx])continue;
     for(const o of [-0.1,0.1]){const A=a[0]?g(sx,sy,0,o):g(sx,sy,o,0),Bp=a[0]?g(sx,sy,1,o):g(sx,sy,o,1);ctx.moveTo(A[0],A[1]);ctx.lineTo(Bp[0],Bp[1]+elev[y*N+x]-elev[ny*N+nx]);}}}
   ctx.stroke();
+  if(zoom>1.45){/* close-up: packed gravel, small stones with a lit top, hoof prints */
+    for(const q of list){const x=q[0],y=q[1],sx=q[2],sy=q[3];
+      for(let k=0;k<9;k++){const ox=(h2(x,y,150+k)-0.5)*22,oy=(h2(x,y,160+k)-0.5)*10,r=0.8+h2(x,y,170+k)*1.2;ctx.fillStyle=win?'rgba(150,146,136,0.8)':'rgba(120,104,80,0.75)';ctx.beginPath();ctx.ellipse(sx+ox,sy+oy+0.6,r,r*0.6,0,0,6.3);ctx.fill();ctx.fillStyle=win?'#E8E5DD':'#DCCDAE';ctx.beginPath();ctx.ellipse(sx+ox-0.2,sy+oy,r*0.75,r*0.42,0,0,6.3);ctx.fill();}
+      if(!win&&h2(x,y,180)>0.6){ctx.strokeStyle='rgba(110,92,66,0.5)';ctx.lineWidth=0.8;for(let k=0;k<2;k++){const ox=(h2(x,y,181+k)-0.5)*14,oy=(h2(x,y,183+k)-0.5)*6;ctx.beginPath();ctx.arc(sx+ox,sy+oy,1.6,0.3,2.8);ctx.stroke();}}}}
   ctx.lineCap='butt';
   for(let y=0;y<N;y++)for(let x=0;x<N;x++){const i=y*N+x;if(!roads[i]||ter[i]===T.RIVER)continue;const sx=(x-y)*HW,sy=(x+y)*HH-elev[i];if(!vis(sx,sy))continue;
     for(let k=0;k<3;k++){const u=h2(x,y,90+k);if(u<0.5)continue;ctx.fillStyle=win?'#BDB8AA':'#9A8F7C';ctx.beginPath();ctx.ellipse(sx+(h2(x,y,93+k)-0.5)*12,sy+(h2(x,y,96+k)-0.5)*6,1.6,1,0,0,6.3);ctx.fill();}

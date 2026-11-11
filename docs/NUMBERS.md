@@ -1,4 +1,4 @@
-# Ubbe's Saga: numbers (Beta 0.9.0)
+# Ubbe's Saga: numbers (Beta 0.10.0)
 
 Generated from the game by `tools/gen_numbers.py`. Do not edit by hand.
 
@@ -18,35 +18,35 @@ Limits are per Town Hall level 1 / 2 / 3 / 4 / 5. Workers: +1 at building level 
 | Key | Name | Category | Town Hall | Size | Cost | Workers | Output | Limits |
 |---|---|---|---|---|---|---|---|---|
 | th | Town Hall · Langhús | None | 1 | 6×6 |  | 0 |  | 1 / 1 / 1 / 1 / 1 |
-| house | House | Housing | 1 | 2×2 | 20 wood | 0 |  | 11 / 15 / 22 / 25 / 27 |
-| jarl | Jarl’s House | Housing | 1 | 3×3 | 60 wood, 30 planks | 0 |  | 1 / 1 / 1 / 1 / 1 |
-| pyre | Funeral Pyre | Housing | 1 | 2×2 | 10 wood | 0 |  | 1 / 1 / 2 / 2 / 2 |
-| wood | Woodcutter’s Lodge | Resources | 1 | 2×2 | 15 wood | 3 | 3 wood per worker a day | 2 / 3 / 4 / 4 / 5 |
-| carp | Carpenter | Resources | 1 | 2×2 | 25 wood | 2 | 4 wood → 2 planks per worker a day | 1 / 2 / 2 / 2 / 2 |
-| mine | Iron Mine | Resources | 1 | 2×2 | 30 wood, 10 planks | 3 | 2 iron per worker a day | 1 / 1 / 2 / 2 / 2 |
-| smith | Smithy | Resources | 1 | 2×2 | 15 wood, 20 planks, 10 iron | 2 | Tools, and later weapons | 1 / 1 / 1 / 2 / 2 |
+| house | House | Homes | 1 | 2×2 | 20 wood | 0 |  | 11 / 15 / 22 / 25 / 27 |
+| jarl | Jarl’s House | Homes | 1 | 3×3 | 60 wood, 30 planks | 0 |  | 1 / 1 / 1 / 1 / 1 |
+| pyre | Funeral Pyre | Community | 1 | 2×2 | 10 wood | 0 |  | 1 / 1 / 2 / 2 / 2 |
+| wood | Woodcutter’s Lodge | Materials | 1 | 2×2 | 15 wood | 3 | 3 wood per worker a day | 2 / 3 / 4 / 4 / 5 |
+| carp | Carpenter | Materials | 1 | 2×2 | 25 wood | 2 | 4 wood → 2 planks per worker a day | 1 / 2 / 2 / 2 / 2 |
+| mine | Iron Mine | Materials | 1 | 2×2 | 30 wood, 10 planks | 3 | 2 iron per worker a day | 1 / 1 / 2 / 2 / 2 |
+| smith | Smithy | Crafts | 1 | 2×2 | 15 wood, 20 planks, 10 iron | 2 | Tools, and later weapons | 1 / 1 / 1 / 2 / 2 |
 | fish | Fisher’s Hut | Food | 1 | 2×1 | 15 wood | 3 | 4 fish per worker a day | 2 / 2 / 2 / 2 / 2 |
 | berry | Berry Gatherer | Food | 1 | 2×2 | 10 wood | 2 | 4 berries per worker a day (summer) | 2 / 2 / 2 / 2 / 2 |
 | pres | Preserver | Food | 1 | 2×2 | 15 wood, 20 planks | 2 | Dried fish, jam and (with salt) pickles | 1 / 1 / 1 / 1 / 2 |
 | gran | Granary | Storage | 1 | 3×2 | 30 wood, 10 planks | 0 |  | 1 / 2 / 2 / 3 / 3 |
 | ware | Warehouse | Storage | 1 | 3×2 | 30 wood, 10 planks | 0 |  | 1 / 2 / 2 / 3 / 3 |
-| market | Market Square | Village | 1 | 4×4 | 40 wood, 40 planks | 1 | More families settle here | 1 / 1 / 1 / 1 / 1 |
+| market | Market Square | Community | 1 | 4×4 | 40 wood, 40 planks | 1 | More families settle here | 1 / 1 / 1 / 1 / 1 |
 | pen | Animal Pen | Farms | 2 | 3×3 | 40 wood, 10 planks | 2 | Breeds pigs and sheep: meat, wool, hides | 0 / 1 / 1 / 2 / 2 |
 | hay | Hay Meadow | Farms | 2 | 3×3 | 15 wood | 2 | 5 hay per worker a day (summer) | 0 / 1 / 1 / 2 / 3 |
 | garden | Vegetable Garden | Farms | 2 | 3×3 | 20 wood | 2 | 3 vegetables per worker a day (summer) | 0 / 2 / 2 / 3 / 3 |
 | salt | Salt Works | Food | 2 | 2×2 | 25 wood, 10 planks | 2 | 1 wood → 2 salt per worker a day | 0 / 1 / 1 / 1 / 1 |
 | smoke | Smokehouse | Food | 2 | 2×2 | 20 wood, 15 planks | 2 | Smoked fish and meat; sausages with salt | 0 / 1 / 1 / 1 / 2 |
-| altar | Altar | Village | 2 | 2×2 | 20 wood, 20 planks, 5 iron | 0 |  | 0 / 1 / 1 / 1 / 1 |
-| train | Training Ground | War | 2 | 3×3 | 40 wood, 30 planks | 0 |  | 0 / 1 / 1 / 1 / 1 |
-| arsenal | Arsenal | War | 2 | 3×2 | 30 wood, 30 planks, 10 iron | 0 |  | 0 / 1 / 1 / 1 / 1 |
+| altar | Altar | Community | 2 | 2×2 | 20 wood, 20 planks, 5 iron | 0 |  | 0 / 1 / 1 / 1 / 1 |
+| train | Training Ground | Military | 2 | 3×3 | 40 wood, 30 planks | 0 |  | 0 / 1 / 1 / 1 / 1 |
+| arsenal | Arsenal | Military | 2 | 3×2 | 30 wood, 30 planks, 10 iron | 0 |  | 0 / 1 / 1 / 1 / 1 |
 | grain | Grain Field | Farms | 3 | 3×3 | 20 wood | 2 | 4 barley per worker a day (summer) | 0 / 0 / 2 / 2 / 3 |
 | bakery | Bakery | Food | 3 | 2×2 | 20 wood, 25 planks | 2 | 2 barley + ½ wood → 2 bread per worker | 0 / 0 / 1 / 1 / 1 |
 | flax | Flax Field | Farms | 3 | 3×3 | 20 wood | 2 | 4 flax per worker a day (summer) | 0 / 0 / 1 / 2 / 2 |
-| weaver | Weaver | Resources | 3 | 2×2 | 20 wood, 25 planks | 2 | 2 wool → 1 sailcloth; 2 flax → 1 rope | 0 / 0 / 1 / 1 / 1 |
+| weaver | Weaver | Crafts | 3 | 2×2 | 20 wood, 25 planks | 2 | 2 wool → 1 sailcloth; 2 flax → 1 rope | 0 / 0 / 1 / 1 / 1 |
 | hunter | Hunter’s Lodge | Food | 3 | 2×2 | 25 wood, 10 planks | 2 | 2 meat + ½ hide per worker a day | 0 / 0 / 1 / 2 / 2 |
 | shipyard | Shipyard | Sea | 3 | 4×3 | 60 wood, 60 planks, 10 iron | 4 |  | 0 / 0 / 1 / 1 / 1 |
 | harbour | Harbour | Sea | 3 | 3×3 | 40 wood, 50 planks | 0 |  | 0 / 0 / 1 / 1 / 1 |
-| thrall | Thrall Pen | Housing | 3 | 3×2 | 40 wood, 20 planks, 5 iron | 0 |  | 0 / 0 / 1 / 1 / 1 |
+| thrall | Thrall Pen | Homes | 3 | 3×2 | 40 wood, 20 planks, 5 iron | 0 |  | 0 / 0 / 1 / 1 / 1 |
 | camp | Community Fire | Decor | 1 | 1×1 | 10 wood | 0 |  | 4 / 6 / 8 / 10 / 12 |
 | bench | Wooden Benches | Decor | 1 | 1×1 | 5 wood | 0 |  | 6 / 8 / 10 / 12 / 14 |
 | wattle | Wattle Fence | Decor | 1 | 1×1 | 2 wood | 0 |  | 20 / 30 / 40 / 40 / 40 |
@@ -57,10 +57,10 @@ Limits are per Town Hall level 1 / 2 / 3 / 4 / 5. Workers: +1 at building level 
 | trade | Trading House | Sea | 3 | 3×2 | 40 wood, 40 planks, 10 iron | 0 |  | 0 / 0 / 1 / 1 / 1 |
 | brewery | Brewery | Food | 4 | 2×2 | 30 wood, 30 planks, 5 iron | 2 | 2 barley + ½ wood → 2 ale; 2 honey → 1 mead | 0 / 0 / 0 / 1 / 1 |
 | hives | Beehives | Farms | 4 | 2×2 | 20 wood, 10 planks | 1 | 3 honey per keeper a day (summer) | 0 / 0 / 0 / 2 / 3 |
-| tomb | Ragnar’s Ship-Tomb | Village | 4 | 4×4 | 150 planks, 40 iron | 5 | A wonder: up to 5 builders raise it, year after year | 0 / 0 / 0 / 1 / 1 |
-| tailor | Tailor | Resources | 5 | 2×2 | 20 wood, 30 planks | 2 | 2 wool + 1 hide → 1 warm clothing | 0 / 0 / 0 / 0 / 1 |
-| hof | Hof | Village | 5 | 4×3 | 80 wood, 80 planks, 20 iron, 50 silver | 1 |  | 0 / 0 / 0 / 0 / 1 |
-| tower | Watchtower | War | 5 | 2×2 | 40 wood, 30 planks | 0 |  | 0 / 0 / 0 / 0 / 2 |
+| tomb | Ragnar’s Ship-Tomb | Community | 4 | 4×4 | 150 planks, 40 iron | 5 | A wonder: up to 5 builders raise it, year after year | 0 / 0 / 0 / 1 / 1 |
+| tailor | Tailor | Crafts | 5 | 2×2 | 20 wood, 30 planks | 2 | 2 wool + 1 hide → 1 warm clothing | 0 / 0 / 0 / 0 / 1 |
+| hof | Hof | Community | 5 | 4×3 | 80 wood, 80 planks, 20 iron, 50 silver | 1 |  | 0 / 0 / 0 / 0 / 1 |
+| tower | Watchtower | Military | 5 | 2×2 | 40 wood, 30 planks | 0 |  | 0 / 0 / 0 / 0 / 2 |
 
 ## Saga goals
 

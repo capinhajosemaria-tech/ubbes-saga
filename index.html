@@ -299,7 +299,7 @@ textarea,input{-webkit-user-select:text;user-select:text}
   .tcard{flex:none;width:160px;display:flex;flex-direction:column;align-items:stretch;gap:2px;text-align:left;padding:6px 8px 9px;border-radius:12px;border:1px solid var(--line2);background:var(--parch2);cursor:pointer;font-family:var(--body);color:var(--ink)}
   .tcard img{width:144px;height:108px;object-fit:contain;align-self:center;background:#E2E9D8;border-radius:6px;box-shadow:inset 0 0 0 1px rgba(110,128,88,.18)}
   .tcard b{font-family:var(--display);font-weight:400;font-size:16px;line-height:1.15}
-  .tcard .tc2{font-size:11.5px;color:var(--muted)}.tcard .cost{font-size:12px;font-weight:600;color:#5C4634}.tcard .cost.bad{color:var(--accent)}
+  .tcard .tc2{font-size:11.5px;color:var(--muted)}.tcard .tc3{font-size:12px;line-height:1.25;color:#4A3C30}.tcard .cost{font-size:12px;font-weight:600;color:#5C4634}.tcard .cost.bad{color:var(--accent)}
   .tcard:hover{border-color:var(--gold);box-shadow:0 4px 14px rgba(30,24,18,.18)}.tcard.no{opacity:.62}.tcard.lk img{filter:grayscale(.8) brightness(1.05)}
   /* building and panel sheets dock to the left, like a city-builder inspector */
   .sheet{left:16px;right:auto;top:calc(env(safe-area-inset-top,0px) + 112px);bottom:96px;width:420px;padding:0;display:flex;align-items:flex-start}
@@ -406,7 +406,7 @@ textarea,input{-webkit-user-select:text;user-select:text}
 <script>
 (function(){
 'use strict';
-const GAME_VERSION="Beta 0.9.1";
+const GAME_VERSION="Beta 0.10.0";
 /* =================== constants =================== */
 const N=132,OX=30,OY=24,SX=12,SY=6,HW=32,HH=16,TW=64;
 const HOME_X=63,HOME_Y=60;  /* the village centre in tile coords */
@@ -603,37 +603,37 @@ const EMPTY_RES=()=>{const r={water:0,silver:0,gold:0};FOOD.concat(MAT,ARMS).for
 /* lvl: Town Hall level that unlocks it (level-1 buildings unlock through the saga goals instead) */
 const DEF={
   th:{name:'Town Hall · Langhús',w:6,h:6,cost:{},slots:0,housing:4,road:false,fixed:true,lvl:1,desc:'The heart of Kaldstrand. Shelters the Jarl’s household. Raise it to unlock a new age of buildings.'},
-  house:{name:'House',w:2,h:2,cost:{wood:20},slots:0,housing:4,road:false,cat:'Housing',lvl:1,up:true,desc:'Home for 4 people, 5 after the first upgrade; the second upgrade insulates it (−25% firewood). Burns 1 wood a day in winter.'},
-  jarl:{name:'Jarl’s House',w:3,h:3,cost:{wood:60,planks:30},slots:0,housing:4,road:false,cat:'Housing',lvl:1,desc:'Home of Ubbe and his heirs.'},
-  pyre:{name:'Funeral Pyre',w:2,h:2,cost:{wood:10},slots:0,road:false,cat:'Housing',lvl:1,desc:'The dead are burned here, so the river stays clean.'},
-  wood:{name:'Woodcutter’s Lodge',w:2,h:2,cost:{wood:15},slots:3,tools:true,need:{k:'tree',r:6},cat:'Resources',lvl:1,up:true,out:'3 wood per worker a day',desc:'Fells trees within 6 tiles. Felled trees grow back in about a year and a half.'},
-  carp:{name:'Carpenter',w:2,h:2,cost:{wood:25},slots:2,tools:true,cat:'Resources',lvl:1,up:true,out:'4 wood → 2 planks per worker a day',desc:'Saws timber into planks. Never touches the wood reserve you set.'},
-  mine:{name:'Iron Mine',w:2,h:2,cost:{wood:30,planks:10},slots:3,tools:true,need:{k:'iron',r:4},cat:'Resources',lvl:1,up:true,out:'2 iron per worker a day',desc:'Digs ore at the foot of the mountains.'},
-  smith:{name:'Smithy',w:2,h:2,cost:{wood:15,planks:20,iron:10},slots:2,cat:'Resources',lvl:1,up:true,out:'Tools, and later weapons',desc:'Forges tools; from Town Hall 2 spears, from Town Hall 3 shields, bows, arrows and swords. Needs a working anvil; a new one costs 10 iron. +15% next to a mine.'},
+  house:{name:'House',w:2,h:2,cost:{wood:20},slots:0,housing:4,road:false,cat:'Homes',lvl:1,up:true,desc:'Home for 4 people, 5 after the first upgrade; the second upgrade insulates it (−25% firewood). Burns 1 wood a day in winter.'},
+  jarl:{name:'Jarl’s House',w:3,h:3,cost:{wood:60,planks:30},slots:0,housing:4,road:false,cat:'Homes',lvl:1,desc:'Home of Ubbe and his heirs.'},
+  pyre:{name:'Funeral Pyre',w:2,h:2,cost:{wood:10},slots:0,road:false,cat:'Community',lvl:1,desc:'The dead are burned here, so the river stays clean.'},
+  wood:{name:'Woodcutter’s Lodge',w:2,h:2,cost:{wood:15},slots:3,tools:true,need:{k:'tree',r:6},cat:'Materials',lvl:1,up:true,out:'3 wood per worker a day',desc:'Fells trees within 6 tiles. Felled trees grow back in about a year and a half.'},
+  carp:{name:'Carpenter',w:2,h:2,cost:{wood:25},slots:2,tools:true,cat:'Materials',lvl:1,up:true,out:'4 wood → 2 planks per worker a day',desc:'Saws timber into planks. Never touches the wood reserve you set.'},
+  mine:{name:'Iron Mine',w:2,h:2,cost:{wood:30,planks:10},slots:3,tools:true,need:{k:'iron',r:4},cat:'Materials',lvl:1,up:true,out:'2 iron per worker a day',desc:'Digs ore at the foot of the mountains.'},
+  smith:{name:'Smithy',w:2,h:2,cost:{wood:15,planks:20,iron:10},slots:2,cat:'Crafts',lvl:1,up:true,out:'Tools, and later weapons',desc:'Forges tools; from Town Hall 2 spears, from Town Hall 3 shields, bows, arrows and swords. Needs a working anvil; a new one costs 10 iron. +15% next to a mine.'},
   fish:{name:'Fisher’s Hut',w:2,h:1,cost:{wood:15},slots:3,tools:true,need:{k:'waterd',r:5},cat:'Food',lvl:1,up:true,out:'4 fish per worker a day',desc:'A small hut with boats. Full catch within 5 tiles of the sea or the river, less further away. Set how many fish with the workers. Catches far less in winter.'},
   berry:{name:'Berry Gatherer',w:2,h:2,cost:{wood:10},slots:2,tools:true,need:{k:'bush',r:5},seasonal:true,cat:'Food',lvl:1,up:true,out:'4 berries per worker a day (summer)',desc:'Picks berries within 5 tiles. Rests in winter; its workers are free for other jobs.'},
   pres:{name:'Preserver',w:2,h:2,cost:{wood:15,planks:20},slots:2,cat:'Food',lvl:1,up:true,out:'Dried fish, jam and (with salt) pickles',desc:'Preserved food never spoils and feeds twice as much.'},
   gran:{name:'Granary',w:3,h:2,cost:{wood:30,planks:10},slots:0,road:false,store:{food:300},cat:'Storage',lvl:1,up:true,desc:'Raised storehouse. Holds 300 more food, +150 per upgrade.'},
   ware:{name:'Warehouse',w:3,h:2,cost:{wood:30,planks:10},slots:0,road:false,store:{mat:300},cat:'Storage',lvl:1,up:true,desc:'Holds 300 more goods, +150 per upgrade.'},
-  market:{name:'Market Square',w:4,h:4,cost:{wood:40,planks:40},slots:1,cat:'Village',lvl:1,out:'More families settle here',desc:'Open square with stalls. Draws newcomers to Kaldstrand.'},
+  market:{name:'Market Square',w:4,h:4,cost:{wood:40,planks:40},slots:1,cat:'Community',lvl:1,out:'More families settle here',desc:'Open square with stalls. Draws newcomers to Kaldstrand.'},
   /* ---- Town Hall level 2 ---- */
   pen:{name:'Animal Pen',w:3,h:3,cost:{wood:40,planks:10},slots:2,road:false,cat:'Farms',lvl:2,up:true,out:'Breeds pigs and sheep: meat, wool, hides',desc:'Keeps the herd. Animals breed in summer and eat hay in winter. Surplus animals are slaughtered for meat.'},
   hay:{name:'Hay Meadow',w:3,h:3,cost:{wood:15},slots:2,road:false,tools:true,farm:true,seasonal:true,cat:'Farms',lvl:2,up:true,out:'5 hay per worker a day (summer)',desc:'Scythed grass to feed the herd through winter. Needs tools.'},
   garden:{name:'Vegetable Garden',w:3,h:3,cost:{wood:20},slots:2,road:false,tools:true,farm:true,seasonal:true,cat:'Farms',lvl:2,up:true,out:'3 vegetables per worker a day (summer)',desc:'Cabbages, turnips and onions. Without hoes (tools) it yields almost nothing.'},
   salt:{name:'Salt Works',w:2,h:2,cost:{wood:25,planks:10},slots:2,need:{k:'sea',r:2},cat:'Food',lvl:2,up:true,out:'1 wood → 2 salt per worker a day',desc:'Boils sea water in iron pans. Salt makes pickles and sausages.'},
   smoke:{name:'Smokehouse',w:2,h:2,cost:{wood:20,planks:15},slots:2,cat:'Food',lvl:2,up:true,out:'Smoked fish and meat; sausages with salt',desc:'2 meat or fish + ½ wood → 1 smoked (2 meals). 2 meat + 1 salt → 1 sausage (3 meals).'},
-  altar:{name:'Altar',w:2,h:2,cost:{wood:20,planks:20,iron:5},slots:0,road:false,cat:'Village',lvl:2,desc:'Make offerings to Odin, Thor, Freyja, Njord and Loki. Favoured gods give gifts and blessings.'},
-  train:{name:'Training Ground',w:3,h:3,cost:{wood:40,planks:30},slots:0,cat:'War',lvl:2,up:true,desc:'Turns villagers into warriors in batches. Each recruit needs weapons. Warriors stop working in summer and eat 1½ meals.'},
-  arsenal:{name:'Arsenal',w:3,h:2,cost:{wood:30,planks:30,iron:10},slots:0,road:false,store:{arms:60},cat:'War',lvl:2,up:true,desc:'Stores weapons. Holds 60 more.'},
+  altar:{name:'Altar',w:2,h:2,cost:{wood:20,planks:20,iron:5},slots:0,road:false,cat:'Community',lvl:2,desc:'Make offerings to Odin, Thor, Freyja, Njord and Loki. Favoured gods give gifts and blessings.'},
+  train:{name:'Training Ground',w:3,h:3,cost:{wood:40,planks:30},slots:0,cat:'Military',lvl:2,up:true,desc:'Turns villagers into warriors in batches. Each recruit needs weapons. Warriors stop working in summer and eat 1½ meals.'},
+  arsenal:{name:'Arsenal',w:3,h:2,cost:{wood:30,planks:30,iron:10},slots:0,road:false,store:{arms:60},cat:'Military',lvl:2,up:true,desc:'Stores weapons. Holds 60 more.'},
   /* ---- Town Hall level 3 ---- */
   grain:{name:'Grain Field',w:3,h:3,cost:{wood:20},slots:2,road:false,tools:true,farm:true,seasonal:true,cat:'Farms',lvl:3,up:true,out:'4 barley per worker a day (summer)',desc:'Barley for bread. Needs tools.'},
   bakery:{name:'Bakery',w:2,h:2,cost:{wood:20,planks:25},slots:2,cat:'Food',lvl:3,up:true,out:'2 barley + ½ wood → 2 bread per worker',desc:'Flat bread from a clay oven. Bread keeps a while and feeds 1½.'},
   flax:{name:'Flax Field',w:3,h:3,cost:{wood:20},slots:2,road:false,tools:true,farm:true,seasonal:true,cat:'Farms',lvl:3,up:true,out:'4 flax per worker a day (summer)',desc:'Flax for rope.'},
-  weaver:{name:'Weaver',w:2,h:2,cost:{wood:20,planks:25},slots:2,cat:'Resources',lvl:3,up:true,out:'2 wool → 1 sailcloth; 2 flax → 1 rope',desc:'Weaves wool into sailcloth and twists flax into rope for ships.'},
+  weaver:{name:'Weaver',w:2,h:2,cost:{wood:20,planks:25},slots:2,cat:'Crafts',lvl:3,up:true,out:'2 wool → 1 sailcloth; 2 flax → 1 rope',desc:'Weaves wool into sailcloth and twists flax into rope for ships.'},
   hunter:{name:'Hunter’s Lodge',w:2,h:2,cost:{wood:25,planks:10},slots:2,tools:true,need:{k:'tree',r:6},cat:'Food',lvl:3,up:true,out:'2 meat + ½ hide per worker a day',desc:'Hunts deer and boar in the forest.'},
   shipyard:{name:'Shipyard',water:true,w:4,h:3,cost:{wood:60,planks:60,iron:10},slots:4,need:{k:'sea',r:1},cat:'Sea',lvl:3,desc:'Builds ships on a slipway. Its slipway may run out over the water, but it needs a foothold on the shore. A ship takes many worker-days.'},
   harbour:{name:'Harbour',water:true,w:3,h:3,cost:{wood:40,planks:50},slots:0,road:false,need:{k:'sea',r:1},cat:'Sea',lvl:3,desc:'Pier where ships moor and merchants land.'},
-  thrall:{name:'Thrall Pen',w:3,h:2,cost:{wood:40,planks:20,iron:5},slots:0,road:false,cat:'Housing',lvl:3,up:true,desc:'Holds 8 thralls (+4 per upgrade). Thralls work without pay, eat half a meal and may try to flee.'},
+  thrall:{name:'Thrall Pen',w:3,h:2,cost:{wood:40,planks:20,iron:5},slots:0,road:false,cat:'Homes',lvl:3,up:true,desc:'Holds 8 thralls (+4 per upgrade). Thralls work without pay, eat half a meal and may try to flee.'},
   camp:{name:'Community Fire',w:1,h:1,cost:{wood:10},slots:0,road:false,cat:'Decor',lvl:1,deco:3,desc:'A ring of stones where neighbours gather. +3 attractiveness.'},
   bench:{name:'Wooden Benches',w:1,h:1,cost:{wood:5},slots:0,road:false,cat:'Decor',lvl:1,deco:1,desc:'Somewhere to sit in the evening. +1 attractiveness.'},
   wattle:{name:'Wattle Fence',w:1,h:1,cost:{wood:2},slots:0,road:false,cat:'Decor',lvl:1,deco:0.5,desc:'Woven hazel fencing. +½ attractiveness.'},
@@ -650,7 +650,7 @@ const thLevel=()=>S.th||1;
 const limitOf=k=>(LIMITS[k]||[1,1,1])[thLevel()-1];
 const FIRST_FREE=['berry','wood'];
 const costOf=k=>FIRST_FREE.includes(k)&&!B.some(b=>b.t===k)?{}:DEF[k].cost;
-const CATS=['Housing','Resources','Food','Farms','Storage','Village','War','Sea','Decor'];
+const CATS=['Homes','Food','Farms','Materials','Crafts','Storage','Community','Military','Sea','Decor'];
 const BUILDABLE=new Set([T.GRASS,T.BEACH,T.FOOT]);
 const isAvail=k=>{const D=DEF[k];if(D.lvl>1||D.cat==='Decor')return thLevel()>=D.lvl;return S.avail.includes(k);};
 const TH_UP={2:{cost:{wood:90,planks:60,iron:16},pop:22,fame:150,bld:[['gran',1]],ms:['winter']},
@@ -663,10 +663,10 @@ const canUpgrade=b=>DEF[b.t].up&&b.lvl<thLevel();
 Object.assign(DEF,{
   brewery:{name:'Brewery',w:2,h:2,cost:{wood:30,planks:30,iron:5},slots:2,cat:'Food',lvl:4,up:true,out:'2 barley + ½ wood → 2 ale; 2 honey → 1 mead',desc:'Brews ale from barley and mead from honey. Banquets need it, and merchants pay well for mead.'},
   hives:{name:'Beehives',w:2,h:2,cost:{wood:20,planks:10},slots:1,road:false,seasonal:true,farm:true,cat:'Farms',lvl:4,up:true,out:'3 honey per keeper a day (summer)',desc:'Straw skeps on a sunny slope. Honey for mead, offerings to Freyja and trade.'},
-  tomb:{name:'Ragnar’s Ship-Tomb',w:4,h:4,cost:{planks:150,iron:40},slots:5,cat:'Village',lvl:4,wonder:true,out:'A wonder: up to 5 builders raise it, year after year',desc:'A great mound over a sacrificed ship, for Ragnar Lothbrok. To begin: 40 gold, 6 swords and one of your ships. When finished, Odin’s favour never falls below 30 and Kaldstrand gains 1 fame every day.'},
-  tailor:{name:'Tailor',w:2,h:2,cost:{wood:20,planks:30},slots:2,cat:'Resources',lvl:5,up:true,out:'2 wool + 1 hide → 1 warm clothing',desc:'Sews wool cloaks and fur-lined boots. With enough warm clothing for everyone, winter sickness is halved and spirits rise.'},
-  hof:{name:'Hof',w:4,h:3,cost:{wood:80,planks:80,iron:20,silver:50},slots:1,cat:'Village',lvl:5,desc:'A temple hall kept by a gothi. Favour rises 25% faster, the gothi tends the least-honoured god, and blessings cost 20 favour instead of 30.'},
-  tower:{name:'Watchtower',w:2,h:2,cost:{wood:40,planks:30},slots:0,road:false,cat:'War',lvl:5,desc:'A timber tower for two archers. Adds to the village’s defence, more if it stands by the palisade.'}
+  tomb:{name:'Ragnar’s Ship-Tomb',w:4,h:4,cost:{planks:150,iron:40},slots:5,cat:'Community',lvl:4,wonder:true,out:'A wonder: up to 5 builders raise it, year after year',desc:'A great mound over a sacrificed ship, for Ragnar Lothbrok. To begin: 40 gold, 6 swords and one of your ships. When finished, Odin’s favour never falls below 30 and Kaldstrand gains 1 fame every day.'},
+  tailor:{name:'Tailor',w:2,h:2,cost:{wood:20,planks:30},slots:2,cat:'Crafts',lvl:5,up:true,out:'2 wool + 1 hide → 1 warm clothing',desc:'Sews wool cloaks and fur-lined boots. With enough warm clothing for everyone, winter sickness is halved and spirits rise.'},
+  hof:{name:'Hof',w:4,h:3,cost:{wood:80,planks:80,iron:20,silver:50},slots:1,cat:'Community',lvl:5,desc:'A temple hall kept by a gothi. Favour rises 25% faster, the gothi tends the least-honoured god, and blessings cost 20 favour instead of 30.'},
+  tower:{name:'Watchtower',w:2,h:2,cost:{wood:40,planks:30},slots:0,road:false,cat:'Military',lvl:5,desc:'A timber tower for two archers. Adds to the village’s defence, more if it stands by the palisade.'}
 });
 for(const k in LIMITS){const a=LIMITS[k];while(a.length<5)a.push(a[a.length-1]);}
 Object.assign(LIMITS,{house:[6,10,14,18,22],wood:[2,3,4,4,5],mine:[1,2,2,2,3],carp:[1,2,2,3,3],smith:[1,1,2,2,3],berry:[2,2,3,3,3],pres:[1,1,2,2,2],gran:[1,2,2,3,3],ware:[1,2,2,3,3],
@@ -1456,7 +1456,7 @@ function hireMercs(){if(thLevel()<4)return 'Mercenaries come at Town Hall level 
 function mercDay(){for(const p of S.people.slice())if(p.merc&&p.merc<=S.day&&!p.away){removePerson(p,'left');toast('A mercenary’s year is up. He takes his pay and sails south.');}}
 
 EVTS.sails={cat:'War',c:()=>thLevel()>=5,w:0.7,mk:()=>({n:pick(['Hrolf the Grey','Sigvard of Jutland','the Orkney jarl'])}),t:a=>'Scouts on the headland saw the sails of '+a.n+' off the coast. They lay there a day, counting your defences, and turned away.',
-  o:[{l:'Note it in the saga',f:()=>{const d=defenceValue();return 'Defence of Kaldstrand: '+d+'. From Town Hall 6, such fleets will land.';}}]};
+  o:[{l:'Note it in the saga',f:()=>{const d=defenceValue();return 'Defence of Kaldstrand: '+d+'. Next time they may land.';}}]};
 
 /* =================== event choices: what you pay and what you get =================== */
 /* per event: one [pay, get] pair per option, in the same order as EVTS[id].o. Items: [amount, resource] or plain text; a function gets the event args. */
@@ -1538,6 +1538,11 @@ function drawTile(x,y,PL,win){
   poly([sx,top-HH-0.7,sx+HW+0.9,top,sx,top+HH+0.7,sx-HW-0.9,top],col);
   if(zoom>0.75&&!win&&tt===T.GRASS&&!occ[i]&&!roads[i]){const r=h2(x,y,12);if(r>0.6){ctx.strokeStyle='rgba(95,122,80,0.7)';ctx.lineWidth=1.2;ctx.beginPath();const ox=(h2(x,y,13)-0.5)*30,oy=(h2(x,y,14)-0.5)*12;ctx.moveTo(sx+ox-2,top+oy);ctx.lineTo(sx+ox,top+oy-5);ctx.lineTo(sx+ox+2,top+oy);ctx.stroke();}
     if(r>0.93){ctx.fillStyle='#EFE9DA';ctx.beginPath();ctx.arc(sx+(h2(x,y,15)-0.5)*26,top+(h2(x,y,16)-0.5)*10,1.8,0,6.3);ctx.fill();}}
+  /* close-up: more blades of grass, clover and the odd flower */
+  if(zoom>1.45&&!win&&(tt===T.GRASS||tt===T.BERRY)&&!occ[i]&&!roads[i]){ctx.strokeStyle='rgba(88,116,72,0.55)';ctx.lineWidth=0.8;ctx.beginPath();
+    for(let k=0;k<6;k++){const ox=(h2(x,y,40+k)-0.5)*44,oy=(h2(x,y,50+k)-0.5)*18,hh=2.5+h2(x,y,60+k)*3;ctx.moveTo(sx+ox,top+oy);ctx.lineTo(sx+ox-1,top+oy-hh);ctx.moveTo(sx+ox+1.5,top+oy);ctx.lineTo(sx+ox+2.5,top+oy-hh*0.8);}ctx.stroke();
+    if(h2(x,y,70)>0.55){ctx.fillStyle='rgba(120,150,96,0.6)';for(let k=0;k<3;k++){ctx.beginPath();ctx.arc(sx+(h2(x,y,71+k)-0.5)*36,top+(h2(x,y,74+k)-0.5)*14,1.3,0,6.3);ctx.fill();}}
+    if(h2(x,y,77)>0.8){ctx.fillStyle=h2(x,y,78)>0.5?'#E8D36A':'#C98FB8';ctx.beginPath();ctx.arc(sx+(h2(x,y,79)-0.5)*30,top+(h2(x,y,80)-0.5)*12-2,1.5,0,6.3);ctx.fill();}}
   if(tt===T.SEA&&zoom>0.55&&h2(x,y,9)>0.82){ctx.strokeStyle=win?'rgba(170,190,198,0.6)':'rgba(170,196,204,0.8)';ctx.lineWidth=1.6;const o=Math.sin(t*0.8+x+y)*5;ctx.beginPath();ctx.moveTo(sx-10+o,top);ctx.quadraticCurveTo(sx-4+o,top-4,sx+2+o,top);ctx.quadraticCurveTo(sx+8+o,top-4,sx+14+o,top);ctx.stroke();}
   if(tt===T.BEACH){const a=0.35+0.25*Math.sin(t*1.4+x*0.6);ctx.strokeStyle='rgba(243,245,243,'+a.toFixed(2)+')';ctx.lineWidth=2.2;
     if(x+1<N&&ter[i+1]===T.SEA){ctx.beginPath();ctx.moveTo(sx+HW,top);ctx.lineTo(sx,top+HH);ctx.stroke();}
@@ -1636,6 +1641,11 @@ function hall(c,wh,rh,alongX,o,win){
   for(let k=1;k<nb;k++){const a=lerp(c.L,c.Bt,k/nb);ctx.moveTo(a[0],a[1]-3);ctx.lineTo(a[0],a[1]-wh);}for(let k=1;k<nb2;k++){const b2=lerp(c.Bt,c.R,k/nb2);ctx.moveTo(b2[0],b2[1]-3);ctx.lineTo(b2[0],b2[1]-wh);}ctx.stroke();}
   else wallTexture(c,wh,wt,win);
   if(o.chim&&!win){}
+  if(zoom>1.45&&!win){/* close-up: wood grain and knots on the walls, single stones in the footing */
+    ctx.strokeStyle='rgba(40,28,18,0.16)';ctx.lineWidth=0.5;ctx.beginPath();const sd=(c.T[0]*7+c.T[1])|0;
+    for(const f of [[c.L,c.Bt],[c.Bt,c.R]])for(let k=0;k<14;k++){const u=((sd*31+k*53)%97)/97,v=0.25+((sd*17+k*29)%61)/61*0.65,a=lerp(f[0],f[1],u);ctx.moveTo(a[0],a[1]-wh*v);ctx.lineTo(a[0],a[1]-wh*v-3-(k%3));}ctx.stroke();
+    ctx.fillStyle='rgba(50,34,22,0.35)';for(const f of [[c.L,c.Bt],[c.Bt,c.R]])for(let k=0;k<3;k++){const a=lerp(f[0],f[1],((sd*13+k*41)%89)/89);ctx.beginPath();ctx.ellipse(a[0],a[1]-wh*(0.35+0.15*k),0.9,1.4,0,0,6.3);ctx.fill();}
+    ctx.strokeStyle='rgba(70,64,56,0.45)';ctx.lineWidth=0.6;ctx.beginPath();for(const f of [[c.L,c.Bt],[c.Bt,c.R]])for(let k=0;k<12;k++){const a=lerp(f[0],f[1],(k+0.5)/12);ctx.moveTo(a[0]-1.6,a[1]-1.5+(k%2));ctx.lineTo(a[0]+1.6,a[1]-1.5+(k%2));}ctx.stroke();}
   /* corner posts */
   ctx.strokeStyle='rgba(48,36,26,0.75)';ctx.lineWidth=2;ctx.beginPath();for(const q of [c.L,c.Bt,c.R]){ctx.moveTo(q[0],q[1]-3);ctx.lineTo(q[0],q[1]-wh);}ctx.stroke();
   /* shadow under the eaves */
@@ -1862,6 +1872,10 @@ function drawRoads(win,vis){
   for(const q of list){const x=q[0],y=q[1],sx=q[2],sy=q[3];for(const a of [[1,0],[0,1]]){const nx=x+a[0],ny=y+a[1];if(!inMap(nx,ny)||!roads[ny*N+nx])continue;
     for(const o of [-0.1,0.1]){const A=a[0]?g(sx,sy,0,o):g(sx,sy,o,0),Bp=a[0]?g(sx,sy,1,o):g(sx,sy,o,1);ctx.moveTo(A[0],A[1]);ctx.lineTo(Bp[0],Bp[1]+elev[y*N+x]-elev[ny*N+nx]);}}}
   ctx.stroke();
+  if(zoom>1.45){/* close-up: packed gravel, small stones with a lit top, hoof prints */
+    for(const q of list){const x=q[0],y=q[1],sx=q[2],sy=q[3];
+      for(let k=0;k<9;k++){const ox=(h2(x,y,150+k)-0.5)*22,oy=(h2(x,y,160+k)-0.5)*10,r=0.8+h2(x,y,170+k)*1.2;ctx.fillStyle=win?'rgba(150,146,136,0.8)':'rgba(120,104,80,0.75)';ctx.beginPath();ctx.ellipse(sx+ox,sy+oy+0.6,r,r*0.6,0,0,6.3);ctx.fill();ctx.fillStyle=win?'#E8E5DD':'#DCCDAE';ctx.beginPath();ctx.ellipse(sx+ox-0.2,sy+oy,r*0.75,r*0.42,0,0,6.3);ctx.fill();}
+      if(!win&&h2(x,y,180)>0.6){ctx.strokeStyle='rgba(110,92,66,0.5)';ctx.lineWidth=0.8;for(let k=0;k<2;k++){const ox=(h2(x,y,181+k)-0.5)*14,oy=(h2(x,y,183+k)-0.5)*6;ctx.beginPath();ctx.arc(sx+ox,sy+oy,1.6,0.3,2.8);ctx.stroke();}}}}
   ctx.lineCap='butt';
   for(let y=0;y<N;y++)for(let x=0;x<N;x++){const i=y*N+x;if(!roads[i]||ter[i]===T.RIVER)continue;const sx=(x-y)*HW,sy=(x+y)*HH-elev[i];if(!vis(sx,sy))continue;
     for(let k=0;k<3;k++){const u=h2(x,y,90+k);if(u<0.5)continue;ctx.fillStyle=win?'#BDB8AA':'#9A8F7C';ctx.beginPath();ctx.ellipse(sx+(h2(x,y,93+k)-0.5)*12,sy+(h2(x,y,96+k)-0.5)*6,1.6,1,0,0,6.3);ctx.fill();}
@@ -2082,9 +2096,23 @@ function drawExtra2(b,win,c0,alongX){const L=b.lvl||1;
   case 'hof':{const c=inset(c0,0.1);
     /* a stave hall with a raised, second roof and gilded dragon gables */
     hall(c,20,18,alongX,{},win);
-    const c2=inset(c,0.42);ctx.save();ctx.translate(0,-30);hall(c2,10,14,alongX,{door:false},win);ctx.restore();
-    const m=alongX?lerp(c2.Bt,c2.R,0.5):lerp(c2.L,c2.Bt,0.5);const top=[m[0],m[1]-30-10-14];
-    ctx.strokeStyle='#C9A64A';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(top[0],top[1]);ctx.quadraticCurveTo(top[0]+10,top[1]-8,top[0]+8,top[1]-16);ctx.moveTo(top[0],top[1]);ctx.quadraticCurveTo(top[0]-10,top[1]-8,top[0]-8,top[1]-16);ctx.stroke();
+    /* stave-church tiers rising from the ridge: stacked steep roofs, gilded dragons, a spire */
+    {const W0=c.R[0]-c.L[0],cx=(c.L[0]+c.R[0])/2,cy=(c.T[1]+c.Bt[1])/2,RL=win?'#EEF1F0':'#4A433C',RD=win?'#D3DAD9':'#2E2925',WL='#4A3626',WD='#33251A',G='#C9A64A';
+      const tier=(by,a,wh,rh,dr)=>{const L=[cx-a,by],R=[cx+a,by],Bt=[cx,by+a/2];
+        poly(P(L,Bt,up(Bt,wh),up(L,wh)),WL);poly(P(Bt,R,up(R,wh),up(Bt,wh)),WD);
+        ctx.strokeStyle='rgba(20,14,10,0.35)';ctx.lineWidth=0.7;ctx.beginPath();for(let k=1;k<6;k++){const q=lerp(L,Bt,k/6),r=lerp(Bt,R,k/6);ctx.moveTo(q[0],q[1]);ctx.lineTo(q[0],q[1]-wh);ctx.moveTo(r[0],r[1]);ctx.lineTo(r[0],r[1]-wh);}ctx.stroke();
+        if(!win&&wh>=8){ctx.fillStyle='#1E1611';for(const u of [0.35,0.65]){const q=lerp(L,Bt,u),r=lerp(Bt,R,u);ctx.fillRect(q[0]-1,q[1]-wh*0.7,2,3);ctx.fillRect(r[0]-1,r[1]-wh*0.7,2,3);}}
+        const e=1.25,eb=by-wh,EL=[cx-a*e,eb],ER=[cx+a*e,eb],EB=[cx,eb+a*e/2],ap=[cx,eb-rh];
+        poly(P(EL,EB,ap),RL);poly(P(EB,ER,ap),RD);
+        if(!win){ctx.strokeStyle='rgba(15,12,10,0.4)';ctx.lineWidth=0.6;ctx.beginPath();for(let k=1;k<5;k++){const v=k/5,a1=lerp(EL,ap,v),b1=lerp(EB,ap,v),c1=lerp(ER,ap,v);ctx.moveTo(a1[0],a1[1]);ctx.lineTo(b1[0],b1[1]);ctx.lineTo(c1[0],c1[1]);}ctx.stroke();}
+        ctx.strokeStyle=G;ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(EL[0],EL[1]);ctx.lineTo(EB[0],EB[1]);ctx.lineTo(ER[0],ER[1]);ctx.stroke();
+        if(dr){dragonHead(EL,-1,G,dr);dragonHead(ER,1,G,dr);}
+        return eb-rh;};
+      const a1=W0*0.17;let y=cy-26;
+      y=tier(y,a1,14,13,0.8)+9;
+      y=tier(y,a1*0.7,10,11,0.6)+8;
+      const top=tier(y,a1*0.4,7,26,0);
+      ctx.strokeStyle=G;ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(cx,top);ctx.lineTo(cx,top-9);ctx.stroke();poly([cx,top-9,cx+6,top-7.5,cx+5,top-5,cx,top-5.5],G);/* gilded weathervane */}
     /* posts with offerings and a fire bowl */
     const f=c.Bt;ctx.strokeStyle='#3E3028';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(f[0]-26,f[1]+2);ctx.lineTo(f[0]-26,f[1]-22);ctx.stroke();ctx.fillStyle='#C9A64A';ctx.beginPath();ctx.arc(f[0]-26,f[1]-24,3,0,6.3);ctx.fill();
     ctx.fillStyle='#4E4A45';ctx.beginPath();ctx.ellipse(f[0]+16,f[1]+2,7,3,0,0,6.3);ctx.fill();if(!win){ctx.fillStyle='#F07A30';ctx.beginPath();ctx.moveTo(f[0]+11,f[1]+1);ctx.quadraticCurveTo(f[0]+16,f[1]-12-Math.sin(t*6)*2,f[0]+21,f[1]+1);ctx.fill();}
@@ -2215,19 +2243,17 @@ const HOUSE_SCH=[
   {n:'Red ochre',wall:'#9A4E3A',wallD:'#7A3C2D',roof:'#7F9568',roofD:'#6B8058',barge:'#3E3028',rt:'turf'},
   {n:'Whitewashed',wall:'#D8CDB4',wallD:'#B9AE95',roof:'#B39E66',roofD:'#97834F',barge:'#5C4634',rt:'thatch'},
   {n:'Birch and slate',wall:'#B7AE9C',wallD:'#958C7B',roof:'#6F7A80',roofD:'#5A646A',barge:'#A34A3A',rt:'shingle'}];
-function houseSch(b){if(b.sch!==undefined&&b.sch!==null)return b.sch;if(S&&S.houseSch!==undefined&&S.houseSch!==null)return S.houseSch;return Math.floor(h2(b.id||0,b.fx*7+b.fy,77)*4);}
+function houseSch(b){if(b.sch!==undefined&&b.sch!==null)return b.sch;if(S&&S.houseSch!==undefined&&S.houseSch!==null)return S.houseSch;return Math.floor(h2(b.id||0,0,77)*4);}/* from the id only, so moving a house keeps its colours */
 function roofPoint(c,wh,H,o,u,v){/* a point on the visible roof plane: u along the ridge, v from eave (0) to ridge (1) */
   const a=o.alongX?lerp(up(c.L,wh),up(c.Bt,wh),u):lerp(up(c.Bt,wh),up(c.R,wh),u),b=o.alongX?lerp(up(o.M1,H),up(o.M2,H),u):lerp(up(o.M2,H),up(o.M1,H),u);return lerp(a,b,v);}
 function drawHouse(b,win){
-  const L=Math.min(5,b.lvl||1),v=Math.floor(h2(b.id||0,b.fx*7+b.fy,77)*3),st=HOUSE_STY[L-1][v],alongX=b.rot%2===0;
+  const L=Math.min(5,b.lvl||1),v=Math.floor(h2(b.id||0,1,77)*3),st=HOUSE_STY[L-1][v],alongX=b.rot%2===0;
   const c0=fp(b),c=inset(c0,L>=4?0.08:L>=2?0.13:0.17);
   const wh=[9,11,13,14,15][L-1],rh=[15,14,16,17,18][L-1];
   if(L>=5){poly(P(c.L,c.Bt,[c.Bt[0],c.Bt[1]+4],[c.L[0],c.L[1]+4]),'#8E877D');poly(P(c.Bt,c.R,[c.R[0],c.R[1]+4],[c.Bt[0],c.Bt[1]+4]),'#77716A');}
   const SC=HOUSE_SCH[houseSch(b)];
-  /* shape varies by variant: 0 gable, 1 hipped and slightly bowed, 2 round hut at levels 1–2 */
-  if(v===2&&L<=2){const q=inset(c0,0.2);roundHut(q.cx,q.cy+2,L===1?19:21,wh,rh+6,{rt:SC.rt==='shingle'?'turf':SC.rt,roof:SC.rt==='shingle'?undefined:SC.roof,roofD:SC.rt==='shingle'?undefined:SC.roofD,wall:SC.wall,wallD:SC.wallD},win);
-    const fb=c0.Bt;if(L>=2)barrelC(fb[0]+12,fb[1]-2);return;}
-  const r=hall(c,wh,rh,alongX,{wall:SC.wall,wallD:SC.wallD,roof:SC.roof,roofD:SC.roofD,barge:L>=3?st[4]:SC.barge,rt:SC.rt,hip:v===1?0.22:0,sag:v===1?4:0},win);
+  /* one shape for every house (gable); v only varies colours and props */
+  const r=hall(c,wh,rh,alongX,{wall:SC.wall,wallD:SC.wallD,roof:SC.roof,roofD:SC.roofD,barge:L>=3?st[4]:SC.barge,rt:SC.rt,hip:0,sag:0},win);
   const o={alongX:alongX,M1:r.M1,M2:r.M2};
   if(false){
     const turf=st[2]==='#7F9568'||st[2]==='#8E9C68'||st[2]==='#728A60'||st[2]==='#6E8A5E';
@@ -2239,7 +2265,7 @@ function drawHouse(b,win){
   /* props */
   const fb=c0.Bt,fl=lerp(c0.L,c0.Bt,0.5),fr=lerp(c0.Bt,c0.R,0.5);
   const side=v===0?fl:fr;
-  if(L>=2&&v!==2)barrelC(side[0]+(side===fl?-8:10),side[1]+4);
+  if(L>=2)barrelC(side[0]+(side===fl?-8:10),side[1]+4);
   if(L>=2){const bx=fb[0]+(v===1?-14:10),by=fb[1]+2;if(propOK(bx,by)){poly([bx-7,by-3,bx+7,by+1,bx+7,by-1,bx-7,by-5],'#A88A69');ctx.fillStyle='#6E543D';ctx.fillRect(bx-6,by-3,1.4,4);ctx.fillRect(bx+5,by,1.4,3);}}
   if(L>=3){const p=lerp(c.L,c.Bt,0.3);ctx.fillStyle=v===1?'#D7CDB4':'#A34A3A';ctx.beginPath();ctx.arc(p[0],p[1]-wh*0.55,3.4,0,6.3);ctx.fill();ctx.fillStyle='#C9C2B2';ctx.beginPath();ctx.arc(p[0],p[1]-wh*0.55,1.1,0,6.3);ctx.fill();}
   if(L>=4){/* lean-to store shed */const s={T:lerp(c0.R,c0.T,0.25),R:c0.R,Bt:lerp(c0.R,c0.Bt,0.45),L:null};s.L=[s.T[0]+s.Bt[0]-s.R[0],s.T[1]+s.Bt[1]-s.R[1]];
@@ -2473,6 +2499,7 @@ function render(){
   for(const b of BS){if(place&&place.moving===b)continue;dyn.push({d:b.fx+b.w-1+b.fy+b.h-1+0.5,b:b});}
   for(const w of walkers)dyn.push({d:w.x+w.y+0.3,w:w});
   for(let i=0;i<N*N;i++)if(walls[i]){const x=i%N,y=(i/N)|0;if(vis((x-y)*HW,(x+y)*HH))dyn.push({d:x+y+0.45,wl:i});}
+  vrDyn(dyn);
   if(ghost)dyn.push({d:ghost.fx+ghost.w-1+ghost.fy+ghost.h-1+0.6,g:ghost});
   dyn.sort((a,b)=>a.d-b.d);
   let di=0;
@@ -2480,7 +2507,8 @@ function render(){
     if(o.b){const p=iso(o.b.fx,o.b.fy);if(vis(p[0],p[1]-60)||vis(p[0],p[1]+100))drawBuilding(o.b,win,1,false);}
     else if(o.w)drawWalker(o.w,win);
     else if(o.wl!==undefined)drawWallTile(o.wl,win);
-    else if(o.g)drawBuilding(o.g,win,0.7,true);}};
+    else if(o.g)drawBuilding(o.g,win,0.7,true);
+    else if(o.f)o.f(win);}};
   for(const o of objs){flushDyn(o.d);
     const sx=(o.x-o.y)*HW,sy=(o.x+o.y)*HH;if(!vis(sx,sy))continue;
     if(o.kind==='peak'){drawPeak(o,win);continue;}if(o.kind==='rocks'){drawRocks(o,win);continue;}if(o.kind==='iron'){drawIron(o);continue;}
@@ -2488,7 +2516,7 @@ function render(){
     if(o.kind==='tree'){if(!o.gone)drawTree(o,win,a);}
     else if(o.kind==='bush'&&!o.gone)drawSprite(SP.bush[win?1:(o.amt>0.5?0:2)],sx+o.ox,sy-elev[o.y*N+o.x]+o.oy,o.s,a,false);}
   flushDyn(Infinity);
-  drawShipsAtHarbour(win);drawAnims(win);drawHover();
+  drawShipsAtHarbour(win);drawAnims(win);vrDraw(win);drawHover();
   for(const b of B)drawBadge(b);
   for(const p of smoke){ctx.fillStyle='rgba(220,225,224,'+(p.a*0.75).toFixed(3)+')';ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,6.3);ctx.fill();}
   drawEdgeFog(win,vis);
@@ -2528,7 +2556,12 @@ function drawWallTile(i,win){const x=i%N,y=(i/N)|0,e=elev[i]||2,sx=(x-y)*HW,sy=(
     ctx.fillStyle='#A34A3A';ctx.beginPath();ctx.moveTo((a[0]+b[0])/2-4,(a[1]+b[1])/2-24);ctx.lineTo((a[0]+b[0])/2+4,(a[1]+b[1])/2-24);ctx.lineTo((a[0]+b[0])/2,(a[1]+b[1])/2-16);ctx.fill();return;}
   const link=dirs.filter(d=>inMap(x+d[0],y+d[1])&&walls[(y+d[1])*N+x+d[0]]);
   ctx.strokeStyle=dk;ctx.lineWidth=2;ctx.beginPath();for(const d of link){ctx.moveTo(sx,sy-8);ctx.lineTo(sx+d[2],sy+d[3]-8);}ctx.stroke();
-  const pts=[[0,0]];for(const d of link){pts.push([d[2]*0.33,d[3]*0.33],[d[2]*0.7,d[3]*0.7]);}pts.sort((p,q)=>p[1]-q[1]);for(const p of pts)stake(sx+p[0],sy+p[1],13+((p[0]*7+p[1]*3)&3));}
+  const pts=[[0,0]];for(const d of link){pts.push([d[2]*0.33,d[3]*0.33],[d[2]*0.7,d[3]*0.7]);}pts.sort((p,q)=>p[1]-q[1]);const WL=wallLv(),wr=wallWear(i),hb=WL>=2?4:0;
+  if(WL>=2){ctx.strokeStyle=win?'#9C8A76':'#8A6E52';ctx.lineWidth=3;ctx.beginPath();for(const d of link){ctx.moveTo(sx,sy-6);ctx.lineTo(sx+d[2],sy+d[3]-6);}ctx.stroke();}
+  pts.forEach((p,k)=>{if(wr>0&&h2(x*7+k,y,5)<wr*0.7)return;stake(sx+p[0],sy+p[1],13+hb+((p[0]*7+p[1]*3)&3)-(wr>0.5&&k%2?5:0));});
+  if(zoom>1.45&&!win){/* close-up: rope lashing and bark on the stakes */ctx.strokeStyle='rgba(196,170,120,0.85)';ctx.lineWidth=1;ctx.beginPath();for(const d of link){const m=[sx+d[2]*0.5,sy+d[3]*0.5];ctx.moveTo(m[0]-3,m[1]-9);ctx.lineTo(m[0]+3,m[1]-10);ctx.moveTo(m[0]-3,m[1]-7);ctx.lineTo(m[0]+3,m[1]-8);}ctx.stroke();
+    ctx.strokeStyle='rgba(40,30,22,0.35)';ctx.lineWidth=0.5;ctx.beginPath();for(const p of pts){ctx.moveTo(sx+p[0]-0.8,sy+p[1]-3);ctx.lineTo(sx+p[0]-0.6,sy+p[1]-10);}ctx.stroke();}
+  if(WL>=3){ctx.strokeStyle='#5E6468';ctx.lineWidth=1.4;ctx.beginPath();for(const d of link){for(const hh of [5,13]){ctx.moveTo(sx,sy-hh);ctx.lineTo(sx+d[2],sy+d[3]-hh);}}ctx.stroke();}}
 
 /* =================== update loop =================== */
 let dayAcc=0;
@@ -2543,6 +2576,179 @@ function update(dt){
   for(let i=smoke.length-1;i>=0;i--){const p=smoke[i];p.life+=dt;p.y-=14*dt;p.x+=5*dt*Math.sin(p.life*1.3);p.r+=3*dt;p.a=Math.max(0,0.9-p.life/3.2);if(p.a<=0)smoke.splice(i,1);}
   if(isWinter())for(const f of flakes){f.y+=f.v*dt/H;f.p+=dt;if(f.y>1){f.y=0;f.x=Math.random();}}
 }
+
+/* =================== raids on Kaldstrand (Town Hall 5+): landings, palisade HP and levels, a short visible fight =================== */
+/* palisade levels: hit points per segment; gates are a little stronger */
+const WALL_LV=[null,{n:'Stakes',hp:150},{n:'Double stakes',hp:300,c:{planks:3}},{n:'Iron-bound stakes',hp:500,c:{planks:3,iron:1}}];
+const RAIDER={hp:26,dps:3.4,sp:1.05,carry:20};
+const VR_COL={raid:['#4A4F57','#8E2F2A'],def:['#5E6E4A','#9AA0A4']};
+let VR=null;                       /* the fight on screen (not saved; a save mid-fight is settled on the next day) */
+function wallLv(){return Math.max(1,Math.min(3,S.wallLvl||1));}
+function wallMax(i){return WALL_LV[wallLv()].hp*(walls[i]===2?1.3:1);}
+function wallHp(i){S.wdmg=S.wdmg||{};return Math.max(0,wallMax(i)-(S.wdmg[i]||0));}
+function wallSegs(){let n=0;for(let i=0;i<N*N;i++)if(walls[i])n++;return n;}
+function wallUpCost(){const L=WALL_LV[wallLv()+1];if(!L)return null;const n=wallSegs(),o={};for(const k in L.c)o[k]=L.c[k]*n;return o;}
+function upgradeWalls(){const c=wallUpCost();if(!c)return 'The palisade is as strong as it gets.';if(!wallSegs())return 'Build a palisade first.';if(!afford(c))return 'Not enough: needs '+costStr(c)+'.';
+  pay(c,1);S.wallLvl=wallLv()+1;S.wdmg={};return '';}
+function repairCost(){const n=(S.wbroken||[]).length;return n?{wood:4*n,planks:(wallLv()-1)*3*n}:{};}
+function repairWalls(){const br=S.wbroken||[];if(!br.length)return 'Nothing to repair.';if(VR)return 'Not while raiders are in the village.';const c=repairCost();if(c.planks===0)delete c.planks;if(!afford(c))return 'Not enough: needs '+costStr(c)+'.';
+  pay(c,1);for(const q of br){if(!walls[q[0]]&&!occ[q[0]])walls[q[0]]=q[1];delete S.wdmg[q[0]];}S.wbroken=[];recomputeWalls();rebuildOcc();return '';}
+function breakWall(i){const v=walls[i];if(!v)return;walls[i]=0;S.wbroken=S.wbroken||[];S.wbroken.push([i,v]);delete S.wdmg[i];recomputeWalls();if(VR){VR.broke++;vrFields();vrFx('dust',i%N,(i/N)|0);}}
+
+/* --- planning: sails sighted, landing a few days later --- */
+function vrModeF(){return S.mode==='relaxed'?0.75:S.mode==='challenge'?1.25:1;}
+function vrPlanDay(){
+  if(S.mode==='sandbox'||thLevel()<5){return;}
+  if(S.vrNext===undefined||S.vrNext===null)S.vrNext=S.day+20;
+  if(!S.vr&&S.day>=S.vrNext&&!isWinter()){const y=Math.max(0,Math.floor((S.day-(S.th5Day||S.day))/YDAYS));
+    const n=Math.min(24,Math.round((6+2*y+S.day%3)*vrModeF()));S.vr={day:S.day+5,n:n,who:pick(['Hrolf the Grey','Sigvard of Jutland','the Orkney jarl','Kolbein Haraldsson','the sons of Thorir'])};
+    S.saga.push({y:yearNow(),t:'Scouts saw the sails of '+S.vr.who+'. They mean to land.'});
+    queueModal({k:'info',title:'Sails off the Coast',text:'Scouts on the headland saw the ships of '+S.vr.who+', about '+n+' raiders. They will land in 5 days. Keep your warriors at home, man the watchtowers and close the palisade.'});}
+  if(S.vr&&!S.vr.on&&S.day>=S.vr.day){if(isWinter()){S.vr.day=S.day+1;}else vrStart();}
+  else if(S.vr&&S.vr.on&&(!VR||(VR.t<1&&S.day>S.vr.day)))vrAuto();
+  /* the village patches damaged stakes: a quarter of a segment a day */
+  if(S.wdmg&&!VR){for(const k in S.wdmg){S.wdmg[k]-=WALL_LV[wallLv()].hp*0.25;if(S.wdmg[k]<=0)delete S.wdmg[k];}}}
+
+/* --- path costs: raiders head for the Town Hall, through the palisade if they must --- */
+function vrPass(i){const t=ter[i];return t!==T.SEA&&t!==T.MOUNT;}
+function vrDijkstra(src){const D=new Float32Array(N*N).fill(1e9),q=[];for(const i of src){D[i]=0;q.push([0,i]);}
+  const push=(d,i)=>{q.push([d,i]);let k=q.length-1;while(k>0){const p=(k-1)>>1;if(q[p][0]<=q[k][0])break;[q[p],q[k]]=[q[k],q[p]];k=p;}};
+  const popq=()=>{const top=q[0],last=q.pop();if(q.length){q[0]=last;let k=0;for(;;){const l=2*k+1,r=l+1;let m=k;if(l<q.length&&q[l][0]<q[m][0])m=l;if(r<q.length&&q[r][0]<q[m][0])m=r;if(m===k)break;[q[m],q[k]]=[q[k],q[m]];k=m;}}return top;};
+  q.length=0;for(const i of src)push(0,i);
+  while(q.length){const [d,i]=popq();if(d>D[i])continue;const x=i%N,y=(i/N)|0;
+    for(const s of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+s[0],ny=y+s[1];if(nx<0||ny<0||nx>=N||ny>=N)continue;const j=ny*N+nx;if(!vrPass(j))continue;
+      let c=1;if(walls[j])c=8+wallHp(j)/20;else if(occ[j])c=30;else if(ter[j]===T.RIVER)c=2.5;
+      if(d+c<D[j]){D[j]=d+c;push(D[j],j);}}}
+  return D;}
+function vrFields(){if(!VR)return;const th=B.find(b=>b.t==='th');const g=[];
+  for(let y=th.fy-1;y<=th.fy+th.h;y++)for(let x=th.fx-1;x<=th.fx+th.w;x++){if(!inMap(x,y))continue;const i=y*N+x;if(!occ[i]&&vrPass(i)&&!walls[i])g.push(i);}
+  VR.fin=vrDijkstra(g);VR.fout=vrDijkstra([VR.land]);
+  VR.ins=vrInside(g);}
+function thRing(){const th=B.find(b=>b.t==='th'),g=[];if(!th)return g;for(let y=th.fy-1;y<=th.fy+th.h;y++)for(let x=th.fx-1;x<=th.fx+th.w;x++){if(!inMap(x,y))continue;const i=y*N+x;if(!occ[i]&&vrPass(i)&&!walls[i])g.push(i);}return g;}
+/* inside the ring: tiles reachable from the Town Hall without crossing the palisade (where defenders may go) */
+function vrInside(g){const ins=new Uint8Array(N*N),q=g.slice();for(const i of g)ins[i]=1;
+  while(q.length){const i=q.pop(),x=i%N,y=(i/N)|0;for(const s of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+s[0],ny=y+s[1];if(!inMap(nx,ny))continue;const j=ny*N+nx;if(ins[j]||walls[j]||!vrPass(j))continue;ins[j]=1;q.push(j);}}
+  return ins;}
+
+/* --- the fight --- */
+function vrStart(){const th=B.find(b=>b.t==='th');if(!th){S.vr=null;return;}recomputeWalls();
+  const cx=th.fx+th.w/2,cy=th.fy+th.h/2;let best=null;const ins=walls.some(v=>v)?vrInside(thRing()):null;
+  for(let y=1;y<N-1;y++)for(let x=1;x<N-1;x++){const i=y*N+x;if(!vrPass(i)||occ[i]||walls[i]||(ins&&ins[i]&&S.wallClosed))continue;
+    if(![[1,0],[-1,0],[0,1],[0,-1]].some(s=>ter[(y+s[1])*N+x+s[0]]===T.SEA))continue;const d=Math.hypot(x-cx,y-cy);if(d<12)continue;const sc=Math.abs(d-20)+h2(x,y,S.day)*6;if(!best||sc<best.sc)best={sc:sc,i:i};}
+  if(!best){S.vr=null;return;}
+  S.vr.on=true;S.wdmg=S.wdmg||{};const lx=best.i%N,ly=(best.i/N)|0;
+  VR={t:0,land:best.i,u:[],fx:[],broke:0,killed:0,loot:{},lost:[],stolen:{},arch:0};
+  for(let k=0;k<S.vr.n;k++)VR.u.push({side:'raid',x:lx+U(-0.4,0.4),y:ly+U(-0.4,0.4),hp:RAIDER.hp,mx:RAIDER.hp,dps:RAIDER.dps*U(0.85,1.15),c:VR_COL.raid,ph:Math.random()*6,carry:'spear',st:'in',bag:{},bagN:0,cd:0});
+  const def=S.people.filter(p=>p.w&&!p.away&&p.sick<=0&&p.w!=='archer');
+  def.forEach((p,k)=>{const a=k/Math.max(1,def.length)*6.283;VR.u.push({side:'def',p:p,x:cx+Math.cos(a)*(th.w/2+0.8),y:cy+Math.sin(a)*(th.h/2+0.8),hp:18+10*soldierStr(p),mx:18+10*soldierStr(p),dps:2.4*soldierStr(p),c:VR_COL.def,ph:Math.random()*6,carry:'spear',cd:0});});
+  VR.towers=B.filter(b=>b.t==='tower').slice(0,Math.floor(S.people.filter(p=>p.w==='archer'&&!p.away&&p.sick<=0).length/2)).map(b=>({b:b,cd:Math.random()}));
+  {const sea=[];for(const q of [[1,0],[-1,0],[0,1],[0,-1],[2,0],[-2,0],[0,2],[0,-2],[2,1],[1,2],[-2,-1],[-1,-2]]){const x=lx+q[0],y=ly+q[1];if(inMap(x,y)&&ter[y*N+x]===T.SEA)sea.push([x,y,Math.atan2(q[1],q[0])]);}
+    VR.ships=sea.slice(0,Math.max(1,Math.min(3,Math.ceil(S.vr.n/8))));}
+  vrFields();if(speed>1)setSpeed(1);
+  const p=iso((lx+cx)/2,(ly+cy)/2);camX=p[0];camY=p[1];clampCam();
+  toast(S.vr.who+' has landed with '+S.vr.n+' raiders!',4200);}
+const vrAt=(x,y)=>{const tx=Math.round(x),ty=Math.round(y);return inMap(tx,ty)?ty*N+tx:-1;};
+function vrStep(u,F,dt){const i=vrAt(u.x,u.y);if(i<0)return null;if(F[i]>=1e8)return 'lost';const x=i%N,y=(i/N)|0;let bj=-1,bd=F[i];
+  for(const s of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+s[0],ny=y+s[1];if(!inMap(nx,ny))continue;const j=ny*N+nx;if(F[j]<bd){bd=F[j];bj=j;}}
+  if(bj<0){u.moving=false;return 'there';}
+  if(walls[bj]){u.moving=false;return bj;}
+  const tx=bj%N,ty=(bj/N)|0,dx=tx-u.x,dy=ty-u.y,d=Math.hypot(dx,dy),s=Math.min(d,RAIDER.sp*dt*(ter[i]===T.RIVER?0.6:1));if(d>0.001){u.x+=dx/d*s;u.y+=dy/d*s;}u.moving=true;u.ph+=dt;return null;}
+const STEAL=['silver','gold','iron','tools','planks','wood','smoked','sausage','bread','fish','meat','ale','mead','cloth'];
+function vrUpdate(gdt){let left=Math.min(gdt,8);while(VR&&left>0){const st=Math.min(left,0.25);vrTick(st);left-=st;}}
+function vrTick(dt){if(!VR)return;VR.t+=dt;
+  if(VR.t>120){for(const u of VR.u)if(u.side==='raid'&&u.hp>0){u.gone=1;u.hp=0;for(const k in u.bag)VR.stolen[k]=(VR.stolen[k]||0)+u.bag[k];}vrEnd();return;}
+  const R=VR.u.filter(u=>u.side==='raid'&&u.hp>0),Dd=VR.u.filter(u=>u.side==='def'&&u.hp>0);
+  const near=(u,L,r)=>{let b=null,bd=r;for(const o of L){const d=Math.hypot(o.x-u.x,o.y-u.y);if(d<bd){bd=d;b=o;}}return b;};
+  const atk={};for(const u of R)if(u.wt!==undefined)atk[u.wt]=(atk[u.wt]||0)+1;for(const u of R)u.wt=undefined;
+  const hitWall=(u,r)=>{u.wt=r;if(u.cd>0)return;S.wdmg[r]=(S.wdmg[r]||0)+u.dps*1.2*Math.min(1,3/Math.max(1,atk[r]||1));u.cd=1;vrFx('chop',r%N,(r/N)|0);if(wallHp(r)<=0)breakWall(r);};
+  for(const u of R){u.cd-=dt;
+    const foe=near(u,Dd,0.95);if(foe){u.moving=false;if(u.cd<=0){foe.hp-=u.dps;u.cd=1;vrFx('hit',foe.x,foe.y);}continue;}
+    if(VR.t>60&&u.st!=='out')u.st='out';
+    if(u.st==='in'){const r=vrStep(u,VR.fin,dt);
+      if(typeof r==='number')hitWall(u,r);
+      else if(r==='there')u.st='loot';else if(r==='lost')u.st='out';}
+    else if(u.st==='loot'){u.moving=false;if(u.cd<=0){u.cd=1;const ks=STEAL.filter(k=>(S.res[k]||0)>=1);if(!ks.length||u.bagN>=RAIDER.carry){u.st='out';continue;}const k=pick(ks),a=Math.min(S.res[k],k==='silver'?6:3);S.res[k]-=a;u.bag[k]=(u.bag[k]||0)+a;u.bagN+=a;}}
+    else{const r=vrStep(u,VR.fout,dt);if(typeof r==='number')hitWall(u,r);
+      else if(r==='there'||r==='lost'){u.hp=0;u.gone=1;for(const k in u.bag)VR.stolen[k]=(VR.stolen[k]||0)+u.bag[k];}}}
+  VR.fdT=(VR.fdT||0)-dt;if(VR.fdT<=0){VR.fdT=0.5;VR.fdef=vrDefMap(R);}
+  for(const u of Dd){u.cd-=dt;
+    /* spears reach over the stakes: raiders hacking at the palisade can be struck from inside */
+    const R2=R.filter(o=>o.hp>0&&!o.gone),foe=near(u,R2,1.0)||R2.find(o=>o.st==='in'&&!o.moving&&Math.hypot(o.x-u.x,o.y-u.y)<1.7);
+    if(foe){u.moving=false;if(u.cd<=0){foe.hp-=u.dps;u.cd=1;vrFx('hit',foe.x,foe.y);if(foe.hp<=0)vrKill(foe);}continue;}
+    /* follow the defenders' map toward the nearest raider; close in directly once on the same tile */
+    const i=vrAt(u.x,u.y),F=VR.fdef;let moved=false;
+    if(F&&i>=0&&F[i]<1e8){const x=i%N,y=(i/N)|0;let bj=-1,bd=F[i];for(const q of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+q[0],ny=y+q[1];if(!inMap(nx,ny))continue;const j=ny*N+nx;if(F[j]<bd){bd=F[j];bj=j;}}
+      let tx,ty;if(bj>=0){tx=bj%N;ty=(bj/N)|0;}else{const t=near(u,R2,3);if(t){tx=t.x;ty=t.y;}}
+      if(tx!==undefined){const dx=tx-u.x,dy=ty-u.y,d=Math.hypot(dx,dy),st=Math.min(d,1.15*dt);if(d>0.001){u.x+=dx/d*st;u.y+=dy/d*st;moved=true;}}}
+    u.moving=moved;if(moved)u.ph+=dt;}
+  /* keep a little room between fighters so a crowd reads as a crowd */
+  {const A=VR.u.filter(u=>u.hp>0&&!u.gone);for(let a=0;a<A.length;a++)for(let b=a+1;b<A.length;b++){const p=A[a],q=A[b],dx=q.x-p.x,dy=q.y-p.y,d=Math.hypot(dx,dy);if(d>0.42||d<1e-4)continue;const k=(0.42-d)*0.5*Math.min(1,dt*6)/d;
+    const mv=(u,sx,sy)=>{const nx=u.x+sx,ny=u.y+sy,j=vrAt(nx,ny);if(j>=0&&vrPass(j)&&!walls[j]){u.x=nx;u.y=ny;}};mv(p,-dx*k,-dy*k);mv(q,dx*k,dy*k);}}
+  /* watchtower archers */
+  for(const t of VR.towers){t.cd-=dt;if(t.cd>0)continue;const b=t.b,o={x:b.fx+b.w/2-0.5,y:b.fy+b.h/2-0.5};const foe=near(o,R.filter(u=>u.hp>0),7.5);if(!foe)continue;
+    t.cd=1.3;foe.hp-=7;VR.arch++;VR.fx.push({k:'arrow',a:[o.x,o.y],b:[foe.x,foe.y],t:0.35});if(foe.hp<=0)vrKill(foe);}
+  for(const u of R)if(u.hp<=0&&!u.dead&&!u.gone)vrKill(u);
+  for(const f of VR.fx)f.t-=dt;VR.fx=VR.fx.filter(f=>f.t>0);
+  if(!VR.u.some(u=>u.side==='raid'&&u.hp>0))vrEnd();}
+function vrDefMap(R){const F=new Float32Array(N*N).fill(1e9),q=[];
+  for(const u of R){if(u.hp<=0||u.gone)continue;const i=vrAt(u.x,u.y);if(i<0)continue;
+    /* a raider at the palisade is reached from the inside of it */
+    if(walls[i]||!VR.ins[i]){const x=i%N,y=(i/N)|0;for(const d of [[0,0],[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+d[0],ny=y+d[1];if(!inMap(nx,ny))continue;const j=ny*N+nx;if(VR.ins[j]&&!walls[j]&&F[j]>0){F[j]=0;q.push(j);}}}
+    else if(F[i]>0){F[i]=0;q.push(i);}}
+  for(let k=0;k<q.length;k++){const i=q[k],x=i%N,y=(i/N)|0;for(const d of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+d[0],ny=y+d[1];if(!inMap(nx,ny))continue;const j=ny*N+nx;if(F[j]<1e9||walls[j]||!vrPass(j)||!VR.ins[j])continue;F[j]=F[i]+(occ[j]?2:1);q.push(j);}}
+  return F;}
+function vrKill(u){if(u.dead||u.gone)return;u.dead=1;u.hp=0;VR.killed++;for(const k in u.bag)S.res[k]=(S.res[k]||0)+u.bag[k];u.bag={};}
+function vrFx(k,x,y){if(VR)VR.fx.push({k:k,x:x,y:y,t:k==='dust'?1.2:0.3});}
+function vrCasualty(p,out){if(!p||!S.people.includes(p))return;
+  if(S.mode!=='relaxed'&&!p.num&&Math.random()<0.45){out.dead.push(pname(p));removePerson(p,'battle');}
+  else{p.wound=1;p.sick=Math.max(p.sick||0,6);out.wounded++;}}
+function vrEnd(){const out={dead:[],wounded:0};for(const u of VR.u)if(u.side==='def'&&u.hp<=0)vrCasualty(u.p,out);
+  vrReport(VR.killed,S.vr.n,VR.stolen,out,VR.broke);VR=null;}
+function vrAuto(){/* settled without the scene (a save mid-fight, or no screen) */
+  const a=S.vr.n*RAIDER.dps*(S.wallClosed?1.2+0.4*wallLv():1)*2.2,d=defenceValue()*3.2;const k=Math.min(S.vr.n,Math.round(S.vr.n*Math.min(1,d/Math.max(1,a))));const stolen={};
+  if(d<a){for(const key of STEAL){const v=Math.floor((S.res[key]||0)*0.12*(1-d/a));if(v>0){S.res[key]-=v;stolen[key]=v;}}}
+  const out={dead:[],wounded:0};const def=S.people.filter(p=>p.w&&!p.away);const hurt=Math.min(def.length,Math.round(S.vr.n*0.25*Math.min(1.5,a/Math.max(1,d))));for(let i=0;i<hurt;i++)vrCasualty(def[i],out);
+  VR=null;vrReport(k,S.vr.n,stolen,out,0);}
+function vrReport(killed,n,stolen,out,broke){const got=Object.keys(stolen).filter(k=>stolen[k]>0).map(k=>Math.round(stolen[k])+' '+k);
+  const won=!got.length;S.vrNext=S.day+(S.mode==='relaxed'?55:40)+Math.floor(Math.random()*20);
+  if(won){addFame(4+killed*2);addMod('vraid','We drove the raiders into the sea',6,20);}else addMod('vraid','Raiders plundered the village',-6,20);
+  S.saga.push({y:yearNow(),t:(won?'The raiders of '+S.vr.who+' were beaten back at Kaldstrand.':S.vr.who+' plundered Kaldstrand and sailed off.')+' '+killed+' of '+n+' fell.'});
+  queueModal({k:'vraid',won:won,title:won?'The Raiders Are Beaten':'The Raiders Got Away',text:won?'The raiders of '+S.vr.who+' broke against Kaldstrand. '+(killed>=n?'None of them saw home again.':'The rest ran for their ships.'):'The raiders of '+S.vr.who+' carried off what they could.',
+    table:[['Raiders slain',killed+' of '+n],['Taken by the raiders',got.length?got.join(', '):'nothing'],['Our dead',out.dead.length?out.dead.join(', '):'none'],['Wounded',String(out.wounded)],['Palisade segments broken',String(broke)+(broke?' (repair them in War → Defence)':'')]]});
+  S.vr=null;syncPop();assignWorkers();}
+
+/* --- drawing: units, arrows, chips of wood, damaged and broken palisade --- */
+function vrDyn(dyn){if(VR)for(const u of VR.u)if(u.hp>0&&!u.gone)dyn.push({d:u.x+u.y+0.3,f:w=>{drawWalker(u,w);if(u.hp<u.mx){const p=iso(u.x,u.y);ctx.fillStyle='rgba(30,24,18,.6)';ctx.fillRect(p[0]-7,p[1]-30,14,3);ctx.fillStyle=u.side==='raid'?'#C0503A':'#7FA05A';ctx.fillRect(p[0]-7,p[1]-30,14*Math.max(0,u.hp/u.mx),3);}}});
+  for(const q of (S.wbroken||[])){const i=q[0];if(walls[i])continue;const x=i%N,y=(i/N)|0;dyn.push({d:x+y+0.4,f:()=>{const p=iso(x,y);const e=elev[i]||2;ctx.fillStyle='#6E543D';for(let k=0;k<4;k++){const a=h2(x,y,k)*6.28;ctx.save();ctx.translate(p[0]+Math.cos(a)*6,p[1]-e+Math.sin(a)*3);ctx.rotate(a);ctx.fillRect(-5,-1,10,2.4);ctx.restore();}ctx.fillStyle='#4E3C2E';ctx.fillRect(p[0]-2,p[1]-e-5,4,5);}});}}
+function vrShips(win){if(!VR||!VR.ships)return;for(const sh of VR.ships){const p=iso(sh[0],sh[1]),a=sh[2];ctx.save();ctx.translate(p[0],p[1]+2);ctx.scale(Math.cos(a)>0?1:-1,1);
+  poly([-26,-2,26,-2,32,-12,22,4,-22,4,-32,-12],'#3E3028');poly([-22,-3,22,-3,20,1,-20,1],'#5C4634');ctx.strokeStyle='#2E2620';ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(0,-2);ctx.lineTo(0,-34);ctx.stroke();
+  for(let k=0;k<5;k++)poly([-12,-32+k*5,12,-32+k*5,12,-27+k*5,-12,-27+k*5],k%2?(win?'#E6E1D8':'#E9E1CF'):'#2E3A4A');
+  ctx.fillStyle='#8E2F2A';for(let k=-3;k<=3;k++){ctx.beginPath();ctx.arc(k*6,-3,2.2,0,6.3);ctx.fill();}ctx.restore();}}
+function vrDraw(win){if(!VR)return;vrShips(win);for(const f of VR.fx){
+  if(f.k==='arrow'){const a=iso(f.a[0],f.a[1]),b=iso(f.b[0],f.b[1]),u=1-f.t/0.35,x=a[0]+(b[0]-a[0])*u,y=a[1]-46+(b[1]-12-a[1]+46)*u;ctx.strokeStyle='#3E3028';ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-(b[0]-a[0])*0.06,y-(b[1]-a[1]-34)*0.06);ctx.stroke();}
+  else{const p=iso(f.x,f.y);ctx.fillStyle=f.k==='hit'?'rgba(230,220,200,.8)':f.k==='dust'?'rgba(180,160,130,'+(f.t/1.2*0.6).toFixed(2)+')':'#C9A27A';
+    if(f.k==='dust'){ctx.beginPath();ctx.arc(p[0],p[1]-10,14*(1.3-f.t/1.2),0,6.3);ctx.fill();}else for(let k=0;k<3;k++)ctx.fillRect(p[0]-4+k*3,p[1]-16-k*3*(f.t/0.3),2,2);}}}
+/* damage on a palisade tile: 0 (whole) .. 1 (about to break) */
+function wallWear(i){if(!S.wdmg||!S.wdmg[i])return 0;return Math.min(1,S.wdmg[i]/wallMax(i));}
+
+/* --- hooks into the day, the frame, the modal and the To do list --- */
+{const _dt=dayTick;dayTick=function(){_dt();if(thLevel()>=5&&S.th5Day===undefined)S.th5Day=S.day;vrPlanDay();};}
+{const _up=update;update=function(dt){_up(dt);if(VR)vrUpdate(dt*speed);};}
+{const _ms=modalSpec;modalSpec=function(m){if(m&&m.k==='vraid')return {title:m.title,text:m.text,table:m.table,opts:[{l:m.won?'Raise a cheer':'Rebuild',f:()=>''}]};return _ms(m);};}
+{const _sg=suggestions;suggestions=function(){const out=_sg();
+  if(S.vr&&!S.vr.on){const d=S.vr.day-S.day;out.unshift({p:0,ic:'War',t:'Raiders land in '+d+' day'+(d===1?'':'s'),sub:S.vr.n+' raiders. Keep warriors home and close the palisade',go:()=>warPanel(),cls:'bad'});}
+  if(VR){const left=VR.u.filter(u=>u.side==='raid'&&u.hp>0).length;out.unshift({p:0,ic:'War',t:'Raiders in the village: '+left+' left',sub:'Click to watch the fight',go:()=>{const u=VR&&VR.u.find(u=>u.side==='raid'&&u.hp>0);if(u){const p=iso(u.x,u.y);camX=p[0];camY=p[1];clampCam();}},cls:'bad'});}
+  if((S.wbroken||[]).length&&!VR)out.push({p:1,ic:'Palisade',t:'Palisade broken in '+S.wbroken.length+' place'+(S.wbroken.length>1?'s':''),sub:'Repair it: '+costStr(repairCost()),go:()=>warPanel()});
+  return out;};}
+function wallDefHtml(on){if(thLevel()<5)return '';const L=wallLv(),nx=WALL_LV[L+1],uc=wallUpCost(),rc=repairCost(),nb=(S.wbroken||[]).length;
+  let h='<h3>Palisade</h3><table class="t"><tr><td>Level</td><td>'+L+' · '+WALL_LV[L].n+'</td></tr><tr><td>Strength of each segment</td><td>'+WALL_LV[L].hp+' (gates '+Math.round(WALL_LV[L].hp*1.3)+')</td></tr><tr><td>Segments</td><td>'+wallSegs()+(nb?' · '+nb+' broken':'')+'</td></tr></table>';
+  h+='<p class="meta">Raiders must hack through the palisade, segment by segment, unless they find a gap. Spearmen strike over the stakes; archers in manned towers shoot from 7 tiles. Damaged stakes are patched for free in a few days; broken ones must be rebuilt.</p>';
+  if(nb)h+='<div class="wk">'+btn('w-rep','Repair '+nb+' broken segment'+(nb>1?'s':''),{cls:'small primary',dis:!afford(rc)||!!VR})+'<span class="meta">'+esc(costStr(rc))+'</span></div>';
+  if(nx)h+='<div class="wk">'+btn('w-wup','Upgrade to '+nx.n,{cls:'small',dis:!wallSegs()||!afford(uc)})+'<span class="meta">'+nx.hp+' per segment · '+(wallSegs()?esc(costStr(uc)):'build a palisade first')+'</span></div>';
+  if(S.vr&&!S.vr.on)h+='<p><strong>'+esc(S.vr.who)+' will land in '+(S.vr.day-S.day)+' days with about '+S.vr.n+' raiders.</strong></p>';
+  on.push(()=>{if($('w-rep'))$('w-rep').onclick=()=>{const w=repairWalls();toast(w||'The palisade is whole again.');if(!w){warPanel();save();}};
+    if($('w-wup'))$('w-wup').onclick=()=>{const w=upgradeWalls();toast(w||'The palisade is now '+WALL_LV[wallLv()].n.toLowerCase()+'.');if(!w){warPanel();save();}};});
+  return h;}
 
 /* =================== HUD =================== */
 const $=id=>document.getElementById(id);
@@ -2612,6 +2818,7 @@ function buildingSheet(b){
   sel={b:b};const D=DEF[b.t],sl=slotsOf(b);
   let h=head(D.name,(D.fixed||D.up?'Level '+(b.t==='th'?thLevel():b.lvl)+' · ':'')+(D.w*D.h>1?(b.w+'×'+b.h+' tiles'):'1 tile'));
   const on=[];
+  if(b.t!=='th'){h+='<p class="role"><strong>'+esc(roleOf(b.t))+'.</strong> '+esc(D.desc||'')+'</p>';const nd=needsOf(b.t);if(nd.length)h+='<div class="meta needs">Needs: '+esc(nd.join(' · '))+'</div>';}
   if(sl){h+='<span class="status '+statusClass(b.status)+'">'+esc(b.status||'Starting')+'</span>';
     assignWorkers();h+='<div class="wk"><button type="button" class="btn small" id="w-minus" aria-label="Fewer workers" '+(b.desired<=0?'disabled':'')+'>−</button><span class="num">'+b.desired+' / '+sl+' <span class="meta">workers</span></span><button type="button" class="btn small" id="w-plus" aria-label="More workers" '+(b.desired>=sl||freeWorkers<=0?'disabled':'')+'>+</button><span class="meta">'+freeWorkers+' free in the village</span></div>';
     h+='<p>'+esc(D.out||'')+(b.made?' · <strong>Yesterday: '+esc(b.made)+'</strong>':'')+'</p>';
@@ -2647,7 +2854,7 @@ function buildingSheet(b){
     on.push(()=>{$('sheet-card').querySelectorAll('[data-sch]').forEach(x=>x.onclick=()=>{b.sch=+x.dataset.sch;save();buildingSheet(b);});$('sch-all').onclick=()=>{S.houseSch=houseSch(b);for(const o of B)if(o.t==='house')delete o.sch;save();toast('Every house now uses '+HOUSE_SCH[S.houseSch].n.toLowerCase()+'.');buildingSheet(b);};$('sch-mix').onclick=()=>{S.houseSch=null;for(const o of B)if(o.t==='house')delete o.sch;save();buildingSheet(b);};});}
   if(D.housing)h+='<div class="meta">Shelters '+(b.t==='house'?HOUSE_CAP[b.lvl-1]:D.housing)+' people'+(b.t==='house'&&b.lvl>=3?' · burns ¾ firewood':'')+'</div>';
   if(D.store)h+='<div class="meta">Storage: '+(D.store.food?(300+150*(b.lvl-1))+' food':D.store.mat?(300+150*(b.lvl-1))+' goods':(60+30*(b.lvl-1))+' weapons')+'</div>';
-  h+='<p>'+esc(D.desc)+'</p>';
+
   if(D.up){const nx=b.lvl+1;if(b.lvl>=5)h+='<div class="meta">Highest level reached.</div>';
     else{const c=upCost(b),need=canUpgrade(b);const eff=b.t==='house'?('+1 resident'+(nx===3?', better insulated: −25% firewood':nx===5?', a carved hall that draws newcomers':'')):D.store?'+150 storage':nx===2?'+20% output':nx===3?(FIELDS.has(b.t)?'+30% output in all':'+1 worker slot'):nx===4?'+40% output in all':'Finest work: +55% output in all';
       h+='<div class="wk">'+btn('b-up','Upgrade to level '+nx,{cls:'primary',dis:!need||!afford(c)})+'<span class="meta">'+esc(eff)+' · '+costIco(c)+(need?'':' · raise the Town Hall first')+'</span></div>';
@@ -2676,7 +2883,7 @@ function tileSheet(x,y){
 }
 
 /* ---------- panels ---------- */
-let buildCat='Housing';
+let buildCat='Homes';
 let newArmed=false;
 function renderBuild(){if(isWide()){if(mode!=='view')endMode();closeSheet();openTray(buildCat);return;}
   let h=head('Build','Construction is instant. Town Hall level '+thLevel()+'.');
@@ -2823,8 +3030,8 @@ function buildThumb(t,lvl){const key=t+':'+(lvl||1);if(THUMBS[key])return THUMBS
 
 /* --- category icons --- */
 const CAT_ICON={
-  Housing:'<path d="M2 10.5 L10 4 L18 10.5 L16.6 11.2 L10 6 L3.4 11.2 Z" fill="#6E8B4E" stroke="#4D6438" stroke-width="0.6" stroke-linejoin="round"/><path d="M4 10.4 L10 5.8 L16 10.4 V17 H4 Z" fill="#B08A62" stroke="#6E5440" stroke-width="0.7"/><path d="M4 13 H16 M4 15 H16" stroke="#8E6F52" stroke-width="0.5"/><rect x="8.4" y="12" width="3.2" height="5" rx="1.4" fill="#4A3828"/><path d="M13.5 3 V6.4" stroke="#8E877D" stroke-width="1.4"/><path d="M13 2.4 Q14.6 1 13.8 0" stroke="#C9C2B2" stroke-width="0.8" fill="none"/>',
-  Resources:'<path d="M2 15 L13 9 L15 12.6 L4 18.6 Z" fill="#8E6F52" stroke="#5A4636" stroke-width="0.6"/><ellipse cx="14" cy="10.8" rx="1.6" ry="2" transform="rotate(-28 14 10.8)" fill="#D8B98A" stroke="#7A5D44" stroke-width="0.6"/><path d="M6.4 13.2 L13.6 2.4" stroke="#7A5D44" stroke-width="1.6" stroke-linecap="round"/><path d="M11.2 3.2 Q13 0.4 16.4 2 L14.6 6 Q13 4.4 11.2 5.6 Z" fill="#B7BCBF" stroke="#5E6468" stroke-width="0.6"/>',
+  Homes:'<path d="M2 10.5 L10 4 L18 10.5 L16.6 11.2 L10 6 L3.4 11.2 Z" fill="#6E8B4E" stroke="#4D6438" stroke-width="0.6" stroke-linejoin="round"/><path d="M4 10.4 L10 5.8 L16 10.4 V17 H4 Z" fill="#B08A62" stroke="#6E5440" stroke-width="0.7"/><path d="M4 13 H16 M4 15 H16" stroke="#8E6F52" stroke-width="0.5"/><rect x="8.4" y="12" width="3.2" height="5" rx="1.4" fill="#4A3828"/><path d="M13.5 3 V6.4" stroke="#8E877D" stroke-width="1.4"/><path d="M13 2.4 Q14.6 1 13.8 0" stroke="#C9C2B2" stroke-width="0.8" fill="none"/>',
+  Materials:'<path d="M2 15 L13 9 L15 12.6 L4 18.6 Z" fill="#8E6F52" stroke="#5A4636" stroke-width="0.6"/><ellipse cx="14" cy="10.8" rx="1.6" ry="2" transform="rotate(-28 14 10.8)" fill="#D8B98A" stroke="#7A5D44" stroke-width="0.6"/><path d="M6.4 13.2 L13.6 2.4" stroke="#7A5D44" stroke-width="1.6" stroke-linecap="round"/><path d="M11.2 3.2 Q13 0.4 16.4 2 L14.6 6 Q13 4.4 11.2 5.6 Z" fill="#B7BCBF" stroke="#5E6468" stroke-width="0.6"/>',
   Food:'<path d="M1.6 10 Q6 4.4 12.6 7.4 L17.6 4 L16.6 10 L18 15.4 L12.6 12.4 Q6 15.6 1.6 10 Z" fill="#9FB4BC" stroke="#5E7F8C" stroke-width="0.8" stroke-linejoin="round"/><path d="M7.6 6.8 Q9 10 7.6 13.2" stroke="#5E7F8C" stroke-width="0.7" fill="none"/><circle cx="4.6" cy="9.2" r="0.9" fill="#263035"/><path d="M9.6 9.4 L11.4 10.4 M10 11.2 L11.2 11.6" stroke="#C9D6DA" stroke-width="0.6"/>',
   Farms:'<path d="M10 18 V7 M10 18 L6 8 M10 18 L14 8 M10 18 L3.6 10.4 M10 18 L16.4 10.4" stroke="#B08A3E" stroke-width="1.1" stroke-linecap="round"/><ellipse cx="10" cy="5" rx="1.4" ry="2.8" fill="#D9B45A"/><ellipse cx="5.6" cy="6.4" rx="1.2" ry="2.4" transform="rotate(-22 5.6 6.4)" fill="#D9B45A"/><ellipse cx="14.4" cy="6.4" rx="1.2" ry="2.4" transform="rotate(22 14.4 6.4)" fill="#D9B45A"/><ellipse cx="3" cy="9.2" rx="1" ry="2" transform="rotate(-45 3 9.2)" fill="#C9A64A"/><ellipse cx="17" cy="9.2" rx="1" ry="2" transform="rotate(45 17 9.2)" fill="#C9A64A"/><path d="M6.6 14 H13.4" stroke="#8E5A2E" stroke-width="1.6"/>',
   Storage:'<path d="M4.4 3.6 H15.6 Q17.4 10 15.6 16.4 H4.4 Q2.6 10 4.4 3.6 Z" fill="#A9825A" stroke="#5A4636" stroke-width="0.7"/><path d="M3.4 6.6 H16.6 M3.2 13.4 H16.8" stroke="#5E6468" stroke-width="1.4"/><path d="M7.6 3.8 Q6.8 10 7.6 16.2 M12.4 3.8 Q13.2 10 12.4 16.2" stroke="#8E6F52" stroke-width="0.6" fill="none"/><ellipse cx="10" cy="3.6" rx="5.6" ry="1.2" fill="#C9A87A" stroke="#5A4636" stroke-width="0.6"/>',
@@ -2840,6 +3047,8 @@ const PANEL_ICON={village:CAT_ICON.Village,
   war:CAT_ICON.War,
   world:'<rect x="1.6" y="2.6" width="16.8" height="14.8" rx="1" fill="#E3D3AE" stroke="#8E6F52" stroke-width="0.8"/><path d="M1.6 2.6 Q0.4 4 1.6 5.4 M18.4 14.6 Q19.6 16 18.4 17.4" stroke="#8E6F52" stroke-width="0.8" fill="none"/><path d="M4 6 Q6 4.4 7.6 6.4 Q7 9.6 5 10.4 Q3.6 8.6 4 6 Z M11 9 Q14 7.4 16 9.6 Q15.4 13.6 12.4 14.4 Q10.4 12 11 9 Z" fill="#9AAE7E" stroke="#5E7A4E" stroke-width="0.5"/><path d="M6 12.6 Q9 15.6 12.4 11.4" stroke="#A34A3A" stroke-width="0.9" stroke-dasharray="1.4 1" fill="none"/><path d="M13.2 4.4 L15.4 6.6 M15.4 4.4 L13.2 6.6" stroke="#A34A3A" stroke-width="1.1"/>',
   saga:'<path d="M3.4 3.4 H14.6 V16.6 H3.4 Z" fill="#E9DDC0" stroke="#8E6F52" stroke-width="0.8"/><path d="M2.4 2.4 Q3.4 1.4 4.4 2.4 V4.4 H2.4 Z M2.4 15.6 H4.4 V17.6 Q3.4 18.6 2.4 17.6 Z" fill="#B08A62"/><path d="M5.6 6.4 H12.4 M5.6 8.8 H12.4 M5.6 11.2 H10.4" stroke="#8E7A58" stroke-width="0.8"/><path d="M17.6 2 L11.6 13.6 L10.8 15.4 L12.4 14.2 L18.6 2.6 Z" fill="#E9E2D0" stroke="#5A4636" stroke-width="0.6"/>'};
+CAT_ICON.Housing=CAT_ICON.Homes;CAT_ICON.Community=CAT_ICON.Village;CAT_ICON.Military=CAT_ICON.War;CAT_ICON.Resources=CAT_ICON.Materials;
+CAT_ICON.Crafts='<path d="M3 9.6 H14.6 Q17.6 9.6 18 7.6 H11.4 V6 H3 Z" fill="#6E7478" stroke="#3E4448" stroke-width="0.7" stroke-linejoin="round"/><path d="M7 9.6 L6 14.6 H12 L11 9.6 Z" fill="#5A6064" stroke="#3E4448" stroke-width="0.6"/><path d="M4.4 14.6 H13.6 V17.4 H4.4 Z" fill="#8E6F52" stroke="#5A4636" stroke-width="0.6"/><path d="M13.4 1.6 L17.8 4.4 L16.8 5.8 L12.4 3 Z" fill="#A9AFB3" stroke="#3E4448" stroke-width="0.5"/><path d="M14.8 3.6 L11 9" stroke="#8E6F52" stroke-width="1.4" stroke-linecap="round"/>';
 const ico=(k,sz)=>'<svg width="'+(sz||20)+'" height="'+(sz||20)+'" viewBox="0 0 20 20" aria-hidden="true">'+(CAT_ICON[k]||'')+'</svg>';
 
 /* --- the dock (PC): panels on the left, build categories and roads on the right --- */
@@ -2858,7 +3067,7 @@ function openTray(cat){trayCat=cat;buildCat=cat;const tr=$('tray');
   let h='<div class="trh"><b>'+esc(cat)+'</b><span>Town Hall level '+thLevel()+' · click a building, then choose its spot</span><button type="button" class="x" id="tray-x" aria-label="Close">×</button></div><div class="trl">';
   for(const k of keys){const D=DEF[k],av=isAvail(k),lim=limitOf(k),cnt=count(k),uq=cnt>=lim,cst=costOf(k),free=!Object.keys(cst).length&&Object.keys(D.cost).length,ok=av&&!uq&&afford(cst)&&D.lvl<=thLevel();
     const lock=D.lvl>thLevel()?'Town Hall '+D.lvl:!av?'Saga: '+(MS.find(m=>m.unlock.includes(k))||{title:'?'}).title:uq?'Limit reached':'';
-    h+='<button type="button" class="tcard'+(ok?'':' no')+(lock?' lk':'')+'" data-b="'+k+'" title="'+esc(D.desc||'')+'"><img alt="" src="'+buildThumb(k,1)+'"><b>'+esc(D.name)+'</b><span class="tc2">'+(D.lvl<=thLevel()?cnt+' / '+lim:'')+(D.slots?' · '+D.slots+' workers':'')+(D.housing?' · '+D.housing+' people':'')+'</span><span class="cost'+(av&&!afford(cst)?' bad':'')+'">'+(lock?esc(lock):free?'First one free':costIco(cst))+'</span></button>';}
+    h+='<button type="button" class="tcard'+(ok?'':' no')+(lock?' lk':'')+'" data-b="'+k+'" title="'+esc((D.desc||'')+(needsOf(k).length?' Needs: '+needsOf(k).join(', ')+'.':''))+'"><img alt="" src="'+buildThumb(k,1)+'"><b>'+esc(D.name)+'</b><span class="tc3">'+esc(roleOf(k))+'</span><span class="tc2">'+(D.lvl<=thLevel()?cnt+' / '+lim:'')+(D.slots?' · '+D.slots+' workers':'')+(D.housing?' · '+D.housing+' beds':'')+(needsShort(k)?'<br>Needs '+esc(needsShort(k)):'')+'</span><span class="cost'+(av&&!afford(cst)?' bad':'')+'">'+(lock?esc(lock):free?'First one free':costIco(cst))+'</span></button>';}
   tr.innerHTML=h+'</div>';tr.hidden=false;
   $('tray-x').onclick=closeTray;
   tr.querySelectorAll('.tcard').forEach(c=>c.onclick=()=>{const k=c.dataset.b,D=DEF[k];
@@ -2916,6 +3125,31 @@ function renderTodo(){let el=$('todo');if(!el){el=document.createElement('div');
   el.querySelectorAll('[data-td]').forEach(b=>b.onclick=()=>{const o=L[+b.dataset.td];if(mode!=='view')endMode();o.go();todoKey='';});}
 setInterval(()=>{try{renderTodo();if(isWide()&&!$('dock'))renderDock();if($('dock')){const lv=thLevel();if(renderDock.lv!==lv||renderDock.m!==mode+roadKind){renderDock.lv=lv;renderDock.m=mode+roadKind;renderDock();}}}catch(e){}},700);
 window.addEventListener('resize',()=>{if(isWide())renderDock();});
+
+/* =================== what each building does and needs (build tray, sheets) =================== */
+const ROLE={house:'Beds for 4 people, 5 after an upgrade',jarl:'Home of Ubbe and his heirs',pyre:'Where the dead are burned',
+  wood:'Fells trees for wood',carp:'Saws wood into planks',mine:'Digs iron from the mountain foot',
+  smith:'Forges tools, later weapons',weaver:'Sailcloth and rope for ships',tailor:'Warm clothing against winter sickness',
+  fish:'Catches fish for food',berry:'Picks berries for food, not in winter',pres:'Preserved food never spoils',hunter:'Hunts deer and boar for meat',
+  salt:'Boils sea water into salt',smoke:'Smoked meat, fish and sausages',bakery:'Bakes bread from barley',brewery:'Brews ale and mead',
+  pen:'Keeps pigs and sheep: meat, wool, hides',hay:'Hay to feed the herd in winter',garden:'Grows vegetables for food',grain:'Grows barley for bread and ale',flax:'Grows flax for rope',hives:'Honey for mead and offerings',
+  gran:'Stores more food',ware:'Stores more goods',arsenal:'Stores more weapons',
+  market:'Draws newcomers to the village',altar:'Offerings to the gods for blessings',hof:'Temple: the gods favour you faster',tomb:'A great mound for Ragnar Lothbrok',
+  train:'Turns villagers into warriors',tower:'Two archers defend the village',
+  shipyard:'Builds ships',harbour:'Moors ships; merchants land here',trade:'Trade with merchants in summer',
+  thrall:'Houses thralls, unpaid workers'};
+function roleOf(k){const D=DEF[k];if(ROLE[k])return ROLE[k];if(D.deco)return 'Decoration: +'+D.deco+' attractiveness';return (D.desc||'').split('. ')[0];}
+const NEED_TXT={tree:r=>['trees within '+r+' tiles','trees nearby'],iron:r=>['iron ore within '+r+' tiles (mountain foot)','iron ore nearby'],bush:r=>['berry bushes within '+r+' tiles','bushes nearby'],
+  waterd:r=>['sea or river within '+r+' tiles for a full catch','water nearby'],sea:r=>r<=1?['a spot on the shore','the shore']:['the sea within '+r+' tiles','the sea']};
+function needsList(k,short){const D=DEF[k],a=[];if(!D)return a;
+  if(D.slots)a.push(D.slots+(short?' workers':' worker'+(D.slots>1?'s':'')));
+  if(D.need&&NEED_TXT[D.need.k])a.push(NEED_TXT[D.need.k](D.need.r)[short?1:0]);
+  if(D.tools)a.push(short?'tools':'tools (much slower without)');
+  if(k==='trade')a.push('a harbour');
+  if(!short&&D.slots&&D.road!==false)a.push('a road to the Town Hall');
+  return a;}
+function needsOf(k){return needsList(k,false);}
+function needsShort(k){return needsList(k,true).filter(x=>!/workers$/.test(x)).join(', ');}
 
 /* =================== guide: short dynamic tutorial at the start of a new saga =================== */
 /* S.guide: step index while the guide runs, -1 when finished or closed, undefined in old saves and test villages */
@@ -3319,7 +3553,7 @@ function tombHtml(b,on){if(b.proj)return '<p>'+(S.tombDone?'Ragnar rests in his 
 function warExtraHtml(on){let h='';
   if(thLevel()>=4){h+='<h3>Hire and levy</h3><div class="wk">'+btn('w-merc','Hire 5 mercenaries (70 silver)',{cls:'small'})+'<span class="meta">Strength 2, ready at once, stay one year. Needs 300 fame.</span></div>';
     const lev=S.mobilUntil>S.day;h+='<div class="wk">'+btn('w-levy',lev?'Levy called ('+(S.mobilUntil-S.day)+' days)':'Call the levy',{cls:'small',dis:lev})+'<span class="meta">+20% warrior limit for 30 days. −5 morale.</span></div>';}
-  if(thLevel()>=5){recomputeWalls();h+='<h3>Defence</h3><table class="t"><tr><td>Defence of the village</td><td>'+defenceValue()+'</td></tr><tr><td>Palisade</td><td>'+(S.wallClosed?'closed':walls.some(v=>v)?'open: there is a gap':'none')+'</td></tr><tr><td>Watchtowers manned</td><td>'+Math.min(B.filter(b=>b.t==='tower').length,Math.floor(S.people.filter(p=>p.w==='archer'&&!p.away).length/2))+' / '+B.filter(b=>b.t==='tower').length+'</td></tr></table><p class="meta">Raiders will not come before Town Hall 6, but scouts already watch the sea. A closed palisade (with a gate) counts 1.5×.</p><div class="acts">'+btn('w-wall','Build the palisade',{cls:'primary'})+'</div>';}
+  if(thLevel()>=5){recomputeWalls();h+='<h3>Defence</h3><table class="t"><tr><td>Defence of the village</td><td>'+defenceValue()+'</td></tr><tr><td>Palisade</td><td>'+(S.wallClosed?'closed':walls.some(v=>v)?'open: there is a gap':'none')+'</td></tr><tr><td>Watchtowers manned</td><td>'+Math.min(B.filter(b=>b.t==='tower').length,Math.floor(S.people.filter(p=>p.w==='archer'&&!p.away).length/2))+' / '+B.filter(b=>b.t==='tower').length+'</td></tr></table><p class="meta">From Town Hall 5 raiders land on the shore now and then; scouts give you 5 days’ warning. A closed palisade (with a gate) keeps them out until they hack through it.</p><div class="acts">'+btn('w-wall','Build the palisade',{cls:'primary'})+'</div>'+wallDefHtml(on);}
   on.push(()=>{if($('w-merc'))$('w-merc').onclick=()=>{const w=hireMercs();toast(w||'Five mercenaries came ashore.');if(!w){warPanel();save();}};
     if($('w-levy'))$('w-levy').onclick=()=>{S.mobilUntil=S.day+30;toast('The levy is called. Every able man takes up a weapon.');warPanel();save();};
     if($('w-wall'))$('w-wall').onclick=()=>{closeSheet();startWall();};});return h;}

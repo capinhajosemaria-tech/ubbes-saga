@@ -13,19 +13,17 @@ const HOUSE_SCH=[
   {n:'Red ochre',wall:'#9A4E3A',wallD:'#7A3C2D',roof:'#7F9568',roofD:'#6B8058',barge:'#3E3028',rt:'turf'},
   {n:'Whitewashed',wall:'#D8CDB4',wallD:'#B9AE95',roof:'#B39E66',roofD:'#97834F',barge:'#5C4634',rt:'thatch'},
   {n:'Birch and slate',wall:'#B7AE9C',wallD:'#958C7B',roof:'#6F7A80',roofD:'#5A646A',barge:'#A34A3A',rt:'shingle'}];
-function houseSch(b){if(b.sch!==undefined&&b.sch!==null)return b.sch;if(S&&S.houseSch!==undefined&&S.houseSch!==null)return S.houseSch;return Math.floor(h2(b.id||0,b.fx*7+b.fy,77)*4);}
+function houseSch(b){if(b.sch!==undefined&&b.sch!==null)return b.sch;if(S&&S.houseSch!==undefined&&S.houseSch!==null)return S.houseSch;return Math.floor(h2(b.id||0,0,77)*4);}/* from the id only, so moving a house keeps its colours */
 function roofPoint(c,wh,H,o,u,v){/* a point on the visible roof plane: u along the ridge, v from eave (0) to ridge (1) */
   const a=o.alongX?lerp(up(c.L,wh),up(c.Bt,wh),u):lerp(up(c.Bt,wh),up(c.R,wh),u),b=o.alongX?lerp(up(o.M1,H),up(o.M2,H),u):lerp(up(o.M2,H),up(o.M1,H),u);return lerp(a,b,v);}
 function drawHouse(b,win){
-  const L=Math.min(5,b.lvl||1),v=Math.floor(h2(b.id||0,b.fx*7+b.fy,77)*3),st=HOUSE_STY[L-1][v],alongX=b.rot%2===0;
+  const L=Math.min(5,b.lvl||1),v=Math.floor(h2(b.id||0,1,77)*3),st=HOUSE_STY[L-1][v],alongX=b.rot%2===0;
   const c0=fp(b),c=inset(c0,L>=4?0.08:L>=2?0.13:0.17);
   const wh=[9,11,13,14,15][L-1],rh=[15,14,16,17,18][L-1];
   if(L>=5){poly(P(c.L,c.Bt,[c.Bt[0],c.Bt[1]+4],[c.L[0],c.L[1]+4]),'#8E877D');poly(P(c.Bt,c.R,[c.R[0],c.R[1]+4],[c.Bt[0],c.Bt[1]+4]),'#77716A');}
   const SC=HOUSE_SCH[houseSch(b)];
-  /* shape varies by variant: 0 gable, 1 hipped and slightly bowed, 2 round hut at levels 1–2 */
-  if(v===2&&L<=2){const q=inset(c0,0.2);roundHut(q.cx,q.cy+2,L===1?19:21,wh,rh+6,{rt:SC.rt==='shingle'?'turf':SC.rt,roof:SC.rt==='shingle'?undefined:SC.roof,roofD:SC.rt==='shingle'?undefined:SC.roofD,wall:SC.wall,wallD:SC.wallD},win);
-    const fb=c0.Bt;if(L>=2)barrelC(fb[0]+12,fb[1]-2);return;}
-  const r=hall(c,wh,rh,alongX,{wall:SC.wall,wallD:SC.wallD,roof:SC.roof,roofD:SC.roofD,barge:L>=3?st[4]:SC.barge,rt:SC.rt,hip:v===1?0.22:0,sag:v===1?4:0},win);
+  /* one shape for every house (gable); v only varies colours and props */
+  const r=hall(c,wh,rh,alongX,{wall:SC.wall,wallD:SC.wallD,roof:SC.roof,roofD:SC.roofD,barge:L>=3?st[4]:SC.barge,rt:SC.rt,hip:0,sag:0},win);
   const o={alongX:alongX,M1:r.M1,M2:r.M2};
   if(false){
     const turf=st[2]==='#7F9568'||st[2]==='#8E9C68'||st[2]==='#728A60'||st[2]==='#6E8A5E';
@@ -37,7 +35,7 @@ function drawHouse(b,win){
   /* props */
   const fb=c0.Bt,fl=lerp(c0.L,c0.Bt,0.5),fr=lerp(c0.Bt,c0.R,0.5);
   const side=v===0?fl:fr;
-  if(L>=2&&v!==2)barrelC(side[0]+(side===fl?-8:10),side[1]+4);
+  if(L>=2)barrelC(side[0]+(side===fl?-8:10),side[1]+4);
   if(L>=2){const bx=fb[0]+(v===1?-14:10),by=fb[1]+2;if(propOK(bx,by)){poly([bx-7,by-3,bx+7,by+1,bx+7,by-1,bx-7,by-5],'#A88A69');ctx.fillStyle='#6E543D';ctx.fillRect(bx-6,by-3,1.4,4);ctx.fillRect(bx+5,by,1.4,3);}}
   if(L>=3){const p=lerp(c.L,c.Bt,0.3);ctx.fillStyle=v===1?'#D7CDB4':'#A34A3A';ctx.beginPath();ctx.arc(p[0],p[1]-wh*0.55,3.4,0,6.3);ctx.fill();ctx.fillStyle='#C9C2B2';ctx.beginPath();ctx.arc(p[0],p[1]-wh*0.55,1.1,0,6.3);ctx.fill();}
   if(L>=4){/* lean-to store shed */const s={T:lerp(c0.R,c0.T,0.25),R:c0.R,Bt:lerp(c0.R,c0.Bt,0.45),L:null};s.L=[s.T[0]+s.Bt[0]-s.R[0],s.T[1]+s.Bt[1]-s.R[1]];

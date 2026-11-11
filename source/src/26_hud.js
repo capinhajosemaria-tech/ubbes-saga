@@ -66,6 +66,7 @@ function buildingSheet(b){
   sel={b:b};const D=DEF[b.t],sl=slotsOf(b);
   let h=head(D.name,(D.fixed||D.up?'Level '+(b.t==='th'?thLevel():b.lvl)+' · ':'')+(D.w*D.h>1?(b.w+'×'+b.h+' tiles'):'1 tile'));
   const on=[];
+  if(b.t!=='th'){h+='<p class="role"><strong>'+esc(roleOf(b.t))+'.</strong> '+esc(D.desc||'')+'</p>';const nd=needsOf(b.t);if(nd.length)h+='<div class="meta needs">Needs: '+esc(nd.join(' · '))+'</div>';}
   if(sl){h+='<span class="status '+statusClass(b.status)+'">'+esc(b.status||'Starting')+'</span>';
     assignWorkers();h+='<div class="wk"><button type="button" class="btn small" id="w-minus" aria-label="Fewer workers" '+(b.desired<=0?'disabled':'')+'>−</button><span class="num">'+b.desired+' / '+sl+' <span class="meta">workers</span></span><button type="button" class="btn small" id="w-plus" aria-label="More workers" '+(b.desired>=sl||freeWorkers<=0?'disabled':'')+'>+</button><span class="meta">'+freeWorkers+' free in the village</span></div>';
     h+='<p>'+esc(D.out||'')+(b.made?' · <strong>Yesterday: '+esc(b.made)+'</strong>':'')+'</p>';
@@ -101,7 +102,7 @@ function buildingSheet(b){
     on.push(()=>{$('sheet-card').querySelectorAll('[data-sch]').forEach(x=>x.onclick=()=>{b.sch=+x.dataset.sch;save();buildingSheet(b);});$('sch-all').onclick=()=>{S.houseSch=houseSch(b);for(const o of B)if(o.t==='house')delete o.sch;save();toast('Every house now uses '+HOUSE_SCH[S.houseSch].n.toLowerCase()+'.');buildingSheet(b);};$('sch-mix').onclick=()=>{S.houseSch=null;for(const o of B)if(o.t==='house')delete o.sch;save();buildingSheet(b);};});}
   if(D.housing)h+='<div class="meta">Shelters '+(b.t==='house'?HOUSE_CAP[b.lvl-1]:D.housing)+' people'+(b.t==='house'&&b.lvl>=3?' · burns ¾ firewood':'')+'</div>';
   if(D.store)h+='<div class="meta">Storage: '+(D.store.food?(300+150*(b.lvl-1))+' food':D.store.mat?(300+150*(b.lvl-1))+' goods':(60+30*(b.lvl-1))+' weapons')+'</div>';
-  h+='<p>'+esc(D.desc)+'</p>';
+
   if(D.up){const nx=b.lvl+1;if(b.lvl>=5)h+='<div class="meta">Highest level reached.</div>';
     else{const c=upCost(b),need=canUpgrade(b);const eff=b.t==='house'?('+1 resident'+(nx===3?', better insulated: −25% firewood':nx===5?', a carved hall that draws newcomers':'')):D.store?'+150 storage':nx===2?'+20% output':nx===3?(FIELDS.has(b.t)?'+30% output in all':'+1 worker slot'):nx===4?'+40% output in all':'Finest work: +55% output in all';
       h+='<div class="wk">'+btn('b-up','Upgrade to level '+nx,{cls:'primary',dis:!need||!afford(c)})+'<span class="meta">'+esc(eff)+' · '+costIco(c)+(need?'':' · raise the Town Hall first')+'</span></div>';
@@ -130,7 +131,7 @@ function tileSheet(x,y){
 }
 
 /* ---------- panels ---------- */
-let buildCat='Housing';
+let buildCat='Homes';
 let newArmed=false;
 function renderBuild(){if(isWide()){if(mode!=='view')endMode();closeSheet();openTray(buildCat);return;}
   let h=head('Build','Construction is instant. Town Hall level '+thLevel()+'.');

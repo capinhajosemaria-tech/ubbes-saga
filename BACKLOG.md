@@ -3,20 +3,20 @@
 José adds feedback here while playing (or tells Claude, who adds it). At the start of a round, pick 3–6 items and move them to "This round".
 Format: `- [ ] what · why / where seen` — screenshots welcome in the conversation.
 
-## This round — Polish 3: Town Hall 1, tutorial and clarity (PC) · approved by José 2026-11-10
-- [x] Town Hall 1: winter essentials (Preserver etc.) buildable earlier, fewer steps to unlock buildings.
-- [x] Short, dynamic written tutorial at the start of each save (how the game works, TH1 buildings, preparing for winter).
-- [x] Event choices: signed amounts with icons, green gain / red cost, "you get" / "you pay".
-- [x] Winter firewood after TH4: stop the waves of people leaving; TH5 spare workers back to 4–8.
-- [x] Road texture continuous from grass to sand; more explicit icons in build tray, panels and sheets.
+## This round — Polish 4: buildings, menus, detail and walls (PC) · approved by José 2026-11-11
+- [x] Houses keep their look when moved or rotated; check every building type in all 4 rotations and fix crossed roofs / missing faces.
+- [x] All houses share one shape again (keep colour schemes).
+- [x] Hof: redraw the raised upper roof as a proper stave-church tier.
+- [x] Menus: review build categories, panel structure and sheet wording; explain what each building does and needs.
+- [x] More close-up detail on buildings, ground, roads, walls and palisades when zoomed in.
+- [x] Walls and sea palisades work like Clash of Clans walls (HP, levels, block raiders, visibly protect).
 
 ## Done rounds
 - Polish 1 — the early game (Beta 0.7.0).
 - Polish 2 — look and simplification (Beta 0.8.0).
+- Polish 3 — Town Hall 1, tutorial and clarity (Beta 0.9.0, fix 0.9.1).
 
 ## Next rounds (planned)
-- **Later — walls:** walls and sea palisades working like Clash of Clans walls.
-- **Later — organisation:** build categories, clearer wording, explicit icons everywhere.
 - **Later — world map and raids:** overlapping labels, Birka in Sweden, England visible, raid balance after TH4 (with the Monte Carlo update).
 
 ## Polish after Town Hall 5 (beta polish rounds)
@@ -42,19 +42,19 @@ José's second play session (Relaxed, 2026-11-10, after Polish 1) added the item
 ### Organisation / gameplay
 - [x] **Remove water as a resource** *(play 2)*: the village is by a river, and 2–3 wells in a small village feel wrong. Remove water and wells to reduce complexity (may come back later). Save keys likely need a bump.
 - [x] **More building space** (José): start with more land unlocked (more than the free 3 × 3 zones) and more buildable room overall.
-- [ ] **Menus not well organised, sometimes unclear** (José): review build categories, panel structure and the wording of sheets; explain what each building does and needs.
+- [x] **Menus not well organised, sometimes unclear** (José): review build categories, panel structure and the wording of sheets; explain what each building does and needs.
 - [x] To do says "Every bed is taken" at the start while the bar shows 11/12; make the message and the counter agree.
 
 ### Play 3 feedback (José, 2026-11-10)
 - [x] **Event choices: unclear gain or loss** (UI): cost/gain hints like "(+23 meals, −80 wood)" are ambiguous, e.g. the before-winter event ("skip this year" vs feast/meals): you can't tell whether meals are gained or spent. Show clear signed amounts with icons, green for gain and red for cost, and say "you get" / "you pay".
-- [ ] **Walls never implemented** (gameplay): walls and the sea palisades should work like Clash of Clans walls: raiders must break through them (wall HP, upgrade levels, paths blocked), and they visibly protect the village.
-- [ ] **More close-up detail** (visual): buildings, ground textures, roads, walls and palisades should show more detail when zoomed in.
+- [x] **Walls never implemented** (gameplay): walls and the sea palisades should work like Clash of Clans walls: raiders must break through them (wall HP, upgrade levels, paths blocked), and they visibly protect the village.
+- [x] **More close-up detail** (visual): buildings, ground textures, roads, walls and palisades should show more detail when zoomed in.
 - [x] **Fisher's Hut placement** (gameplay): replace "needs water within X tiles" with a productivity falloff: 100% up to 5 tiles from any water tile (sea or river), less beyond that.
 - [x] **Town Hall 1 unlocks too slow / tutorial** (balance + UX): in one save the Preserver and other winter essentials only unlocked once winter had already started. Rethink the TH1 saga steps: winter essentials buildable earlier, fewer steps to unlock buildings overall. Add a short, dynamic written tutorial at the start of each save: how the game works, what each TH1 building does and why it matters, how to prepare for winter, and other basics.
 - [x] **Road texture breaks from grass to sand** (visual, minor): the road texture is discontinuous where it crosses from grass to sand.
 
 ### Play 4 feedback (José, Beta 0.8.0)
-- [ ] **Houses: one shape for all again** (visual, José insists, do together with the bug above): all houses share one shape like before 0.8.0 (no round small houses, no mixed silhouettes); keep the colour schemes and keep the varied shapes for the other buildings.
+- [x] **Houses: one shape for all again** (visual, José insists, do together with the bug above): all houses share one shape like before 0.8.0 (no round small houses, no mixed silhouettes); keep the colour schemes and keep the varied shapes for the other buildings.
 
 ### Phone (later — after PC is polished)
 - [ ] Convert the PC interface to iPhone 14 once PC is settled.
@@ -65,11 +65,12 @@ José's second play session (Relaxed, 2026-11-10, after Polish 1) added the item
 
 
 ## Bugs
-- [ ] **Houses change when moved or rotated — still there after 0.9.1** (José, 2026-11-11, top priority next round): moving a house changes its type (shape and colour); rotating it still gives the crossed / broken roof. Likely the house look is picked from position or id (hash) instead of being stored with the house, and the round/other house shapes have their own rotation bug that 0.9.1 did not cover.
-- [ ] **Check every building for the same problem** (from 0.8.0's new shapes): place, move and rotate each building type (all 4 rotations) and look for crossed roofs, missing faces or a look that changes; fix all of them.
+- [x] **Houses change when moved or rotated — still there after 0.9.1** (José, 2026-11-11, top priority next round): moving a house changes its type (shape and colour); rotating it still gives the crossed / broken roof. Likely the house look is picked from position or id (hash) instead of being stored with the house, and the round/other house shapes have their own rotation bug that 0.9.1 did not cover.
+- [x] **Check every building for the same problem** (from 0.8.0's new shapes): place, move and rotate each building type (all 4 rotations) and look for crossed roofs, missing faces or a look that changes; fix all of them.
 
 ## Wanted
-- [ ] Hof: the raised upper roof reads as a flat stripe; redraw as a proper stave-church tier.
+- [ ] Balance village raids (frequency, size, loot) with the balance agent after José has met a few; raiders' shields look like ours (both red).
+- [x] Hof: the raised upper roof reads as a flat stripe; redraw as a proper stave-church tier.
 - [ ] Re-measure troop strength and raid value for vikings, berserks and the new regions (Monte Carlo in `tools/balance/raidmc.py` needs updating).
 - [ ] Heavy raiders lose population after Town Hall 4 (deaths and people leaving); check if raiding is too punishing or the bots raid too much.
 - [ ] Market is generous for buying iron and tools; revisit after José plays a full saga.

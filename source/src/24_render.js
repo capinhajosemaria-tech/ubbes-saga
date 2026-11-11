@@ -55,6 +55,7 @@ function render(){
   for(const b of BS){if(place&&place.moving===b)continue;dyn.push({d:b.fx+b.w-1+b.fy+b.h-1+0.5,b:b});}
   for(const w of walkers)dyn.push({d:w.x+w.y+0.3,w:w});
   for(let i=0;i<N*N;i++)if(walls[i]){const x=i%N,y=(i/N)|0;if(vis((x-y)*HW,(x+y)*HH))dyn.push({d:x+y+0.45,wl:i});}
+  vrDyn(dyn);
   if(ghost)dyn.push({d:ghost.fx+ghost.w-1+ghost.fy+ghost.h-1+0.6,g:ghost});
   dyn.sort((a,b)=>a.d-b.d);
   let di=0;
@@ -62,7 +63,8 @@ function render(){
     if(o.b){const p=iso(o.b.fx,o.b.fy);if(vis(p[0],p[1]-60)||vis(p[0],p[1]+100))drawBuilding(o.b,win,1,false);}
     else if(o.w)drawWalker(o.w,win);
     else if(o.wl!==undefined)drawWallTile(o.wl,win);
-    else if(o.g)drawBuilding(o.g,win,0.7,true);}};
+    else if(o.g)drawBuilding(o.g,win,0.7,true);
+    else if(o.f)o.f(win);}};
   for(const o of objs){flushDyn(o.d);
     const sx=(o.x-o.y)*HW,sy=(o.x+o.y)*HH;if(!vis(sx,sy))continue;
     if(o.kind==='peak'){drawPeak(o,win);continue;}if(o.kind==='rocks'){drawRocks(o,win);continue;}if(o.kind==='iron'){drawIron(o);continue;}
@@ -70,7 +72,7 @@ function render(){
     if(o.kind==='tree'){if(!o.gone)drawTree(o,win,a);}
     else if(o.kind==='bush'&&!o.gone)drawSprite(SP.bush[win?1:(o.amt>0.5?0:2)],sx+o.ox,sy-elev[o.y*N+o.x]+o.oy,o.s,a,false);}
   flushDyn(Infinity);
-  drawShipsAtHarbour(win);drawAnims(win);drawHover();
+  drawShipsAtHarbour(win);drawAnims(win);vrDraw(win);drawHover();
   for(const b of B)drawBadge(b);
   for(const p of smoke){ctx.fillStyle='rgba(220,225,224,'+(p.a*0.75).toFixed(3)+')';ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,6.3);ctx.fill();}
   drawEdgeFog(win,vis);

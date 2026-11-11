@@ -285,7 +285,7 @@ textarea,input{-webkit-user-select:text;user-select:text}
   .tcard{flex:none;width:160px;display:flex;flex-direction:column;align-items:stretch;gap:2px;text-align:left;padding:6px 8px 9px;border-radius:12px;border:1px solid var(--line2);background:var(--parch2);cursor:pointer;font-family:var(--body);color:var(--ink)}
   .tcard img{width:144px;height:108px;object-fit:contain;align-self:center;background:#E2E9D8;border-radius:6px;box-shadow:inset 0 0 0 1px rgba(110,128,88,.18)}
   .tcard b{font-family:var(--display);font-weight:400;font-size:16px;line-height:1.15}
-  .tcard .tc2{font-size:11.5px;color:var(--muted)}.tcard .cost{font-size:12px;font-weight:600;color:#5C4634}.tcard .cost.bad{color:var(--accent)}
+  .tcard .tc2{font-size:11.5px;color:var(--muted)}.tcard .tc3{font-size:12px;line-height:1.25;color:#4A3C30}.tcard .cost{font-size:12px;font-weight:600;color:#5C4634}.tcard .cost.bad{color:var(--accent)}
   .tcard:hover{border-color:var(--gold);box-shadow:0 4px 14px rgba(30,24,18,.18)}.tcard.no{opacity:.62}.tcard.lk img{filter:grayscale(.8) brightness(1.05)}
   /* building and panel sheets dock to the left, like a city-builder inspector */
   .sheet{left:16px;right:auto;top:calc(env(safe-area-inset-top,0px) + 112px);bottom:96px;width:420px;padding:0;display:flex;align-items:flex-start}

@@ -24,6 +24,11 @@ function hall(c,wh,rh,alongX,o,win){
   for(let k=1;k<nb;k++){const a=lerp(c.L,c.Bt,k/nb);ctx.moveTo(a[0],a[1]-3);ctx.lineTo(a[0],a[1]-wh);}for(let k=1;k<nb2;k++){const b2=lerp(c.Bt,c.R,k/nb2);ctx.moveTo(b2[0],b2[1]-3);ctx.lineTo(b2[0],b2[1]-wh);}ctx.stroke();}
   else wallTexture(c,wh,wt,win);
   if(o.chim&&!win){}
+  if(zoom>1.45&&!win){/* close-up: wood grain and knots on the walls, single stones in the footing */
+    ctx.strokeStyle='rgba(40,28,18,0.16)';ctx.lineWidth=0.5;ctx.beginPath();const sd=(c.T[0]*7+c.T[1])|0;
+    for(const f of [[c.L,c.Bt],[c.Bt,c.R]])for(let k=0;k<14;k++){const u=((sd*31+k*53)%97)/97,v=0.25+((sd*17+k*29)%61)/61*0.65,a=lerp(f[0],f[1],u);ctx.moveTo(a[0],a[1]-wh*v);ctx.lineTo(a[0],a[1]-wh*v-3-(k%3));}ctx.stroke();
+    ctx.fillStyle='rgba(50,34,22,0.35)';for(const f of [[c.L,c.Bt],[c.Bt,c.R]])for(let k=0;k<3;k++){const a=lerp(f[0],f[1],((sd*13+k*41)%89)/89);ctx.beginPath();ctx.ellipse(a[0],a[1]-wh*(0.35+0.15*k),0.9,1.4,0,0,6.3);ctx.fill();}
+    ctx.strokeStyle='rgba(70,64,56,0.45)';ctx.lineWidth=0.6;ctx.beginPath();for(const f of [[c.L,c.Bt],[c.Bt,c.R]])for(let k=0;k<12;k++){const a=lerp(f[0],f[1],(k+0.5)/12);ctx.moveTo(a[0]-1.6,a[1]-1.5+(k%2));ctx.lineTo(a[0]+1.6,a[1]-1.5+(k%2));}ctx.stroke();}
   /* corner posts */
   ctx.strokeStyle='rgba(48,36,26,0.75)';ctx.lineWidth=2;ctx.beginPath();for(const q of [c.L,c.Bt,c.R]){ctx.moveTo(q[0],q[1]-3);ctx.lineTo(q[0],q[1]-wh);}ctx.stroke();
   /* shadow under the eaves */

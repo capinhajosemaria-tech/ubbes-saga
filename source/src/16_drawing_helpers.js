@@ -28,6 +28,11 @@ function drawTile(x,y,PL,win){
   poly([sx,top-HH-0.7,sx+HW+0.9,top,sx,top+HH+0.7,sx-HW-0.9,top],col);
   if(zoom>0.75&&!win&&tt===T.GRASS&&!occ[i]&&!roads[i]){const r=h2(x,y,12);if(r>0.6){ctx.strokeStyle='rgba(95,122,80,0.7)';ctx.lineWidth=1.2;ctx.beginPath();const ox=(h2(x,y,13)-0.5)*30,oy=(h2(x,y,14)-0.5)*12;ctx.moveTo(sx+ox-2,top+oy);ctx.lineTo(sx+ox,top+oy-5);ctx.lineTo(sx+ox+2,top+oy);ctx.stroke();}
     if(r>0.93){ctx.fillStyle='#EFE9DA';ctx.beginPath();ctx.arc(sx+(h2(x,y,15)-0.5)*26,top+(h2(x,y,16)-0.5)*10,1.8,0,6.3);ctx.fill();}}
+  /* close-up: more blades of grass, clover and the odd flower */
+  if(zoom>1.45&&!win&&(tt===T.GRASS||tt===T.BERRY)&&!occ[i]&&!roads[i]){ctx.strokeStyle='rgba(88,116,72,0.55)';ctx.lineWidth=0.8;ctx.beginPath();
+    for(let k=0;k<6;k++){const ox=(h2(x,y,40+k)-0.5)*44,oy=(h2(x,y,50+k)-0.5)*18,hh=2.5+h2(x,y,60+k)*3;ctx.moveTo(sx+ox,top+oy);ctx.lineTo(sx+ox-1,top+oy-hh);ctx.moveTo(sx+ox+1.5,top+oy);ctx.lineTo(sx+ox+2.5,top+oy-hh*0.8);}ctx.stroke();
+    if(h2(x,y,70)>0.55){ctx.fillStyle='rgba(120,150,96,0.6)';for(let k=0;k<3;k++){ctx.beginPath();ctx.arc(sx+(h2(x,y,71+k)-0.5)*36,top+(h2(x,y,74+k)-0.5)*14,1.3,0,6.3);ctx.fill();}}
+    if(h2(x,y,77)>0.8){ctx.fillStyle=h2(x,y,78)>0.5?'#E8D36A':'#C98FB8';ctx.beginPath();ctx.arc(sx+(h2(x,y,79)-0.5)*30,top+(h2(x,y,80)-0.5)*12-2,1.5,0,6.3);ctx.fill();}}
   if(tt===T.SEA&&zoom>0.55&&h2(x,y,9)>0.82){ctx.strokeStyle=win?'rgba(170,190,198,0.6)':'rgba(170,196,204,0.8)';ctx.lineWidth=1.6;const o=Math.sin(t*0.8+x+y)*5;ctx.beginPath();ctx.moveTo(sx-10+o,top);ctx.quadraticCurveTo(sx-4+o,top-4,sx+2+o,top);ctx.quadraticCurveTo(sx+8+o,top-4,sx+14+o,top);ctx.stroke();}
   if(tt===T.BEACH){const a=0.35+0.25*Math.sin(t*1.4+x*0.6);ctx.strokeStyle='rgba(243,245,243,'+a.toFixed(2)+')';ctx.lineWidth=2.2;
     if(x+1<N&&ter[i+1]===T.SEA){ctx.beginPath();ctx.moveTo(sx+HW,top);ctx.lineTo(sx,top+HH);ctx.stroke();}

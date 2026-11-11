@@ -22,4 +22,9 @@ function drawWallTile(i,win){const x=i%N,y=(i/N)|0,e=elev[i]||2,sx=(x-y)*HW,sy=(
     ctx.fillStyle='#A34A3A';ctx.beginPath();ctx.moveTo((a[0]+b[0])/2-4,(a[1]+b[1])/2-24);ctx.lineTo((a[0]+b[0])/2+4,(a[1]+b[1])/2-24);ctx.lineTo((a[0]+b[0])/2,(a[1]+b[1])/2-16);ctx.fill();return;}
   const link=dirs.filter(d=>inMap(x+d[0],y+d[1])&&walls[(y+d[1])*N+x+d[0]]);
   ctx.strokeStyle=dk;ctx.lineWidth=2;ctx.beginPath();for(const d of link){ctx.moveTo(sx,sy-8);ctx.lineTo(sx+d[2],sy+d[3]-8);}ctx.stroke();
-  const pts=[[0,0]];for(const d of link){pts.push([d[2]*0.33,d[3]*0.33],[d[2]*0.7,d[3]*0.7]);}pts.sort((p,q)=>p[1]-q[1]);for(const p of pts)stake(sx+p[0],sy+p[1],13+((p[0]*7+p[1]*3)&3));}
+  const pts=[[0,0]];for(const d of link){pts.push([d[2]*0.33,d[3]*0.33],[d[2]*0.7,d[3]*0.7]);}pts.sort((p,q)=>p[1]-q[1]);const WL=wallLv(),wr=wallWear(i),hb=WL>=2?4:0;
+  if(WL>=2){ctx.strokeStyle=win?'#9C8A76':'#8A6E52';ctx.lineWidth=3;ctx.beginPath();for(const d of link){ctx.moveTo(sx,sy-6);ctx.lineTo(sx+d[2],sy+d[3]-6);}ctx.stroke();}
+  pts.forEach((p,k)=>{if(wr>0&&h2(x*7+k,y,5)<wr*0.7)return;stake(sx+p[0],sy+p[1],13+hb+((p[0]*7+p[1]*3)&3)-(wr>0.5&&k%2?5:0));});
+  if(zoom>1.45&&!win){/* close-up: rope lashing and bark on the stakes */ctx.strokeStyle='rgba(196,170,120,0.85)';ctx.lineWidth=1;ctx.beginPath();for(const d of link){const m=[sx+d[2]*0.5,sy+d[3]*0.5];ctx.moveTo(m[0]-3,m[1]-9);ctx.lineTo(m[0]+3,m[1]-10);ctx.moveTo(m[0]-3,m[1]-7);ctx.lineTo(m[0]+3,m[1]-8);}ctx.stroke();
+    ctx.strokeStyle='rgba(40,30,22,0.35)';ctx.lineWidth=0.5;ctx.beginPath();for(const p of pts){ctx.moveTo(sx+p[0]-0.8,sy+p[1]-3);ctx.lineTo(sx+p[0]-0.6,sy+p[1]-10);}ctx.stroke();}
+  if(WL>=3){ctx.strokeStyle='#5E6468';ctx.lineWidth=1.4;ctx.beginPath();for(const d of link){for(const hh of [5,13]){ctx.moveTo(sx,sy-hh);ctx.lineTo(sx+d[2],sy+d[3]-hh);}}ctx.stroke();}}

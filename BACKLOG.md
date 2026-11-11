@@ -54,9 +54,10 @@ Do the rounds in this order:
 ### 1F. World map
 - [ ] One map from Finland to Portugal, down to North Africa and the future Middle East targets; mist over it that still shows the coastlines; targets marked as now.
 
-### 1H. Living village (José, 2026-11-11 — place in the order still to decide)
+### 1H. Living village (José, 2026-11-11 — do right after 1C)
 - [ ] **Real people walk**: each villager is a walker (today only 3–10 decorative ones wander near the hall). At dawn they walk from their own house to their workplace along roads, at dusk back home; children play near home, warriors at the Training Ground, elders walk slower. Commute follows the light cycle (3 game days), not every 27-second day.
 - [ ] **Click a person**: sheet with name, age, traits, family, house and workplace; buttons to show their house and workplace. Click a house or building → list of who lives / works there.
+- [ ] **Click selects by tile** (José: clicking a tree near a building picks the building): the game finds the tile under the cursor and selects what stands on it. Order: a person under the cursor → the building on that tile → the tree / bush / ore on that tile; only if the tile is empty, fall back to a building whose picture covers the point (tall roofs over tiles behind them). Highlight what will be selected on hover.
 - [ ] Visual only at first (walking distance does not cut output). Watch performance (~110 people at TH5): fewer figures when zoomed out.
 
 ### 1G. Worker priorities

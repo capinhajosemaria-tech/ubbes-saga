@@ -14,7 +14,7 @@ Format: `- [ ] what · why / where seen` — screenshots welcome in the conversa
 ## Next round — Balance fixes 1 (from the audit)
 Audit done 2026-11-11: data in `tools/balance/audit_data.md` (48 bot runs × 900 days), report in `tools/balance/audit_report.md` (finding IDs below refer to it; read the finding before applying). Key result: TH1–TH2 are sound; most TH3–TH5 bot data reflects bot weaknesses (22/48 runs stuck at TH3 because the bot boxes in its own shore — Shipyard placement is fine for a player).
 Claude's suggested round (José still has to pick; ask him about item A1 because fewer babies changes the feel):
-- [x] **B1, B2 — fix the bot first** (done 2026-11-11, `tools/bots/bot4.js` only): every planner build keeps the shore and the road-reachable land open (`placeSafe`); wood target = hall wood + 100 before carpenters; plank target = hall planks + 60; all farm/hunter slots staffed, spare workers to lodges with trees → mines → carpenters → fishers; spot search covers all unlocked land. Result, 24 runs × 900 days: TH5 24/24 (audit 21/48) — planner d510–586, warlord 434–545, challenge 509–587, lazy 513–586; no fail keys. Open: warlord now fastest (planner should be a bit faster); summer spare workers at TH5 mostly 0–10 (rule 4–8, see A8).
+- [x] **B1, B2 — fix the bot first** (done 2026-11-11, `tools/bots/bot4.js` only): every planner build keeps the shore and the road-reachable land open (`placeSafe`); wood target = hall wood + 100 before carpenters; plank target = hall planks + 60; all farm/hunter slots staffed, spare workers to lodges with trees → mines → carpenters → fishers; spot search covers all unlocked land. Result, 24 runs × 900 days: TH5 24/24 (audit 21/48) — planner d510–586, warlord 434–545, challenge 509–587, lazy 513–586; no fail keys. Warlord fastest is fine for now (José, 2026-11-11). Open: summer spare workers at TH5 mostly 0–10 (rule 4–8, see A8).
 - [ ] **E1 — rounding bugs**: Preserver levels 4/5 → 5/6 items a day; Smokehouse carries fractions (levels 2 and 4 add nothing now).
 - [ ] **E2 — ale and mead out of the meal count** (counted as meals, never eaten).
 - [ ] **A2 — Bakery 2 → 4 bread per worker a day** (weak link of TH5 winter food).
@@ -91,7 +91,7 @@ José's second play session (Relaxed, 2026-11-10, after Polish 1) added the item
 - [x] Heavy raiders lose population after Town Hall 4 (deaths and people leaving); check if raiding is too punishing or the bots raid too much.
 - [x] Market is generous for buying iron and tools; revisit after José plays a full saga.
 - [ ] Silver piles up (bots end with 8–17k unspent; Town Hall costs only 250): find something worth spending silver on (balance agent, 2026-11-11).
-- [ ] After Beta 0.11.0 the careful "planner" bot reaches TH5 later (~620 days) than the warlord (~570) and challenge (~560) bots; decide whether that is fine or if peaceful play needs a boost.
+- [x] *(decided 2026-11-11: fine for now, heavy raiding may be faster)* After Beta 0.11.0 the careful "planner" bot reaches TH5 later (~620 days) than the warlord (~570) and challenge (~560) bots; decide whether that is fine or if peaceful play needs a boost.
 - [ ] Bots never build a palisade, so village-raid balance with walls can't be measured yet: teach `tools/bots/bot4.js` to wall the Town Hall at TH5.
 
 ## Ideas for later (Town Hall 6–10, see docs/DESIGN.md)

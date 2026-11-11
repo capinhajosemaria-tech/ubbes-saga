@@ -2,6 +2,10 @@
 
 Versions are `Beta 0.MINOR.PATCH` until Town Hall 10 (`1.0.0`).
 
+## Beta 0.15.2
+- The small paths from building doors to the roads are gone.
+- The palisade is now a closed wall of upright split pine logs, sharpened at the top and set in an earth bank (iron bands on the strongest level), and the gate has heavy log posts and a plank walkway. It no longer looks like a fence.
+
 ## Beta 0.15.1
 - Every text in the game now uses the title font (Marcellus SC).
 - Updates arrive at once: the game no longer keeps showing the previous version after a release.

@@ -22,7 +22,7 @@ function render(){
     ctx.strokeStyle=win?'#6E5C4C':'#4E3B2C';ctx.lineWidth=1.6;ctx.beginPath();
     for(const vv of (alongX?[V[0],V[1]]:[U[0],U[1]])){const a=alongX?g(U[0],vv,H+7):g(vv,V[0],H+7),b2=alongX?g(U[1],vv,H+7):g(vv,V[1],H+7);ctx.moveTo(a[0],a[1]);ctx.lineTo(b2[0],b2[1]);
       for(const uu of [0,0.5]){const p0=alongX?g(U[0]+uu*(U[1]-U[0])*1.98,vv,H):g(vv,V[0]+uu*(V[1]-V[0])*1.98,H);ctx.moveTo(p0[0],p0[1]);ctx.lineTo(p0[0],p0[1]-7);}}ctx.stroke();}
-  drawRoads(win,vis);doorPaths(win);
+  drawRoads(win,vis);/* door paths removed (José, 0.15.2) */
   if(mode==='road')drawRoadGhost();
   if(mode==='road'||mode==='erase'){ctx.fillStyle='rgba(201,166,74,0.9)';for(let y=0;y<N;y++)for(let x=0;x<N;x++){const i=y*N+x;if(roads[i]&&!conn[i]){const sx=(x-y)*HW,sy=(x+y)*HH-elev[i];if(vis(sx,sy)){ctx.beginPath();ctx.arc(sx,sy,3,0,6.3);ctx.fill();}}}}
   /* locked overlay (soft) + faint grid + owned-land border */

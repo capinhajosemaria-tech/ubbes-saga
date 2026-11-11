@@ -21,8 +21,8 @@ function thGreatHall(c,ax,L,lv,win){
   wallsOnly(body,wh,ax,{wall:'#7A5638',wallD:'#5C3F28',door:false},win);
   /* carved wall boards: dark posts every few planks */
   const fa=ax?body.L:body.Bt,fb=ax?body.Bt:body.R;
-  ctx.strokeStyle='rgba(40,28,18,0.6)';ctx.lineWidth=1.6;ctx.beginPath();for(let k=1;k<7;k++){const p=lerp(fa,fb,k/7);ctx.moveTo(p[0],p[1]-3);ctx.lineTo(p[0],p[1]-wh);}ctx.stroke();
-  shieldRow(lerp(fa,fb,0.08),lerp(fa,fb,0.92),wh*0.55,6,L>=3?['#A34A3A','#D7CDB4','#C9A64A']:['#A34A3A','#D7CDB4']);
+  ctx.strokeStyle='rgba(40,28,18,0.6)';ctx.lineWidth=THDV?0.9:1.6;ctx.beginPath();for(let k=1;k<7;k++){const p=lerp(fa,fb,k/7);ctx.moveTo(p[0],p[1]-3);ctx.lineTo(p[0],p[1]-wh);}ctx.stroke();
+  if(THDV){const sc=L>=3?['#A34A3A','#D7CDB4','#C9A64A']:['#A34A3A','#D7CDB4'];shieldRow(lerp(fa,fb,0.05),lerp(fa,fb,0.3),wh*0.55,2,sc);shieldRow(lerp(fa,fb,0.7),lerp(fa,fb,0.95),wh*0.55,2,sc.slice().reverse());}else  shieldRow(lerp(fa,fb,0.08),lerp(fa,fb,0.92),wh*0.55,6,L>=3?['#A34A3A','#D7CDB4','#C9A64A']:['#A34A3A','#D7CDB4']);
   const r=hipRoof(body,wh,rh,ax,{hp:0.16,sag:L>=2?16:13,bow:7,rt:L>=4?'shingle':'turf',ov:4,seed:11},win);
   /* raised middle roof: a louvred band standing on the main roof, its own hipped roof on top, drawn on the main roof plane so it grows out of it */
   if(L>=3){const u0=0.3,u1=0.7,v0=0.6,hw=L>=5?13:11,rise=12,lift=(p,h)=>[p[0],p[1]-h];
@@ -42,13 +42,15 @@ function thGreatHall(c,ax,L,lv,win){
     ctx.strokeStyle='rgba(30,22,16,0.4)';ctx.lineWidth=1.2;ctx.beginPath();for(const u of us){const p=Eu(u);u===u0?ctx.moveTo(p[0],p[1]+1):ctx.lineTo(p[0],p[1]+1);}ctx.stroke();
     dragonHead(Ru(ue1),ax?1:-1,L>=4?'#C9A64A':'#4E3C2E',0.8);}
   dragonHead(r.rf,ax?1:-1,L>=4?'#C9A64A':'#4E3C2E',1.6);dragonHead(r.rb,ax?-1:1,L>=4?'#C9A64A':'#4E3C2E',1.6);
+  if(THDV){thEntrance(THDV,fa,fb,wh,L,win,ax);}else{
   /* porch over the door on the front long side */
   const pc=subA(c,ax,0.4,0.6,0.78,1.0),pd=lerp(fa,fb,0.5);
   poly([pd[0]-6,pd[1]+1,pd[0]+6,pd[1]+4,pd[0]+6,pd[1]-wh*0.8+4,pd[0]-6,pd[1]-wh*0.8],'#2E241E');
   porchPosts(pc.L,ax?pc.Bt:pc.Bt,wh-6);if(!ax)porchPosts(pc.R,pc.Bt,wh-6);
   {const pr=hall(pc,wh-6,20,!ax,{wall:'#7A5638',wallD:'#5C3F28',rt:L>=4?'shingle':'turf',roof:L>=4?'#5E5850':'#7F9568',roofD:L>=4?'#4A4540':'#6B8058',door:false,nr:0,barge:L>=4?'#C9A64A':'#4E3C2E'},win);gableX(up(pr.M2,pr.H),L>=4?'#C9A64A':'#4E3C2E',1);}
+  }
   /* torches */
-  if(L>=2){for(const q of [lerp(fa,fb,0.3),lerp(fa,fb,0.7)]){ctx.fillStyle='rgba(255,197,107,0.3)';ctx.beginPath();ctx.ellipse(q[0],q[1]-wh*0.8,7,5,0,0,6.3);ctx.fill();if(!win){ctx.fillStyle='#F0A040';ctx.beginPath();ctx.moveTo(q[0]-2,q[1]-wh*0.7);ctx.quadraticCurveTo(q[0],q[1]-wh*0.7-8-Math.sin(t*7+q[0])*1.5,q[0]+2,q[1]-wh*0.7);ctx.fill();}}}
+  if(L>=2&&!THDV){for(const q of [lerp(fa,fb,0.3),lerp(fa,fb,0.7)]){ctx.fillStyle='rgba(255,197,107,0.3)';ctx.beginPath();ctx.ellipse(q[0],q[1]-wh*0.8,7,5,0,0,6.3);ctx.fill();if(!win){ctx.fillStyle='#F0A040';ctx.beginPath();ctx.moveTo(q[0]-2,q[1]-wh*0.7);ctx.quadraticCurveTo(q[0],q[1]-wh*0.7-8-Math.sin(t*7+q[0])*1.5,q[0]+2,q[1]-wh*0.7);ctx.fill();}}}
   if(L>=2){const p=ax?c.L:c.R;bannerPole(p[0]+(ax?10:-22),p[1]-4,44+L*3,'#A34A3A');}
   if(L>=4){const p=ax?c.R:c.L;bannerPole(p[0]+(ax?-22:10),p[1]-2,48+L*3,'#5E7F8C');}
 }

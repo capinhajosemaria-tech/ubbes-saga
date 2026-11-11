@@ -69,6 +69,7 @@ function buildingSheet(b){
   if(b.t!=='th'){h+='<p class="role"><strong>'+esc(roleOf(b.t))+'.</strong> '+esc(D.desc||'')+'</p>';const nd=needsOf(b.t);if(nd.length)h+='<div class="meta needs">Needs: '+esc(nd.join(' · '))+'</div>';}
   if(sl){h+='<span class="status '+statusClass(b.status)+'">'+esc(b.status||'Starting')+'</span>';
     assignWorkers();h+='<div class="wk"><button type="button" class="btn small" id="w-minus" aria-label="Fewer workers" '+(b.desired<=0?'disabled':'')+'>−</button><span class="num">'+b.desired+' / '+sl+' <span class="meta">workers</span></span><button type="button" class="btn small" id="w-plus" aria-label="More workers" '+(b.desired>=sl||freeWorkers<=0?'disabled':'')+'>+</button><span class="meta">'+freeWorkers+' free in the village</span></div>';
+    if(D.out){const pc=Math.round(100*(b.workers||0)/sl);h+='<div class="outpct"><span class="meta">Output from workers</span><span class="bar"><i style="width:'+pc+'%"></i></span><strong>'+pc+'%</strong><span class="meta">'+(b.workers||0)+' of '+sl+' working · each worker adds '+Math.round(100/sl)+'%</span></div>';}
     h+='<p>'+esc(D.out||'')+(b.made?' · <strong>Yesterday: '+esc(b.made)+'</strong>':'')+'</p>';
     if(D.need){const nc=needCount(b,D.need);h+='<div class="meta">'+esc(nc.label)+'</div>';}
     if(!b.conn&&D.road!==false)h+='<p style="color:#8E3B2F">Connect this building to the Town Hall with a road.</p>';
@@ -107,6 +108,7 @@ function buildingSheet(b){
     else{const c=upCost(b),need=canUpgrade(b);const eff=b.t==='house'?('+1 resident'+(nx===3?', better insulated: −25% firewood':nx===5?', a carved hall that draws newcomers':'')):D.store?'+150 storage':nx===2?'+20% output':nx===3?(FIELDS.has(b.t)?'+30% output in all':'+1 worker slot'):nx===4?'+40% output in all':'Finest work: +55% output in all';
       h+='<div class="wk">'+btn('b-up','Upgrade to level '+nx,{cls:'primary',dis:!need||!afford(c)})+'<span class="meta">'+esc(eff)+' · '+costIco(c)+(need?'':' · raise the Town Hall first')+'</span></div>';
       on.push(()=>{$('b-up').onclick=()=>{if(!canUpgrade(b)||!afford(upCost(b)))return;pay(upCost(b),1);b.lvl++;assignWorkers();toast(D.name+' upgraded to level '+b.lvl+'.');buildingSheet(b);save();};});}}
+  if(b.t==='th'){h+='<div class="acts"><button type="button" class="btn" id="b-move">Move or rotate</button></div>';on.push(()=>{$('b-move').onclick=()=>{closeSheet();startPlace('th',b);};});}
   if(!D.fixed){h+='<div class="acts"><button type="button" class="btn danger" id="b-demo">'+(demolishArmed===b.id?'Tap again to demolish':'Demolish (50% back)')+'</button><button type="button" class="btn" id="b-move">Move</button></div>';
     on.push(()=>{$('b-demo').onclick=()=>{if(demolishArmed!==b.id){demolishArmed=b.id;buildingSheet(b);return;}demolishArmed=0;
         if(D.housing&&housing()-D.housing<S.pop){toast('Not enough room elsewhere for the people living here.');return;}

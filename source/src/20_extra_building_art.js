@@ -76,7 +76,7 @@ function drawBuilding0(b,win,alpha,ghost){
   if(alpha<1)ctx.globalAlpha=alpha;
   ctx.save();ctx.translate(0,-e);
   if(b.t==='house'){drawHouse(b,win);if(!ghost&&b.lvl>=2)pennant(b,0,b.lvl>=3?'#A34A3A':'#C9A64A');ctx.restore();if(alpha<1)ctx.globalAlpha=1;return;}
-  if(b.t==='th'&&(window.__THV!==undefined?window.__THV:THV)){THV=window.__THV!==undefined?window.__THV:THV;drawTownHall(b,win);drawPlaza(b,win);ctx.restore();if(alpha<1)ctx.globalAlpha=1;return;}
+  if(b.t==='th'&&(window.__THV!==undefined?window.__THV:THV)){THV=window.__THV!==undefined?window.__THV:THV;if(((b.rot|0)&3)===2){drawPlaza(b,win);drawTownHall(b,win);}else{drawTownHall(b,win);drawPlaza(b,win);}/* fire behind the hall: draw it first */ctx.restore();if(alpha<1)ctx.globalAlpha=1;return;}
   if(b.t==='th'){const hb=thHallRect(b),p=iso(hb.fx+hb.w/2-0.5,hb.fy+hb.h/2-0.5),L=thLevel();
     if(L>=2){const c=fp(hb);[c.L,c.R].forEach((q,i)=>{const x=q[0]+(i?-14:14),y=q[1]+(i?2:2);ctx.strokeStyle='#4E3C2E';ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x,y-46);ctx.stroke();poly([x,y-45,x+(i?-16:16),y-41,x,y-35],'#A34A3A');poly([x+(i?-4:4),y-42,x+(i?-10:10),y-40,x+(i?-5:5),y-39],'#263035');});}
     drawSprite(SP.lh[win?1:0],p[0],p[1],[0.6,0.64,0.69,0.72,0.75][L-1],1,false);

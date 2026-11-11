@@ -2,6 +2,15 @@
 
 Versions are `Beta 0.MINOR.PATCH` until Town Hall 10 (`1.0.0`).
 
+## Beta 0.13.0
+- The Town Hall now stands in the middle of its square, and you can move and rotate it (rotating turns the hall and moves the plaza fire to another corner).
+- The Jarl's House is already built when a new saga starts.
+- Locked buildings say what unlocks them, e.g. "Unlocks with: saga goal “Ready for winter”" or "Unlocks with: Town Hall 3".
+- The building sheet shows output from workers as a bar and a percentage: 2 of 4 workers means 50%.
+- The bottom bar has a gold border all round and its labels use the title font.
+- Art: roads are earthier, with ragged grassy edges, ruts, puddles and edge stones; meadows, sand and building yards have more texture.
+- Old saves still load (they keep their Town Hall where it was and get no free Jarl's House).
+
 ## Beta 0.12.0
 - New look, "Frost & Ember": a warm, golden summer, cast shadows that move with the sun, and a slow time-of-day cycle (dawn, a long day, dusk and a short night) over every 3 game days, longer nights in winter. From dusk to dawn doors and fires glow.
 - New map, the fjord: Kaldstrand lies at the head of a winding fjord with cliffs, a river from the northern range, a rocky iron hill next to the village, a ridge, a lake and islands at the fjord mouth.

@@ -28,6 +28,12 @@ function drawGround(b,win){
   const yard=b.t==='pen'?(win?'rgba(210,213,208,0.8)':'rgba(150,134,100,0.62)'):b.t==='train'?(win?'rgba(216,218,213,0.85)':'rgba(190,176,136,0.75)'):(win?'rgba(214,217,213,0.7)':'rgba(160,150,112,0.42)');
   poly(jitterRing(c,7,b.id),win?'rgba(205,210,206,0.35)':'rgba(140,140,96,0.16)');
   poly(jitterRing(c,1,b.id+7),yard);
+  /* worked earth: damp and dusty patches, pebbles and a worn track to the door */
+  {const cx=(c.T[0]+c.Bt[0])/2,cy=(c.T[1]+c.Bt[1])/2,sw=Math.abs(c.R[0]-c.L[0])/2,shh=Math.abs(c.Bt[1]-c.T[1])/2,n=Math.min(14,4+b.w*b.h*2);
+    for(let k=0;k<n;k++){const u=(h2(b.id,k,400)-0.5)*1.5,v=(h2(b.id,k,401)-0.5)*1.5;if(Math.abs(u)+Math.abs(v)>0.85)continue;const px=cx+u*sw,py=cy+v*shh,r=2+h2(b.id,k,402)*6;
+      ctx.fillStyle=win?(k%2?'rgba(255,255,255,0.3)':'rgba(170,176,178,0.25)'):(k%2?'rgba(214,196,150,0.32)':'rgba(110,92,62,0.2)');ctx.beginPath();ctx.ellipse(px,py,r,r*0.5,0,0,6.3);ctx.fill();}
+    if(zoom>1.1)for(let k=0;k<n;k++){const u=(h2(b.id,k,410)-0.5)*1.7,v=(h2(b.id,k,411)-0.5)*1.7;if(Math.abs(u)+Math.abs(v)>0.95)continue;const px=cx+u*sw,py=cy+v*shh;
+      ctx.fillStyle=win?'#B9BCB8':'#8A8274';ctx.beginPath();ctx.ellipse(px,py+0.4,1.5,0.9,0,0,6.3);ctx.fill();ctx.fillStyle=win?'#E9EAE6':'#B8AE98';ctx.beginPath();ctx.ellipse(px-0.2,py-0.1,1.1,0.55,0,0,6.3);ctx.fill();}}
   if(!win){ctx.strokeStyle='rgba(95,122,80,0.75)';ctx.lineWidth=1.2;ctx.beginPath();const r=jitterRing(c,3,b.id+3);for(let i=0;i<r.length;i+=4){const x=r[i],y=r[i+1];ctx.moveTo(x-2,y);ctx.lineTo(x,y-4);ctx.lineTo(x+2,y);}ctx.stroke();}
   ctx.restore();
 }
@@ -56,12 +62,19 @@ function drawRoads(win,vis){
         let c;if(a[0])c=[g(sx,sy,0,-ww),m(a[0]*0.5,-wm),m(a[0]*0.5,wm),g(sx,sy,0,ww)];else c=[g(sx,sy,-ww,0),m(-wm,a[1]*0.5),m(wm,a[1]*0.5),g(sx,sy,ww,0)];
         addP(p,c);}}
     ctx.fillStyle=col;ctx.fill(p,'nonzero');};
-  pass(0.45,win?'rgba(150,150,140,0.14)':'rgba(110,108,70,0.14)',0.08);
-  pass(0.36,win?'rgba(170,166,154,0.9)':'rgba(128,108,76,0.88)',0.05);
-  pass(0.32,win?'#D6D2C6':'#C5B28C',0.04);
-  pass(0.18,win?'#E0DCD2':'#D0BF9C',0.05);
+  pass(0.52,win?'rgba(150,150,140,0.12)':'rgba(96,100,58,0.2)',0.22);/* trampled grass shoulder */
+  pass(0.4,win?'rgba(170,166,154,0.9)':'rgba(112,92,62,0.92)',0.16);/* dark damp edge */
+  pass(0.35,win?'#D6D2C6':'#A88F68',0.14);
+  pass(0.25,win?'#DCD8CD':'#B59E77',0.14);
+  pass(0.12,win?'#E3DFD5':'#C2AD88',0.1);/* packed, sun-dried crown */
+  /* mottled earth: damp hollows and paler dust, so the road is not one flat colour */
+  for(const q of list){const x=q[0],y=q[1],sx=q[2],sy=q[3];for(let k=0;k<3;k++){const u=h2(x,y,200+k);const ox=(h2(x,y,203+k)-0.5)*20,oy=(h2(x,y,206+k)-0.5)*9,r=3+u*5;
+    ctx.fillStyle=win?(k%2?'rgba(190,186,176,0.35)':'rgba(240,238,232,0.35)'):(k%2?'rgba(120,98,66,0.22)':'rgba(230,214,180,0.25)');ctx.beginPath();ctx.ellipse(sx+ox,sy+oy,r,r*0.5,0,0,6.3);ctx.fill();}
+    if(!win&&h2(x,y,210)>0.86){ctx.fillStyle='rgba(92,104,110,0.45)';ctx.beginPath();ctx.ellipse(sx+(h2(x,y,211)-0.5)*10,sy+(h2(x,y,212)-0.5)*4,5,2.2,0,0,6.3);ctx.fill();ctx.fillStyle='rgba(200,214,220,0.35)';ctx.beginPath();ctx.ellipse(sx+(h2(x,y,211)-0.5)*10-1.5,sy+(h2(x,y,212)-0.5)*4-0.6,2.2,0.8,0,0,6.3);ctx.fill();}/* a puddle now and then */
+    for(const a of arms){if(inMap(x+a[0],y+a[1])&&roads[(y+a[1])*N+x+a[0]])continue;/* edge stones where the road ends at grass */
+      for(let k=0;k<2;k++){if(h2(x,y,230+k+a[0]*5+a[1]*9)<0.55)continue;const t=(h2(x,y,220+k+a[0]*5+a[1]*9)-0.5)*0.7,e=g(sx,sy,a[0]?a[0]*0.4:t,a[1]?a[1]*0.4:t);ctx.fillStyle=win?'#B4B0A6':'#8C857A';ctx.beginPath();ctx.ellipse(e[0],e[1]+0.5,2.2,1.3,0,0,6.3);ctx.fill();ctx.fillStyle=win?'#E6E4DE':'#B5AE9F';ctx.beginPath();ctx.ellipse(e[0]-0.3,e[1]-0.2,1.6,0.8,0,0,6.3);ctx.fill();}}}
   /* worn wheel ruts along straight runs */
-  ctx.strokeStyle=win?'rgba(170,164,150,0.55)':'rgba(140,121,90,0.45)';ctx.lineWidth=1.1;ctx.beginPath();
+  ctx.strokeStyle=win?'rgba(160,154,140,0.6)':'rgba(112,92,64,0.55)';ctx.lineWidth=1.6;ctx.beginPath();
   for(const q of list){const x=q[0],y=q[1],sx=q[2],sy=q[3];for(const a of [[1,0],[0,1]]){const nx=x+a[0],ny=y+a[1];if(!inMap(nx,ny)||!roads[ny*N+nx])continue;
     for(const o of [-0.1,0.1]){const A=a[0]?g(sx,sy,0,o):g(sx,sy,o,0),Bp=a[0]?g(sx,sy,1,o):g(sx,sy,o,1);ctx.moveTo(A[0],A[1]);ctx.lineTo(Bp[0],Bp[1]+elev[y*N+x]-elev[ny*N+nx]);}}}
   ctx.stroke();

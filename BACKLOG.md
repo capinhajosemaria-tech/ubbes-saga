@@ -10,15 +10,17 @@ Format: `- [ ] what · why / where seen` — screenshots welcome in the conversa
 - Polish 4 — buildings, menus, detail and walls (Beta 0.10.0).
 - World map and raids (Beta 0.11.0).
 - Art 1 — "Frost & Ember" light and the fjord map (Beta 0.12.0).
+- Urgent fixes 1 — village centre, unlock hints, worker output, bottom bar, roads and ground (Beta 0.13.0). Wood items left for later (José, 2026-11-11).
 
 ## Urgent fixing (José, 2026-11-11 — do before the balance round)
 - [ ] **Wood too expensive and hard to keep up**: review wood (firewood) use per person and the wood costs; it drains too fast.
 - [ ] **Resource sources never run out / position doesn't matter**: output should depend on what is nearby. Woodcutter near many trees produces most; fewer trees in reach → less. Show the % of maximum output on the building. Same idea for iron (mine near ore), berries (bushes), fish, etc.
-- [ ] **Output scales with workers for every production building**: e.g. a 4-worker building with 2 workers makes 50%, with 1 makes 25%. Show it clearly in the building sheet.
-- [ ] **Village centre on the square**: centre the starting Town Hall on the square; the Jarl's house comes already built at the start; let the player move and rotate the Town Hall.
-- [ ] **Locked buildings say what unlocks them** (e.g. "Unlocks with: Ready for winter") — José couldn't build the Jarl's house after TH2 because that saga goal was still open.
-- [ ] **Art quality**: better textures and details everywhere; more realistic paths/roads.
-- [ ] **Bottom menu bar**: the half-gold border must cover the whole bar; use the title font for the bar's text.
+- [x] **Output scales with workers for every production building**: e.g. a 4-worker building with 2 workers makes 50%, with 1 makes 25%. Show it clearly in the building sheet.
+- [x] **Village centre on the square**: centre the starting Town Hall on the square; the Jarl's house comes already built at the start; let the player move and rotate the Town Hall.
+- [x] **Locked buildings say what unlocks them** (e.g. "Unlocks with: Ready for winter") — José couldn't build the Jarl's house after TH2 because that saga goal was still open.
+- [x] **Art quality**: better textures and details everywhere; more realistic paths/roads. *(0.13.0: roads, grass, sand, yards; building textures still to do)*
+- [ ] **Art quality 2**: richer building textures and details (planks, roof materials, props), water depth near shores.
+- [x] **Bottom menu bar**: the half-gold border must cover the whole bar; use the title font for the bar's text.
 
 ## Next round — Balance fixes 1 (from the audit)
 Audit done 2026-11-11: data in `tools/balance/audit_data.md` (48 bot runs × 900 days), report in `tools/balance/audit_report.md` (finding IDs below refer to it; read the finding before applying). Key result: TH1–TH2 are sound; most TH3–TH5 bot data reflects bot weaknesses (22/48 runs stuck at TH3 because the bot boxes in its own shore — Shipyard placement is fine for a player).

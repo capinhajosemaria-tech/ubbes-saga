@@ -78,6 +78,8 @@ function freshState(mode,adv){
   B=[];nextId=1;roads=new Uint8Array(N*N);defaultZones();ter.set(TER0);
   for(const t of trees){t.amt=TREE_WOOD;t.regrow=0;t.gone=0;}S.cleared=[];for(const b of bushes)b.amt=15;
   addBuilding('th',TH_POS.fx,TH_POS.fy,0,true);
+  rebuildOcc();/* the Jarl's house stands beside the hall from the start */
+  for(const q of [[HOME_X+5,HOME_Y-5],[HOME_X-6,HOME_Y-5],[HOME_X+5,HOME_Y-2],[HOME_X-2,HOME_Y-9],[HOME_X+2,HOME_Y-9]]){if(canPlace('jarl',q[0],q[1],0,0).ok){addBuilding('jarl',q[0],q[1],0,true);break;}}
   rebuildOcc();[[HOME_X-5,HOME_Y-2],[HOME_X+5,HOME_Y-2],[HOME_X-5,HOME_Y-5],[HOME_X-8,HOME_Y-2],[HOME_X-8,HOME_Y-5],[HOME_X+5,HOME_Y-5]].forEach(q=>{if(B.filter(b=>b.t==='house').length<4&&canPlace('house',q[0],q[1],0,0).ok)addBuilding('house',q[0],q[1],0,true);rebuildOcc();});
   {const ry=HOME_Y+1;for(let x=HOME_X-5;x<=HOME_X+6;x++){if(BUILDABLE.has(tAt(x,ry))&&!occ[ry*N+x])roads[ry*N+x]=1;}}[[HOME_X,HOME_Y+2],[HOME_X,HOME_Y+3],[HOME_X,HOME_Y+4]].forEach(p=>{if(BUILDABLE.has(tAt(p[0],p[1])))roads[p[1]*N+p[0]]=1;});
   rebuildOcc();recomputeConn();

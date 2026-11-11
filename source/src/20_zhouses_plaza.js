@@ -42,14 +42,16 @@ function drawHouse(b,win){
     poly(P(s.L,s.Bt,up(s.Bt,7),up(s.L,7)),st[1]);poly(P(s.Bt,s.R,up(s.R,7),up(s.Bt,7)),st[1]);poly(P(up(s.L,7),up(s.Bt,7),up(s.R,7),up(s.T,10)),win?'#E6E9E7':st[3]);}
   if(L>=5){const p=lerp(c0.L,c0.Bt,0.85);ctx.strokeStyle='#4E3C2E';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(p[0],p[1]+4);ctx.lineTo(p[0],p[1]-30);ctx.stroke();poly([p[0],p[1]-29,p[0]+13,p[1]-26,p[0],p[1]-21],v===1?'#C9A64A':'#A34A3A');}
 }
-/* Town Hall: the hall stands on the back 4×4; the front of the 6×6 plot is the village plaza, which grows with the hall */
-function thHallRect(b){return {fx:b.fx,fy:b.fy,w:4,h:4};}
+/* Town Hall: the hall stands in the middle of its 6×6 square, with the village plaza all round it */
+/* the hall stands in the middle of its square; rotating the Town Hall turns the roof and moves the fire to another corner */
+const TH_MX=[[0,0],[1,0],[1,1],[0,1]];
+function thHallRect(b){return {fx:b.fx+1,fy:b.fy+1,w:4,h:4};}
 function feastOn(){return S&&S.feast&&S.feast.until>S.gameT;}
 function dancer(x,y,ph,col){const k=0.22,j=Math.abs(Math.sin(ph*2))*3;ctx.save();ctx.translate(x,y-j);ctx.scale(k,k);
   poly([12,22,28,22,31,52,9,52],col);ctx.fillStyle='#E2B99A';ctx.beginPath();ctx.arc(20,13,7,0,6.3);ctx.fill();ctx.strokeStyle=col;ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(13,26);ctx.lineTo(4,12+Math.sin(ph*4)*6);ctx.moveTo(27,26);ctx.lineTo(36,12-Math.sin(ph*4)*6);ctx.stroke();ctx.strokeStyle='#6B5A48';ctx.beginPath();ctx.moveTo(17,50);ctx.lineTo(15-Math.sin(ph*4)*4,74);ctx.moveTo(23,50);ctx.lineTo(25+Math.sin(ph*4)*4,74);ctx.stroke();ctx.restore();}
 function drawPlaza(b,win){const L=thLevel(),e=elev[b.fy*N+b.fx]||2;
-  const at=(x,y)=>iso(b.fx+x-0.5,b.fy+y-0.5);
-  const fire=at(4.9,4.9),feast=feastOn();
+  const mr=TH_MX[(b.rot|0)&3],at=(x,y)=>iso(b.fx+(mr[0]?6-x:x)-0.5,b.fy+(mr[1]?6-y:y)-0.5);
+  const fire=at(5.45,5.45),feast=feastOn();
   ctx.save();
   /* paving: flat stones around the fire */
   for(let k=0;k<14;k++){const a=k/14*6.283,rr=30+(k%3)*5;ctx.fillStyle=k%2?(win?'#C9CCC8':'#9A958B'):(win?'#D6D9D5':'#A8A398');ctx.beginPath();ctx.ellipse(fire[0]+Math.cos(a)*rr,fire[1]+Math.sin(a)*rr*0.5,5,2.6,0,0,6.3);ctx.fill();}

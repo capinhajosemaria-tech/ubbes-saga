@@ -54,7 +54,7 @@ button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 .nav{position:fixed;left:0;right:0;bottom:0;z-index:5;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 8px);
   padding-left:max(16px, env(safe-area-inset-left,0px));padding-right:max(16px, env(safe-area-inset-right,0px));pointer-events:none}
 .nav .row{pointer-events:auto;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:5px;box-shadow:0 4px 16px rgba(38,48,53,.12);max-width:560px;margin:0 auto}
-.nav button{min-height:50px;border:0;border-radius:10px;background:transparent;color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font:600 11px var(--body);cursor:pointer}
+.nav button{min-height:50px;border:0;border-radius:10px;background:transparent;color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font:400 12.5px var(--display);letter-spacing:.03em;cursor:pointer}
 .nav button:hover{background:rgba(38,48,53,.06)}
 .nav button.locked{color:#8A959A}
 .modebar{position:fixed;z-index:6;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 80px);padding-left:max(16px, env(safe-area-inset-left,0px));padding-right:max(16px, env(safe-area-inset-right,0px));pointer-events:none}
@@ -285,8 +285,8 @@ textarea,input{-webkit-user-select:text;user-select:text}
 .dock,.tray{display:none}
 @media (min-width:900px){
   .nav,.fabs{display:none!important}
-  .dock{display:flex;position:fixed;z-index:5;left:50%;transform:translateX(-50%);bottom:14px;align-items:stretch;gap:6px;padding:6px 8px;background:rgba(47,38,32,.96);border:1px solid var(--woodline);border-radius:14px;box-shadow:0 8px 26px rgba(20,16,12,.35)}
-  .dock::before{content:'';position:absolute;left:14px;right:14px;top:-1px;height:8px;background:var(--knot) repeat-x center/24px 8px;opacity:.7;pointer-events:none}
+  .dock{display:flex;position:fixed;z-index:5;left:50%;transform:translateX(-50%);bottom:14px;align-items:stretch;gap:6px;padding:6px 8px;background:rgba(47,38,32,.96);border:2px solid var(--gold);border-radius:14px;box-shadow:0 8px 26px rgba(20,16,12,.35),inset 0 0 0 3px rgba(47,38,32,.96),inset 0 0 0 4px rgba(201,166,74,.45)}
+  .dock::before{content:'';position:absolute;left:0;right:0;top:-2px;height:8px;border-radius:14px 14px 0 0;background:var(--knot) repeat-x center/24px 8px;opacity:.7;pointer-events:none}
   .dgrp{display:flex;gap:2px}.dsep{width:1px;background:rgba(243,235,216,.15);margin:6px 2px}
   .dk{min-width:58px;min-height:54px;padding:4px 6px;border:0;border-radius:10px;background:transparent;color:var(--cream);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font:600 11px var(--body);cursor:pointer}
   .dk svg{width:20px;height:20px}
@@ -299,7 +299,7 @@ textarea,input{-webkit-user-select:text;user-select:text}
   .tcard{flex:none;width:160px;display:flex;flex-direction:column;align-items:stretch;gap:2px;text-align:left;padding:6px 8px 9px;border-radius:12px;border:1px solid var(--line2);background:var(--parch2);cursor:pointer;font-family:var(--body);color:var(--ink)}
   .tcard img{width:144px;height:108px;object-fit:contain;align-self:center;background:#E2E9D8;border-radius:6px;box-shadow:inset 0 0 0 1px rgba(110,128,88,.18)}
   .tcard b{font-family:var(--display);font-weight:400;font-size:16px;line-height:1.15}
-  .tcard .tc2{font-size:11.5px;color:var(--muted)}.tcard .tc3{font-size:12px;line-height:1.25;color:#4A3C30}.tcard .cost{font-size:12px;font-weight:600;color:#5C4634}.tcard .cost.bad{color:var(--accent)}
+  .tcard .tc2{font-size:11.5px;color:var(--muted)}.tcard .tc3{font-size:12px;line-height:1.25;color:#4A3C30}.tcard .cost{font-size:12px;font-weight:600;color:#5C4634}.tcard .cost.bad{color:var(--accent)}.tcard .cost.unl{color:#7A4E1E;font-weight:600;line-height:1.25}
   .tcard:hover{border-color:var(--gold);box-shadow:0 4px 14px rgba(30,24,18,.18)}.tcard.no{opacity:.62}.tcard.lk img{filter:grayscale(.8) brightness(1.05)}
   /* building and panel sheets dock to the left, like a city-builder inspector */
   .sheet{left:16px;right:auto;top:calc(env(safe-area-inset-top,0px) + 112px);bottom:96px;width:420px;padding:0;display:flex;align-items:flex-start}
@@ -337,7 +337,8 @@ textarea,input{-webkit-user-select:text;user-select:text}
 /* ===== Polish 2: classic look (M1) on PC + title font for numbers ===== */
 .chip strong,.wk .num,table.t td:last-child,.god .num,.ms .f,.sub .date,.rtip .tr span:last-child,.todo-n,.tcard .tc2 .nb{font-family:var(--display);font-weight:400;letter-spacing:.02em}
 .chip .v strong{font-size:17px;font-weight:400}
-.wk .num{font-size:17px}.god .num{font-size:15px}table.t td:last-child{font-size:15px}
+.wk .num{font-size:17px}
+.outpct{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:6px 0}.outpct .bar{width:90px;height:8px;border-radius:4px;background:#DDD3BE;overflow:hidden}.outpct .bar i{display:block;height:100%;background:var(--gold)}.outpct strong{font-family:var(--display);font-weight:400;font-size:16px}.god .num{font-size:15px}table.t td:last-child{font-size:15px}
 @media (min-width:761px){
   .chip .v{flex-direction:row;align-items:baseline;gap:6px}
   .chip .v .lbl{text-transform:none;letter-spacing:0;font-size:12.5px;font-weight:400;opacity:.7}
@@ -406,7 +407,7 @@ textarea,input{-webkit-user-select:text;user-select:text}
 <script>
 (function(){
 'use strict';
-const GAME_VERSION="Beta 0.12.0";
+const GAME_VERSION="Beta 0.13.0";
 /* =================== constants =================== */
 const N=132,OX=30,OY=24,SX=12,SY=6,HW=32,HH=16,TW=64;
 const HOME_X=63,HOME_Y=60;  /* the village centre in tile coords */
@@ -1041,6 +1042,8 @@ function freshState(mode,adv){
   B=[];nextId=1;roads=new Uint8Array(N*N);defaultZones();ter.set(TER0);
   for(const t of trees){t.amt=TREE_WOOD;t.regrow=0;t.gone=0;}S.cleared=[];for(const b of bushes)b.amt=15;
   addBuilding('th',TH_POS.fx,TH_POS.fy,0,true);
+  rebuildOcc();/* the Jarl's house stands beside the hall from the start */
+  for(const q of [[HOME_X+5,HOME_Y-5],[HOME_X-6,HOME_Y-5],[HOME_X+5,HOME_Y-2],[HOME_X-2,HOME_Y-9],[HOME_X+2,HOME_Y-9]]){if(canPlace('jarl',q[0],q[1],0,0).ok){addBuilding('jarl',q[0],q[1],0,true);break;}}
   rebuildOcc();[[HOME_X-5,HOME_Y-2],[HOME_X+5,HOME_Y-2],[HOME_X-5,HOME_Y-5],[HOME_X-8,HOME_Y-2],[HOME_X-8,HOME_Y-5],[HOME_X+5,HOME_Y-5]].forEach(q=>{if(B.filter(b=>b.t==='house').length<4&&canPlace('house',q[0],q[1],0,0).ok)addBuilding('house',q[0],q[1],0,true);rebuildOcc();});
   {const ry=HOME_Y+1;for(let x=HOME_X-5;x<=HOME_X+6;x++){if(BUILDABLE.has(tAt(x,ry))&&!occ[ry*N+x])roads[ry*N+x]=1;}}[[HOME_X,HOME_Y+2],[HOME_X,HOME_Y+3],[HOME_X,HOME_Y+4]].forEach(p=>{if(BUILDABLE.has(tAt(p[0],p[1])))roads[p[1]*N+p[0]]=1;});
   rebuildOcc();recomputeConn();
@@ -1565,6 +1568,12 @@ function drawTile(x,y,PL,win){
   const eL=y+1<N?elev[i+N]:e;if(eL<e)poly([sx-HW,top,sx,top+HH,sx,sy+HH-eL,sx-HW,sy-eL],sh(fc,0.94));
   let col;if(tt===T.SEA||(tt===T.RIVER&&!win))col=sh(base,f);else{const key=tt*2+(win?1:0);if(TKEY[i]!==key){let bc=base;if((tt===T.GRASS||tt===T.FOREST||tt===T.BERRY)&&!win){const dry=TDRY[i];bc=[base[0]+(DRYC[0]-base[0])*dry,base[1]+(DRYC[1]-base[1])*dry,base[2]+(DRYC[2]-base[2])*dry];}TCOL[i]=sh(bc,f);TKEY[i]=key;}col=TCOL[i];}
   poly([sx,top-HH-0.7,sx+HW+0.9,top,sx,top+HH+0.7,sx-HW-0.9,top],col);
+  /* soft tone patches so meadows and sand are not flat colour: a lighter sunlit patch and a darker lush one per tile */
+  if(zoom>0.6&&!occ[i]&&!roads[i]&&(tt===T.GRASS||tt===T.FOREST||tt===T.BERRY||tt===T.BEACH)){const sand=tt===T.BEACH;
+    for(let k=0;k<2;k++){const ox=(h2(x,y,300+k)-0.5)*34,oy=(h2(x,y,302+k)-0.5)*14,rr=14+h2(x,y,304+k)*14;
+      if(h2(x,y,306+k)<0.45)continue;ctx.fillStyle=win?(k?'rgba(255,255,255,0.12)':'rgba(170,182,186,0.08)'):sand?(k?'rgba(255,246,220,0.12)':'rgba(170,140,96,0.07)'):(k?'rgba(214,214,140,0.085)':'rgba(62,92,52,0.07)');
+      ctx.beginPath();ctx.ellipse(sx+ox,top+oy,rr,rr*0.48,0,0,6.3);ctx.fill();}
+    if(sand&&zoom>1.1&&!win){ctx.fillStyle='rgba(150,124,88,0.45)';for(let k=0;k<5;k++){ctx.beginPath();ctx.arc(sx+(h2(x,y,310+k)-0.5)*40,top+(h2(x,y,315+k)-0.5)*16,0.9,0,6.3);ctx.fill();}}}
   if(zoom>0.75&&!win&&tt===T.GRASS&&!occ[i]&&!roads[i]){const r=h2(x,y,12);if(r>0.6){ctx.strokeStyle='rgba(95,122,80,0.7)';ctx.lineWidth=1.2;ctx.beginPath();const ox=(h2(x,y,13)-0.5)*30,oy=(h2(x,y,14)-0.5)*12;ctx.moveTo(sx+ox-2,top+oy);ctx.lineTo(sx+ox,top+oy-5);ctx.lineTo(sx+ox+2,top+oy);ctx.stroke();}
     if(r>0.93){ctx.fillStyle='#EFE9DA';ctx.beginPath();ctx.arc(sx+(h2(x,y,15)-0.5)*26,top+(h2(x,y,16)-0.5)*10,1.8,0,6.3);ctx.fill();}}
   /* close-up: more blades of grass, clover and the odd flower */
@@ -1864,6 +1873,12 @@ function drawGround(b,win){
   const yard=b.t==='pen'?(win?'rgba(210,213,208,0.8)':'rgba(150,134,100,0.62)'):b.t==='train'?(win?'rgba(216,218,213,0.85)':'rgba(190,176,136,0.75)'):(win?'rgba(214,217,213,0.7)':'rgba(160,150,112,0.42)');
   poly(jitterRing(c,7,b.id),win?'rgba(205,210,206,0.35)':'rgba(140,140,96,0.16)');
   poly(jitterRing(c,1,b.id+7),yard);
+  /* worked earth: damp and dusty patches, pebbles and a worn track to the door */
+  {const cx=(c.T[0]+c.Bt[0])/2,cy=(c.T[1]+c.Bt[1])/2,sw=Math.abs(c.R[0]-c.L[0])/2,shh=Math.abs(c.Bt[1]-c.T[1])/2,n=Math.min(14,4+b.w*b.h*2);
+    for(let k=0;k<n;k++){const u=(h2(b.id,k,400)-0.5)*1.5,v=(h2(b.id,k,401)-0.5)*1.5;if(Math.abs(u)+Math.abs(v)>0.85)continue;const px=cx+u*sw,py=cy+v*shh,r=2+h2(b.id,k,402)*6;
+      ctx.fillStyle=win?(k%2?'rgba(255,255,255,0.3)':'rgba(170,176,178,0.25)'):(k%2?'rgba(214,196,150,0.32)':'rgba(110,92,62,0.2)');ctx.beginPath();ctx.ellipse(px,py,r,r*0.5,0,0,6.3);ctx.fill();}
+    if(zoom>1.1)for(let k=0;k<n;k++){const u=(h2(b.id,k,410)-0.5)*1.7,v=(h2(b.id,k,411)-0.5)*1.7;if(Math.abs(u)+Math.abs(v)>0.95)continue;const px=cx+u*sw,py=cy+v*shh;
+      ctx.fillStyle=win?'#B9BCB8':'#8A8274';ctx.beginPath();ctx.ellipse(px,py+0.4,1.5,0.9,0,0,6.3);ctx.fill();ctx.fillStyle=win?'#E9EAE6':'#B8AE98';ctx.beginPath();ctx.ellipse(px-0.2,py-0.1,1.1,0.55,0,0,6.3);ctx.fill();}}
   if(!win){ctx.strokeStyle='rgba(95,122,80,0.75)';ctx.lineWidth=1.2;ctx.beginPath();const r=jitterRing(c,3,b.id+3);for(let i=0;i<r.length;i+=4){const x=r[i],y=r[i+1];ctx.moveTo(x-2,y);ctx.lineTo(x,y-4);ctx.lineTo(x+2,y);}ctx.stroke();}
   ctx.restore();
 }
@@ -1892,12 +1907,19 @@ function drawRoads(win,vis){
         let c;if(a[0])c=[g(sx,sy,0,-ww),m(a[0]*0.5,-wm),m(a[0]*0.5,wm),g(sx,sy,0,ww)];else c=[g(sx,sy,-ww,0),m(-wm,a[1]*0.5),m(wm,a[1]*0.5),g(sx,sy,ww,0)];
         addP(p,c);}}
     ctx.fillStyle=col;ctx.fill(p,'nonzero');};
-  pass(0.45,win?'rgba(150,150,140,0.14)':'rgba(110,108,70,0.14)',0.08);
-  pass(0.36,win?'rgba(170,166,154,0.9)':'rgba(128,108,76,0.88)',0.05);
-  pass(0.32,win?'#D6D2C6':'#C5B28C',0.04);
-  pass(0.18,win?'#E0DCD2':'#D0BF9C',0.05);
+  pass(0.52,win?'rgba(150,150,140,0.12)':'rgba(96,100,58,0.2)',0.22);/* trampled grass shoulder */
+  pass(0.4,win?'rgba(170,166,154,0.9)':'rgba(112,92,62,0.92)',0.16);/* dark damp edge */
+  pass(0.35,win?'#D6D2C6':'#A88F68',0.14);
+  pass(0.25,win?'#DCD8CD':'#B59E77',0.14);
+  pass(0.12,win?'#E3DFD5':'#C2AD88',0.1);/* packed, sun-dried crown */
+  /* mottled earth: damp hollows and paler dust, so the road is not one flat colour */
+  for(const q of list){const x=q[0],y=q[1],sx=q[2],sy=q[3];for(let k=0;k<3;k++){const u=h2(x,y,200+k);const ox=(h2(x,y,203+k)-0.5)*20,oy=(h2(x,y,206+k)-0.5)*9,r=3+u*5;
+    ctx.fillStyle=win?(k%2?'rgba(190,186,176,0.35)':'rgba(240,238,232,0.35)'):(k%2?'rgba(120,98,66,0.22)':'rgba(230,214,180,0.25)');ctx.beginPath();ctx.ellipse(sx+ox,sy+oy,r,r*0.5,0,0,6.3);ctx.fill();}
+    if(!win&&h2(x,y,210)>0.86){ctx.fillStyle='rgba(92,104,110,0.45)';ctx.beginPath();ctx.ellipse(sx+(h2(x,y,211)-0.5)*10,sy+(h2(x,y,212)-0.5)*4,5,2.2,0,0,6.3);ctx.fill();ctx.fillStyle='rgba(200,214,220,0.35)';ctx.beginPath();ctx.ellipse(sx+(h2(x,y,211)-0.5)*10-1.5,sy+(h2(x,y,212)-0.5)*4-0.6,2.2,0.8,0,0,6.3);ctx.fill();}/* a puddle now and then */
+    for(const a of arms){if(inMap(x+a[0],y+a[1])&&roads[(y+a[1])*N+x+a[0]])continue;/* edge stones where the road ends at grass */
+      for(let k=0;k<2;k++){if(h2(x,y,230+k+a[0]*5+a[1]*9)<0.55)continue;const t=(h2(x,y,220+k+a[0]*5+a[1]*9)-0.5)*0.7,e=g(sx,sy,a[0]?a[0]*0.4:t,a[1]?a[1]*0.4:t);ctx.fillStyle=win?'#B4B0A6':'#8C857A';ctx.beginPath();ctx.ellipse(e[0],e[1]+0.5,2.2,1.3,0,0,6.3);ctx.fill();ctx.fillStyle=win?'#E6E4DE':'#B5AE9F';ctx.beginPath();ctx.ellipse(e[0]-0.3,e[1]-0.2,1.6,0.8,0,0,6.3);ctx.fill();}}}
   /* worn wheel ruts along straight runs */
-  ctx.strokeStyle=win?'rgba(170,164,150,0.55)':'rgba(140,121,90,0.45)';ctx.lineWidth=1.1;ctx.beginPath();
+  ctx.strokeStyle=win?'rgba(160,154,140,0.6)':'rgba(112,92,64,0.55)';ctx.lineWidth=1.6;ctx.beginPath();
   for(const q of list){const x=q[0],y=q[1],sx=q[2],sy=q[3];for(const a of [[1,0],[0,1]]){const nx=x+a[0],ny=y+a[1];if(!inMap(nx,ny)||!roads[ny*N+nx])continue;
     for(const o of [-0.1,0.1]){const A=a[0]?g(sx,sy,0,o):g(sx,sy,o,0),Bp=a[0]?g(sx,sy,1,o):g(sx,sy,o,1);ctx.moveTo(A[0],A[1]);ctx.lineTo(Bp[0],Bp[1]+elev[y*N+x]-elev[ny*N+nx]);}}}
   ctx.stroke();
@@ -2026,7 +2048,7 @@ function drawBuilding0(b,win,alpha,ghost){
   if(alpha<1)ctx.globalAlpha=alpha;
   ctx.save();ctx.translate(0,-e);
   if(b.t==='house'){drawHouse(b,win);if(!ghost&&b.lvl>=2)pennant(b,0,b.lvl>=3?'#A34A3A':'#C9A64A');ctx.restore();if(alpha<1)ctx.globalAlpha=1;return;}
-  if(b.t==='th'&&(window.__THV!==undefined?window.__THV:THV)){THV=window.__THV!==undefined?window.__THV:THV;drawTownHall(b,win);drawPlaza(b,win);ctx.restore();if(alpha<1)ctx.globalAlpha=1;return;}
+  if(b.t==='th'&&(window.__THV!==undefined?window.__THV:THV)){THV=window.__THV!==undefined?window.__THV:THV;if(((b.rot|0)&3)===2){drawPlaza(b,win);drawTownHall(b,win);}else{drawTownHall(b,win);drawPlaza(b,win);}/* fire behind the hall: draw it first */ctx.restore();if(alpha<1)ctx.globalAlpha=1;return;}
   if(b.t==='th'){const hb=thHallRect(b),p=iso(hb.fx+hb.w/2-0.5,hb.fy+hb.h/2-0.5),L=thLevel();
     if(L>=2){const c=fp(hb);[c.L,c.R].forEach((q,i)=>{const x=q[0]+(i?-14:14),y=q[1]+(i?2:2);ctx.strokeStyle='#4E3C2E';ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x,y-46);ctx.stroke();poly([x,y-45,x+(i?-16:16),y-41,x,y-35],'#A34A3A');poly([x+(i?-4:4),y-42,x+(i?-10:10),y-40,x+(i?-5:5),y-39],'#263035');});}
     drawSprite(SP.lh[win?1:0],p[0],p[1],[0.6,0.64,0.69,0.72,0.75][L-1],1,false);
@@ -2301,14 +2323,16 @@ function drawHouse(b,win){
     poly(P(s.L,s.Bt,up(s.Bt,7),up(s.L,7)),st[1]);poly(P(s.Bt,s.R,up(s.R,7),up(s.Bt,7)),st[1]);poly(P(up(s.L,7),up(s.Bt,7),up(s.R,7),up(s.T,10)),win?'#E6E9E7':st[3]);}
   if(L>=5){const p=lerp(c0.L,c0.Bt,0.85);ctx.strokeStyle='#4E3C2E';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(p[0],p[1]+4);ctx.lineTo(p[0],p[1]-30);ctx.stroke();poly([p[0],p[1]-29,p[0]+13,p[1]-26,p[0],p[1]-21],v===1?'#C9A64A':'#A34A3A');}
 }
-/* Town Hall: the hall stands on the back 4×4; the front of the 6×6 plot is the village plaza, which grows with the hall */
-function thHallRect(b){return {fx:b.fx,fy:b.fy,w:4,h:4};}
+/* Town Hall: the hall stands in the middle of its 6×6 square, with the village plaza all round it */
+/* the hall stands in the middle of its square; rotating the Town Hall turns the roof and moves the fire to another corner */
+const TH_MX=[[0,0],[1,0],[1,1],[0,1]];
+function thHallRect(b){return {fx:b.fx+1,fy:b.fy+1,w:4,h:4};}
 function feastOn(){return S&&S.feast&&S.feast.until>S.gameT;}
 function dancer(x,y,ph,col){const k=0.22,j=Math.abs(Math.sin(ph*2))*3;ctx.save();ctx.translate(x,y-j);ctx.scale(k,k);
   poly([12,22,28,22,31,52,9,52],col);ctx.fillStyle='#E2B99A';ctx.beginPath();ctx.arc(20,13,7,0,6.3);ctx.fill();ctx.strokeStyle=col;ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(13,26);ctx.lineTo(4,12+Math.sin(ph*4)*6);ctx.moveTo(27,26);ctx.lineTo(36,12-Math.sin(ph*4)*6);ctx.stroke();ctx.strokeStyle='#6B5A48';ctx.beginPath();ctx.moveTo(17,50);ctx.lineTo(15-Math.sin(ph*4)*4,74);ctx.moveTo(23,50);ctx.lineTo(25+Math.sin(ph*4)*4,74);ctx.stroke();ctx.restore();}
 function drawPlaza(b,win){const L=thLevel(),e=elev[b.fy*N+b.fx]||2;
-  const at=(x,y)=>iso(b.fx+x-0.5,b.fy+y-0.5);
-  const fire=at(4.9,4.9),feast=feastOn();
+  const mr=TH_MX[(b.rot|0)&3],at=(x,y)=>iso(b.fx+(mr[0]?6-x:x)-0.5,b.fy+(mr[1]?6-y:y)-0.5);
+  const fire=at(5.45,5.45),feast=feastOn();
   ctx.save();
   /* paving: flat stones around the fire */
   for(let k=0;k<14;k++){const a=k/14*6.283,rr=30+(k%3)*5;ctx.fillStyle=k%2?(win?'#C9CCC8':'#9A958B'):(win?'#D6D9D5':'#A8A398');ctx.beginPath();ctx.ellipse(fire[0]+Math.cos(a)*rr,fire[1]+Math.sin(a)*rr*0.5,5,2.6,0,0,6.3);ctx.fill();}
@@ -2465,7 +2489,7 @@ function drawWalker(w,win){
 const smoke=[];let smokeTimer=0;
 const flakes=[];for(let i=0;i<140;i++)flakes.push({x:Math.random(),y:Math.random(),s:0.6+Math.random()*1.6,v:12+Math.random()*24,p:Math.random()*6});
 function smokeSources(){const out=[];for(const b of B){const e=elev[b.fy*N+b.fx]||2;const p=iso(b.fx+b.w/2-0.5,b.fy+b.h/2-0.5);
-  if(b.t==='th'){const q=iso(b.fx+1.5,b.fy+1.5);out.push([q[0]-12,q[1]-e-92]);}else if(b.t==='house')out.push([p[0],p[1]-e-40]);else if(b.t==='jarl')out.push([p[0],p[1]-e-46]);
+  if(b.t==='th'){const hr=thHallRect(b),q=iso(hr.fx+1.5,hr.fy+1.5);out.push([q[0]-12,q[1]-e-92]);}else if(b.t==='house')out.push([p[0],p[1]-e-40]);else if(b.t==='jarl')out.push([p[0],p[1]-e-46]);
   else if(['smith','pres','smoke','bakery','salt'].includes(b.t)&&b.status==='Working')out.push([p[0]-4,p[1]-e-30]);}return out;}
 
 /* =================== interaction state =================== */
@@ -2927,6 +2951,7 @@ function buildingSheet(b){
   if(b.t!=='th'){h+='<p class="role"><strong>'+esc(roleOf(b.t))+'.</strong> '+esc(D.desc||'')+'</p>';const nd=needsOf(b.t);if(nd.length)h+='<div class="meta needs">Needs: '+esc(nd.join(' · '))+'</div>';}
   if(sl){h+='<span class="status '+statusClass(b.status)+'">'+esc(b.status||'Starting')+'</span>';
     assignWorkers();h+='<div class="wk"><button type="button" class="btn small" id="w-minus" aria-label="Fewer workers" '+(b.desired<=0?'disabled':'')+'>−</button><span class="num">'+b.desired+' / '+sl+' <span class="meta">workers</span></span><button type="button" class="btn small" id="w-plus" aria-label="More workers" '+(b.desired>=sl||freeWorkers<=0?'disabled':'')+'>+</button><span class="meta">'+freeWorkers+' free in the village</span></div>';
+    if(D.out){const pc=Math.round(100*(b.workers||0)/sl);h+='<div class="outpct"><span class="meta">Output from workers</span><span class="bar"><i style="width:'+pc+'%"></i></span><strong>'+pc+'%</strong><span class="meta">'+(b.workers||0)+' of '+sl+' working · each worker adds '+Math.round(100/sl)+'%</span></div>';}
     h+='<p>'+esc(D.out||'')+(b.made?' · <strong>Yesterday: '+esc(b.made)+'</strong>':'')+'</p>';
     if(D.need){const nc=needCount(b,D.need);h+='<div class="meta">'+esc(nc.label)+'</div>';}
     if(!b.conn&&D.road!==false)h+='<p style="color:#8E3B2F">Connect this building to the Town Hall with a road.</p>';
@@ -2965,6 +2990,7 @@ function buildingSheet(b){
     else{const c=upCost(b),need=canUpgrade(b);const eff=b.t==='house'?('+1 resident'+(nx===3?', better insulated: −25% firewood':nx===5?', a carved hall that draws newcomers':'')):D.store?'+150 storage':nx===2?'+20% output':nx===3?(FIELDS.has(b.t)?'+30% output in all':'+1 worker slot'):nx===4?'+40% output in all':'Finest work: +55% output in all';
       h+='<div class="wk">'+btn('b-up','Upgrade to level '+nx,{cls:'primary',dis:!need||!afford(c)})+'<span class="meta">'+esc(eff)+' · '+costIco(c)+(need?'':' · raise the Town Hall first')+'</span></div>';
       on.push(()=>{$('b-up').onclick=()=>{if(!canUpgrade(b)||!afford(upCost(b)))return;pay(upCost(b),1);b.lvl++;assignWorkers();toast(D.name+' upgraded to level '+b.lvl+'.');buildingSheet(b);save();};});}}
+  if(b.t==='th'){h+='<div class="acts"><button type="button" class="btn" id="b-move">Move or rotate</button></div>';on.push(()=>{$('b-move').onclick=()=>{closeSheet();startPlace('th',b);};});}
   if(!D.fixed){h+='<div class="acts"><button type="button" class="btn danger" id="b-demo">'+(demolishArmed===b.id?'Tap again to demolish':'Demolish (50% back)')+'</button><button type="button" class="btn" id="b-move">Move</button></div>';
     on.push(()=>{$('b-demo').onclick=()=>{if(demolishArmed!==b.id){demolishArmed=b.id;buildingSheet(b);return;}demolishArmed=0;
         if(D.housing&&housing()-D.housing<S.pop){toast('Not enough room elsewhere for the people living here.');return;}
@@ -3172,8 +3198,8 @@ function openTray(cat){trayCat=cat;buildCat=cat;const tr=$('tray');
   const keys=Object.keys(DEF).filter(k=>DEF[k].cat===cat);
   let h='<div class="trh"><b>'+esc(cat)+'</b><span>Town Hall level '+thLevel()+' · click a building, then choose its spot</span><button type="button" class="x" id="tray-x" aria-label="Close">×</button></div><div class="trl">';
   for(const k of keys){const D=DEF[k],av=isAvail(k),lim=limitOf(k),cnt=count(k),uq=cnt>=lim,cst=costOf(k),free=!Object.keys(cst).length&&Object.keys(D.cost).length,ok=av&&!uq&&afford(cst)&&D.lvl<=thLevel();
-    const lock=D.lvl>thLevel()?'Town Hall '+D.lvl:!av?'Saga: '+(MS.find(m=>m.unlock.includes(k))||{title:'?'}).title:uq?'Limit reached':'';
-    h+='<button type="button" class="tcard'+(ok?'':' no')+(lock?' lk':'')+'" data-b="'+k+'" title="'+esc((D.desc||'')+(needsOf(k).length?' Needs: '+needsOf(k).join(', ')+'.':''))+'"><img alt="" src="'+buildThumb(k,1)+'"><b>'+esc(D.name)+'</b><span class="tc3">'+esc(roleOf(k))+'</span><span class="tc2">'+(D.lvl<=thLevel()?cnt+' / '+lim:'')+(D.slots?' · '+D.slots+' workers':'')+(D.housing?' · '+D.housing+' beds':'')+(needsShort(k)?'<br>Needs '+esc(needsShort(k)):'')+'</span><span class="cost'+(av&&!afford(cst)?' bad':'')+'">'+(lock?esc(lock):free?'First one free':costIco(cst))+'</span></button>';}
+    const msU=MS.find(m=>m.unlock.includes(k)),lkP=[];if(D.lvl>thLevel())lkP.push('Town Hall '+D.lvl);if(!av&&msU)lkP.push('saga goal “'+msU.title+'”');const lock=lkP.length?'🔒 Unlocks with: '+lkP.join(' + '):uq?'Limit reached':'';
+    h+='<button type="button" class="tcard'+(ok?'':' no')+(lock?' lk':'')+'" data-b="'+k+'" title="'+esc((D.desc||'')+(needsOf(k).length?' Needs: '+needsOf(k).join(', ')+'.':''))+'"><img alt="" src="'+buildThumb(k,1)+'"><b>'+esc(D.name)+'</b><span class="tc3">'+esc(roleOf(k))+'</span><span class="tc2">'+(D.lvl<=thLevel()?cnt+' / '+lim:'')+(D.slots?' · '+D.slots+' workers':'')+(D.housing?' · '+D.housing+' beds':'')+(needsShort(k)?'<br>Needs '+esc(needsShort(k)):'')+'</span><span class="cost'+(lock&&lock!=='Limit reached'?' unl':av&&!afford(cst)?' bad':'')+'">'+(lock?esc(lock):free?'First one free':costIco(cst))+'</span></button>';}
   tr.innerHTML=h+'</div>';tr.hidden=false;
   $('tray-x').onclick=closeTray;
   tr.querySelectorAll('.tcard').forEach(c=>c.onclick=()=>{const k=c.dataset.b,D=DEF[k];

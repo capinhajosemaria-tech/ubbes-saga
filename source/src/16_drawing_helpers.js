@@ -26,6 +26,12 @@ function drawTile(x,y,PL,win){
   const eL=y+1<N?elev[i+N]:e;if(eL<e)poly([sx-HW,top,sx,top+HH,sx,sy+HH-eL,sx-HW,sy-eL],sh(fc,0.94));
   let col;if(tt===T.SEA||(tt===T.RIVER&&!win))col=sh(base,f);else{const key=tt*2+(win?1:0);if(TKEY[i]!==key){let bc=base;if((tt===T.GRASS||tt===T.FOREST||tt===T.BERRY)&&!win){const dry=TDRY[i];bc=[base[0]+(DRYC[0]-base[0])*dry,base[1]+(DRYC[1]-base[1])*dry,base[2]+(DRYC[2]-base[2])*dry];}TCOL[i]=sh(bc,f);TKEY[i]=key;}col=TCOL[i];}
   poly([sx,top-HH-0.7,sx+HW+0.9,top,sx,top+HH+0.7,sx-HW-0.9,top],col);
+  /* soft tone patches so meadows and sand are not flat colour: a lighter sunlit patch and a darker lush one per tile */
+  if(zoom>0.6&&!occ[i]&&!roads[i]&&(tt===T.GRASS||tt===T.FOREST||tt===T.BERRY||tt===T.BEACH)){const sand=tt===T.BEACH;
+    for(let k=0;k<2;k++){const ox=(h2(x,y,300+k)-0.5)*34,oy=(h2(x,y,302+k)-0.5)*14,rr=14+h2(x,y,304+k)*14;
+      if(h2(x,y,306+k)<0.45)continue;ctx.fillStyle=win?(k?'rgba(255,255,255,0.12)':'rgba(170,182,186,0.08)'):sand?(k?'rgba(255,246,220,0.12)':'rgba(170,140,96,0.07)'):(k?'rgba(214,214,140,0.085)':'rgba(62,92,52,0.07)');
+      ctx.beginPath();ctx.ellipse(sx+ox,top+oy,rr,rr*0.48,0,0,6.3);ctx.fill();}
+    if(sand&&zoom>1.1&&!win){ctx.fillStyle='rgba(150,124,88,0.45)';for(let k=0;k<5;k++){ctx.beginPath();ctx.arc(sx+(h2(x,y,310+k)-0.5)*40,top+(h2(x,y,315+k)-0.5)*16,0.9,0,6.3);ctx.fill();}}}
   if(zoom>0.75&&!win&&tt===T.GRASS&&!occ[i]&&!roads[i]){const r=h2(x,y,12);if(r>0.6){ctx.strokeStyle='rgba(95,122,80,0.7)';ctx.lineWidth=1.2;ctx.beginPath();const ox=(h2(x,y,13)-0.5)*30,oy=(h2(x,y,14)-0.5)*12;ctx.moveTo(sx+ox-2,top+oy);ctx.lineTo(sx+ox,top+oy-5);ctx.lineTo(sx+ox+2,top+oy);ctx.stroke();}
     if(r>0.93){ctx.fillStyle='#EFE9DA';ctx.beginPath();ctx.arc(sx+(h2(x,y,15)-0.5)*26,top+(h2(x,y,16)-0.5)*10,1.8,0,6.3);ctx.fill();}}
   /* close-up: more blades of grass, clover and the odd flower */

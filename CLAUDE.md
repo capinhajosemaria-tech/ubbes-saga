@@ -41,6 +41,7 @@ Delegate routine work to the cheaper agents in `.claude/agents/` and keep the ma
 | `balance` | Sonnet | Balance questions: several bot runs, raid Monte Carlo, workers vs jobs, compared with the targets |
 | `shots` | Haiku | Screenshots joined into one contact sheet (`tools/ui/sheet.py`); then read only `tools/shots/sheet.png` |
 **Never use Fable (or Mythos) models** — not for agents, audits or anything else (José, 2026-11-11: save credits). Use the agents above; if a task seems to need a stronger model, use Opus/Sonnet or ask José first.
+**No balance-bot runs or audits unless José asks for them explicitly** (José, 2026-11-11); at the end of a round run only `tools/check.py` via the tester.
 Also: one round per conversation (start a new one after each release); run independent agents in parallel; never run checks or bots directly in the main conversation.
 
 ## Commands (run from the repository root)

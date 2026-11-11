@@ -1,6 +1,12 @@
 /* =================== Water Mill: a timber mill on the bank, its wheel turning in the river =================== */
 /* MILLV: 1 = undershot wheel beside a turf-roofed mill house; 2 = overshot wheel fed by a wooden chute, shingle roof */
 let MILLV=1;
+/* colour palettes for look A: 0 = first draft (brown logs, green turf) */
+let MILLP=1;
+const MILL_PAL=[{wall:'#7E6248',wallD:'#5F4936',roof:'#7F9568',roofD:'#6B8058',rt:'turf'},
+  {wall:'#8A8478',wallD:'#6B665C',roof:'#5A4A3C',roofD:'#47392E',rt:'shingle'},   /* 1: weathered grey timber, dark shingles */
+  {wall:'#8E3B2F',wallD:'#6E2C23',roof:'#7F9568',roofD:'#6B8058',rt:'turf'},      /* 2: red-painted walls, turf roof */
+  {wall:'#A88A69',wallD:'#86694E',roof:'#B39E66',roofD:'#97834F',rt:'thatch'}];   /* 3: pale timber, golden thatch */
 /* which side of the footprint the river lies on: '-y' (T–R edge), '+x' (R–Bt), '+y' (Bt–L), '-x' (L–T) */
 function millSide(b){const cnt={'-y':0,'+x':0,'+y':0,'-x':0},isR=(x,y)=>inMap(x,y)&&ter[y*N+x]===T.RIVER;
   for(let x=b.fx-1;x<=b.fx+b.w;x++){if(isR(x,b.fy-1))cnt['-y']+=2;if(isR(x,b.fy))cnt['-y']++;if(isR(x,b.fy+b.h))cnt['+y']+=2;if(isR(x,b.fy+b.h-1))cnt['+y']++;}
@@ -44,7 +50,7 @@ function drawMill(b,win,c0){
   if(back)wheel();
   /* the mill house */
   if(V===2)hall(hc,16,13,alongX,{wt:'planks',wall:'#8E6F52',wallD:'#6E543D',roof:'#6F5A47',roofD:'#5A4838',rt:'shingle',door:true},win);
-  else hall(hc,13,12,alongX,{wt:'logs',wall:'#7E6248',wallD:'#5F4936',roof:'#7F9568',roofD:'#6B8058',rt:'turf',door:true},win);
+  else{const PAL=MILL_PAL[window.__MILLP!==undefined?window.__MILLP:MILLP];hall(hc,13,12,alongX,Object.assign({wt:'logs',door:true},PAL),win);}
   /* flour sacks and a millstone leaning by the door side */
   const fr=lerp(hc.Bt,back?hc.L:hc.T,0.25);if(!win){[[0,0],[5,1.5],[2.5,-2.5]].forEach(o=>{ctx.fillStyle='#E4D9C0';ctx.beginPath();ctx.ellipse(fr[0]+o[0],fr[1]+o[1]-3,2.6,3.4,0,0,6.3);ctx.fill();ctx.fillStyle='#C9B98F';ctx.fillRect(fr[0]+o[0]-1.2,fr[1]+o[1]-7,2.4,1.2);});}
   const ms=lerp(hc.Bt,back?hc.R:hc.L,0.2);ctx.fillStyle=win?'#C2C5C3':'#9C9790';ctx.beginPath();ctx.ellipse(ms[0],ms[1]-5,2.2,5.2,0,0,6.3);ctx.fill();ctx.fillStyle='#6E6A64';ctx.beginPath();ctx.ellipse(ms[0],ms[1]-5,0.7,1.4,0,0,6.3);ctx.fill();

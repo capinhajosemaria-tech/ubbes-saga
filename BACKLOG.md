@@ -20,7 +20,7 @@ Order: **Round 1** → 1C → 1H → 1D → 1I → 1E → 1F → 1G → 1J. Bala
 ## This round — Round 1: economy, resources and first art (José, 2026-11-11)
 José asked for one big round with all economy, resource and decided art changes. It is larger than the usual 3–6 items, so it may take 2–3 conversations; release at the end, then **José plays (checkpoint)** before 1C.
 **Old saves will not load** (bump save keys). Update the balance bot (`tools/bots/bot4.js`) and Test villages for removed/new buildings so `tools/check.py` keeps passing; no bot balance runs unless José asks.
-**Progress (2026-11-11, conversation 1):** all economy and food items are in branch `round-1` (not released). Left: Water Mill look (A or B — José to choose), Harbour redesign, tutorial texts, SPEC/NUMBERS/CHANGELOG, `tools/check.py`, release.
+**Progress (2026-11-11, conversation 1):** all economy and food items are in branch `round-1` (not released). Water Mill = look A with palette 1 (grey timber, dark shingles; José). Left: Harbour redesign, tutorial texts, SPEC/NUMBERS/CHANGELOG, `tools/check.py`, release.
 Start by showing José the proposed numbers (yearly source limits, firewood, build times, Town Hall costs) before changing the game.
 **Numbers agreed (José, 2026-11-11):** year = 45 days (30 summer + 15 winter).
 - Yearly sources: tree 8 wood, berry bush 25, iron outcrop tile 60, water tile within 3 of a Fisher's Hut 20 fish (sea) / 12 (river). Refilled in spring.
@@ -49,7 +49,7 @@ Resources: food and drink
 - [x] **Brewery and Beehives move to TH3**; ale and mead are not meals (fixes E2): they are drunk at feasts and in the **Tavern** (unlocks with the Brewery), which uses them slowly and raises morale while stocked and working.
 
 Art
-- [ ] **Water Mill** stands on the river and looks like a real mill (wheel in the water): show 1–2 drawings first.
+- [x] **Water Mill** stands on the river and looks like a real mill (wheel in the water): show 1–2 drawings first.
 - [x] **Roads = option B "trodden earth"** (from branch `art-prototypes`): dark mud, deep wheel ruts, puddles reflecting the sky, stones, round worn bends, grass tufts over the edge. Door tracks and winter roads must match.
 - [x] **Door paths join the road** without overlapping, same style as roads but thinner.
 - [x] **Grass = option B**: large soft colour drift (no tile chessboard), two-tone grass clumps, darker grass and trampled earth around buildings.

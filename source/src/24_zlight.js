@@ -50,7 +50,7 @@ function drawLight(win,vis){const L=todNow(win);ctx.save();ctx.setTransform(dpr,
   const ov=lightOverlay(L);if(ov){ctx.globalCompositeOperation='screen';ctx.drawImage(ov.sun,0,0,W,H);ctx.globalCompositeOperation='source-over';ctx.drawImage(ov.base,0,0,W,H);}
   /* lamps: doors and windows glow, fires throw a warm pool */
   if(L.lights>0.02){ctx.setTransform(dpr*zoom,0,0,dpr*zoom,dpr*(W/2-camX*zoom),dpr*(H/2-camY*zoom));ctx.globalCompositeOperation='lighter';const a=L.lights;
-    for(const b of BS){if(FIELDS.has(b.t)||b.t==='pen'||b.t==='bench'||b.t==='wattle'||b.t==='herbs'||b.t==='hives')continue;
+    for(const b of BS){if(FIELDS.has(b.t)||b.t==='pigpen'||b.t==='sheeppen'||b.t==='bench'||b.t==='wattle'||b.t==='herbs'||b.t==='hives')continue;
       const st=sideTiles(b,SIDES[(b.rot||0)&3]);const m=st[Math.floor((st.length-1)/2)];if(!m)continue;
       const fx=(m[0]+(b.fx+b.w/2-.5))/2,fy=(m[1]+(b.fy+b.h/2-.5))/2;const sx=(fx-fy)*HW,sy=(fx+fy)*HH-elev[b.fy*N+b.fx];if(!vis(sx,sy))continue;
       const k=LIT_BIG[b.t]||1,R=34*k;ctx.globalAlpha=a;ctx.drawImage(GLOW,sx-R,sy-6-R,R*2,R*2);ctx.globalAlpha=1;ctx.fillStyle='rgba(255,214,150,'+(0.85*a).toFixed(3)+')';ctx.fillRect(sx-2,sy-15,4,5);}

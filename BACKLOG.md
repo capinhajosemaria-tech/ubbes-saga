@@ -21,6 +21,13 @@ Order: **Round 1** → 1C → 1H → 1D → 1I → 1E → 1F → 1G → 1J. Bala
 José asked for one big round with all economy, resource and decided art changes. It is larger than the usual 3–6 items, so it may take 2–3 conversations; release at the end, then **José plays (checkpoint)** before 1C.
 **Old saves will not load** (bump save keys). Update the balance bot (`tools/bots/bot4.js`) and Test villages for removed/new buildings so `tools/check.py` keeps passing; no bot balance runs unless José asks.
 Start by showing José the proposed numbers (yearly source limits, firewood, build times, Town Hall costs) before changing the game.
+**Numbers agreed (José, 2026-11-11):** year = 45 days (30 summer + 15 winter).
+- Yearly sources: tree 8 wood, berry bush 25, iron outcrop tile 60, water tile within 3 of a Fisher's Hut 20 fish (sea) / 12 (river). Refilled in spring.
+- Firewood option A (assumed, José did not pick): 0.5 a house a day in summer, 1.2 in winter (lv3+ houses ×0.75; Town Hall 2× a house). Planks burn as 2 wood each when logs run out, above the plank reserve. Wood costs unchanged until measured.
+- Build time: 1×1 decor ½ day, 1 worker; up to 2×2 1 day, 1 worker; 3×2 and 3×3 2 days, 2 workers; 4×3 and larger, and the Town Hall, 3 days, 3 workers. Upgrades take the same time.
+- Town Hall: TH2 110 wood, 70 planks, 20 iron, 22 people, house lv1; TH3 190 wood, 150 planks, 50 iron, 10 tools, 32 people, house lv2; TH4 320 wood, 270 planks, 100 iron, 20 tools, 100 silver, 48 people, house lv3; TH5 460 wood, 400 planks, 170 iron, 30 tools, 250 silver, 20 gold, 80 people, house lv4.
+- Warehouses and granaries: the first 2 of each at base price, the 3rd–5th each +30% on the previous one, then each further one +50% on the previous one.
+- Removing sources gives 2 wood per tree, 3 berries per bush.
 
 Economy
 - [ ] **Resource sources with a yearly limit**: trees, berry bushes, iron lines and fishing waters give a fixed amount per year (they stay on the map), refilled each spring, so winter draws on what is left. A building works the sources within its radius; buildings sharing sources split them. Show the radius and expected % when placing, and the % of maximum output on the building.

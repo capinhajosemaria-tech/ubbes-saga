@@ -10,5 +10,6 @@ for(let y=0;y<N;y++)for(let x=0;x<N;x++){
 }
 objs.sort((a,b)=>a.d-b.d);
 const TER0=ter.slice();
-function clearForest(i,silent){const x=i%N,y=(i/N)|0;let wood=0;for(const t of trees)if(t.x===x&&t.y===y){wood+=t.amt;t.amt=0;t.regrow=-1;t.gone=1;}ter[i]=T.GRASS;if(!silent){if(!S.cleared.includes(i))S.cleared.push(i);}return wood;}
-const REGROW=60, TREE_WOOD=25; /* a felled tree grows back in 60 days (≈1.3 years) */
+/* removes the trees or berry bushes on a tile for good; returns how many sources went */
+function clearForest(i,silent){const x=i%N,y=(i/N)|0;let wood=0;for(const t of trees)if(t.x===x&&t.y===y&&!t.gone){wood++;t.amt=0;t.regrow=-1;t.gone=1;}for(const t of bushes)if(t.x===x&&t.y===y&&!t.gone){wood++;t.amt=0;t.gone=1;}ter[i]=T.GRASS;if(!silent){if(!S.cleared.includes(i))S.cleared.push(i);}return wood;}
+const REGROW=60, TREE_WOOD=8;

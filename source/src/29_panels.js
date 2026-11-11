@@ -69,7 +69,7 @@ function peoplePanel(){assignWorkers();
   card.querySelectorAll('[data-tp]').forEach(b=>b.onclick=()=>{tabP=b.dataset.tp;peoplePanel();});
   card.querySelectorAll('[data-pf]').forEach(b=>b.onclick=()=>{peopleFilter=b.dataset.pf;peoplePanel();});
   card.querySelectorAll('[data-pid]').forEach(b=>b.onclick=()=>{const p=PB(+b.dataset.pid);if(p)personSheet(p);});}
-function warPanel(){let h=head('War','Warriors '+S.warriors+' / '+warCap());
+function warPanel(){let h=head('War','Warriors '+S.warriors);
   const by={};S.people.filter(p=>p.w).forEach(p=>{by[p.w]=(by[p.w]||0)+1;});
   h+='<h3>Troops</h3><table class="t">'+Object.keys(TROOPS).filter(k=>TROOPS[k].lv<=thLevel()).map(k=>'<tr><td>'+TROOPS[k].n+' <span class="meta">strength '+TROOPS[k].str+'</span></td><td>'+(by[k]||0)+'</td></tr>').join('')+'<tr><td>In training</td><td>'+(S.train?S.train.n+' '+TROOPS[S.train.type].n.toLowerCase()+'s · '+S.train.left+' days':'none')+'</td></tr><tr><td>Unarmed</td><td>'+S.people.filter(p=>p.w&&p.ua).length+'</td></tr></table>';
   h+='<h3>Arsenal</h3><table class="t">'+ARMS.filter(k=>SMITH[k]&&SMITH[k].lv<=thLevel()).map(k=>'<tr><td>'+RNAME[k]+'</td><td>'+fmt(S.res[k])+'</td></tr>').join('')+'</table>';
@@ -135,13 +135,18 @@ function altarHtml(on){let h='<p>Offer goods to raise a god’s favour. At 50 th
       toast(GODS[k].bless.n+': '+GODS[k].bless.d+'.',4000);checkMilestones();buildingSheet(sel.b);save();});});
   return h;}
 function trainHtml(b,on){const avT=Object.keys(TROOPS).filter(k=>TROOPS[k].lv<=thLevel()&&k!=='merc');if(!avT.includes(S.trainType))S.trainType=avT[avT.length-1];
-  let h='<table class="t"><tr><td>Warriors</td><td>'+S.warriors+' / '+warCap()+'</td></tr>'+(S.train?'<tr><td>In training</td><td>'+S.train.n+' '+TROOPS[S.train.type].n.toLowerCase()+'s · '+S.train.left+' days left</td></tr>':'')+'</table>';
+  let h='<table class="t"><tr><td>Warriors</td><td>'+S.warriors+'</td></tr>'+(S.train?'<tr><td>In training</td><td>'+S.train.n+' '+TROOPS[S.train.type].n.toLowerCase()+'s · '+S.train.left+' days left</td></tr>':'')+'</table>';
   h+='<h3>Train as</h3><div class="prio" role="group">'+avT.map(k=>'<button type="button" data-tt="'+k+'" aria-pressed="'+(S.trainType===k)+'">'+TROOPS[k].n+'</button>').join('')+'</div>';
-  const tp=trainPlan(S.trainType,b.lvl),batch=tp.batch;const T=TROOPS[S.trainType];h+='<p>'+esc(T.d)+' Strength '+T.str+'. Each recruit takes '+esc(costStr(T.eq))+'.</p><p class="meta">A batch trains for 10 days. Recruits leave their work. Warriors eat 1½ meals but help with chores in winter.</p>';
-  if(!S.train&&batch>0)h+='<div class="acts">'+btn('tr-go','Train '+batch+' '+T.n.toLowerCase()+'s',{cls:'primary'})+'</div>';
-  if(tp.up.length)h+='<div class="meta">The warrior limit is full: '+tp.up.length+' weaker '+(tp.up.length>1?'troops':'troop')+' at home will retrain as '+T.n.toLowerCase()+'s.</div>';
-  if(batch<=0)h+='<div class="meta">The Town Hall must rise to hold more warriors.</div>';
-  on.push(()=>{$('sheet-card').querySelectorAll('[data-tt]').forEach(x=>x.onclick=()=>{S.trainType=x.dataset.tt;buildingSheet(b);});if($('tr-go'))$('tr-go').onclick=()=>{const why=startTraining(S.trainType);if(why){toast(why);return;}toast('Training has begun.');buildingSheet(b);save();};});
+  const T=TROOPS[S.trainType],room=trainRoom(S.trainType,b.lvl);if(S.trainN===undefined)S.trainN=room.n;S.trainN=Math.max(0,Math.min(S.trainN,room.n));
+  h+='<p>'+esc(T.d)+' Strength '+T.str+'. Each recruit takes '+esc(costStr(T.eq))+'.</p><p class="meta">A batch trains for 10 days. Recruits leave their work. Warriors eat 1½ meals but help with chores in winter. There is no limit on warriors: free workers and gear decide.</p>';
+  if(!S.train){h+='<div class="wk"><button type="button" class="btn small" id="tr-minus" aria-label="Fewer recruits" '+(S.trainN<=0?'disabled':'')+'>−</button><span class="num">'+S.trainN+' <span class="meta">recruits</span></span><button type="button" class="btn small" id="tr-plus" aria-label="More recruits" '+(S.trainN>=room.n?'disabled':'')+'>+</button><span class="meta">'+freeWorkers+' free in the village · at most '+esc(room.why)+'</span></div>';
+    if(S.trainN>0)h+='<div class="acts">'+btn('tr-go','Train '+S.trainN+' '+T.n.toLowerCase()+(S.trainN>1?'s':''),{cls:'primary'})+'</div>';
+    const up=retrainList(S.trainType);if(up.length){const n=Math.min(up.length,trainMax(b.lvl));h+='<div class="acts">'+btn('tr-up','Retrain '+n+' weaker troop'+(n>1?'s':'')+' as '+T.n.toLowerCase()+'s')+'</div>';}}
+  on.push(()=>{$('sheet-card').querySelectorAll('[data-tt]').forEach(x=>x.onclick=()=>{S.trainType=x.dataset.tt;S.trainN=undefined;buildingSheet(b);});
+    if($('tr-minus'))$('tr-minus').onclick=()=>{S.trainN=Math.max(0,S.trainN-1);buildingSheet(b);};
+    if($('tr-plus'))$('tr-plus').onclick=()=>{S.trainN=Math.min(trainRoom(S.trainType,b.lvl).n,S.trainN+1);buildingSheet(b);};
+    if($('tr-go'))$('tr-go').onclick=()=>{const why=startTraining(S.trainType,S.trainN);if(why){toast(why);return;}S.trainN=undefined;toast('Training has begun.');buildingSheet(b);save();};
+    if($('tr-up'))$('tr-up').onclick=()=>{const why=startTraining(S.trainType,trainMax(b.lvl),true);if(why){toast(why);return;}toast('Retraining has begun.');buildingSheet(b);save();};});
   return h;}
 function smithHtml(b,on){const modes=Object.keys(SMITH).filter(k=>SMITH[k].lv<=thLevel());if(!modes.includes(b.mode))b.mode='tools';
   let h='<div class="meta">Anvil: '+Math.max(0,Math.round(b.anvil))+'% · iron in store: '+fmt(S.res.iron)+(S.res.iron<10?' (keep 10 for a new anvil)':'')+'</div>';

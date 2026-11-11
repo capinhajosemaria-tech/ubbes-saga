@@ -25,9 +25,9 @@ function tipHtml(k){const c=CHIPS.find(q=>q[0]===k),r=S.res,bal=(S.bal||{})[k],L
   if(bal!==undefined){const prod=Object.values(L).reduce((a,v)=>a+v,0),used=Math.max(0,prod-bal);
     h+='<div class="tr"><span>Yesterday</span><span class="'+(bal>=0?'up':'dn')+'">'+(bal>=0?'+':'')+bal.toFixed(1)+' / day</span></div>';
     const items=Object.entries(L).sort((a,b)=>b[1]-a[1]).slice(0,6);
-    if(items.length)h+='<div class="ts">Made by</div>'+items.map(e=>'<div class="tr"><span>'+esc(DEF[e[0]]?DEF[e[0]].name:e[0]==='pen'?'Herd':'Trade and finds')+'</span><span class="up">+'+e[1].toFixed(1)+'</span></div>').join('');
+    if(items.length)h+='<div class="ts">Made by</div>'+items.map(e=>'<div class="tr"><span>'+esc(DEF[e[0]]?DEF[e[0]].name:e[0]==='pen'?'Herds':'Trade and finds')+'</span><span class="up">+'+e[1].toFixed(1)+'</span></div>').join('');
     if(used>0.05)h+='<div class="tr"><span>'+(k==='food'?'Eaten':k==='wood'?'Burned and worked':k==='water'?'Drunk':'Used')+'</span><span class="dn">−'+used.toFixed(1)+'</span></div>';
-    if(k==='food'||k==='water'||k==='wood'){const lim=k==='food'?eatNeed():k==='water'?S.pop:fireNeed();if(bal<0){const have=k==='food'?foodUnits():r[k];h+='<p class="warnp">Lasts about '+Math.max(0,Math.floor(have/(-bal)))+' days at this rate.</p>';}}}
+    if(k==='food'||k==='water'||k==='wood'){const lim=k==='food'?eatNeed():k==='water'?S.pop:fireToday();if(bal<0){const have=k==='food'?foodUnits():r[k];h+='<p class="warnp">Lasts about '+Math.max(0,Math.floor(have/(-bal)))+' days at this rate.</p>';}}}
   if(k==='morale'&&S.mf)h+=S.mf.slice().sort((a,b)=>Math.abs(b.v)-Math.abs(a.v)).slice(0,6).map(f=>'<div class="tr"><span>'+esc(f.t)+'</span><span class="'+(f.v>=0?'up':'dn')+'">'+(f.v>0?'+':'')+f.v+'</span></div>').join('');
   return h;}
 document.querySelectorAll('.chip').forEach(b=>{b.addEventListener('mouseenter',()=>{const t=$('rtip');t.innerHTML=tipHtml(b.dataset.res);t.hidden=false;const rc=b.getBoundingClientRect();t.style.left=Math.max(8,Math.min(innerWidth-288,rc.left+rc.width/2-140))+'px';t.style.top=(rc.bottom+8)+'px';});
@@ -71,6 +71,7 @@ function buildingSheet(b){
     assignWorkers();h+='<div class="wk"><button type="button" class="btn small" id="w-minus" aria-label="Fewer workers" '+(b.desired<=0?'disabled':'')+'>−</button><span class="num">'+b.desired+' / '+sl+' <span class="meta">workers</span></span><button type="button" class="btn small" id="w-plus" aria-label="More workers" '+(b.desired>=sl||freeWorkers<=0?'disabled':'')+'>+</button><span class="meta">'+freeWorkers+' free in the village</span></div>';
     if(D.out){const pc=Math.round(100*(b.workers||0)/sl);h+='<div class="outpct"><span class="meta">Output from workers</span><span class="bar"><i style="width:'+pc+'%"></i></span><strong>'+pc+'%</strong><span class="meta">'+(b.workers||0)+' of '+sl+' working · each worker adds '+Math.round(100/sl)+'%</span></div>';}
     h+='<p>'+esc(D.out||'')+(b.made?' · <strong>Yesterday: '+esc(b.made)+'</strong>':'')+'</p>';
+    if(SRC_OF[b.t]){const I=srcInfo(b,false),pc=Math.round(I.pct*100);h+='<div class="outpct"><span class="meta">Sources in range</span><span class="bar"><i style="width:'+pc+'%"></i></span><strong>'+pc+'%</strong><span class="meta">of maximum yearly output, with all workers</span></div>';}
     if(D.need){const nc=needCount(b,D.need);h+='<div class="meta">'+esc(nc.label)+'</div>';}
     if(!b.conn&&D.road!==false)h+='<p style="color:#8E3B2F">Connect this building to the Town Hall with a road.</p>';
     on.push(()=>{$('w-minus').onclick=()=>{b.desired=Math.max(0,b.desired-1);assignWorkers();buildingSheet(b);save();};$('w-plus').onclick=()=>{assignWorkers();if(freeWorkers<=0){toast('No free workers. Take someone off another building first.');return;}b.desired=Math.min(sl,b.desired+1);assignWorkers();buildingSheet(b);save();};});
@@ -78,7 +79,7 @@ function buildingSheet(b){
   if(b.t==='smith')h+=smithHtml(b,on);
   if(b.t==='carp'){h+='<div class="wk"><span class="meta">Wood reserve</span><button type="button" class="btn small" id="rv-minus" aria-label="Lower the wood reserve">−10</button><span class="num">'+S.woodReserve+'</span><button type="button" class="btn small" id="rv-plus" aria-label="Raise the wood reserve">+10</button><span class="meta">never sawn</span></div>';
     on.push(()=>{$('rv-minus').onclick=()=>{S.woodReserve=Math.max(0,S.woodReserve-10);buildingSheet(b);save();};$('rv-plus').onclick=()=>{S.woodReserve=Math.min(300,S.woodReserve+10);buildingSheet(b);save();};});}
-  if(b.t==='pen'){const hn=herdTotal()*0.4;h+='<table class="t"><tr><td>Pigs</td><td>'+S.herd.pigs+'</td></tr><tr><td>Sheep</td><td>'+S.herd.sheep+'</td></tr><tr><td>Room in the pens</td><td>'+herdCap()+'</td></tr><tr><td>Hay in store</td><td>'+fmt(S.res.hay)+'</td></tr><tr><td>Hay eaten per winter day</td><td>'+hn.toFixed(1)+' ('+fmt(hn*15)+' for a whole winter)</td></tr></table><p>Animals above the pen’s room are slaughtered for 10 meat and a hide each.</p>';}
+  if(b.t==='pigpen'||b.t==='sheeppen'){const sheep=b.t==='sheeppen',hn=herdTotal()*0.4;h+='<table class="t"><tr><td>'+(sheep?'Sheep':'Pigs')+'</td><td>'+(sheep?S.herd.sheep:S.herd.pigs)+' / '+(sheep?sheepCap():pigCap())+'</td></tr><tr><td>Fodder in store</td><td>'+fmt(S.res.fodder)+'</td></tr><tr><td>Fodder eaten per winter day (all animals)</td><td>'+hn.toFixed(1)+' ('+fmt(hn*15)+' for a whole winter)</td></tr></table><p>'+(sheep?'Sheep above the pens’ room are slaughtered for 8 meat and a hide each.':'Pigs above the pens’ room are slaughtered for 10 meat and a hide each.')+'</p>';}
   if(b.t==='altar')h+=altarHtml(on);
   if(b.t==='train')h+=trainHtml(b,on);
   if(b.t==='thrall')h+='<table class="t"><tr><td>Thralls</td><td>'+S.thralls+' / '+thrallCap()+'</td></tr><tr><td>Treatment</td><td>'+(S.pol.thralls==='harsh'?'Harsh':'Mild')+'</td></tr></table><p>Thralls come from raids (take prisoners) or from merchants. They work like anyone else but cannot be warriors. Set their treatment in Village → Policies.</p>';
@@ -94,7 +95,6 @@ function buildingSheet(b){
   if(b.t==='tomb')h+=tombHtml(b,on);
   if(b.t==='tower')h+='<p>Archers at home: '+S.people.filter(p=>p.w==='archer'&&!p.away).length+'. Each tower needs 2 to count.</p>';
   if(b.t==='th'){const q=thReq();h+='<p>'+esc(D.desc)+'</p>'+thExtraHtml(on);
-    if(q){h+='<div class="wk"><span class="meta">Keep materials for the next hall</span><div class="prio" role="group"><button type="button" data-sh="1" aria-pressed="'+(S.saveHall!==false)+'">On</button><button type="button" data-sh="0" aria-pressed="'+(S.saveHall===false)+'">Off</button></div><span class="meta">Once every other requirement is met, workshops stop using the wood, planks and iron the hall needs.</span></div>';on.push(()=>{$('sheet-card').querySelectorAll('[data-sh]').forEach(x=>x.onclick=()=>{S.saveHall=x.dataset.sh==='1';buildingSheet(b);save();});});}
     if(q){h+='<h3>Raise to level '+q.lv+'</h3>'+q.items.map(i=>'<div class="ms'+(i.ok?' done':'')+'"><i aria-hidden="true"></i><div>'+esc(i.t)+'</div></div>').join('')+'<div class="acts">'+btn('th-up','Raise the hall to level '+q.lv,{cls:'primary',dis:!q.ok})+'</div>';
       on.push(()=>{$('th-up').onclick=()=>{if(upgradeTH()){closeSheet();save();}};});}
     else h+='<p>The hall stands at its highest level for this update.</p>';
@@ -104,31 +104,29 @@ function buildingSheet(b){
   if(D.housing)h+='<div class="meta">Shelters '+(b.t==='house'?HOUSE_CAP[b.lvl-1]:D.housing)+' people'+(b.t==='house'&&b.lvl>=3?' · burns ¾ firewood':'')+'</div>';
   if(D.store)h+='<div class="meta">Storage: '+(D.store.food?(300+150*(b.lvl-1))+' food':D.store.mat?(300+150*(b.lvl-1))+' goods':(60+30*(b.lvl-1))+' weapons')+'</div>';
 
-  if(D.up){const nx=b.lvl+1;if(b.lvl>=5)h+='<div class="meta">Highest level reached.</div>';
+  if(b.cons)h+=consHtml(b);
+  if(D.up&&!(b.cons&&b.cons.k==='build')){const nx=b.lvl+1;if(b.cons&&b.cons.k==='up');else if(b.lvl>=5)h+='<div class="meta">Highest level reached.</div>';
     else{const c=upCost(b),need=canUpgrade(b);const eff=b.t==='house'?('+1 resident'+(nx===3?', better insulated: −25% firewood':nx===5?', a carved hall that draws newcomers':'')):D.store?'+150 storage':nx===2?'+20% output':nx===3?(FIELDS.has(b.t)?'+30% output in all':'+1 worker slot'):nx===4?'+40% output in all':'Finest work: +55% output in all';
       h+='<div class="wk">'+btn('b-up','Upgrade to level '+nx,{cls:'primary',dis:!need||!afford(c)})+'<span class="meta">'+esc(eff)+' · '+costIco(c)+(need?'':' · raise the Town Hall first')+'</span></div>';
-      on.push(()=>{$('b-up').onclick=()=>{if(!canUpgrade(b)||!afford(upCost(b)))return;pay(upCost(b),1);b.lvl++;assignWorkers();toast(D.name+' upgraded to level '+b.lvl+'.');buildingSheet(b);save();};});}}
+      on.push(()=>{$('b-up').onclick=()=>{if(!canUpgrade(b)||!afford(upCost(b)))return;pay(upCost(b),1);startCons(b,'up',b.lvl+1);assignWorkers();toast(D.name+': upgrade to level '+b.cons.lv+' started. It keeps working meanwhile.');buildingSheet(b);save();};});}}
   if(b.t==='th'){h+='<div class="acts"><button type="button" class="btn" id="b-move">Move or rotate</button></div>';on.push(()=>{$('b-move').onclick=()=>{closeSheet();startPlace('th',b);};});}
-  if(!D.fixed){h+='<div class="acts"><button type="button" class="btn danger" id="b-demo">'+(demolishArmed===b.id?'Tap again to demolish':'Demolish (50% back)')+'</button><button type="button" class="btn" id="b-move">Move</button></div>';
-    on.push(()=>{$('b-demo').onclick=()=>{if(demolishArmed!==b.id){demolishArmed=b.id;buildingSheet(b);return;}demolishArmed=0;
-        if(D.housing&&housing()-D.housing<S.pop){toast('Not enough room elsewhere for the people living here.');return;}
-        pay(b.paid||D.cost,-0.5);B=B.filter(o=>o!==b);rebuildOcc();recomputeConn();assignWorkers();closeSheet();toast(D.name+' demolished. Half the materials returned.');save();};
-      $('b-move').onclick=()=>{closeSheet();startPlace(b.t,b);};});}
+  if(!D.fixed){h+='<div class="acts"><button type="button" class="btn" id="b-move">Move</button></div><div class="meta">To remove it, use Remove next to Roads.</div>';
+    on.push(()=>{      $('b-move').onclick=()=>{closeSheet();startPlace(b.t,b);};});}
   openSheet(h,'building');on.forEach(f=>f());
 }
 let clearArmed=-1;
 function tileSheet(x,y){
   sel={x:x,y:y};const tt=ter[y*N+x],zx=Math.floor(x/6),zy=Math.floor(y/6),un=isUnl(x,y),cost=zoneCost(zx,zy);
   const TN={0:'Sea',1:'Beach',2:'Meadow',3:'Forest',4:'Mountains',5:'Foothills',6:'River',7:'Berry bushes',8:'Iron outcrop'};
-  const TX={0:'Open water. Fishers, salt works and the harbour work from the shore.',1:'Sand and shingle. Good ground for fishers, the salt works and the harbour.',2:'Open ground for houses, workshops, fields and roads.',3:'Woodcutters fell trees here; hunters stalk game. Felled trees grow back.',4:'The mountains close the land off. Nothing can be built here.',5:'Rocky ground at the foot of the mountains. Mines go here.',6:'Fresh water. Fishers work from its banks; roads cross it as bridges.',7:'Gatherers pick berries here in summer. Bushes rest in winter.',8:'Iron ore. Place an iron mine within 4 tiles.'};
+  const TX={0:'Open water. Each tile within 3 of a fisher’s hut gives 20 fish a year (river 12).',1:'Sand and shingle. Good ground for fishers and the harbour.',2:'Open ground for houses, workshops, fields and roads.',3:'Woodcutters work these trees. Each tree gives 8 wood a year, refilled every spring.',4:'The mountains close the land off. Nothing can be built here.',5:'Rocky ground at the foot of the mountains. Mines go here.',6:'Fresh water. Fishers work from its banks; roads cross it as bridges.',7:'Gatherers pick berries here in summer: 25 a bush each year. Bushes rest in winter.',8:'Iron ore: 60 iron a year. Place an iron mine within 4 tiles.'};
   let extra='';
-  if(tt===T.FOREST){const ts=trees.filter(o=>o.x===x&&o.y===y);if(ts.length){const tr=ts[0];extra=tr.amt>0?'Wood left here: '+fmt(ts.reduce((a,o)=>a+o.amt,0)):'Felled · grows back in '+Math.ceil(tr.regrow)+' days';}}
-  if(tt===T.BERRY){const bs=bushes.find(o=>o.x===x&&o.y===y);if(bs)extra='Berries left this summer: '+fmt(bs.amt);}
+  if(tt===T.FOREST){const ts=trees.filter(o=>o.x===x&&o.y===y&&!o.gone);if(ts.length)extra='Wood left here this year: '+fmt(ts.reduce((a,o)=>a+o.amt,0))+' of '+ts.reduce((a,o)=>a+o.cap,0);}
+  if(tt===T.BERRY){const bs=bushes.find(o=>o.x===x&&o.y===y&&!o.gone);if(bs)extra='Berries left this year: '+fmt(bs.amt)+' of '+bs.cap;}
+  if(tt===T.IRON||tt===T.SEA||tt===T.RIVER){const o=SRCAT[y*N+x];if(o)extra=(tt===T.IRON?'Iron':'Fish')+' left here this year: '+fmt(o.amt)+' of '+o.cap;}
   let h=head(TN[tt],zoneName(zx,zy)+' · '+(un?'Unlocked':'Locked'))+'<p>'+esc(TX[tt])+'</p>'+(extra?'<div class="meta">'+esc(extra)+'</div>':'');
-  const canClear=tt===T.FOREST&&un&&!occ[y*N+x];if(canClear)h+='<h3>Clear the land</h3><p>Fell and uproot these trees for good. You keep half their wood, but nothing grows back here: the tile becomes open meadow for building.</p><div class="acts"><button type="button" class="btn danger" id="t-clear">'+(clearArmed===y*N+x?'Tap again to clear for good':'Clear the trees')+'</button></div>';
+  if((tt===T.FOREST||tt===T.BERRY)&&un)h+='<div class="meta">To clear these for good, use Remove next to Roads.</div>';
   if(!un){const adj=zoneAdj(zx,zy);h+='<div class="acts"><button type="button" class="btn primary" id="z-un" '+(adj&&S.fame>=cost?'':'disabled')+'>Unlock for '+cost+' fame</button></div>'+(!adj?'<div class="meta">Unlock a neighbouring land first.</div>':S.fame<cost?'<div class="meta">You have '+fmt(S.fame)+' fame. Complete saga goals to earn more.</div>':'');}
   openSheet(h,'tile');
-  if($('t-clear'))$('t-clear').onclick=()=>{const i=y*N+x;if(clearArmed!==i){clearArmed=i;tileSheet(x,y);return;}clearArmed=-1;const w=clearForest(i,false);const g=addRes('wood',w*0.5);toast('The trees are gone. +'+fmt(g)+' wood. The ground is open for building.');save();tileSheet(x,y);};
   if(!un&&$('z-un'))$('z-un').onclick=()=>{if(S.fame<cost)return;S.fame-=cost;unlocked.add(zx+','+zy);toast(zoneName(zx,zy)+' is now part of Kaldstrand.');save();tileSheet(x,y);};
 }
 
@@ -140,7 +138,7 @@ function renderBuild(){if(isWide()){if(mode!=='view')endMode();closeSheet();open
   h+='<div class="tabs" role="group" aria-label="Categories">'+CATS.map(c=>'<button type="button" data-cat="'+c+'" aria-pressed="'+(c===buildCat)+'">'+c+'</button>').join('')+'</div><div class="blist">';
   Object.keys(DEF).filter(k=>DEF[k].cat===buildCat).forEach(k=>{const D=DEF[k],av=isAvail(k),lim=limitOf(k),cnt=count(k),uq=cnt>=lim,cst=costOf(k),free=!Object.keys(cst).length&&Object.keys(D.cost).length,ok=av&&!uq&&afford(cst);
     const lock=D.lvl>thLevel()?'Needs Town Hall level '+D.lvl:!av?'Unlocks with: '+(MS.find(m=>m.unlock.includes(k))||{title:'?'}).title:uq?'Limit reached for this level':'';
-    h+='<button type="button" class="bcard'+(ok?'':' no')+'" data-b="'+k+'"><img class="bth" alt="" src="'+buildThumb(k,1)+'"><b>'+esc(D.name)+'</b>'+(D.lvl<=thLevel()?'<span class="lim">Built '+cnt+' / '+lim+'</span>':'')+'<span>'+D.w+'×'+D.h+(D.slots?' · '+D.slots+' workers':'')+(D.housing?' · '+D.housing+' people':'')+'</span><span class="cost'+(av&&!afford(cst)?' bad':'')+'">'+(free?'First one free':costIco(cst))+'</span>'+(lock?'<span>'+esc(lock)+'</span>':'')+'</button>';});
+    h+='<button type="button" class="bcard'+(ok?'':' no')+'" data-b="'+k+'"><img class="bth" alt="" src="'+buildThumb(k,1)+'"><b>'+esc(D.name)+'</b>'+(D.lvl<=thLevel()?'<span class="lim">Built '+cnt+(UNLIMITED.has(k)?'':' / '+lim)+'</span>':'')+'<span>'+D.w+'×'+D.h+(D.slots?' · '+D.slots+' workers':'')+(D.housing?' · '+D.housing+' people':'')+'</span><span class="cost'+(av&&!afford(cst)?' bad':'')+'">'+(free?'First one free':costIco(cst))+'</span>'+(lock?'<span>'+esc(lock)+'</span>':'')+'</button>';});
   h+='</div>';openSheet(h,'build');
   $('sheet-card').querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{buildCat=b.dataset.cat;renderBuild();});
   $('sheet-card').querySelectorAll('.bcard').forEach(c=>c.onclick=()=>{const k=c.dataset.b,D=DEF[k];
@@ -161,15 +159,21 @@ function startPlace(t,moving){mode='place';place={t:t,rot:moving?moving.rot:0,mo
   if(moving){const p=iso(moving.fx+moving.w/2-0.5,moving.fy+moving.h/2-0.5);camX=p[0];camY=p[1];}
   updatePlaceBar();}
 let lastPlaceKey='';
-function updatePlaceBar(){if(mode!=='place'||!place)return;const D=DEF[place.t],chk=place.chk||{ok:false,why:'Move the map to choose a spot'};
+function updatePlaceBar(){if(mode!=='place'||!place)return;if(place.asking){if(place.asking===place.fx+','+place.fy+','+place.rot)return;place.asking=null;lastPlaceKey='';}const D=DEF[place.t],chk=place.chk||{ok:false,why:'Move the map to choose a spot'};
   const key=place.t+place.rot+(chk.ok?1:0)+(chk.why||'')+(chk.label||'');if(key===lastPlaceKey)return;lastPlaceKey=key;
   const msg='<strong>'+esc(D.name)+'</strong> · '+esc(place.moving?'moving (free)':(Object.keys(costOf(place.t)).length?costStr(costOf(place.t)):'free'))+'<br>'+(chk.ok?esc(chk.label||'Drag the map to choose a spot, then place.'):esc(chk.why))+(D.cat!=='Decor'&&!FIELDS.has(place.t)?'<br><span class="meta">Entrance faces '+SIDE_ARROW[place.rot&3]+'. Rotate to turn it to any side.</span>':'');
   setModeBar(msg,!chk.ok,[{label:'Cancel',fn:()=>{endMode();}},{label:'Rotate '+SIDE_ARROW[place.rot&3],fn:()=>{place.rot=((place.rot|0)+1)%4;lastPlaceKey='';}},{label:place.moving?'Move here':'Place',cls:'primary',disabled:!chk.ok,fn:confirmPlace}]);}
 function confirmPlace(){if(!place||!place.chk||!place.chk.ok)return;const D=DEF[place.t];
+  /* building over trees or bushes: ask first */
+  const cl=(place.chk.clears||[]).filter(i=>{const p=plantsOn(i);return p.t||p.b;});
+  if(cl.length&&!place.moving&&place.asked!==place.fx+','+place.fy+','+place.rot){let nt=0,nb=0;cl.forEach(i=>{const p=plantsOn(i);nt+=p.t;nb+=p.b;});const w=[],g=[];if(nt){w.push(nt+' tree'+(nt>1?'s':''));g.push(nt*CLEAR_GIVE.tree+' wood');}if(nb){w.push(nb+' berry bush'+(nb>1?'es':''));g.push(nb*CLEAR_GIVE.bush+' berries');}
+    const k=place.fx+','+place.fy+','+place.rot;place.asking=k;
+    setModeBar('<strong>Remove these resource sources?</strong> '+esc(w.join(' and '))+' will go for good. You get '+esc(g.join(' and '))+'.',false,[{label:'No',fn:()=>{place.asking=null;lastPlaceKey='';updatePlaceBar();}},{label:'Yes, remove and place',cls:'primary',fn:()=>{place.asking=null;place.asked=k;lastPlaceKey='';confirmPlace();}}]);return;}
+  if(cl.length&&!place.moving){const gv=clearTiles(cl);toast(clearTxt(gv));}
   if(place.moving){const b=place.moving;const d=dims(b.t,place.rot);b.fx=place.fx;b.fy=place.fy;b.rot=place.rot;b.w=d.w;b.h=d.h;rebuildOcc();recomputeConn();assignWorkers();toast(D.name+' moved.');endMode();save();return;}
   const cst=costOf(place.t);if(!afford(cst)){toast('Not enough materials.');endMode();return;}
-  pay(cst,1);const b=addBuilding(place.t,place.fx,place.fy,place.rot,false);b.paid=cst;assignWorkers();b.desired=Math.min(slotsOf(b),freeWorkers);assignWorkers();checkMilestones();
-  toast(D.name+' built.'+(D.slots&&!b.conn&&D.road!==false?' Connect it with a road.':''));save();
+  pay(cst,1);const b=addBuilding(place.t,place.fx,place.fy,place.rot,false);b.paid=cst;startCons(b,'build');assignWorkers();if(!b.cons){b.desired=Math.min(slotsOf(b),freeWorkers);assignWorkers();}checkMilestones();
+  toast(b.cons?D.name+': construction started ('+(b.cons.days<1?'half a day':b.cons.days+' day'+(b.cons.days>1?'s':''))+', '+b.cons.w+' builder'+(b.cons.w>1?'s':'')+').'+(b.cons.builders?'':' It waits for a free worker.'):D.name+' built.');save();
   if(count(place.t)>=limitOf(place.t)||!afford(costOf(place.t)))endMode();else lastPlaceKey='';}
 let roadErase=false;
 /* roads: tap a start, tap an end, see a ghost of the road, confirm */
@@ -202,7 +206,7 @@ function roadBar(){const G=roadKind==='wall'?walls:roads;const n=roadPrev?roadPr
   if(W)msg+=' <span class="meta">Palisade: '+(S.wallClosed?'closed':'not closed yet')+'.</span>';
   if(!roadLock)msg+=' <span class="meta">Drag to move the map. Gold dots: not connected to the Town Hall.</span>';
   const btns=roadLock?[{label:'Cancel',fn:roadReset},{label:roadErase?'Remove':W?'Build palisade':'Build road',cls:'primary',disabled:!roadPrev||!n||(W&&!roadErase&&!afford(wc)),fn:confirmRoad}]
-    :[{label:'Close',fn:()=>{endMode();save();}},{label:roadErase?'Draw':'Erase',fn:()=>{roadErase=!roadErase;roadReset();}}].concat(roadA?[{label:'Cancel',fn:roadReset}]:[]);
+    :[{label:'Close',fn:()=>{endMode();save();}},{label:'Remove…',fn:()=>{endMode();startRemove();if(typeof renderDock==='function')renderDock();}}].concat(roadA?[{label:'Cancel',fn:roadReset}]:[]);
   setModeBar(msg,roadFail&&roadLock,btns);}
 function roadTarget(t){if(!roadA)return;if(t[0]===roadA[0]&&t[1]===roadA[1]){roadPrev=roadOK(t[0],t[1])?[t]:null;roadFail=false;return;}const p=roadPath(roadA,t);roadFail=!p;roadPrev=p;}
 function roadTap(t){if(!inMap(t[0],t[1]))return;
@@ -231,6 +235,7 @@ function tap(px,py){
   const w=s2w(px,py),tt=w2t(w[0],w[1]);
   if(mode==='place'){camX=w[0];camY=w[1];clampCam();return;}
   if(mode==='road'){roadTap(tt);return;}
+  if(mode==='remove'){removeTap(tt);return;}
   for(let k=0;k<4;k++){const x=tt[0]+k,y=tt[1]+k;if(!inMap(x,y))continue;const id=occ[y*N+x];if(id){const b=B.find(o=>o.id===id);if(b){demolishArmed=0;buildingSheet(b);return;}}}
   if(!inMap(tt[0],tt[1])){closeSheet();return;}
   tileSheet(tt[0],tt[1]);

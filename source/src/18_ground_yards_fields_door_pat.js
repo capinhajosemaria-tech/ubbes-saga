@@ -1,13 +1,13 @@
 /* =================== ground: yards, fields, door paths =================== */
-const FIELDS=new Set(['hay','garden','grain','flax']);
+const FIELDS=new Set(['fodder','grain','flax']);
 function jitterRing(c,pad,seed){const cx=(c.T[0]+c.Bt[0])/2,cy=(c.T[1]+c.Bt[1])/2,out=[];const corners=[c.T,c.R,c.Bt,c.L];
   for(let e=0;e<4;e++){const a=corners[e],b=corners[(e+1)%4];for(let k=0;k<3;k++){const p=lerp(a,b,k/3);const dx=p[0]-cx,dy=p[1]-cy,len=Math.hypot(dx,dy)||1;const j=pad+(h2(seed,e*3+k,77)-0.5)*7;out.push(p[0]+dx/len*j,p[1]+dy/len*j*0.6);}}return out;}
 function summerProgress(){const yt=S.gameT%YEAR;return yt<SUMMER?yt/SUMMER:1;}
 function drawField(b,c,win){
-  const soil=win?'#D9DCD8':'#8A7558',rows=b.t==='hay'?0:Math.max(b.w,b.h)*2;
-  poly(P(c.T,c.R,c.Bt,c.L),win?'#DDE1DE':b.t==='hay'?'#9AAA72':soil);
+  const soil=win?'#D9DCD8':'#8A7558',rows=b.t==='fodder'?0:Math.max(b.w,b.h)*2;
+  poly(P(c.T,c.R,c.Bt,c.L),win?'#DDE1DE':b.t==='fodder'?'#9AAA72':soil);
   const along=b.w>=b.h,n=along?b.h*3:b.w*3,p=summerProgress();
-  if(b.t==='hay'){if(win)return;ctx.strokeStyle=p<0.6?'#8FA368':'#B9B276';ctx.lineWidth=1.2;ctx.beginPath();
+  if(b.t==='fodder'){if(win)return;ctx.strokeStyle=p<0.6?'#8FA368':'#B9B276';ctx.lineWidth=1.2;ctx.beginPath();
     for(let k=0;k<70;k++){const u=h2(b.id,k,81),v=h2(b.id,k,82);const a=lerp(lerp(c.T,c.R,u),lerp(c.L,c.Bt,u),v);const hgt=3+5*Math.min(1,p*1.6);ctx.moveTo(a[0],a[1]);ctx.lineTo(a[0]-1,a[1]-hgt);ctx.moveTo(a[0]+2,a[1]);ctx.lineTo(a[0]+3,a[1]-hgt*0.8);}ctx.stroke();return;}
   for(let k=0;k<n;k++){const f=(k+0.5)/n;const a=along?lerp(c.T,c.L,f):lerp(c.T,c.R,f),e=along?lerp(c.R,c.Bt,f):lerp(c.L,c.Bt,f);
     ctx.strokeStyle=win?'rgba(170,165,150,0.6)':'rgba(70,55,38,0.55)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(e[0],e[1]);ctx.stroke();
@@ -25,7 +25,7 @@ function drawGround(b,win){
   if(FIELDS.has(b.t)){ctx.fillStyle=win?'rgba(200,205,202,0.5)':'rgba(120,108,80,0.35)';const r=jitterRing(c,3,b.id);poly(r,ctx.fillStyle);drawField(b,inset(c,0.02),win);ctx.restore();return;}
   if(b.t==='harbour'||b.t==='shipyard'){ctx.restore();return;}
   if(b.t==='th'){cobbles(b,c,win);ctx.restore();return;}
-  const yard=b.t==='pen'?(win?'rgba(210,213,208,0.8)':'rgba(150,134,100,0.62)'):b.t==='train'?(win?'rgba(216,218,213,0.85)':'rgba(190,176,136,0.75)'):(win?'rgba(214,217,213,0.7)':'rgba(160,150,112,0.42)');
+  const yard=(b.t==='pigpen'||b.t==='sheeppen')?(win?'rgba(210,213,208,0.8)':'rgba(150,134,100,0.62)'):b.t==='train'?(win?'rgba(216,218,213,0.85)':'rgba(190,176,136,0.75)'):(win?'rgba(214,217,213,0.7)':'rgba(160,150,112,0.42)');
   poly(jitterRing(c,7,b.id),win?'rgba(205,210,206,0.35)':'rgba(140,140,96,0.16)');
   poly(jitterRing(c,1,b.id+7),yard);
   /* worked earth: damp and dusty patches, pebbles and a worn track to the door */

@@ -96,10 +96,8 @@ function drawStump(sx,sy,win){ctx.fillStyle='rgba(38,48,53,0.15)';ctx.beginPath(
   ctx.fillStyle=win?'#E6EBEC':'#D2B98F';ctx.beginPath();ctx.ellipse(sx,sy-7,6,3,0,0,6.3);ctx.fill();}
 function drawTree(o,win,a){
   const sx=(o.x-o.y)*HW+o.ox,sy=(o.x+o.y)*HH-elev[o.y*N+o.x]+o.oy;
-  if(o.amt>0){drawSprite(SP[o.sp][win?1:0],sx,sy,o.s,a,false);return;}
-  const p=1-o.regrow/REGROW;
-  if(p<0.2){drawStump(sx,sy,win);return;}
-  const k=p<0.55?0.35:0.65;drawSprite(SP.spruce[win?1:0],sx,sy,o.s*k,a,false);
+  if(!o.gone){drawSprite(SP[o.sp][win?1:0],sx,sy,o.s,a,false);return;}
+  drawStump(sx,sy,win);
 }
 /* isometric log pile on canvas: logs along +x axis */
 let PROP_B=null,CUR_T=null;

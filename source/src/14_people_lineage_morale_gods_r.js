@@ -2,7 +2,7 @@
 const YDAYS=45;
 const MNAMES=['Arne','Bjarni','Gunnar','Halfdan','Ivar','Ketil','Leif','Orm','Ragnvald','Sigurd','Sven','Thorkel','Ulf','Vidar','Asger','Brand','Eirik','Finn','Geir','Hakon','Hrafn','Kari','Njal','Olaf','Rolf','Skuli','Starkad','Toki','Yngvar','Agnar','Bodvar','Dag','Grim','Hogni','Knut','Steinar','Torvald','Vali','Hauk','Ottar'];
 const FNAMES=['Astrid','Bergljot','Dagny','Freydis','Gudrun','Gunnhild','Helga','Hild','Ingrid','Jorunn','Ragnhild','Sigrid','Solveig','Thyra','Turid','Asa','Aud','Bodil','Eydis','Frida','Gyda','Halla','Herdis','Inga','Ragna','Rannveig','Signy','Svanhild','Tove','Ylva','Alfhild','Hallveig','Jofrid','Liv','Una','Vigdis','Embla','Geirny','Osk','Ulfhild'];
-const TRAITS={steady:{n:'Steady Hand',d:'Crafts go faster (+3% each, up to 15%)'},strong:{n:'Strong',d:'Woodcutting and mining go faster; hits harder'},patient:{n:'Patient',d:'Fishing and preserving go faster'},hawk:{n:'Hawk-Eyed',d:'Better hunter; a deadly archer'},seafarer:{n:'Seafarer',d:'Ships are built faster'},hot:{n:'Hot-Blooded',d:'Fights harder, quarrels more'},frail:{n:'Frail',d:'Falls sick more easily'},lazy:{n:'Lazy',d:'Does a little less work'}};
+const TRAITS={steady:{n:'Steady Hand',d:'Crafts go faster (+3% each, up to 15%)'},strong:{n:'Strong',d:'Woodcutting and mining go faster; hits harder'},patient:{n:'Patient',d:'Fishing and preserving go faster'},hawk:{n:'Hawk-Eyed',d:'A deadly archer'},seafarer:{n:'Seafarer',d:'Ships are built faster'},hot:{n:'Hot-Blooded',d:'Fights harder, quarrels more'},frail:{n:'Frail',d:'Falls sick more easily'},lazy:{n:'Lazy',d:'Does a little less work'}};
 const TRAIT_KEYS=Object.keys(TRAITS);
 const JTRAITS={ambitious:{n:'Ambitious',d:'+10% fame'},devout:{n:'Devout',d:'The gods’ favour rises 25% faster'},wise:{n:'Wise',d:'Better prices and better at haggling'},brave:{n:'Brave',d:'+20% raid strength when he sails'},cruel:{n:'Cruel',d:'Harsh choices in events; −3 morale'},greedy:{n:'Greedy',d:'+15% loot; −3 morale'}};
 const ADVISORS={floki:{n:'Floki',role:'Shipwright',b:'Ships cost 20% less and are built 20% faster.',q:'“The sea is a road, if your ship is honest.”'},
@@ -15,7 +15,7 @@ const ROMAN=['','','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
 const MODES={relaxed:{n:'Relaxed',d:'Hunger drives families away but never kills. Odin’s wrath is mild. Recommended.'},challenge:{n:'Challenge',d:'Hard winters. People starve. The Jarl can fall in battle. A revolt or a broken line ends the saga.'},sandbox:{n:'Sandbox',d:'Endless stores and every building of level 1 open. For building freely.'},
   test:{n:'Test',d:'Pick a Town Hall level and start in a finished village of that age: every building at its limit and highest level. Test tools and 8×/16× speed.'}};
 const RATION={normal:{f:1,m:0,n:'Normal'},reduced:{f:0.8,m:-8,n:'Reduced'},severe:{f:0.6,m:-20,n:'Severe'}};
-const FARMLIKE=new Set(['hay','garden','grain','flax','berry','pen']);
+const FARMLIKE=new Set(['fodder','grain','flax','berry','pigpen','sheeppen']);
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 const U=(a,b)=>a+Math.random()*(b-a);
@@ -39,8 +39,8 @@ const PRIMARY={skirm:'spears',spear:'spears',archer:'bows',warrior:'swords'};
 /* ---------- gods ---------- */
 const GODS={odin:{n:'Odin',likes:'Fame, brave deaths, sacrifice',pass:'+10% fame',bless:{n:'Raven’s Eye',d:'The next raid fights 25% harder'},off:[['hides',5,5],['spears',2,6],['silver',10,8],['misc',4,6]]},
   thor:{n:'Thor',likes:'Victories and a strong defence',pass:'+10% strength in battle',bless:{n:'Hammer Ward',d:'Warriors fight 20% harder for 30 days'},off:[['meat',10,5],['iron',5,5],['misc',4,6]]},
-  freyja:{n:'Freyja',likes:'Harvests and births',pass:'+10% from farms, gatherers and the pen; more births',bless:{n:'Rich Harvest',d:'+30% from farms and gatherers for 15 days'},off:[['wool',5,6],['berries',15,5],['veg',10,5],['misc',4,5]]},
-  njord:{n:'Njord',likes:'Ships, fishing and trade',pass:'+10% fishing and salt; fewer storms',bless:{n:'Fair Winds',d:'The next voyage is safe and twice as fast'},off:[['fish',15,5],['rope',3,6],['dfish',5,5],['misc',4,5]]},
+  freyja:{n:'Freyja',likes:'Harvests and births',pass:'+10% from farms, gatherers and the pens; more births',bless:{n:'Rich Harvest',d:'+30% from farms and gatherers for 15 days'},off:[['wool',5,6],['berries',15,5],['honey',5,6],['misc',4,5]]},
+  njord:{n:'Njord',likes:'Ships, fishing and trade',pass:'+10% fishing; fewer storms',bless:{n:'Fair Winds',d:'The next voyage is safe and twice as fast'},off:[['fish',15,5],['rope',3,6],['dfish',5,5],['misc',4,5]]},
   loki:{n:'Loki',likes:'Chaos and cunning',pass:'Strange things happen more often',bless:{n:'Trickster’s Wager',d:'The next raid brings double loot, or none'},off:[['misc',3,6],['planks',10,5],['silver',5,6]]}};
 const GOD_KEYS=Object.keys(GODS);
 function addFavor(g,v){if(!S.gods)return;if(v>0){if(jt('devout'))v*=1.25;if(has('hof'))v*=1.25;if(hasAdv('thorbjorg'))v*=1.3;}S.gods[g]=clamp(S.gods[g]+v,0,100);if(g==='loki'&&v>0)S.gods.thor=Math.max(0,S.gods.thor-v*0.3);}
@@ -52,7 +52,7 @@ const TARGETS=[
   {id:'sogn',n:'Sogn outpost',type:'Outpost',x:96,y:100,d:3,def:8,loot:{wood:80,iron:30,hides:10,silver:20},pris:4},
   {id:'hord',n:'Hordaland',type:'Hall of Jarl Hrolf the Grey',x:58,y:158,d:4,def:18,loot:{silver:70,iron:40,spears:6,shields:4,meat:30},pris:8,jarl:true},
   {id:'ringa',n:'Ringsaker',type:'Farmsteads by the lake',x:138,y:118,d:4,def:9,loot:{grain:80,meat:60,wool:30,silver:25},pris:6,herd:3},
-  {id:'skir',n:'Skiringssal',type:'Market town',x:134,y:190,d:5,def:15,loot:{silver:90,cloth:15,salt:30,tools:4},pris:6,trade:true},
+  {id:'skir',n:'Skiringssal',type:'Market town',x:134,y:190,d:5,def:15,loot:{silver:90,cloth:15,flour:30,tools:4},pris:6,trade:true},
   {id:'jut',n:'Jutland',type:'Hall of Jarl Sigvard',x:118,y:248,d:6,def:24,loot:{silver:110,swords:3,iron:50,meat:40},pris:8,jarl:true},
   {id:'hedeby',n:'Hedeby',type:'Great market behind a rampart',x:140,y:282,d:7,def:44,loot:{silver:320,cloth:30,swords:6,tools:10},pris:12,trade:true,walls:true},
   {id:'birka',n:'Birka',type:'Trading town on an island',x:236,y:176,d:9,def:32,loot:{silver:240,hides:30,cloth:20,misc:12},pris:10,trade:true,walls:true}];
@@ -76,7 +76,7 @@ function freshState(mode,adv){
      lowDays:0,wrathWarn:0,wrathCd:0,shipSeq:1,over:false,meta:null,maps:{},mkt:{},advs:adv?[adv]:[],mobilUntil:0,banqN:0,wallClosed:false,feast:null};
   walls=new Uint8Array(N*N);
   B=[];nextId=1;roads=new Uint8Array(N*N);defaultZones();ter.set(TER0);
-  for(const t of trees){t.amt=TREE_WOOD;t.regrow=0;t.gone=0;}S.cleared=[];for(const b of bushes)b.amt=15;
+  for(const t of trees){t.regrow=0;t.gone=0;}for(const b of bushes)b.gone=0;S.cleared=[];refillSources();
   addBuilding('th',TH_POS.fx,TH_POS.fy,0,true);
   rebuildOcc();/* the Jarl's house stands beside the hall from the start */
   for(const q of [[HOME_X+5,HOME_Y-5],[HOME_X-6,HOME_Y-5],[HOME_X+5,HOME_Y-2],[HOME_X-2,HOME_Y-9],[HOME_X+2,HOME_Y-9]]){if(canPlace('jarl',q[0],q[1],0,0).ok){addBuilding('jarl',q[0],q[1],0,true);break;}}
@@ -103,10 +103,8 @@ function workforce(){if(!S.people)return 0;const win=isWinter();let s=0;for(cons
 function eatNeed(){if(!S.people)return 0;let s=0;for(const p of S.people){if(p.away)continue;s+=p.w?EAT*WAR_EAT:(p.a<14||p.a>=50?EAT*0.5:EAT);}s+=S.thralls*EAT*0.5;return s*RATION[S.pol.ration].f;}
 function drinkers(){let n=S.thralls;for(const p of S.people)if(!p.away)n++;return n;}
 function thrallCap(){return B.filter(b=>b.t==='thrall').reduce((a,b)=>a+8+4*(b.lvl-1),0);}
-function spendMeals(m){const order=['fish','berries','meat','veg','bread','dfish','jam','pickles','smoked','sausage'];if(foodUnits()<m)return false;for(const k of order){if(m<=0)break;const e=Math.min(S.res[k],m/MEAL[k]);S.res[k]-=e;m-=e*MEAL[k];}return true;}
-let _hk={d:-1,on:false};
-const hallKeep=k=>{if(S.saveHall===false)return 0;const d=Math.floor(S.gameT/DAY);if(_hk.d!==d){_hk.d=d;const q=thReq();_hk.on=!!q&&q.items.slice(0,-1).every(i=>i.ok||/^Survive/.test(i.t));}if(!_hk.on)return 0;const q=TH_UP[thLevel()+1];return q&&q.cost[k]?q.cost[k]:0;};
-const resv=k=>Math.max(0,S.res[k]-Math.max((S.reserve&&S.reserve[k])||0,hallKeep(k))-(k==='wood'?S.woodReserve:0));
+function spendMeals(m){const order=['fish','berries','meat','bread','dfish','jam','smoked'];if(foodUnits()<m)return false;for(const k of order){if(m<=0)break;const e=Math.min(S.res[k],m/MEAL[k]);S.res[k]-=e;m-=e*MEAL[k];}return true;}
+const resv=k=>Math.max(0,S.res[k]-((S.reserve&&S.reserve[k])||0)-(k==='wood'?S.woodReserve:0));
 
 /* ---------- morale & attractiveness ---------- */
 function addMod(k,t,v,days){S.mods=S.mods.filter(m=>m.k!==k);S.mods.push({k:k,t:t,v:v,until:S.day+days});}
@@ -118,6 +116,7 @@ function recalcMorale(){
   const variety=FOOD.filter(k=>r[k]>=1).length;add(variety>=6?'A rich table ('+variety+' foods)':variety>=4?'Varied food ('+variety+' kinds)':variety<=2?'Dull food':'',variety>=6?10:variety>=4?5:variety<=2?-5:0);
   add(RATION[S.pol.ration].m?'Rationing: '+RATION[S.pol.ration].n.toLowerCase():'',RATION[S.pol.ration].m);
   if(has('altar'))add('An altar in the village',4);
+  if(S.tavernOn)add(S.tavernOn>=8?'Mead in the tavern':'Ale in the tavern',S.tavernOn);
   const avg=GOD_KEYS.reduce((a,g)=>a+S.gods[g],0)/5;if(avg>=50)add('The gods are pleased',5);if(GOD_KEYS.some(g=>S.gods[g]<20))add('A god is angry',-5);
   const sick=S.people.filter(p=>p.sick>0).length;if(sick)add(sick+' sick or wounded',-Math.min(15,sick*3));
   if(hasAdv('lagertha'))add('Lagertha’s fair judgement',6);
@@ -146,13 +145,13 @@ function recalcMorale(){
 const moraleProd=()=>S.morale>=70?1.1:S.morale<40?0.85:1;
 
 /* ---------- production multipliers ---------- */
-const NB={smith:['mine'],carp:['wood'],pres:['fish','hunter'],smoke:['fish','hunter']};
+const NB={smith:['mine'],carp:['wood'],pres:['fish'],smoke:['fish','pigpen'],bakery:['mill'],mill:['grain']};
 function nbOf(b){const l=NB[b.t];if(!l)return null;const o=B.find(x=>x!==b&&l.includes(x.t)&&bDist(b,x)<=4);return o?DEF[o.t].name:null;}
 function traitBonus(t){const tc=S.tc||{};const m=k=>Math.min(0.15,0.03*(tc[k]||0));
-  if(['carp','smith','weaver','bakery'].includes(t))return 1+m('steady');if(t==='wood'||t==='mine')return 1+m('strong');if(['fish','pres','smoke'].includes(t))return 1+m('patient');if(t==='hunter')return 1+m('hawk');if(t==='shipyard')return 1+m('seafarer');return 1;}
+  if(['carp','smith','weaver','bakery'].includes(t))return 1+m('steady');if(t==='wood'||t==='mine')return 1+m('strong');if(['fish','pres','smoke'].includes(t))return 1+m('patient');if(t==='shipyard')return 1+m('seafarer');return 1;}
 function prodMult(b){const t=b.t;let m=moraleProd()*traitBonus(t);
   if(nbOf(b))m*=1.15;
-  if(S.gods.freyja>=50&&FARMLIKE.has(t))m*=1.1;if(S.gods.njord>=50&&(t==='fish'||t==='salt'))m*=1.1;
+  if(S.gods.freyja>=50&&FARMLIKE.has(t))m*=1.1;if(S.gods.njord>=50&&t==='fish')m*=1.1;
   if((S.blessOn.freyja||0)>S.day&&FARMLIKE.has(t))m*=1.3;
   if((S.fx.dry||0)>S.day&&FARMLIKE.has(t))m*=0.7;if((S.fx.bear||0)>S.day&&t==='wood')m*=0.5;if((S.fx.nofish||0)>S.day&&t==='fish')m*=0.7;
   if(t==='fish'&&isWinter()&&S.winter.hard)m*=0.8;
@@ -273,17 +272,25 @@ function revoltDay(){if(S.morale<20){S.lowDays++;if(S.lowDays===1)queueModal({k:
     if(j&&h){S.saga.push({y:yearNow(),t:'The people rose and cast '+pname(j)+' from the high seat.'});j.jt=null;const old=j;S.jarl=0;old.num=old.num;succession('deposed');S.morale=45;addFame(-30);}}}
 
 /* ---------- training ---------- */
-/* recruits fill free warrior places first; when the limit is full, weaker troops at home retrain as the better kind */
-function trainPlan(type,lvl){const T=TROOPS[type]||TROOPS.skirm,max=lvl>=2?8:5,room=Math.max(0,warCap()-S.warriors);
-  const upg=type==='merc'?[]:S.people.filter(p=>p.w&&p.id!==S.jarl&&!p.away&&p.sick<=0&&p.a<45&&(TROOPS[p.w]||TROOPS.skirm).str<T.str).sort((a,b)=>(TROOPS[a.w]||TROOPS.skirm).str-(TROOPS[b.w]||TROOPS.skirm).str);
-  const nNew=Math.min(room,max),nUp=Math.min(upg.length,max-nNew);return {batch:nNew+nUp,nNew:nNew,up:upg.slice(0,nUp)};}
-function startTraining(type){type=type||'skirm';const tg=B.find(b=>b.t==='train');if(!tg||S.train)return 'A batch is already training';const T=TROOPS[type];if(T.lv>thLevel())return 'Needs Town Hall level '+T.lv;
-  const plan=trainPlan(type,tg.lvl),batch=plan.batch,nNew=plan.nNew;if(batch<=0)return 'Warrior limit reached for this Town Hall level, and no weaker troops at home to retrain';
-  for(const k in T.eq)if(S.res[k]<T.eq[k]*batch)return 'Needs '+T.eq[k]*batch+' '+RNAME[k].toLowerCase()+' (you have '+fmt(S.res[k])+')';
-  if(type==='merc')return 'Mercenaries are hired, not trained';const pool=S.people.filter(p=>p.id!==S.jarl&&!p.w&&p.a>=16&&p.a<45&&!p.away&&p.sick<=0).sort((a,b)=>((b.g==='m')-(a.g==='m'))||((b.tr==='hot'||b.tr==='strong'||(type==='archer'&&b.tr==='hawk'))-(a.tr==='hot'||a.tr==='strong'||(type==='archer'&&a.tr==='hawk'))));
-  if(pool.length<nNew)return 'Needs '+nNew+' fit adults aged 16–44 (you have '+pool.length+')';
-  assignWorkers();if(freeWorkers<nNew)return 'Needs '+nNew+' free workers (you have '+freeWorkers+'). Take people off a building first.';
-  for(const k in T.eq)S.res[k]-=T.eq[k]*batch;S.train={n:batch,left:10,type:type,ids:pool.slice(0,nNew).map(p=>p.id).concat(plan.up.map(p=>p.id))};assignWorkers();return '';}
+/* training works like assigning workers: choose how many free workers to train (up to 5 a batch, 8 from Training Ground level 2), limited by gear */
+const trainMax=lvl=>lvl>=2?8:5;
+function trainPool(){return S.people.filter(p=>p.id!==S.jarl&&!p.w&&p.a>=16&&p.a<45&&!p.away&&p.sick<=0).sort((a,b)=>((b.g==='m')-(a.g==='m'))||((b.tr==='hot'||b.tr==='strong')-(a.tr==='hot'||a.tr==='strong')));}
+/* most recruits possible now, and what limits it */
+function trainRoom(type,lvl){const T=TROOPS[type]||TROOPS.skirm;assignWorkers();const pool=trainPool();let n=trainMax(lvl),why='a batch holds '+n;
+  if(pool.length<n){n=pool.length;why=n+' fit adults aged 16–44 without a weapon';}
+  if(freeWorkers<n){n=Math.max(0,freeWorkers);why=n+' free workers';}
+  for(const k in T.eq){const g=Math.floor((S.res[k]||0)/T.eq[k]);if(g<n){n=g;why='gear for '+g+' ('+RNAME[k].toLowerCase()+')';}}
+  return {n:Math.max(0,n),why:why};}
+/* weaker troops at home that could retrain as this type */
+function retrainList(type){const T=TROOPS[type]||TROOPS.skirm;return S.people.filter(p=>p.w&&p.id!==S.jarl&&!p.away&&p.sick<=0&&p.a<45&&(TROOPS[p.w]||TROOPS.skirm).str<T.str).sort((a,b)=>(TROOPS[a.w]||TROOPS.skirm).str-(TROOPS[b.w]||TROOPS.skirm).str);}
+function trainPlan(type,lvl,want){const nNew=Math.min(want===undefined?trainMax(lvl):want,trainRoom(type,lvl).n);return {batch:nNew,nNew:nNew,up:[]};}
+function startTraining(type,want,retrain){type=type||'skirm';const tg=B.find(b=>b.t==='train');if(!tg||S.train)return 'A batch is already training';const T=TROOPS[type];if(T.lv>thLevel())return 'Needs Town Hall level '+T.lv;
+  if(type==='merc')return 'Mercenaries are hired, not trained';
+  let ids=[];
+  if(retrain){const up=retrainList(type).slice(0,Math.min(want||trainMax(tg.lvl),trainMax(tg.lvl)));if(!up.length)return 'No weaker troops at home to retrain';
+    for(const k in T.eq)if(S.res[k]<T.eq[k]*up.length)return 'Needs '+T.eq[k]*up.length+' '+RNAME[k].toLowerCase()+' (you have '+fmt(S.res[k])+')';ids=up.map(p=>p.id);}
+  else{const n=Math.min(want===undefined?trainMax(tg.lvl):want,trainRoom(type,tg.lvl).n);if(n<=0)return 'No one can train: '+trainRoom(type,tg.lvl).why;ids=trainPool().slice(0,n).map(p=>p.id);}
+  for(const k in T.eq)S.res[k]-=T.eq[k]*ids.length;S.train={n:ids.length,left:10,type:type,ids:ids};assignWorkers();return '';}
 function trainDay(){if(!S.train)return;S.train.left-=1;if(S.train.left<=0){const T=TROOPS[S.train.type];let n=0;for(const id of S.train.ids){const p=PB(id);if(p){p.w=S.train.type;p.ua=0;n++;}}S.train=null;syncPop();toast(n+' '+T.n.toLowerCase()+'s finished their training.',3600);}}
 function rearm(p){const k=PRIMARY[p.w];if(!k)return;if(S.res[k]>=1){S.res[k]-=1;p.ua=0;}else p.ua=1;}
 
@@ -360,7 +367,7 @@ function homecoming(r){const t=TG(r.tgt);const st=S.tg[t.id]=S.tg[t.id]||{};
   if(r.prov>=2){const df=Math.floor(r.prov/MEAL.dfish);if(df>0){addRes('dfish',df);got.push(df+' dried fish left over');}r.prov=0;}
   if(r.result==='win'||r.result==='tribute'){
     let share=S.pol.loot==='warriors'?0.85:1;
-    for(const k in r.loot){if(k==='animals'){const n=Math.min(r.loot[k],Math.max(0,herdCap()-herdTotal()));for(let i=0;i<n;i++){if(S.herd.pigs<=S.herd.sheep)S.herd.pigs++;else S.herd.sheep++;}if(n)got.push(n+' animals');continue;}
+    for(const k in r.loot){if(k==='animals'){let n=0;for(let i=0;i<r.loot[k];i++){const rp=pigCap()-S.herd.pigs,rs=sheepCap()-S.herd.sheep;if(rp<=0&&rs<=0)break;if(rp>=rs)S.herd.pigs++;else S.herd.sheep++;n++;}if(n)got.push(n+' animals');continue;}
       const v=Math.round(r.loot[k]*share);if(!v)continue;if(k==='silver'){S.res.silver+=v;S.yr.silver+=v;}else addRes(k,v);got.push(v+' '+(RNAME[k]||k).toLowerCase());}
     if(r.prisoners){const room=Math.max(0,thrallCap()-S.thralls);const keep=Math.min(room,r.prisoners),sold=r.prisoners-keep;S.thralls+=keep;if(sold)S.res.silver+=sold*12;got.push(r.prisoners+' prisoners'+(sold?' ('+sold+' sold for '+sold*12+' silver)':''));}
     st.pill=S.day+90;st.beaten=(st.beaten||0)+(r.result==='win'?1:0);st.grudge=(st.grudge||0)+1;if(t.trade)st.ban=S.day+90;
@@ -402,7 +409,7 @@ const EVTS={
   storm:{cat:'Nature',c:()=>isWinter(),w:1,mk:()=>({}),t:()=>'A storm out of the north tore turf from the roofs.',o:[{l:'Repair at once (15 planks)',ok:()=>S.res.planks>=15,f:()=>{S.res.planks-=15;return 'The roofs held. Nobody froze.';}},{l:'Let it wait',f:()=>{addMod('storm','Damaged roofs',-6,15);sicken(2);return 'Snow came in through the gaps. Two fell sick.';}}]},
   dry:{cat:'Nature',c:()=>!isWinter()&&B.some(b=>FARMLIKE.has(b.t)),w:0.8,mk:()=>({}),t:()=>'No rain for weeks. The ground cracks and the berries wither on the branch.',o:[{l:'Offer to Freyja (10 favour)',ok:()=>S.gods.freyja>=10,f:()=>{S.gods.freyja-=10;return 'Rain came three days later.';}},{l:'Endure it',f:()=>{S.fx.dry=S.day+15;return 'Farms and gatherers will bring in less for 15 days.';}}]},
   herring:{cat:'Nature',good:1,c:()=>!isWinter()&&has('fish'),w:1,mk:()=>({}),t:()=>'Herring fill the bay, so thick the water boils silver.',o:[{l:'Every boat out',f:()=>{const g=addRes('fish',60);return '+'+fmt(g)+' fish.';}},{l:'Let them pass',f:()=>''}]},
-  wolves:{cat:'Nature',c:()=>isWinter()&&has('pen')&&herdTotal()>3,w:1,mk:()=>({}),t:()=>'Wolves came to the pen in the night. The sheep are screaming.',o:[{l:'Send men with spears',ok:()=>S.warriors>0||S.res.spears>=2,f:()=>{if(Math.random()<0.25)sicken(1,true);addRes('hides',2);return 'The wolves were driven off. Two pelts were taken.';}},{l:'Bar the doors',f:()=>{S.herd.sheep=Math.max(1,S.herd.sheep-1);S.herd.pigs=Math.max(1,S.herd.pigs-1);return 'At dawn two animals were gone.';}}]},
+  wolves:{cat:'Nature',c:()=>isWinter()&&(has('pigpen')||has('sheeppen'))&&herdTotal()>3,w:1,mk:()=>({}),t:()=>'Wolves came to the pen in the night. The sheep are screaming.',o:[{l:'Send men with spears',ok:()=>S.warriors>0||S.res.spears>=2,f:()=>{if(Math.random()<0.25)sicken(1,true);addRes('hides',2);return 'The wolves were driven off. Two pelts were taken.';}},{l:'Bar the doors',f:()=>{S.herd.sheep=Math.max(1,S.herd.sheep-1);S.herd.pigs=Math.max(1,S.herd.pigs-1);return 'At dawn two animals were gone.';}}]},
   bear:{cat:'Nature',c:()=>has('wood'),w:0.8,mk:()=>({}),t:()=>'A bear walks the edge of the forest. The woodcutters will not go in.',o:[{l:'Hunt it',f:()=>{addRes('meat',30);addRes('hides',2);if(Math.random()<0.3){sicken(1,true);return 'The bear is dead. One hunter was mauled.';}return 'The bear is dead. +30 meat, +2 hides.';}},{l:'Keep away for now',f:()=>{S.fx.bear=S.day+5;return 'Woodcutters work at half pace for 5 days.';}}]},
   aurora:{cat:'Omen',good:1,c:()=>isWinter(),w:0.7,mk:()=>({}),t:()=>'Green fire danced across the sky all night. The Völva says the gods are watching.',o:[{l:'Make an offering (10 meals)',ok:()=>foodUnits()>=10,f:()=>{spendMeals(10);GOD_KEYS.forEach(g=>addFavor(g,5));return 'All gods +5 favour.';}},{l:'Watch in silence',f:()=>{addMod('aurora','The sky-fire',3,10);return '';}}]},
   twins:{cat:'People',good:1,c:()=>S.people.some(p=>p.g==='f'&&p.sp&&p.a>=18&&p.a<40)&&housing()-S.pop>=2,w:0.6,mk:()=>{const w=pick(S.people.filter(p=>p.g==='f'&&p.sp&&p.a>=18&&p.a<40));return {a:w.id};},t:a=>{const w=PB(a.a);return 'Twins were born to '+(w?w.n:'a woman of the village')+'. The old women say Freyja smiled on her.';},

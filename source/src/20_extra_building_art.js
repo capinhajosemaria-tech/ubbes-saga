@@ -31,8 +31,11 @@ function drawExtra(b,win,c0,alongX){
       poly([ce[0]+2,ce[1]-37,ce[0]+12,ce[1]-34,ce[0]+6,ce[1]-30],'#7A5F46');ctx.fillStyle='#A34A3A';ctx.beginPath();ctx.arc(ce[0]+6,ce[1]-34,1.3,0,6.3);ctx.fill();ctx.strokeStyle='#C9A64A';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(ce[0]-5,ce[1]-12);ctx.lineTo(ce[0]-1,ce[1]-14);ctx.moveTo(ce[0]-5,ce[1]-18);ctx.lineTo(ce[0]-1,ce[1]-20);ctx.stroke();return true;}
     case 'nets':{const a=lerp(c0.L,c0.Bt,0.5),e2=lerp(c0.T,c0.R,0.5);ctx.strokeStyle='#5A4636';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(a[0],a[1]-20);ctx.moveTo(e2[0],e2[1]);ctx.lineTo(e2[0],e2[1]-20);ctx.moveTo(a[0],a[1]-19);ctx.lineTo(e2[0],e2[1]-19);ctx.stroke();
       ctx.strokeStyle='rgba(78,60,46,0.75)';ctx.lineWidth=0.7;ctx.beginPath();for(let k=1;k<6;k++){const p=lerp([a[0],a[1]-19],[e2[0],e2[1]-19],k/6);ctx.moveTo(p[0],p[1]);ctx.lineTo(p[0],p[1]+12+Math.sin(k)*2);}for(let j=1;j<4;j++){ctx.moveTo(a[0],a[1]-19+j*4);ctx.lineTo(e2[0],e2[1]-19+j*4);}ctx.stroke();return true;}
-    case 'pen':{const sh={T:c.T,R:lerp(c.T,c.R,0.38),L:lerp(c.T,c.L,0.38)};sh.Bt=[sh.R[0]+sh.L[0]-c.T[0],sh.R[1]+sh.L[1]-c.T[1]];hall(sh,10,10,true,{door:true},win);
-      const n=Math.min(10,herdTotal());for(let k=0;k<n;k++){const u=0.35+h2(b.id,k,61)*0.55,v=0.25+h2(b.id,k,62)*0.65,mv=Math.sin(t*0.7+k)*0.04;const p=lerp(lerp(c.T,c.R,u+mv),lerp(c.L,c.Bt,u+mv),v);animal(p[0],p[1],k<S.herd.sheep*n/Math.max(1,herdTotal()),Math.abs(Math.sin(t*3+k))*0.8);}
+    case 'pigpen':case 'sheeppen':{const sheep=b.t==='sheeppen',sh={T:c.T,R:lerp(c.T,c.R,0.38),L:lerp(c.T,c.L,0.38)};sh.Bt=[sh.R[0]+sh.L[0]-c.T[0],sh.R[1]+sh.L[1]-c.T[1]];
+      if(!sheep&&!win){const m=lerp(lerp(c.T,c.R,0.62),lerp(c.L,c.Bt,0.62),0.6);ctx.fillStyle='rgba(92,70,48,0.55)';ctx.beginPath();ctx.ellipse(m[0],m[1],HW*0.9,HH*0.7,0,0,6.3);ctx.fill();}
+      hall(sh,sheep?11:8,sheep?11:9,true,{door:true},win);
+      const tot=sheep?S.herd.sheep:S.herd.pigs,pens=Math.max(1,B.filter(q=>q.t===b.t).length),n=Math.min(10,Math.ceil(tot/pens));
+      for(let k=0;k<n;k++){const u=0.35+h2(b.id,k,61)*0.55,v=0.25+h2(b.id,k,62)*0.65,mv=Math.sin(t*0.7+k)*0.04;const p=lerp(lerp(c.T,c.R,u+mv),lerp(c.L,c.Bt,u+mv),v);animal(p[0],p[1],sheep,Math.abs(Math.sin(t*3+k))*0.8);}
       fenceRing(inset(c0,0.04),win);return true;}
     case 'salt':{const back={T:c.T,R:lerp(c.T,c.R,0.45),L:lerp(c.T,c.L,0.45)};back.Bt=[back.R[0]+back.L[0]-c.T[0],back.R[1]+back.L[1]-c.T[1]];hall(back,11,10,true,{},win);
       for(let k=0;k<3;k++){const p=lerp(lerp(c.L,c.Bt,0.2+k*0.28),lerp(c.R,c.Bt,0.2+k*0.28),0.25);poly([p[0]-10,p[1],p[0],p[1]-5,p[0]+10,p[1],p[0],p[1]+5],'#6C645A');poly([p[0]-8,p[1],p[0],p[1]-4,p[0]+8,p[1],p[0],p[1]+4],k===1?'#F3F2EC':'#9DB4BC');}
@@ -70,7 +73,8 @@ function drawShipsAtHarbour(win){const hb=B.find(b=>b.t==='harbour');const home=
   home.forEach((s,i)=>{const sp=spots[Math.min(spots.length-1,Math.floor((i+0.5)*spots.length/home.length))];const p=iso(sp.q[0],sp.q[1]);const bob=Math.sin(t*1.2+i)*1.2;
     const flip=Math.abs(sp.p[0]-(hb.fx+hb.w/2-0.5))>Math.abs(sp.p[1]-(hb.fy+hb.h/2-0.5));drawShip(p[0],p[1]+8+bob,0.36,flip,s.type==='knarr');SHIP_HITS.push([p[0],p[1],s.id]);});}
 
-function drawBuilding(b,win,alpha,ghost){DOOR_SIDE=SIDES[(b.rot|0)&3];PROP_B=ghost||b.thumb?null:b;CUR_T=b.t;try{drawBuilding0(b,win,alpha,ghost);}finally{DOOR_SIDE=null;PROP_B=null;CUR_T=null;}}
+function drawBuilding(b,win,alpha,ghost){if(!ghost&&b.cons&&b.cons.k==='build'){drawScaffold(b,win,alpha);return;}if(!ghost&&b.cons&&!b.thumb){const r=drawBuilding1(b,win,alpha,ghost);drawConsBar(b,Math.min(1,b.cons.done/b.cons.days));return r;}return drawBuilding1(b,win,alpha,ghost);}
+function drawBuilding1(b,win,alpha,ghost){DOOR_SIDE=SIDES[(b.rot|0)&3];PROP_B=ghost||b.thumb?null:b;CUR_T=b.t;try{drawBuilding0(b,win,alpha,ghost);}finally{DOOR_SIDE=null;PROP_B=null;CUR_T=null;}}
 function drawBuilding0(b,win,alpha,ghost){
   const D=DEF[b.t],e=D.water?1:(elev[b.fy*N+b.fx]||2);
   if(alpha<1)ctx.globalAlpha=alpha;

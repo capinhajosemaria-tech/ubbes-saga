@@ -1,14 +1,14 @@
 /* =================== planner, test mode and test tools =================== */
 function nearConnRoad(x,y,w,h,r){let best=99;for(let yy=y-r;yy<y+h+r;yy++)for(let xx=x-r;xx<x+w+r;xx++){if(!inMap(xx,yy)||!conn[yy*N+xx])continue;const d=Math.max(Math.max(x-xx,0,xx-(x+w-1)),Math.max(y-yy,0,yy-(y+h-1)));if(d<best)best=d;}return best;}
-function planSpot(t,all){const D=DEF[t],th=B.find(b=>b.t==='th');const cx=th?th.fx+3:HOME_X,cy=th?th.fy+3:HOME_Y;let best=null;const R=34,cand=[];
-  for(let y=cy-R;y<cy+R;y++)for(let x=cx-R;x<cx+R;x++)for(const rot of [0,1]){if(rot&&D.w===D.h)continue;const c=canPlace(t,x,y,rot,0);if(!c.ok)continue;
+function planSpot(t,all){const D=DEF[t],th=B.find(b=>b.t==='th');const cx=th?th.fx+3:HOME_X,cy=th?th.fy+3:HOME_Y;let best=null;const R=all&&S.mode==="test"?44:34,cand=[];
+  for(let y=cy-R;y<cy+R;y++)for(let x=cx-R;x<cx+R;x++)for(const rot of [0,1]){if(rot&&D.w===D.h)continue;const c=canPlace(t,x,y,rot,0);if(!c.ok||(c.clears&&c.clears.length))continue;
     const d=dims(t,rot),dist=Math.hypot(x+d.w/2-cx,y+d.h/2-cy);let sc=-dist;
     if(D.need)sc+=Math.min(needCount({fx:x,fy:y,w:d.w,h:d.h},D.need).n,25)*2.5;
-    if(D.farm||t==='pen'||t==='hives')sc=-Math.abs(dist-15);
-    if(t!=='shipyard'&&t!=='harbour'&&t!=='salt'&&t!=='fish'){let sea=0;for(let yy=y-1;yy<=y+d.h;yy++)for(let xx=x-1;xx<=x+d.w;xx++)if(tAt(xx,yy)===T.SEA)sea++;if(sea)sc-=30;}
+    if(D.farm||t==='pigpen'||t==='sheeppen'||t==='hives')sc=-Math.abs(dist-15);
+    if(t!=='shipyard'&&t!=='harbour'&&t!=='mill'&&t!=='fish'){let sea=0;for(let yy=y-1;yy<=y+d.h;yy++)for(let xx=x-1;xx<=x+d.w;xx++)if(tAt(xx,yy)===T.SEA)sea++;if(sea)sc-=30;}
     if(D.road!==false&&!D.farm){const nr=nearConnRoad(x,y,d.w,d.h,4);if(nr>4)sc-=50;else sc-=nr*2;}
     cand.push({x:x,y:y,rot:rot,sc:sc});if(!best||sc>best.sc)best={x:x,y:y,rot:rot,sc:sc};}
-  if(all){cand.sort((p,q)=>q.sc-p.sc);return cand.slice(0,D.water||D.need?60:12);}return best;}
+  if(all){cand.sort((p,q)=>q.sc-p.sc);return cand.slice(0,D.water||D.river||D.need||S.mode==="test"?60:12);}return best;}
 function connectRoad(b){recomputeConn();if(b.conn)return true;const prev=new Map(),q=[];const ok=(x,y)=>inMap(x,y)&&isUnl(x,y)&&!occ[y*N+x]&&!walls[y*N+x]&&(roads[y*N+x]||BUILDABLE.has(ter[y*N+x])||ter[y*N+x]===T.RIVER);
   for(const p of edgeTiles(b))if(ok(p[0],p[1])){const k=p[1]*N+p[0];prev.set(k,-1);q.push(k);}
   let found=-1,qi=0;while(qi<q.length){const k=q[qi++];if(roads[k]&&conn[k]){found=k;break;}const x=k%N,y=(k/N)|0;for(const d of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+d[0],ny=y+d[1];if(!ok(nx,ny))continue;const nk=ny*N+nx;if(prev.has(nk))continue;prev.set(nk,k);q.push(nk);}}
@@ -21,7 +21,7 @@ function buildTestVillage(L){
   for(const m of MS)if(m.lv<L&&!S.ms.includes(m.id))S.ms.push(m.id);
   const order=['shipyard','harbour','market','jarl','tomb','hof','train','arsenal','trade','thrall','gran','ware','pyre','altar'];
   const keys=order.concat(Object.keys(DEF).filter(k=>!order.includes(k)));const missing=[];
-  for(const k of keys){const D=DEF[k];if(k==='th'||D.lvl>L||D.hidden)continue;const n=D.cat==='Decor'?1:Math.max(0,limitOf(k)-count(k));
+  for(const k of keys){const D=DEF[k];if(k==='th'||D.lvl>L||D.hidden)continue;const n=D.cat==='Decor'?1:Math.max(0,(TEST_COUNT[k]?TEST_COUNT[k][L-1]:limitOf(k))-count(k));
     for(let i=0;i<n;i++){const b=placeAuto(k);if(!b){missing.push(DEF[k].name);break;}if(D.up)b.lvl=Math.min(L,5);b.desired=slotsOf(b);}}
   for(const b of B)if(DEF[b.t].up&&b.t!=='th')b.lvl=Math.min(L,5);  /* the starting houses too */
   rebuildOcc();recomputeConn();
@@ -30,9 +30,9 @@ function buildTestVillage(L){
   S.fame=2000;S.fameEarned=2000;GOD_KEYS.forEach(g=>S.gods[g]=60);
   const cap=housing(),kidsT=Math.round(cap*0.24),couples=[];while(S.people.length<cap-kidsT){const a=newPerson({a:Math.round(U(18,44)),tr:randTrait()});if(S.people.length<cap-kidsT){const b=newPerson({g:a.g==='m'?'f':'m',a:Math.round(U(18,44))});marry(a,b);couples.push([a,b]);}}
   for(let k=0;S.people.length<cap&&couples.length;k++){const c=couples[k%couples.length];newPerson({a:Math.round(U(1,13)),pa:[c[0].id,c[1].id]});}
-  const types=Object.keys(TROOPS).filter(k=>TROOPS[k].lv<=L&&k!=='merc');const fit=S.people.filter(p=>p.id!==S.jarl&&p.a>=16&&p.a<45);for(let i=0;i<Math.min(warCap(),fit.length);i++){fit[i].w=types[(types.length-1)-(i%types.length)];fit[i].xp=i%3;}
+  const types=Object.keys(TROOPS).filter(k=>TROOPS[k].lv<=L&&k!=='merc');const fit=S.people.filter(p=>p.id!==S.jarl&&p.a>=16&&p.a<45);for(let i=0;i<Math.min(WAR_TEST[L-1],fit.length);i++){fit[i].w=types[(types.length-1)-(i%types.length)];fit[i].xp=i%3;}
   if(L>=3){S.ships.push({id:S.shipSeq++,type:'knarr',name:SHIP_NAMES[1],away:0,voy:0});for(let i=0;i<SHIP_CAP_WAR[L-1];i++)S.ships.push({id:S.shipSeq++,type:i===0?'karvi':'snekkja',name:SHIP_NAMES[(2+i)%SHIP_NAMES.length],away:0,voy:0});}
-  if(L>=2){S.herd={pigs:Math.floor(herdCap()/2),sheep:Math.floor(herdCap()/2)};}if(L>=3)S.thralls=Math.floor(thrallCap()/2);
+  if(L>=2){S.herd={pigs:Math.floor(pigCap()/2),sheep:Math.floor(sheepCap()/2)};}if(L>=3)S.thralls=Math.floor(thrallCap()/2);
   syncPop();recalcMorale();S.morale=60;assignWorkers();S.testMissing=missing;
   S.saga.push({y:1,t:'A test village at Town Hall level '+L+'.'+(missing.length?' No room for: '+missing.join(', ')+'.':'')});}
 const TEST_TOOLS=[['res','+500 of everything',()=>{for(const k in S.res)S.res[k]+=500;return 'Stores filled.';}],

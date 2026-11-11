@@ -74,7 +74,7 @@ function vrStep(u,F,dt){const i=vrAt(u.x,u.y);if(i<0)return null;if(F[i]>=1e8)re
   if(bj<0){u.moving=false;return 'there';}
   if(walls[bj]){u.moving=false;return bj;}
   const tx=bj%N,ty=(bj/N)|0,dx=tx-u.x,dy=ty-u.y,d=Math.hypot(dx,dy),s=Math.min(d,RAIDER.sp*dt*(ter[i]===T.RIVER?0.6:1));if(d>0.001){u.x+=dx/d*s;u.y+=dy/d*s;}u.moving=true;u.ph+=dt;return null;}
-const STEAL=['silver','gold','iron','tools','planks','wood','smoked','sausage','bread','fish','meat','ale','mead','cloth'];
+const STEAL=['silver','gold','iron','tools','planks','wood','smoked','bread','fish','meat','ale','mead','cloth'];
 function vrUpdate(gdt){let left=Math.min(gdt,8);while(VR&&left>0){const st=Math.min(left,0.25);vrTick(st);left-=st;}}
 function vrTick(dt){if(!VR)return;VR.t+=dt;
   if(VR.t>120){for(const u of VR.u)if(u.side==='raid'&&u.hp>0){u.gone=1;u.hp=0;for(const k in u.bag)VR.stolen[k]=(VR.stolen[k]||0)+u.bag[k];}vrEnd();return;}

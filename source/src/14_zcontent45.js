@@ -20,12 +20,12 @@ const regionOpen=r=>{const R=REGIONS[r||'scand'];return thLevel()>=R.lv&&(!R.map
 const hasAdv=k=>S.advs?S.advs.includes(k):S.adv===k;
 const advSlots=()=>[1,1,1,2,3][thLevel()-1];
 /* trading partners unlock step by step */
-const PARTNERS={skir:{n:'Skiringssal',open:()=>thLevel()>=3,wants:['salt','dfish','smoked','planks','hides'],sells:['iron','tools','salt','pig','sheep','arrows']},
+const PARTNERS={skir:{n:'Skiringssal',open:()=>thLevel()>=3,wants:['flour','dfish','smoked','planks','hides'],sells:['iron','tools','flour','pig','sheep','arrows']},
   hedeby:{n:'Hedeby',open:()=>thLevel()>=3&&S.ships.length>0,wants:['wool','cloth','hides','mead','misc'],sells:['tools','iron','swords','shields','thrall','gold']},
   birka:{n:'Birka',open:()=>thLevel()>=4,wants:['hides','honey','mead','rope','jam'],sells:['iron','axes','bows','armour','gold','sheep']},
-  dublin:{n:'Dublin',open:()=>thLevel()>=5,wants:['clothes','mead','swords','thrall','cloth'],sells:['gold','silver','salt','tools','pig']},
-  london:{n:'London',open:()=>thLevel()>=5&&!!(S.maps&&S.maps.england),wants:['hides','clothes','honey','sausage','mead'],sells:['gold','tools','cloth','armour','swords']}};
-const BASEP={wood:0.4,planks:2,iron:3,tools:6,salt:1,wool:2,flax:1.2,grain:1,cloth:6,rope:5,hides:3,misc:1,honey:2.5,clothes:9,smoked:3,sausage:4,jam:2,dfish:2,bread:1,ale:2,mead:5,pickles:2,
+  dublin:{n:'Dublin',open:()=>thLevel()>=5,wants:['clothes','mead','swords','thrall','cloth'],sells:['gold','silver','flour','tools','pig']},
+  london:{n:'London',open:()=>thLevel()>=5&&!!(S.maps&&S.maps.england),wants:['hides','clothes','honey','smoked','mead'],sells:['gold','tools','cloth','armour','swords']}};
+const BASEP={wood:0.4,planks:2,iron:3,tools:6,flour:1,fodder:0.5,wool:2,flax:1.2,grain:1,cloth:6,rope:5,hides:3,misc:1,honey:2.5,clothes:9,smoked:3,jam:2,dfish:2,bread:1,ale:2,mead:5,
   spears:5,shields:8,bows:6,arrows:0.6,swords:18,axes:10,armour:32,thrall:18,pig:6,sheep:8,gold:10,silver:1};
 function partnerOk(id){const P=PARTNERS[id];return P&&P.open()&&!(((S.tg[id]||{}).ban||0)>S.day);}
 function mktSat(k){S.mkt=S.mkt||{};return S.mkt[k]===undefined?1:S.mkt[k];}
@@ -56,9 +56,9 @@ function defenceValue(){const home=S.people.filter(p=>p.w&&!p.away&&p.sick<=0);l
   const archers=home.filter(p=>p.w==='archer').length;const tw=B.filter(b=>b.t==='tower').length;d+=Math.min(tw,Math.floor(archers/2))*6;
   if(S.wallClosed)d*=1.5;if(S.gods.thor>=50)d*=1.1;return Math.round(d);}
 /* banquets in the hall (Town Hall 4+): cost rises if repeated within a season */
-const BANQ={people:{n:'People’s feast',d:'+12 morale for 20 days',c:()=>({sausage:Math.ceil(S.pop*0.25),ale:Math.ceil(S.pop*0.4)}),fx:()=>{addMod('banq','A feast in the hall',12,20);}},
-  warriors:{n:'Warriors’ feast',d:'The next raid fights 15% harder',c:()=>({sausage:Math.ceil(S.warriors*0.6+4),mead:Math.ceil(S.warriors*0.4+2)}),fx:()=>{S.blessOn.feastR=1;addMod('banqw','The warriors feasted',4,15);}},
-  council:{n:'Council feast',d:'+20 fame and the gods take note',c:()=>({sausage:10,mead:10}),fx:()=>{addFame(20);GOD_KEYS.forEach(g=>addFavor(g,3));}}};
+const BANQ={people:{n:'People’s feast',d:'+12 morale for 20 days',c:()=>({smoked:Math.ceil(S.pop*0.25),ale:Math.ceil(S.pop*0.4)}),fx:()=>{addMod('banq','A feast in the hall',12,20);}},
+  warriors:{n:'Warriors’ feast',d:'The next raid fights 15% harder',c:()=>({smoked:Math.ceil(S.warriors*0.6+4),mead:Math.ceil(S.warriors*0.4+2)}),fx:()=>{S.blessOn.feastR=1;addMod('banqw','The warriors feasted',4,15);}},
+  council:{n:'Council feast',d:'+20 fame and the gods take note',c:()=>({smoked:10,mead:10}),fx:()=>{addFame(20);GOD_KEYS.forEach(g=>addFavor(g,3));}}};
 function banqCost(k){const base=BANQ[k].c(),m=1+0.5*(S.banqN||0);const o={};for(const x in base)o[x]=Math.ceil(base[x]*m);return o;}
 function holdBanquet(k){const c=banqCost(k);if(!afford(c))return 'Not enough: needs '+costStr(c);pay(c,1);BANQ[k].fx();S.banqN=(S.banqN||0)+1;S.banqReset=S.day+20;S.feast={until:S.gameT+DAY*1.5};return '';}
 /* mercenaries: hired for a year, paid in silver up front */

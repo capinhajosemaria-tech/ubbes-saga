@@ -2,7 +2,7 @@
 let S,B=[],nextId=1;
 let roads=new Uint8Array(N*N),conn=new Uint8Array(N*N),occ=new Int32Array(N*N);
 const TH_POS={fx:HOME_X-2,fy:HOME_Y-5};
-const has=t=>B.some(b=>b.t===t);
+const has=t=>B.some(b=>b.t===t&&!(b.cons&&b.cons.k==='build'));
 const count=t=>B.filter(b=>b.t===t).length;
 const herdTotal=()=>S.herd.pigs+S.herd.sheep;
 function dims(t,rot){const D=DEF[t];return rot%2?{w:D.h,h:D.w}:{w:D.w,h:D.h};}

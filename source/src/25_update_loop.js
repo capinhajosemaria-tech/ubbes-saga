@@ -2,6 +2,7 @@
 let dayAcc=0;
 function update(dt){
   const gdt=dt*speed;const prevWin=isWinter();S.gameT+=gdt;dayAcc+=gdt;
+  if(gdt>0)consTick(gdt);
   let guard=0;while(dayAcc>=DAY&&guard<8){dayAcc-=DAY;dayTick();guard++;}
   if(prevWin!==isWinter()){toast(isWinter()?'Winter has come. Rivers freeze and the berry slopes rest.':'Summer returns. The bushes bear fruit again.',3600);}
   for(const w of walkers){if(speed===0){w.moving=false;continue;}if(w.wait>0){w.wait-=gdt;w.moving=false;continue;}

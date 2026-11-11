@@ -2,6 +2,10 @@
 
 Versions are `Beta 0.MINOR.PATCH` until Town Hall 10 (`1.0.0`).
 
+## Beta 0.15.1
+- Every text in the game now uses the title font (Marcellus SC).
+- Updates arrive at once: the game no longer keeps showing the previous version after a release.
+
 ## Beta 0.15.0 — Round 1C: production panel
 - New **Production** panel in the bottom bar: for every good, what is in store, made and used each day, the net, and how many **winter days** it lasts (counting what stops in winter: fields, berries, bees and herds rest, fishing falls, firewood rises).
 - **Reserves** for every good a workshop uses, in the same table. Workshops never go below them (now also wood for the smithy, smokehouse, bakery and brewery). New buttons: **Reserve for next Town Hall** (reserves its wood, planks and iron once) and **Clear reserves**.

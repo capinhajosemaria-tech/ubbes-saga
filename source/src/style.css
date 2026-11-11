@@ -3,7 +3,7 @@
   --ink:#263035; --ink2:#4A565C; --muted:#56636A;
   --panel:rgba(243,245,243,0.95); --panel-solid:#F3F5F3; --line:#C9D1CF; --soft:#E4E8E5;
   --accent:#A34A3A; --gold:#C9A64A; --green:#5E7A4E; --sea:#5E7F8C;
-  --display:'Marcellus SC', Georgia, serif; --body:'Inter', system-ui, sans-serif;
+  --display:'Marcellus SC', Georgia, serif; --body:'Marcellus SC', Georgia, serif;
   color-scheme: light;
 }
 html,body{height:100%;margin:0;overflow:hidden;background:var(--sea);color:var(--ink);font-family:var(--body)}
@@ -220,7 +220,7 @@ textarea{background:var(--parch2);border-color:var(--line2)}
 
 .toast{top:calc(env(safe-area-inset-top,0px) + 132px)}
 
-/* ---------- beta 0.5: one display face for every title, plain Inter for text ---------- */
+/* ---------- beta 0.5: one display face for every title, now the same face for all text (0.15.1) ---------- */
 .card h3{font-family:var(--display);font-weight:400;font-size:14px;letter-spacing:.06em;text-transform:none;color:var(--bark)}
 .goal b,.modebar .msg strong,.god strong,.pcard strong,.prow b,.slot b,.adv b,.status{font-family:var(--display);font-weight:400;letter-spacing:.02em}
 .goal b{font-size:11px;letter-spacing:.1em}

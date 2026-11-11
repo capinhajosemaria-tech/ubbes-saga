@@ -1,4 +1,4 @@
-# Ubbe's Saga — specification (Beta 0.15.0)
+# Ubbe's Saga — specification (Beta 0.15.1)
 
 How the game works **today**. Numbers are in `docs/NUMBERS.md` (generated). The long-term vision for Town Hall 6–10 is in `docs/DESIGN.md`.
 
@@ -85,7 +85,7 @@ Market with dynamic prices: partners unlock gradually (Skiringssal TH3, Hedeby T
 - **To do list:** Town Hall ready, food/firewood shortages, firewood for the coming winter (last 10 days of summer), full beds, idle people, buildings in trouble, the current saga goal, next Town Hall requirement, ships ready to sail. Each item moves the camera or opens the right sheet / placement.
 - **Roads and palisade:** click start, click end (the plan is then fixed), Build or Cancel.
 - **World map:** full screen, large chart (Iceland to the Baltic, Norway to Frankia); drag/swipe to move, wheel/pinch to zoom; mist at the edges and over lands not yet open, their places still visible (England only lightly misted, so the goal is always in sight). Opens framing Kaldstrand and every open place. Norway and Sweden are labelled; Birka sits on an island off the Swedish coast.
-- Fonts: Marcellus SC for titles and for numbers (resource bar, tables, counters), Inter for text. Classic look: dark wood bars, parchment sheets with dark headers, white building cards whose pictures are cropped and centred automatically. PC keeps the central bottom dock (panels, build categories, roads).
+- Fonts: Marcellus SC for everything (titles, numbers and all text, also on the map). Classic look: dark wood bars, parchment sheets with dark headers, white building cards whose pictures are cropped and centred automatically. PC keeps the central bottom dock (panels, build categories, roads).
 
 ## 12. Art direction
 **Style: "Frost & Ember"** (chosen Beta 0.12; inspiration Frostpunk, Valheim, Banished): low-poly, flat-shaded, a warm golden summer and a cold blue winter, cast shadows, a slow time-of-day cycle and warm lights in the dark. The style board is the artifact "Ubbe's Saga — 6 estilos de arte".

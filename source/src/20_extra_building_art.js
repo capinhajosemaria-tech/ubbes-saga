@@ -138,4 +138,4 @@ function drawBuilding0(b,win,alpha,ghost){
 }
 function drawBadge(b){if(!slotsOf(b))return;if(b.status==='Working'||b.status==='Drawing newcomers'||b.status===''||b.status.indexOf('Resting')===0||b.status.indexOf('Holding')===0||b.status==='Paused')return;
   const e=elev[b.fy*N+b.fx]||2,p=iso(b.fx+b.w/2-0.5,b.fy+b.h/2-0.5);const x=p[0],y=p[1]-e-36;
-  ctx.fillStyle=b.status.indexOf('slowly')>=0?'#C9A64A':'#A34A3A';ctx.beginPath();ctx.arc(x,y,7,0,6.3);ctx.fill();ctx.fillStyle='#F3F5F3';ctx.font='bold 10px Inter, sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('!',x,y+0.5);}
+  ctx.fillStyle=b.status.indexOf('slowly')>=0?'#C9A64A':'#A34A3A';ctx.beginPath();ctx.arc(x,y,7,0,6.3);ctx.fill();ctx.fillStyle='#F3F5F3';ctx.font='bold 10px "Marcellus SC", serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('!',x,y+0.5);}

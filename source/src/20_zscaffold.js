@@ -32,4 +32,4 @@ function drawScaffold(b,win,alpha){const c=b.cons,pr=Math.min(1,c.done/c.days),e
 /* progress bar over a construction site, an upgrade or the hall being raised */
 function drawConsBar(b,pr){if(zoom<0.45)return;const e=elev[b.fy*N+b.fx]||2,p=iso(b.fx+b.w/2-0.5,b.fy+b.h/2-0.5),y=p[1]-e-24-6*Math.min(b.w,b.h),w=26;
   ctx.fillStyle='rgba(38,48,53,0.82)';ctx.fillRect(p[0]-w/2-1.5,y-1.5,w+3,6);ctx.fillStyle='#C9A64A';ctx.fillRect(p[0]-w/2,y,w*pr,3);
-  if(!b.cons.builders){ctx.fillStyle='#F3F5F3';ctx.font='bold 7px Inter, sans-serif';ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText('waiting for builders',p[0],y-2);}}
+  if(!b.cons.builders){ctx.fillStyle='#F3F5F3';ctx.font='bold 7px "Marcellus SC", serif';ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText('waiting for builders',p[0],y-2);}}

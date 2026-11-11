@@ -10,14 +10,14 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <title>Ubbe's Saga</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus+SC&family=Inter:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus+SC&display=swap">
 <style>
 /* Layout: full-screen isometric map canvas; HUD floats over it (top resource bar, objective, right controls, build buttons, bottom nav, sheets). Single committed look. */
 :root{
   --ink:#263035; --ink2:#4A565C; --muted:#56636A;
   --panel:rgba(243,245,243,0.95); --panel-solid:#F3F5F3; --line:#C9D1CF; --soft:#E4E8E5;
   --accent:#A34A3A; --gold:#C9A64A; --green:#5E7A4E; --sea:#5E7F8C;
-  --display:'Marcellus SC', Georgia, serif; --body:'Inter', system-ui, sans-serif;
+  --display:'Marcellus SC', Georgia, serif; --body:'Marcellus SC', Georgia, serif;
   color-scheme: light;
 }
 html,body{height:100%;margin:0;overflow:hidden;background:var(--sea);color:var(--ink);font-family:var(--body)}
@@ -234,7 +234,7 @@ textarea{background:var(--parch2);border-color:var(--line2)}
 
 .toast{top:calc(env(safe-area-inset-top,0px) + 132px)}
 
-/* ---------- beta 0.5: one display face for every title, plain Inter for text ---------- */
+/* ---------- beta 0.5: one display face for every title, now the same face for all text (0.15.1) ---------- */
 .card h3{font-family:var(--display);font-weight:400;font-size:14px;letter-spacing:.06em;text-transform:none;color:var(--bark)}
 .goal b,.modebar .msg strong,.god strong,.pcard strong,.prow b,.slot b,.adv b,.status{font-family:var(--display);font-weight:400;letter-spacing:.02em}
 .goal b{font-size:11px;letter-spacing:.1em}
@@ -461,7 +461,7 @@ h3 svg{vertical-align:-3px}
 <script>
 (function(){
 'use strict';
-const GAME_VERSION="Beta 0.15.0";
+const GAME_VERSION="Beta 0.15.1";
 /* =================== constants =================== */
 const N=132,OX=30,OY=24,SX=12,SY=6,HW=32,HH=16,TW=64;
 const HOME_X=63,HOME_Y=60;  /* the village centre in tile coords */
@@ -2506,7 +2506,7 @@ function drawBuilding0(b,win,alpha,ghost){
 }
 function drawBadge(b){if(!slotsOf(b))return;if(b.status==='Working'||b.status==='Drawing newcomers'||b.status===''||b.status.indexOf('Resting')===0||b.status.indexOf('Holding')===0||b.status==='Paused')return;
   const e=elev[b.fy*N+b.fx]||2,p=iso(b.fx+b.w/2-0.5,b.fy+b.h/2-0.5);const x=p[0],y=p[1]-e-36;
-  ctx.fillStyle=b.status.indexOf('slowly')>=0?'#C9A64A':'#A34A3A';ctx.beginPath();ctx.arc(x,y,7,0,6.3);ctx.fill();ctx.fillStyle='#F3F5F3';ctx.font='bold 10px Inter, sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('!',x,y+0.5);}
+  ctx.fillStyle=b.status.indexOf('slowly')>=0?'#C9A64A':'#A34A3A';ctx.beginPath();ctx.arc(x,y,7,0,6.3);ctx.fill();ctx.fillStyle='#F3F5F3';ctx.font='bold 10px "Marcellus SC", serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('!',x,y+0.5);}
 
 /* =================== art for the level 4–5 buildings =================== */
 function barrelStack(x,y){barrelC(x-6,y);barrelC(x+6,y+3);if(propOK(x,y))barrelC(x,y-9);}
@@ -3026,7 +3026,7 @@ function drawScaffold(b,win,alpha){const c=b.cons,pr=Math.min(1,c.done/c.days),e
 /* progress bar over a construction site, an upgrade or the hall being raised */
 function drawConsBar(b,pr){if(zoom<0.45)return;const e=elev[b.fy*N+b.fx]||2,p=iso(b.fx+b.w/2-0.5,b.fy+b.h/2-0.5),y=p[1]-e-24-6*Math.min(b.w,b.h),w=26;
   ctx.fillStyle='rgba(38,48,53,0.82)';ctx.fillRect(p[0]-w/2-1.5,y-1.5,w+3,6);ctx.fillStyle='#C9A64A';ctx.fillRect(p[0]-w/2,y,w*pr,3);
-  if(!b.cons.builders){ctx.fillStyle='#F3F5F3';ctx.font='bold 7px Inter, sans-serif';ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText('waiting for builders',p[0],y-2);}}
+  if(!b.cons.builders){ctx.fillStyle='#F3F5F3';ctx.font='bold 7px "Marcellus SC", serif';ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText('waiting for builders',p[0],y-2);}}
 
 /* =================== Town Hall: drawn from shapes, grows with its level =================== */
 /* sub-rectangle of a footprint in (u along iso x, v along iso y), 0..1 */
@@ -3209,7 +3209,7 @@ function render(){
     const D=DEF[place.t];
     if(D.need){const r=D.need.r;ctx.fillStyle='rgba(243,245,243,0.12)';for(let y=fy-r;y<fy+d.h+r;y++)for(let x=fx-r;x<fx+d.w+r;x++){if(!inMap(x,y))continue;const sx=(x-y)*HW,sy=(x+y)*HH-elev[y*N+x];poly([sx,sy-HH,sx+HW,sy,sx,sy+HH,sx-HW,sy],'rgba(243,245,243,0.13)');}}
     for(let y=fy;y<fy+d.h;y++)for(let x=fx;x<fx+d.w;x++){if(!inMap(x,y))continue;const sx=(x-y)*HW,sy=(x+y)*HH-elev[y*N+x];poly([sx,sy-HH,sx+HW,sy,sx,sy+HH,sx-HW,sy],chk.ok?'rgba(127,170,96,0.55)':'rgba(163,74,58,0.55)');}
-    if(D.cat!=='Decor'&&!FIELDS.has(place.t)){const st=sideTiles({fx:fx,fy:fy,w:d.w,h:d.h},SIDES[place.rot&3]);const m=st[Math.floor((st.length-1)/2)];if(m&&inMap(m[0],m[1])){const sx=(m[0]-m[1])*HW,sy=(m[0]+m[1])*HH-elev[m[1]*N+m[0]];poly([sx,sy-HH*0.55,sx+HW*0.55,sy,sx,sy+HH*0.55,sx-HW*0.55,sy],'rgba(201,166,74,0.95)');ctx.fillStyle='#263035';ctx.font='bold 13px Inter, sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('door',sx,sy+0.5);}}}
+    if(D.cat!=='Decor'&&!FIELDS.has(place.t)){const st=sideTiles({fx:fx,fy:fy,w:d.w,h:d.h},SIDES[place.rot&3]);const m=st[Math.floor((st.length-1)/2)];if(m&&inMap(m[0],m[1])){const sx=(m[0]-m[1])*HW,sy=(m[0]+m[1])*HH-elev[m[1]*N+m[0]];poly([sx,sy-HH*0.55,sx+HW*0.55,sy,sx,sy+HH*0.55,sx-HW*0.55,sy],'rgba(201,166,74,0.95)');ctx.fillStyle='#263035';ctx.font='bold 13px "Marcellus SC", serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('door',sx,sy+0.5);}}}
   /* selection outline */
   if(sel&&sel.b){const c=fp(sel.b),e=elev[sel.b.fy*N+sel.b.fx];ctx.strokeStyle='#F3F5F3';ctx.lineWidth=2.5/zoom+0.8;ctx.beginPath();ctx.moveTo(c.T[0],c.T[1]-e);ctx.lineTo(c.R[0],c.R[1]-e);ctx.lineTo(c.Bt[0],c.Bt[1]-e);ctx.lineTo(c.L[0],c.L[1]-e);ctx.closePath();ctx.stroke();}
   else if(sel&&sel.x!==undefined){const x=sel.x,y=sel.y,sx=(x-y)*HW,sy=(x+y)*HH-elev[y*N+x];ctx.strokeStyle='#F3F5F3';ctx.lineWidth=2.5/zoom+0.8;ctx.beginPath();ctx.moveTo(sx,sy-HH);ctx.lineTo(sx+HW,sy);ctx.lineTo(sx,sy+HH);ctx.lineTo(sx-HW,sy);ctx.closePath();ctx.stroke();}
@@ -4412,7 +4412,7 @@ function worldSVG(){const reg=r=>wOpen(r);
   const blobs={isles:[[360,230,120,90]],west:[[150,560,120,140]],far:[[120,70,160,90],[700,760,380,90],[1000,320,80,200]]};
   for(const k in blobs){if(reg(k))continue;for(const e of blobs[k])o+='<ellipse cx="'+e[0]+'" cy="'+e[1]+'" rx="'+e[2]+'" ry="'+e[3]+'" fill="#E2E7E6" opacity="0.5"/>';}
   o+='</g>';
-  for(const k in REGIONS){if(reg(k))continue;const c=k==='isles'?[330,200]:[392,604];o+='<g pointer-events="none"><text x="'+c[0]+'" y="'+c[1]+'" text-anchor="middle" font-family="Marcellus SC, Georgia, serif" font-size="22" fill="#3D3129">'+esc(REGIONS[k].n)+'</text><text x="'+c[0]+'" y="'+(c[1]+20)+'" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" fill="#3D3129">'+(k==='england'&&thLevel()>=5?'Buy the traveller’s map':'Opens at Town Hall '+REGIONS[k].lv)+'</text></g>';}
+  for(const k in REGIONS){if(reg(k))continue;const c=k==='isles'?[330,200]:[392,604];o+='<g pointer-events="none"><text x="'+c[0]+'" y="'+c[1]+'" text-anchor="middle" font-family="Marcellus SC, Georgia, serif" font-size="22" fill="#3D3129">'+esc(REGIONS[k].n)+'</text><text x="'+c[0]+'" y="'+(c[1]+20)+'" text-anchor="middle" font-family=""Marcellus SC", serif" font-size="13" fill="#3D3129">'+(k==='england'&&thLevel()>=5?'Buy the traveller’s map':'Opens at Town Hall '+REGIONS[k].lv)+'</text></g>';}
   o+='<g pointer-events="none"><rect x="-300" y="-300" width="1600" height="440" fill="url(#fgT)"/><rect x="-300" y="660" width="1600" height="440" fill="url(#fgB)"/><rect x="-300" y="-300" width="440" height="1400" fill="url(#fgL)"/><rect x="925" y="-300" width="440" height="1400" fill="url(#fgR)"/></g>';
   /* home */
   o+='<g pointer-events="none"><circle cx="'+H[0]+'" cy="'+H[1]+'" r="10" fill="#2F2620" stroke="#C9A64A" stroke-width="2.6"/><text x="'+(H[0]+15)+'" y="'+(H[1]+6)+'" font-family="Marcellus SC, Georgia, serif" font-size="19" fill="#F3EBD8" stroke="#26404B" stroke-width="4" paint-order="stroke">Kaldstrand</text></g>';
@@ -4656,7 +4656,7 @@ let wsT=0;function syncWalkersMaybe(){wsT++;if(wsT%120===0)syncWalkers();}
 requestAnimationFrame(frame);
 
 // Installable game: register the service worker when served over https (GitHub Pages).
-if('serviceWorker' in navigator&&location.protocol==='https:'){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{});});}
+if('serviceWorker' in navigator&&location.protocol==='https:'){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).catch(()=>{});});}
 
 // Horizontal strips (top resource bar) scroll with the mouse wheel and by dragging on PC.
 (function(){const hook=el=>{if(!el||el.__sx)return;el.__sx=1;

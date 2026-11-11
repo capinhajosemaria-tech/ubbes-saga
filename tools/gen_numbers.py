@@ -11,8 +11,8 @@ async def main():
         await pg.goto('file://'+os.path.join(T,'test.html'));await pg.wait_for_timeout(400)
         d=await pg.evaluate("""(()=>{const G=__G;const cs=c=>Object.entries(c||{}).map(e=>e[1]+' '+e[0]).join(', ');
           const ver=document.querySelector('.ver')?document.querySelector('.ver').textContent:'';
-          const b=Object.keys(G.DEF).filter(k=>!G.DEF[k].hidden).map(k=>{const D=G.DEF[k];return [k,D.name,D.cat,D.lvl,D.w+'×'+D.h,cs(D.cost),D.slots||0,(D.out||'').replace(/\\|/g,'/'),(G.LIMITS[k]||[1,1,1,1,1]).join(' / ')];});
-          const th=Object.keys(G.TH_UP).map(l=>{const u=G.TH_UP[l];return [l,cs(u.cost),u.pop,u.fame,u.bld.map(q=>G.DEF[q[0]].name+(q[1]>1?' lv'+q[1]:'')).join(', '),u.ms.map(id=>(G.MS.find(m=>m.id===id)||{title:id}).title).join(', ')];});
+          const b=Object.keys(G.DEF).filter(k=>!G.DEF[k].hidden).map(k=>{const D=G.DEF[k];return [k,D.name,D.cat,D.lvl,D.w+'×'+D.h,cs(D.cost),D.slots||0,(D.out||'').replace(/\\|/g,'/'),(['house','gran','ware'].includes(k)?['no limit']:(G.LIMITS[k]||[1,1,1,1,1])).join(' / ')];});
+          const th=Object.keys(G.TH_UP).map(l=>{const u=G.TH_UP[l];return [l,cs(u.cost),u.pop,u.house?'level '+u.house:''];});
           const ms=G.MS.map(m=>[m.lv,m.title,m.goal,m.fame,(m.unlock||[]).map(k=>G.DEF[k]?G.DEF[k].name:k).join(', ')]);
           const tr=Object.keys(G.TROOPS).map(k=>{const t=G.TROOPS[k];return [k,t.n||k,t.lv,t.str,cs(t.cost||t.gear||{})];});
           const sh=Object.keys(G.SHIPS).map(k=>{const s=G.SHIPS[k];return [k,s.name,s.lv||3,cs(s.cost),s.work,(G.SHIPCAP[k]||{}).crew,(G.SHIPCAP[k]||{}).cargo];});
@@ -23,7 +23,7 @@ async def main():
     v=open(os.path.join(R,'source','VERSION')).read().strip()
     def table(h,rows):return '| '+' | '.join(h)+' |\n|'+'---|'*len(h)+'\n'+''.join('| '+' | '.join(str(c) for c in r)+' |\n' for r in rows)+'\n'
     md='# Ubbe\'s Saga: numbers ('+v+')\n\nGenerated from the game by `tools/gen_numbers.py`. Do not edit by hand.\n\n'
-    md+='## Town Hall upgrades\n\n'+table(['To level','Materials','People','Fame earned','Buildings','Saga goals'],d['th'])
+    md+='## Town Hall upgrades\n\n'+table(['To level','Materials','People','Best house at least'],d['th'])
     md+='## Buildings\n\nLimits are per Town Hall level 1 / 2 / 3 / 4 / 5. Workers: +1 at building level 3 (not fields or wonders). House capacity by house level: '+' / '.join(map(str,d['hc']))+'.\n\n'
     md+=table(['Key','Name','Category','Town Hall','Size','Cost','Workers','Output','Limits'],d['b'])
     md+='## Saga goals\n\n'+table(['Age','Goal','Task','Fame','Unlocks'],d['ms'])

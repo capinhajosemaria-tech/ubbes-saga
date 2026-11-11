@@ -12,50 +12,14 @@ Finished items are removed from this file; what each version changed is in `CHAN
 - World map and raids (Beta 0.11.0).
 - Art 1 — "Frost & Ember" light and the fjord map (Beta 0.12.0).
 - Urgent fixes 1 — village centre, unlock hints, worker output, bottom bar, roads and ground (Beta 0.13.0).
+- Round 1 — economy, resources and first art (Beta 0.14.0).
 
 ## 1. Core redesign (decided with José, 2026-11-11)
 Goal: fewer systems, each one counts more; decisions matter, but the player stays free to build his own way and can always progress (maybe more slowly). City building and resources first; the lineage matters later, when resources are less of a worry.
-Order: **Round 1** → 1C → 1H → 1D → 1I → 1E → 1F → 1G → 1J. Balance fixes 1 items E1 (Smokehouse) and A2 (Bakery) are replaced by Round 1; re-check the rest after it.
+Order: Round 1 (done, 0.14.0) → **1C** → 1H → 1D → 1I → 1E → 1F → 1G → 1J. Balance fixes 1 items E1 (Smokehouse) and A2 (Bakery) are replaced by Round 1; re-check the rest after it.
 
-## This round — Round 1: economy, resources and first art (José, 2026-11-11)
-José asked for one big round with all economy, resource and decided art changes. It is larger than the usual 3–6 items, so it may take 2–3 conversations; release at the end, then **José plays (checkpoint)** before 1C.
-**Old saves will not load** (bump save keys). Update the balance bot (`tools/bots/bot4.js`) and Test villages for removed/new buildings so `tools/check.py` keeps passing; no bot balance runs unless José asks.
-**Progress (2026-11-11, conversation 1):** all economy and food items are in branch `round-1` (not released). Water Mill = look A with palette 1 (grey timber, dark shingles; José). Left: Harbour redesign, tutorial texts, SPEC/NUMBERS/CHANGELOG, `tools/check.py`, release.
-Start by showing José the proposed numbers (yearly source limits, firewood, build times, Town Hall costs) before changing the game.
-**Numbers agreed (José, 2026-11-11):** year = 45 days (30 summer + 15 winter).
-- Yearly sources: tree 8 wood, berry bush 25, iron outcrop tile 60, water tile within 3 of a Fisher's Hut 20 fish (sea) / 12 (river). Refilled in spring.
-- Firewood option A (assumed, José did not pick): 0.5 a house a day in summer, 1.2 in winter (lv3+ houses ×0.75; Town Hall 2× a house). Planks burn as 2 wood each when logs run out, above the plank reserve. Wood costs unchanged until measured.
-- Build time: 1×1 decor ½ day, 1 worker; up to 2×2 1 day, 1 worker; 3×2 and 3×3 2 days, 2 workers; 4×3 and larger, and the Town Hall, 3 days, 3 workers. Upgrades take the same time.
-- Town Hall: TH2 110 wood, 70 planks, 20 iron, 22 people, house lv1; TH3 190 wood, 150 planks, 50 iron, 10 tools, 32 people, house lv2; TH4 320 wood, 270 planks, 100 iron, 20 tools, 100 silver, 48 people, house lv3; TH5 460 wood, 400 planks, 170 iron, 30 tools, 250 silver, 20 gold, 80 people, house lv4.
-- Warehouses and granaries: the first 2 of each at base price, the 3rd–5th each +30% on the previous one, then each further one +50% on the previous one.
-- Removing sources gives 2 wood per tree, 3 berries per bush.
-
-Economy
-- [x] **Resource sources with a yearly limit**: trees, berry bushes, iron lines and fishing waters give a fixed amount per year (they stay on the map), refilled each spring, so winter draws on what is left. A building works the sources within its radius; buildings sharing sources split them. Show the radius and expected % when placing, and the % of maximum output on the building.
-- [x] **Firewood**: houses already burn 1 a day (0.75 from level 3); add +20% in winter and tune by measuring (important, not crippling). Review wood costs too.
-- [x] **Woodcutters keep full output in winter.**
-- [x] **Planks as fuel fallback**: when logs run out, fires burn planks (1 plank = 2 wood, as in the carpenter recipe), never below the plank reserve.
-- [x] **No automatic material reserve** for the Town Hall (remove "Keep materials for the next hall"); reserves come with the Production panel (1C).
-- [x] **Construction takes time**: every building takes 1–3 days to build and uses 1–3 workers while it is built (by size); the plot shows scaffolding and progress. Ship-Tomb stays as it is.
-- [x] **Town Hall requirements = population + resource cost + at least one house at the highest level the current Town Hall allows** (houses can reach the Town Hall's level). No fame, building or saga-goal requirements any more. Saga goals stay as the early unlock path and give fame (for land).
-- [x] **Remove tool** next to Roads: remove plants, buildings and roads (all removal moves here). Placing a building over trees or bushes asks "Remove these resource sources?"; yes → the building is placed, the sources removed, and the player gets ¼ of a season's output of each removed source.
-- [x] **No soldier limit**: training works like assigning workers — a "+" on the Training Ground showing the free workers; gear from the smithy still limits it. Drop the "4–8 spare workers" balance rule.
-- [x] **Houses unlimited; warehouses and granaries unlimited but each extra one costs more.** Decor stays as it is.
-
-Resources: food and drink
-- [x] Food sources: **berries, fishers, Pig Pen (pigs only), Fodder Field** (feed for animals only, not people), **Grain Field → Water Mill (flour, not perishable) → Bakery** (bread also in winter). Keep Preserver and Smokehouse.
-- [x] **Sheep Pen** for wool (sails, warm clothes).
-- [x] Remove Salt Works and salt goods, Hunter's Lodge, Vegetable Garden, Hay Meadow (replaced by the Fodder Field). Re-check food variety for morale.
-- [x] **Brewery and Beehives move to TH3**; ale and mead are not meals (fixes E2): they are drunk at feasts and in the **Tavern** (unlocks with the Brewery), which uses them slowly and raises morale while stocked and working.
-
-Art
-- [x] **Water Mill** stands on the river and looks like a real mill (wheel in the water): show 1–2 drawings first.
-- [x] **Roads = option B "trodden earth"** (from branch `art-prototypes`): dark mud, deep wheel ruts, puddles reflecting the sky, stones, round worn bends, grass tufts over the edge. Door tracks and winter roads must match.
-- [x] **Door paths join the road** without overlapping, same style as roads but thinner.
-- [x] **Grass = option B**: large soft colour drift (no tile chessboard), two-tone grass clumps, darker grass and trampled earth around buildings.
-- [x] **Market = option M1**: cobbles like the Town Hall square, three timber booths with plank/turf roofs over the back half (goods visible: fish, pots, furs), a stone well with bucket instead of the modern fountain post, crates and barrels. The old striped stalls go.
-- [ ] **Harbour redesign**: longer and narrower (rectangular), reaching further out to sea, a wooden platform that hugs the shore and a small characteristic building. Ships show moored at the harbour, each type with its own look, without overlapping.
-- [x] New buildings (Sheep Pen, Pig Pen, Fodder Field, Tavern, construction scaffolding) drawn in the same style; show a contact sheet.
+## This round
+- (none — José plays Beta 0.14.0 first: **checkpoint** before 1C. Firewood option A was assumed; tune after play.)
 
 ## Next rounds (in this order)
 

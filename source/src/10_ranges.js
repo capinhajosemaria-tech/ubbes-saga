@@ -30,7 +30,9 @@ function canPlace(t,fx,fy,rot,ignoreId){
   }
   if(D.river&&!wet)return {ok:false,why:'The water mill must stand on the river: its wheel turns in the water'};
   if(D.river&&wet>Math.floor(d.w*d.h/2))return {ok:false,why:'Needs a foothold on the bank: too much of it is over the river'};
-  if(D.water&&wet>Math.floor(d.w*d.h*0.6))return {ok:false,why:'Needs a foothold on the shore: too much of it is over water'};
+  if(D.pier){const ax=d.w>d.h,Lr=ax?d.w:d.h,Wr=ax?d.h:d.w,row=k=>{let n=0;for(let s=0;s<Wr;s++){const x=ax?fx+k:fx+s,y=ax?fy+s:fy+k;if(tAt(x,y)===T.SEA)n++;}return n;};const r0=row(0),r1=row(Lr-1);
+    if(!((r0===0&&r1===Wr)||(r1===0&&r0===Wr)))return {ok:false,why:'The pier must run from dry shore straight out to open sea'};}
+  else if(D.water&&wet>Math.floor(d.w*d.h*0.6))return {ok:false,why:'Needs a foothold on the shore: too much of it is over water'};
   const nc=needCount(b,D.need,!ignoreId);
   if(D.need&&nc.n===0){const k=D.need.k,r=D.need.r;return {ok:false,why:k==='tree'?'No trees within '+r+' tiles':k==='bush'?'No berry bushes within '+r+' tiles':k==='iron'?'No iron outcrop within '+r+' tiles':k==='water'?'No sea or river within '+r+' tiles':k==='river'?'Needs the river within '+r+' tiles':k==='waterd'?'No sea or river within 12 tiles':k==='sea'?(r===1?'Must stand right at the sea shore':'Needs the sea within '+r+' tiles'):'Needs water within '+r+' tiles',label:nc.label};}
   let lab=nc.label;if(typeof nbOf==='function'&&NB[t]){const nb=nbOf({t:t,fx:fx,fy:fy,w:d.w,h:d.h});lab=(lab?lab+' · ':'')+(nb?'+15% next to the '+nb:'Place within 4 tiles of a '+NB[t].map(x=>DEF[x].name).join(' or ')+' for +15%');}

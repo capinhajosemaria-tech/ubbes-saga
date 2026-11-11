@@ -23,7 +23,7 @@ function todNow(win){const t=todPhase(),K=win?TOD_W:TOD_S;let i=0;while(i<K.leng
 const rgbaA=(c,a)=>'rgba('+(c[0]|0)+','+(c[1]|0)+','+(c[2]|0)+','+Math.max(0,a).toFixed(3)+')';
 
 /* rough building heights (in tile units) for cast shadows */
-const SH_H={th:2.4,tower:3.0,hof:2.7,jarl:1.8,trade:1.6,tomb:1.1,market:.55,pen:.45,train:.35,camp:.35,bench:.2,wattle:.45,rune:1.1,herbs:.12,prow:.9,nets:.8,hives:.5,altar:.9,pyre:.8,salt:.6,thrall:.9};
+const SH_H={harbour:.12,th:2.4,tower:3.0,hof:2.7,jarl:1.8,trade:1.6,tomb:1.1,market:.55,pen:.45,train:.35,camp:.35,bench:.2,wattle:.45,rune:1.1,herbs:.12,prow:.9,nets:.8,hives:.5,altar:.9,pyre:.8,salt:.6,thrall:.9};
 function shHull(P){P=P.slice().sort((a,b)=>a[0]-b[0]||a[1]-b[1]);const cr=(o,a,b)=>(a[0]-o[0])*(b[1]-o[1])-(a[1]-o[1])*(b[0]-o[0]);const lo=[],up=[];
   for(const p of P){while(lo.length>=2&&cr(lo[lo.length-2],lo[lo.length-1],p)<=0)lo.pop();lo.push(p);}
   for(let i=P.length-1;i>=0;i--){const p=P[i];while(up.length>=2&&cr(up[up.length-2],up[up.length-1],p)<=0)up.pop();up.push(p);}return lo.slice(0,-1).concat(up.slice(0,-1));}

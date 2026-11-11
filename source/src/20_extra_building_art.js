@@ -9,6 +9,7 @@ function spearRack(x,y){ctx.strokeStyle='#5A4636';ctx.lineWidth=1.6;ctx.beginPat
 function pennant(b,e,col){const p=iso(b.fx+b.w/2-0.5,b.fy+b.h/2-0.5),x=p[0]+8,y=p[1]-e-Math.min(56,22+b.w*8);ctx.strokeStyle='#4E3C2E';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x,y-14);ctx.stroke();poly([x,y-14,x+10,y-11,x,y-8],col);}
 function drawExtra(b,win,c0,alongX){
   if(b.t==='mill')return drawMill(b,win,c0);
+  if(b.t==='harbour')return drawHarbour(b,win);
   if(b.t==='tavern')return drawTavern(b,win,c0,alongX);
   if(drawExtra2(b,win,c0,alongX))return true;
   const c=inset(c0,0.1),fb=c.Bt,fr2=lerp(c.Bt,c.R,0.5),fl=lerp(c.L,c.Bt,0.5);
@@ -57,13 +58,7 @@ function drawExtra(b,win,c0,alongX){
     case 'shipyard':{const along=alongX;poly(P(c0.T,c0.R,c0.Bt,c0.L),win?'#D6D9D5':'#B19E7B');
       ctx.strokeStyle='#8A6E52';ctx.lineWidth=3;ctx.beginPath();for(let k=0;k<6;k++){const a=along?lerp(c0.T,c0.L,(k+0.5)/6):lerp(c0.T,c0.R,(k+0.5)/6),e2=along?lerp(c0.R,c0.Bt,(k+0.5)/6):lerp(c0.L,c0.Bt,(k+0.5)/6);ctx.moveTo(a[0],a[1]);ctx.lineTo(e2[0],e2[1]);}ctx.stroke();
       const sh={T:c0.T,R:lerp(c0.T,c0.R,0.3),L:lerp(c0.T,c0.L,0.3)};sh.Bt=[sh.R[0]+sh.L[0]-c0.T[0],sh.R[1]+sh.L[1]-c0.T[1]];hall(inset(sh,0.1),12,12,true,{},win);
-      if(b.proj){const pr=b.proj.done/SHIPS[b.proj.type].work;drawShip(c0.cx||(c0.T[0]+c0.Bt[0])/2,(c0.T[1]+c0.Bt[1])/2+4,0.34,!along,b.proj.type==='knarr',pr);}
-      return true;}
-    case 'harbour':{poly(P(c0.T,c0.R,c0.Bt,c0.L),'#A88A69');ctx.strokeStyle='rgba(78,60,46,0.5)';ctx.lineWidth=1;ctx.beginPath();for(let k=1;k<9;k++){const a=lerp(c0.T,c0.L,k/9),e2=lerp(c0.R,c0.Bt,k/9);ctx.moveTo(a[0],a[1]);ctx.lineTo(e2[0],e2[1]);}ctx.stroke();
-      poly(P(c0.L,c0.Bt,[c0.Bt[0],c0.Bt[1]+5],[c0.L[0],c0.L[1]+5]),'#6E543D');poly(P(c0.Bt,c0.R,[c0.R[0],c0.R[1]+5],[c0.Bt[0],c0.Bt[1]+5]),'#5C4634');
-      [c0.L,c0.Bt,c0.R,lerp(c0.L,c0.Bt,0.5),lerp(c0.Bt,c0.R,0.5)].forEach(p=>{ctx.fillStyle='#4E3C2E';ctx.fillRect(p[0]-2,p[1]-6,4,10);});
-      const cr=lerp(c0.T,c0.Bt,0.4);ctx.strokeStyle='#5A4636';ctx.lineWidth=2.5;ctx.beginPath();ctx.moveTo(cr[0],cr[1]);ctx.lineTo(cr[0],cr[1]-34);ctx.lineTo(cr[0]+20,cr[1]-28);ctx.stroke();ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(cr[0]+20,cr[1]-28);ctx.lineTo(cr[0]+20,cr[1]-14);ctx.stroke();ctx.fillStyle='#A88A69';ctx.fillRect(cr[0]+16,cr[1]-14,8,6);
-      barrelC(lerp(c0.T,c0.L,0.5)[0]+10,lerp(c0.T,c0.L,0.5)[1]+6);barrelC(lerp(c0.T,c0.R,0.5)[0]-6,lerp(c0.T,c0.R,0.5)[1]+8);
+      if(b.proj){const pr=b.proj.done/SHIPS[b.proj.type].work;drawShip(c0.cx||(c0.T[0]+c0.Bt[0])/2,(c0.T[1]+c0.Bt[1])/2+4,0.34,!along,b.proj.type,pr);}
       return true;}
     case 'trade':{hall(c,16,16,alongX,{},win);const a=alongX?lerp(c.Bt,c.R,0.2):lerp(c.L,c.Bt,0.2),e2=alongX?lerp(c.Bt,c.R,0.8):lerp(c.L,c.Bt,0.8);
       for(let k=0;k<6;k++){const p=lerp(a,e2,k/6),q=lerp(a,e2,(k+1)/6);poly([p[0],p[1]-14,q[0],q[1]-14,q[0]+(alongX?-6:6),q[1]-6,p[0]+(alongX?-6:6),p[1]-6],k%2?'#E9E2D0':'#A34A3A');}
@@ -71,10 +66,6 @@ function drawExtra(b,win,c0,alongX){
   }
   return false;
 }
-function drawShipsAtHarbour(win){const hb=B.find(b=>b.t==='harbour');const home=S.ships.filter(s=>!s.away);if(!hb||!home.length)return;const spots=dockSpots(hb);if(!spots.length)return;
-  home.forEach((s,i)=>{const sp=spots[Math.min(spots.length-1,Math.floor((i+0.5)*spots.length/home.length))];const p=iso(sp.q[0],sp.q[1]);const bob=Math.sin(t*1.2+i)*1.2;
-    const flip=Math.abs(sp.p[0]-(hb.fx+hb.w/2-0.5))>Math.abs(sp.p[1]-(hb.fy+hb.h/2-0.5));drawShip(p[0],p[1]+8+bob,0.36,flip,s.type==='knarr');SHIP_HITS.push([p[0],p[1],s.id]);});}
-
 function drawBuilding(b,win,alpha,ghost){if(!ghost&&b.cons&&b.cons.k==='build'){drawScaffold(b,win,alpha);return;}if(!ghost&&b.cons&&!b.thumb){const r=drawBuilding1(b,win,alpha,ghost);drawConsBar(b,Math.min(1,b.cons.done/b.cons.days));return r;}return drawBuilding1(b,win,alpha,ghost);}
 function drawBuilding1(b,win,alpha,ghost){DOOR_SIDE=SIDES[(b.rot|0)&3];PROP_B=ghost||b.thumb?null:b;CUR_T=b.t;try{drawBuilding0(b,win,alpha,ghost);}finally{DOOR_SIDE=null;PROP_B=null;CUR_T=null;}}
 function drawBuilding0(b,win,alpha,ghost){

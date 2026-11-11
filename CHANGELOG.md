@@ -2,6 +2,21 @@
 
 Versions are `Beta 0.MINOR.PATCH` until Town Hall 10 (`1.0.0`).
 
+## Beta 0.14.0 — Round 1: economy, resources and first art
+- **Old saves do not load** (the economy changed too much).
+- Trees, berry bushes, iron outcrops and fishing water now give a fixed amount each year (tree 8 wood, bush 25 berries, iron tile 60, sea tile 20 fish, river tile 12), refilled every spring. Buildings that share sources split them; placing shows how much a building will get, and its sheet shows the % of full output.
+- Firewood: houses burn ½ wood a day in summer and 1.2 in winter. When logs run out, fires burn planks. Woodcutters keep full output in winter.
+- Buildings take 1–3 days to build (and to upgrade) and borrow 1–3 free workers as builders; the plot shows scaffolding and progress.
+- Town Hall: now needs people, materials and one house at the highest level your hall allows. No fame, building or saga-goal requirements. "Keep materials for the next hall" is gone.
+- New **Remove** tool next to Roads: buildings, roads, trees and bushes. Building over trees or bushes asks first and gives back a little wood and berries.
+- No warrior limit: the Training Ground trains free workers, limited by gear.
+- Houses, granaries and warehouses have no limit (granaries and warehouses cost more after the second).
+- New food chains: Pig Pen, Sheep Pen (wool), Fodder Field (animal feed), Grain Field → Water Mill (on the river) → Bakery (bread all year). Salt Works, Hunter's Lodge, Vegetable Garden and Hay Meadow are gone.
+- Brewery and Beehives open at Town Hall 3. Ale and mead are no longer counted as meals: they are drunk at banquets and in the new **Tavern**, which raises morale.
+- Art: "trodden earth" roads with door paths that join them, soft drifting grass, a new Market with timber booths and a well, the Water Mill with its wheel in the river, the Tavern, Pig and Sheep Pens, Fodder Field and construction scaffolding.
+- New **Harbour**: a long pier from the shore out to sea with a boathouse, crane and lantern; ships moor alongside without overlapping. Karvi, knarr and snekkja now each look different.
+- The guide explains yearly source limits, building time and the new Town Hall requirements.
+
 ## Beta 0.13.0
 - The Town Hall now stands in the middle of its square, and you can move and rotate it (rotating turns the hall and moves the plaza fire to another corner).
 - The Jarl's House is already built when a new saga starts.

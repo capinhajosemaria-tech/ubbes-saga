@@ -461,7 +461,7 @@ h3 svg{vertical-align:-3px}
 <script>
 (function(){
 'use strict';
-const GAME_VERSION="Beta 0.15.3";
+const GAME_VERSION="Beta 0.15.4";
 /* =================== constants =================== */
 const N=132,OX=30,OY=24,SX=12,SY=6,HW=32,HH=16,TW=64;
 const HOME_X=63,HOME_Y=60;  /* the village centre in tile coords */
@@ -678,12 +678,12 @@ const DEF={
   house:{name:'House',w:2,h:2,cost:{wood:20},slots:0,housing:4,road:false,cat:'Homes',lvl:1,up:true,desc:'Home for 4 people, 5 after the first upgrade; the second upgrade insulates it (−25% firewood). Burns ½ wood a day in summer and 1.2 in winter; when the logs run out, planks are burned (1 plank = 2 wood).'},
   jarl:{name:'Jarl’s House',w:3,h:3,cost:{wood:60,planks:30},slots:0,housing:4,road:false,cat:'Homes',lvl:1,desc:'Home of Ubbe and his heirs.'},
   pyre:{name:'Funeral Pyre',w:2,h:2,cost:{wood:10},slots:0,road:false,cat:'Community',lvl:1,desc:'The dead are burned here, so the river stays clean.'},
-  wood:{name:'Woodcutter’s Lodge',w:2,h:2,cost:{wood:15},slots:3,tools:true,need:{k:'tree',r:6},cat:'Materials',lvl:1,up:true,out:'3 wood per worker a day',desc:'Fells trees within 6 tiles; the forest never runs out. Works through winter.'},
+  wood:{name:'Woodcutter’s Lodge',w:2,h:2,cost:{wood:15},slots:3,tools:true,need:{k:'tree',r:6},cat:'Materials',lvl:1,up:true,out:'3 wood per worker a day',desc:'Fells trees within 6 tiles. Full output needs 90 trees of its own; trees never run out, but each belongs to one lodge only. Works through winter.'},
   carp:{name:'Carpenter',w:2,h:2,cost:{wood:25},slots:2,tools:true,cat:'Materials',lvl:1,up:true,out:'4 wood → 2 planks per worker a day',desc:'Saws timber into planks. Never touches the wood reserve you set.'},
-  mine:{name:'Iron Mine',w:2,h:2,cost:{wood:30,planks:10},slots:3,tools:true,need:{k:'iron',r:4},cat:'Materials',lvl:1,up:true,out:'2 iron per worker a day',desc:'Digs ore within 4 tiles at the foot of the mountains; the ore never runs out.'},
+  mine:{name:'Iron Mine',w:2,h:2,cost:{wood:30,planks:10},slots:3,tools:true,need:{k:'iron',r:4},cat:'Materials',lvl:1,up:true,out:'2 iron per worker a day',desc:'Digs ore within 4 tiles at the foot of the mountains. Full output needs 5 iron outcrops of its own; ore never runs out, but each outcrop belongs to one mine only.'},
   smith:{name:'Smithy',w:2,h:2,cost:{wood:15,planks:20,iron:10},slots:2,cat:'Crafts',lvl:1,up:true,out:'Tools, and later weapons',desc:'Forges tools; from Town Hall 2 spears, from Town Hall 3 shields, bows, arrows and swords. Needs a working anvil; a new one costs 10 iron. +15% next to a mine.'},
   fish:{name:'Fisher’s Hut',w:2,h:1,cost:{wood:15},slots:3,tools:true,need:{k:'water',r:3},cat:'Food',lvl:1,up:true,out:'4 fish per worker a day',desc:'A small hut with boats. Fishes the water within 3 tiles; the fish never run out. Catches far less in winter, more at sea than on the river.'},
-  berry:{name:'Berry Gatherer',w:2,h:2,cost:{wood:10},slots:2,tools:true,need:{k:'bush',r:5},seasonal:true,cat:'Food',lvl:1,up:true,out:'4 berries per worker a day (summer)',desc:'Picks berries from the bushes within 5 tiles; they never run out. Rests in winter; its workers are free for other jobs.'},
+  berry:{name:'Berry Gatherer',w:2,h:2,cost:{wood:10},slots:2,tools:true,need:{k:'bush',r:5},seasonal:true,cat:'Food',lvl:1,up:true,out:'4 berries per worker a day (summer)',desc:'Picks berries within 5 tiles. Full output needs 6 bushes of its own; bushes never run out, but each belongs to one gatherer only. Rests in winter; its workers are free for other jobs.'},
   pres:{name:'Preserver',w:2,h:2,cost:{wood:15,planks:20},slots:2,cat:'Food',lvl:1,up:true,out:'Dried fish and jam',desc:'Preserved food never spoils and feeds twice as much.'},
   gran:{name:'Granary',w:3,h:2,cost:{wood:30,planks:10},slots:0,road:false,store:{food:300},cat:'Storage',lvl:1,up:true,desc:'Raised storehouse. Holds 300 more food, +150 per upgrade.'},
   ware:{name:'Warehouse',w:3,h:2,cost:{wood:30,planks:10},slots:0,road:false,store:{mat:300},cat:'Storage',lvl:1,up:true,desc:'Holds 300 more goods, +150 per upgrade.'},
@@ -881,8 +881,21 @@ function canPlace(t,fx,fy,rot,ignoreId){
 /* Trees, berry bushes, iron outcrops and fishing water give a fixed amount each year and stay on the map.
    Everything refills at the start of summer (spring), so winter draws on what is left.
    A building works the sources within its radius; buildings of the same kind sharing a source split it. */
-/* 0.15.3 (José): sources never run out; a building only needs one source in range for full output */
+/* 0.15.4 (José): sources never run out, but each one belongs to a single building.
+   Full output needs SRC_NEED sources of its own in range (fewer = less output); fishing water is unlimited and shared. */
 const SRC_ENDLESS=true;
+const SRC_NEED={wood:90,mine:5,berry:6};
+let CLAIM_KEY='',CLAIM=new Map();
+/* every extractor claims the nearest free sources in its range, oldest building first */
+function srcClaims(){const gone=trees.reduce((a,t)=>a+(t.gone?1:0),0)+bushes.reduce((a,t)=>a+(t.gone?1:0),0);
+  const key=B.filter(b=>SRC_NEED[b.t]).map(b=>b.id+b.t+b.fx+','+b.fy+','+b.w).join('|')+'#'+gone;
+  if(key===CLAIM_KEY)return CLAIM;CLAIM_KEY=key;CLAIM=new Map();const taken=new Set();
+  for(const b of B.filter(q=>SRC_NEED[q.t]).sort((a,c)=>a.id-c.id)){const own=srcFree(b,taken);own.forEach(o=>taken.add(o));CLAIM.set(b.id,own);}
+  CLAIM.taken=taken;return CLAIM;}
+function srcFree(b,taken){return srcList(b).filter(o=>!taken.has(o)).sort((p,q)=>rectDist(b,p.x,p.y)-rectDist(b,q.x,q.y)).slice(0,SRC_NEED[b.t]);}
+const srcOwn=b=>srcClaims().get(b.id)||[];
+/* share of full output the sources allow: 0..1 */
+function srcFactor(b){const need=SRC_NEED[b.t];if(!need)return srcList(b).length?1:0;return Math.min(1,srcOwn(b).length/need);}
 const SRC_Y={tree:8,bush:25,iron:60,sea:20,river:12};
 const SRC_OF={wood:'tree',berry:'bush',mine:'iron',fish:'water'};
 const SRC_R={wood:6,berry:5,mine:4,fish:3};
@@ -913,16 +926,18 @@ function srcInfo(b,planned){const t=b.t,list=srcList(b);let share=0,shared=0;
   for(const o of list){const k=srcShare(o,t,planned?null:b,planned);share+=o.cap/k;if(k>1)shared++;}
   const sl=planned?(DEF[t].slots||0):slotsOf(b),mx=maxYear(t,planned?1:b.lvl,Math.max(1,sl));
   let left=0;for(const o of list)left+=o.amt/srcShare(o,t,planned?null:b,planned);
-  if(SRC_ENDLESS)return {n:list.length,shared:shared,share:share,pct:list.length?1:0,left:Infinity,list:list};
+  if(SRC_ENDLESS){const need=SRC_NEED[t];if(!need)return {n:list.length,need:0,inR:list.length,pct:list.length?1:0,left:Infinity,list:list};
+    const C=srcClaims(),own=planned?srcFree(b,C.taken):srcOwn(b);return {n:own.length,need:need,inR:list.length,pct:Math.min(1,own.length/need),left:Infinity,list:own};}
   return {n:list.length,shared:shared,share:share,pct:mx>0?Math.min(1,share/mx):0,left:left,list:list};}
 function srcLabel(b,planned){const k=SRC_OF[b.t],w=SRC_WORD[k],I=srcInfo(b,planned);
   if(!I.n)return {n:0,label:'No '+w[1]+' in range'};
-  if(SRC_ENDLESS)return {n:I.n,label:I.n+' '+(I.n===1?w[0]:w[1])+' in range · full output',pct:1};
+  if(SRC_ENDLESS){if(!I.need)return {n:I.n,label:I.n+' '+(I.n===1?w[0]:w[1])+' in range · full output',pct:1};
+    const other=I.inR-I.n;return {n:I.n,pct:I.pct,label:I.n+' of '+I.need+' '+w[1]+' its own · '+Math.round(I.pct*100)+'% output'+(other>0?' · '+other+' more in range belong to other buildings':'')};}
   let s=I.n+' '+(I.n===1?w[0]:w[1])+' in range'+(I.shared?' ('+I.shared+' shared)':'')+' · '+Math.round(I.pct*100)+'% of full output';
   if(!planned)s+=' · '+fmt(I.left)+' '+RNAME[SRC_RES[b.t]].toLowerCase()+' left this year';
   return {n:I.n,label:s,pct:I.pct};}
 /* take up to `want` from the building's sources, each shared source split between the buildings using it */
-function harvest(b,want){if(want<=0)return 0;if(SRC_ENDLESS)return srcList(b).length?want:0;const list=srcList(b).filter(o=>o.amt>0.001);if(!list.length)return 0;
+function harvest(b,want){if(want<=0)return 0;if(SRC_ENDLESS)return want*srcFactor(b);const list=srcList(b).filter(o=>o.amt>0.001);if(!list.length)return 0;
   const w=list.map(o=>1/srcShare(o,b.t,b,false)),ws=w.reduce((a,c)=>a+c,0);let got=0;
   list.forEach((o,i)=>{const take=Math.min(o.amt,want*w[i]/ws);o.amt-=take;got+=take;});
   let rest=want-got;for(const o of list){if(rest<=0.001)break;const take=Math.min(o.amt,rest);o.amt-=take;got+=take;rest-=take;}
@@ -1023,16 +1038,16 @@ function dayTick(){
     b.status=tf<1?'Working slowly: no tools':'Working';
     const mk=(k,a)=>{const g=addRes(k,a);b.made=(b.made?b.made+', ':'')+'+'+g.toFixed(1)+' '+(RNAME[k]||k).toLowerCase();if(a>0.01&&g<a*0.5)b.status='Storage full';return g;};
     switch(b.t){
-      case 'wood':{const got=harvest(b,n*3*E);if(got<=0.001)b.status=srcList(b).length?'Trees in range used up until spring':'No trees in range';mk('wood',got);break;}
+      case 'wood':{const got=harvest(b,n*3*E);if(got<=0.001)b.status=srcList(b).length?'Every tree in range belongs to another lodge':'No trees in range';mk('wood',got);break;}
       case 'carp':{const av=Math.max(0,r.wood-S.woodReserve),p=Math.min(n*2*E,av/2);if(p<=0.05){b.status=holdMsg(['wood']);break;}r.wood-=p*2;mk('planks',p);break;}
-      case 'mine':{const got=harvest(b,n*2*E);if(got<=0.001)b.status='Ore in range dug out until spring';mk('iron',got);break;}
+      case 'mine':{const got=harvest(b,n*2*E);if(got<=0.001)b.status=srcList(b).length?'Every outcrop in range belongs to another mine':'No iron in range';mk('iron',got);break;}
       case 'smith':{if(b.anvil<=0){if(r.iron>=10){r.iron-=10;b.anvil=100;toast('The smith forged a new anvil (10 iron).');}else{b.status='Anvil broken: needs 10 iron';break;}}
         let md=b.mode;if(!SMITH[md]||SMITH[md].lv>thLevel())md='tools';const sm=SMITH[md];let make=n*sm.per*E;
         for(const k in sm.c){make=Math.min(make,resv(k)/sm.c[k]);}
         if(make<=0.01){b.status=holdMsg(Object.keys(sm.c));break;}
         const g=mk(md,make);for(const k in sm.c)r[k]-=g*sm.c[k];b.anvil-=1;if(miscUse())addRes('misc',g*0.03*(md==='arrows'?0.1:1));break;}
       case 'fish':{const sea=waterDist(b,t=>t===T.SEA)<=3?1:0,got=harvest(b,n*4*E*(win?(sea>0?0.4:0.25):1));if(got<=0.001)b.status='Fishing water in range fished out until spring';mk('fish',got);if(sea>0&&miscUse())addRes('misc',n*0.02);break;}
-      case 'berry':{const got=harvest(b,n*4*E);if(got<=0.001)b.status='Bushes picked clean until next summer';mk('berries',got);break;}
+      case 'berry':{const got=harvest(b,n*4*E);if(got<=0.001)b.status=srcList(b).length?'Every bush in range belongs to another gatherer':'No bushes in range';mk('berries',got);break;}
       case 'pres':{let made=0;for(let k=0;k<Math.round(n*(E>1?1.25:1));k++){
           if(resv('fish')>=2&&resv('fish')>=resv('berries')){r.fish-=2;made+=addRes('dfish',1);}
           else if(resv('berries')>=2){r.berries-=2;made+=addRes('jam',1);}}
@@ -3639,7 +3654,7 @@ function buildingSheet(b){
     assignWorkers();h+='<div class="wk"><button type="button" class="btn small" id="w-minus" aria-label="Fewer workers" '+(b.desired<=0?'disabled':'')+'>−</button><span class="num">'+b.desired+' / '+sl+' <span class="meta">workers</span></span><button type="button" class="btn small" id="w-plus" aria-label="More workers" '+(b.desired>=sl||freeWorkers<=0?'disabled':'')+'>+</button><span class="meta">'+freeWorkers+' free in the village</span></div>';
     if(D.out){const pc=Math.round(100*(b.workers||0)/sl);h+='<div class="outpct"><span class="meta">Output from workers</span><span class="bar"><i style="width:'+pc+'%"></i></span><strong>'+pc+'%</strong><span class="meta">'+(b.workers||0)+' of '+sl+' working · each worker adds '+Math.round(100/sl)+'%</span></div>';}
     h+='<p>'+esc(D.out||'')+(b.made?' · <strong>Yesterday: '+esc(b.made)+'</strong>':'')+'</p>';
-    if(SRC_OF[b.t]&&!SRC_ENDLESS){const I=srcInfo(b,false),pc=Math.round(I.pct*100);h+='<div class="outpct"><span class="meta">Sources in range</span><span class="bar"><i style="width:'+pc+'%"></i></span><strong>'+pc+'%</strong><span class="meta">of maximum yearly output, with all workers</span></div>';}
+    if(SRC_OF[b.t]&&(!SRC_ENDLESS||SRC_NEED[b.t])){const I=srcInfo(b,false),pc=Math.round(I.pct*100);h+='<div class="outpct"><span class="meta">'+(SRC_ENDLESS?'Own '+SRC_WORD[SRC_OF[b.t]][1]+': '+I.n+' of '+I.need:'Sources in range')+'</span><span class="bar"><i style="width:'+pc+'%"></i></span><strong>'+pc+'%</strong><span class="meta">'+(SRC_ENDLESS?'of full output, with all workers':'of maximum yearly output, with all workers')+'</span></div>';}
     if(D.need){const nc=needCount(b,D.need);h+='<div class="meta">'+esc(nc.label)+'</div>';}
     if(!b.conn&&D.road!==false)h+='<p style="color:#8E3B2F">Connect this building to the Town Hall with a road.</p>';
     on.push(()=>{$('w-minus').onclick=()=>{b.desired=Math.max(0,b.desired-1);assignWorkers();buildingSheet(b);save();};$('w-plus').onclick=()=>{assignWorkers();if(freeWorkers<=0){toast('No free workers. Take someone off another building first.');return;}b.desired=Math.min(sl,b.desired+1);assignWorkers();buildingSheet(b);save();};});
@@ -4016,7 +4031,7 @@ function needsShort(k){return needsList(k,true).filter(x=>!/workers$/.test(x)).j
 /* S.guide: step index while the guide runs, -1 when finished or closed, undefined in old saves and test villages */
 const GUIDE=[
   {h:'Welcome to Kaldstrand',t:()=>'A year has 30 days of summer and 15 of winter. In summer your people gather and build. In winter they live on what you stored, and every house burns wood to keep warm.',next:true},
-  {h:'Food and wood',t:()=>'Pick a Berry Gatherer and a Woodcutter’s Lodge from the bar at the bottom (the first of each is free). Berries feed people in summer; wood builds everything and heats the houses. Trees and bushes never run out: one in reach is enough, and the circle shows what the building can reach.',done:()=>has('berry')&&has('wood'),go:()=>placeType(has('berry')?'wood':'berry'),btn:()=>'Place '+DEF[has('berry')?'wood':'berry'].name},
+  {h:'Food and wood',t:()=>'Pick a Berry Gatherer and a Woodcutter’s Lodge from the bar at the bottom (the first of each is free). Berries feed people in summer; wood builds everything and heats the houses. Trees and bushes never run out, but each one serves a single building: a lodge needs 90 trees of its own for full output, a gatherer 6 bushes. When placing, the circle shows how many it gets.',done:()=>has('berry')&&has('wood'),go:()=>placeType(has('berry')?'wood':'berry'),btn:()=>'Place '+DEF[has('berry')?'wood':'berry'].name},
   {h:'Workers',t:()=>'People take jobs on their own. Click a building to see what it makes and what it needs, and use − and + to choose how many work there. Idle people show up in the To do list. New buildings take 1 to 3 days to raise and borrow 1 to 3 workers while the scaffolding stands.',next:true},
   {h:'Fish',t:()=>'The Fisher’s Hut is your steadiest food: 4 fish per worker a day. It fishes the water within 3 tiles; the fish never run out, but it catches more at sea than on the river in winter.',done:()=>has('fish'),go:()=>placeType('fish'),btn:()=>'Place a Fisher’s Hut'},
   {h:'Planks',t:()=>'The Carpenter saws wood into planks. Storing 40 planks opens the Granary, Warehouse, Iron Mine and Smithy.',done:()=>has('carp'),go:()=>placeType('carp'),btn:()=>'Place a Carpenter'},

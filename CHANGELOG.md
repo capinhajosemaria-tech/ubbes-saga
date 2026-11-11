@@ -2,6 +2,9 @@
 
 Versions are `Beta 0.MINOR.PATCH` until Town Hall 10 (`1.0.0`).
 
+## Beta 0.15.4
+- Sources still never run out, but each tree, bush and iron outcrop now belongs to one building only. Full output needs 90 trees for a Woodcutter's Lodge, 6 bushes for a Berry Gatherer and 5 iron outcrops for a mine; with fewer, output falls in proportion. Placement and the building sheet show how many it has. Fishing water stays unlimited.
+
 ## Beta 0.15.3
 - Trees, berry bushes, iron and fishing water never run out: one source in reach is enough for full output.
 - Houses burn 30% less firewood (about 0.35 a day in summer, 0.84 in winter).

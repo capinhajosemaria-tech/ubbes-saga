@@ -15,16 +15,16 @@ function dayTick(){
     b.status=tf<1?'Working slowly: no tools':'Working';
     const mk=(k,a)=>{const g=addRes(k,a);b.made=(b.made?b.made+', ':'')+'+'+g.toFixed(1)+' '+(RNAME[k]||k).toLowerCase();if(a>0.01&&g<a*0.5)b.status='Storage full';return g;};
     switch(b.t){
-      case 'wood':{const got=harvest(b,n*3*E);if(got<=0.001)b.status=srcList(b).length?'Trees in range used up until spring':'No trees in range';mk('wood',got);break;}
+      case 'wood':{const got=harvest(b,n*3*E);if(got<=0.001)b.status=srcList(b).length?'Every tree in range belongs to another lodge':'No trees in range';mk('wood',got);break;}
       case 'carp':{const av=Math.max(0,r.wood-S.woodReserve),p=Math.min(n*2*E,av/2);if(p<=0.05){b.status=holdMsg(['wood']);break;}r.wood-=p*2;mk('planks',p);break;}
-      case 'mine':{const got=harvest(b,n*2*E);if(got<=0.001)b.status='Ore in range dug out until spring';mk('iron',got);break;}
+      case 'mine':{const got=harvest(b,n*2*E);if(got<=0.001)b.status=srcList(b).length?'Every outcrop in range belongs to another mine':'No iron in range';mk('iron',got);break;}
       case 'smith':{if(b.anvil<=0){if(r.iron>=10){r.iron-=10;b.anvil=100;toast('The smith forged a new anvil (10 iron).');}else{b.status='Anvil broken: needs 10 iron';break;}}
         let md=b.mode;if(!SMITH[md]||SMITH[md].lv>thLevel())md='tools';const sm=SMITH[md];let make=n*sm.per*E;
         for(const k in sm.c){make=Math.min(make,resv(k)/sm.c[k]);}
         if(make<=0.01){b.status=holdMsg(Object.keys(sm.c));break;}
         const g=mk(md,make);for(const k in sm.c)r[k]-=g*sm.c[k];b.anvil-=1;if(miscUse())addRes('misc',g*0.03*(md==='arrows'?0.1:1));break;}
       case 'fish':{const sea=waterDist(b,t=>t===T.SEA)<=3?1:0,got=harvest(b,n*4*E*(win?(sea>0?0.4:0.25):1));if(got<=0.001)b.status='Fishing water in range fished out until spring';mk('fish',got);if(sea>0&&miscUse())addRes('misc',n*0.02);break;}
-      case 'berry':{const got=harvest(b,n*4*E);if(got<=0.001)b.status='Bushes picked clean until next summer';mk('berries',got);break;}
+      case 'berry':{const got=harvest(b,n*4*E);if(got<=0.001)b.status=srcList(b).length?'Every bush in range belongs to another gatherer':'No bushes in range';mk('berries',got);break;}
       case 'pres':{let made=0;for(let k=0;k<Math.round(n*(E>1?1.25:1));k++){
           if(resv('fish')>=2&&resv('fish')>=resv('berries')){r.fish-=2;made+=addRes('dfish',1);}
           else if(resv('berries')>=2){r.berries-=2;made+=addRes('jam',1);}}

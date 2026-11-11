@@ -1,4 +1,4 @@
-# Ubbe's Saga — specification (Beta 0.15.3)
+# Ubbe's Saga — specification (Beta 0.15.4)
 
 How the game works **today**. Numbers are in `docs/NUMBERS.md` (generated). The long-term vision for Town Hall 6–10 is in `docs/DESIGN.md`.
 
@@ -22,7 +22,7 @@ A cozy-but-harsh Viking village builder for the browser. Year 865, the village o
 - Raiders land only on sea joined to the map edge (never on the lake).
 - Land is bought in 6 × 6 zones with **fame**; the saga starts with 21 zones (a 5 × 5 block minus its four corners, 30 × 30 tiles); the corners and everything further are bought; cost grows with distance (`30·d − 10`).
 - Edges fade into sea-mist; unbought land is slightly darker with a faint tile grid, and each 6 × 6 block is outlined (brighter for blocks next to owned land).
-- **Resource sources never run out** (since 0.15.3): trees, berry bushes, iron outcrop tiles and fishing water stay on the map; a woodcutter, berry gatherer, mine or fisher works at full output as long as at least one source of its kind is within its radius (6, 5, 4, 3 tiles). Placement shows how many are in range.
+- **Resource sources never run out, but each belongs to one building** (since 0.15.4): trees, berry bushes and iron outcrop tiles stay on the map. Every woodcutter, berry gatherer and mine claims the nearest free sources within its radius (6, 5, 4 tiles), oldest building first, up to what it needs: **90 trees, 6 bushes, 5 iron outcrops** for full output; with fewer, output falls in proportion (45 trees = 50%). A source claimed by one building cannot serve another. Fishing water is unlimited and shared. Placement and the building sheet show "N of 90 trees its own · X% output" and how many in range belong to other buildings; per–Town Hall building limits stay as they are.
 - Trees and bushes go for good only with the **Remove** tool or when a building is placed over them (the game asks first); each gives a quarter of a season's output (2 wood a tree, 3 berries a bush).
 
 ## 5. People

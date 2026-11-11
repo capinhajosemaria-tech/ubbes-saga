@@ -2,8 +2,21 @@
 /* Trees, berry bushes, iron outcrops and fishing water give a fixed amount each year and stay on the map.
    Everything refills at the start of summer (spring), so winter draws on what is left.
    A building works the sources within its radius; buildings of the same kind sharing a source split it. */
-/* 0.15.3 (José): sources never run out; a building only needs one source in range for full output */
+/* 0.15.4 (José): sources never run out, but each one belongs to a single building.
+   Full output needs SRC_NEED sources of its own in range (fewer = less output); fishing water is unlimited and shared. */
 const SRC_ENDLESS=true;
+const SRC_NEED={wood:90,mine:5,berry:6};
+let CLAIM_KEY='',CLAIM=new Map();
+/* every extractor claims the nearest free sources in its range, oldest building first */
+function srcClaims(){const gone=trees.reduce((a,t)=>a+(t.gone?1:0),0)+bushes.reduce((a,t)=>a+(t.gone?1:0),0);
+  const key=B.filter(b=>SRC_NEED[b.t]).map(b=>b.id+b.t+b.fx+','+b.fy+','+b.w).join('|')+'#'+gone;
+  if(key===CLAIM_KEY)return CLAIM;CLAIM_KEY=key;CLAIM=new Map();const taken=new Set();
+  for(const b of B.filter(q=>SRC_NEED[q.t]).sort((a,c)=>a.id-c.id)){const own=srcFree(b,taken);own.forEach(o=>taken.add(o));CLAIM.set(b.id,own);}
+  CLAIM.taken=taken;return CLAIM;}
+function srcFree(b,taken){return srcList(b).filter(o=>!taken.has(o)).sort((p,q)=>rectDist(b,p.x,p.y)-rectDist(b,q.x,q.y)).slice(0,SRC_NEED[b.t]);}
+const srcOwn=b=>srcClaims().get(b.id)||[];
+/* share of full output the sources allow: 0..1 */
+function srcFactor(b){const need=SRC_NEED[b.t];if(!need)return srcList(b).length?1:0;return Math.min(1,srcOwn(b).length/need);}
 const SRC_Y={tree:8,bush:25,iron:60,sea:20,river:12};
 const SRC_OF={wood:'tree',berry:'bush',mine:'iron',fish:'water'};
 const SRC_R={wood:6,berry:5,mine:4,fish:3};
@@ -34,16 +47,18 @@ function srcInfo(b,planned){const t=b.t,list=srcList(b);let share=0,shared=0;
   for(const o of list){const k=srcShare(o,t,planned?null:b,planned);share+=o.cap/k;if(k>1)shared++;}
   const sl=planned?(DEF[t].slots||0):slotsOf(b),mx=maxYear(t,planned?1:b.lvl,Math.max(1,sl));
   let left=0;for(const o of list)left+=o.amt/srcShare(o,t,planned?null:b,planned);
-  if(SRC_ENDLESS)return {n:list.length,shared:shared,share:share,pct:list.length?1:0,left:Infinity,list:list};
+  if(SRC_ENDLESS){const need=SRC_NEED[t];if(!need)return {n:list.length,need:0,inR:list.length,pct:list.length?1:0,left:Infinity,list:list};
+    const C=srcClaims(),own=planned?srcFree(b,C.taken):srcOwn(b);return {n:own.length,need:need,inR:list.length,pct:Math.min(1,own.length/need),left:Infinity,list:own};}
   return {n:list.length,shared:shared,share:share,pct:mx>0?Math.min(1,share/mx):0,left:left,list:list};}
 function srcLabel(b,planned){const k=SRC_OF[b.t],w=SRC_WORD[k],I=srcInfo(b,planned);
   if(!I.n)return {n:0,label:'No '+w[1]+' in range'};
-  if(SRC_ENDLESS)return {n:I.n,label:I.n+' '+(I.n===1?w[0]:w[1])+' in range · full output',pct:1};
+  if(SRC_ENDLESS){if(!I.need)return {n:I.n,label:I.n+' '+(I.n===1?w[0]:w[1])+' in range · full output',pct:1};
+    const other=I.inR-I.n;return {n:I.n,pct:I.pct,label:I.n+' of '+I.need+' '+w[1]+' its own · '+Math.round(I.pct*100)+'% output'+(other>0?' · '+other+' more in range belong to other buildings':'')};}
   let s=I.n+' '+(I.n===1?w[0]:w[1])+' in range'+(I.shared?' ('+I.shared+' shared)':'')+' · '+Math.round(I.pct*100)+'% of full output';
   if(!planned)s+=' · '+fmt(I.left)+' '+RNAME[SRC_RES[b.t]].toLowerCase()+' left this year';
   return {n:I.n,label:s,pct:I.pct};}
 /* take up to `want` from the building's sources, each shared source split between the buildings using it */
-function harvest(b,want){if(want<=0)return 0;if(SRC_ENDLESS)return srcList(b).length?want:0;const list=srcList(b).filter(o=>o.amt>0.001);if(!list.length)return 0;
+function harvest(b,want){if(want<=0)return 0;if(SRC_ENDLESS)return want*srcFactor(b);const list=srcList(b).filter(o=>o.amt>0.001);if(!list.length)return 0;
   const w=list.map(o=>1/srcShare(o,b.t,b,false)),ws=w.reduce((a,c)=>a+c,0);let got=0;
   list.forEach((o,i)=>{const take=Math.min(o.amt,want*w[i]/ws);o.amt-=take;got+=take;});
   let rest=want-got;for(const o of list){if(rest<=0.001)break;const take=Math.min(o.amt,rest);o.amt-=take;got+=take;rest-=take;}

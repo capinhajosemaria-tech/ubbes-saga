@@ -2,6 +2,15 @@
 
 Versions are `Beta 0.MINOR.PATCH` until Town Hall 10 (`1.0.0`).
 
+## Beta 0.11.0
+- World map: names no longer overlap, Sweden is named and Birka sits on its island off the Swedish coast, England stays in sight under a light mist, and the map opens showing every place you can reach.
+- Raids no longer starve the village: provisions not eaten come home as dried fish, and ships only sail if the village keeps enough food (the whole winter's when winter is near).
+- When the warrior limit is full, weaker troops at home can retrain as vikings or berserks.
+- Raiders on Kaldstrand carry black-and-yellow shields, so you can tell them from your own men.
+- Village raids settled off screen take at most 20 goods per surviving raider, and a closed palisade now helps the defence (it wrongly helped the raiders).
+- Market: iron and tools cost more to buy, and the price climbs when you buy a lot.
+- Cowed villages pay half a plunder as tribute; Shetland and the Hebrides are closer and richer.
+
 ## Beta 0.10.0
 - Raiders land at Kaldstrand from Town Hall 5: scouts warn you 5 days ahead, then you watch the fight. Raiders head for the Town Hall and hack through the palisade where they must; your warriors strike over the stakes, archers shoot from manned towers. Raiders who get in carry off goods to their ships. A report follows.
 - The palisade has hit points and three levels (Stakes, Double stakes, Iron-bound stakes), upgraded in War → Defence. Damaged stakes are patched in a few days; broken segments must be repaired.

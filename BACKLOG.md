@@ -3,21 +3,12 @@
 José adds feedback here while playing (or tells Claude, who adds it). At the start of a round, pick 3–6 items and move them to "This round".
 Format: `- [ ] what · why / where seen` — screenshots welcome in the conversation.
 
-## This round — Polish 4: buildings, menus, detail and walls (PC) · approved by José 2026-11-11
-- [x] Houses keep their look when moved or rotated; check every building type in all 4 rotations and fix crossed roofs / missing faces.
-- [x] All houses share one shape again (keep colour schemes).
-- [x] Hof: redraw the raised upper roof as a proper stave-church tier.
-- [x] Menus: review build categories, panel structure and sheet wording; explain what each building does and needs.
-- [x] More close-up detail on buildings, ground, roads, walls and palisades when zoomed in.
-- [x] Walls and sea palisades work like Clash of Clans walls (HP, levels, block raiders, visibly protect).
-
 ## Done rounds
 - Polish 1 — the early game (Beta 0.7.0).
 - Polish 2 — look and simplification (Beta 0.8.0).
 - Polish 3 — Town Hall 1, tutorial and clarity (Beta 0.9.0, fix 0.9.1).
-
-## Next rounds (planned)
-- **Later — world map and raids:** overlapping labels, Birka in Sweden, England visible, raid balance after TH4 (with the Monte Carlo update).
+- Polish 4 — buildings, menus, detail and walls (Beta 0.10.0).
+- World map and raids (Beta 0.11.0).
 
 ## Polish after Town Hall 5 (beta polish rounds)
 Merge José's play feedback here, grouped as visual / balance / organisation. **PC only for now** (decided 2026-11-10): tune everything on PC, then convert to iPhone; phone items wait in "Phone (later)".
@@ -32,12 +23,12 @@ José's second play session (Relaxed, 2026-11-10, after Polish 1) added the item
 - [x] **Menu look** *(play 2)*: menus are better organised now, but José prefers a look closer to the original option, more like Bad North (clean, minimal, light panels).
 - [x] **Title font for numbers** *(play 2)*: use the title font also for resource numbers and other figures in the UI.
 - [x] **Show the 6 × 6 land blocks** *(play 2)*: the unlockable 6 × 6 tile groups should be visible in the translucent grid (still subdued), so it is clear which block will be unlocked.
-- [ ] World map: labels overlap ("Iona" over "SCOTLAND", "Jutland" over "JUTLAND"); Birka sits on the Norway landmass (should be Sweden); England, the main goal, opens half hidden in mist.
+- [x] World map: labels overlap ("Iona" over "SCOTLAND", "Jutland" over "JUTLAND"); Birka sits on the Norway landmass (should be Sweden); England, the main goal, opens half hidden in mist.
 
 ### Balance
 - [x] **Too few people at the start / newcomers too slow** (José, Relaxed): buildings get built but workers are always missing. Raise starting population and/or early attractiveness; check with bots that TH2 does not get too fast.
 - [x] **Winter firewood after TH4** (balance bots, Beta 0.7.0): people leave in waves from year ~7, about 90% in winter for lack of firewood (wood 0), when new houses at TH4/TH5 fill up. Ideas: one more woodcutter at TH3–5, or newcomers wait while wood covers less than ~10 days of firewood. Also TH5 has +12 spare workers (target 4–8).
-- [ ] Re-check raiding after TH4 with the new `balance` agent (several runs per profile), together with the Monte Carlo update below.
+- [x] Re-check raiding after TH4 with the new `balance` agent (several runs per profile), together with the Monte Carlo update below.
 
 ### Organisation / gameplay
 - [x] **Remove water as a resource** *(play 2)*: the village is by a river, and 2–3 wells in a small village feel wrong. Remove water and wells to reduce complexity (may come back later). Save keys likely need a bump.
@@ -69,11 +60,14 @@ José's second play session (Relaxed, 2026-11-10, after Polish 1) added the item
 - [x] **Check every building for the same problem** (from 0.8.0's new shapes): place, move and rotate each building type (all 4 rotations) and look for crossed roofs, missing faces or a look that changes; fix all of them.
 
 ## Wanted
-- [ ] Balance village raids (frequency, size, loot) with the balance agent after José has met a few; raiders' shields look like ours (both red).
+- [ ] Balance village raids (frequency, size, loot) after José has met a few (first pass done in Beta 0.11.0: loot capped, shields fixed).
 - [x] Hof: the raised upper roof reads as a flat stripe; redraw as a proper stave-church tier.
-- [ ] Re-measure troop strength and raid value for vikings, berserks and the new regions (Monte Carlo in `tools/balance/raidmc.py` needs updating).
-- [ ] Heavy raiders lose population after Town Hall 4 (deaths and people leaving); check if raiding is too punishing or the bots raid too much.
-- [ ] Market is generous for buying iron and tools; revisit after José plays a full saga.
+- [x] Re-measure troop strength and raid value for vikings, berserks and the new regions (Monte Carlo in `tools/balance/raidmc.py` needs updating).
+- [x] Heavy raiders lose population after Town Hall 4 (deaths and people leaving); check if raiding is too punishing or the bots raid too much.
+- [x] Market is generous for buying iron and tools; revisit after José plays a full saga.
+- [ ] Silver piles up (bots end with 8–17k unspent; Town Hall costs only 250): find something worth spending silver on (balance agent, 2026-11-11).
+- [ ] After Beta 0.11.0 the careful "planner" bot reaches TH5 later (~620 days) than the warlord (~570) and challenge (~560) bots; decide whether that is fine or if peaceful play needs a boost.
+- [ ] Bots never build a palisade, so village-raid balance with walls can't be measured yet: teach `tools/bots/bot4.js` to wall the Town Hall at TH5.
 
 ## Ideas for later (Town Hall 6–10, see docs/DESIGN.md)
 - [ ] Town Hall 6–10 content: settlements, kingship (level 8), wonders, Danegeld, Christianity.

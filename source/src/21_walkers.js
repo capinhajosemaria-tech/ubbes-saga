@@ -1,4 +1,6 @@
 /* =================== walkers =================== */
+/* shields: ours red with a pale boss; raiders black and yellow, quartered */
+const SHIELD_OURS=['#A34A3A','#D7CDB4'],SHIELD_RAID=['#24282C','#D9B44A',1];
 const walkers=[];const pal=[['#5E7F8C','#B5733F'],['#8E5A4E','#D9B26A'],['#7C8A6A','#6E4A2E'],['#4B6A76','#9A6A40'],['#6E5248','#C29A55'],['#5E7F8C','#9A6A40'],['#7C8A6A','#D9B26A'],['#8E5A4E','#6E4A2E']];
 function walkable(x,y){if(!inMap(x,y))return false;const i=y*N+x,tt=ter[i];if(occ[i])return false;return (tt===T.GRASS||tt===T.BEACH||tt===T.FOOT||roads[i])&&isUnl(x,y);}
 function pickTarget(w){for(let k=0;k<30;k++){const tx=Math.round(HOME_X-9+Math.random()*18),ty=Math.round(HOME_Y-9+Math.random()*14);if(walkable(tx,ty)){w.tx=tx;w.ty=ty;return;}}w.tx=w.x;w.ty=w.y;}
@@ -14,7 +16,7 @@ function drawWalker(w,win){
   ctx.fillStyle='#E2B99A';ctx.beginPath();ctx.arc(20,13,7,0,6.3);ctx.fill();
   ctx.fillStyle=w.c[1];ctx.beginPath();ctx.moveTo(13,12);ctx.quadraticCurveTo(20,2,27,12);ctx.closePath();ctx.fill();
   if(win){poly([10,22,30,22,31,32,9,32],'#7A6A58');}
-  if(w.carry==='spear'){ctx.strokeStyle='#5A4636';ctx.lineWidth=2.4;ctx.beginPath();ctx.moveTo(32,48);ctx.lineTo(36,-8);ctx.stroke();poly([33,-6,39,-6,36,-16],'#B7BCBF');ctx.fillStyle='#A34A3A';ctx.beginPath();ctx.arc(6,34,8,0,6.3);ctx.fill();ctx.fillStyle='#D7CDB4';ctx.beginPath();ctx.arc(6,34,2.5,0,6.3);ctx.fill();}
+  if(w.carry==='spear'){ctx.strokeStyle='#5A4636';ctx.lineWidth=2.4;ctx.beginPath();ctx.moveTo(32,48);ctx.lineTo(36,-8);ctx.stroke();poly([33,-6,39,-6,36,-16],'#B7BCBF');const sh=w.sh||SHIELD_OURS;ctx.fillStyle=sh[0];ctx.beginPath();ctx.arc(6,34,8,0,6.3);ctx.fill();if(sh[2]){ctx.fillStyle=sh[1];ctx.beginPath();ctx.moveTo(6,34);ctx.arc(6,34,8,-1.571,0);ctx.closePath();ctx.moveTo(6,34);ctx.arc(6,34,8,1.571,3.142);ctx.closePath();ctx.fill();ctx.fillStyle='#2A2522';}else ctx.fillStyle=sh[1];ctx.beginPath();ctx.arc(6,34,2.5,0,6.3);ctx.fill();ctx.strokeStyle='#2A2522';ctx.lineWidth=1.2;ctx.beginPath();ctx.arc(6,34,8,0,6.3);ctx.stroke();}
   if(w.carry==='log'){poly([2,16,38,8,40,15,4,22],'#8A6E52');ctx.fillStyle='#D2B98F';ctx.beginPath();ctx.arc(39,11.5,4,0,6.3);ctx.fill();}
   if(w.carry==='basket'){poly([28,42,42,42,40,54,30,54],'#A88A69');if(!win){ctx.fillStyle='#9E3B3B';ctx.beginPath();ctx.arc(32,41,2,0,6.3);ctx.arc(36,40,2,0,6.3);ctx.arc(39,41,2,0,6.3);ctx.fill();}}
   ctx.lineCap='butt';ctx.restore();

@@ -2,7 +2,7 @@
 /* palisade levels: hit points per segment; gates are a little stronger */
 const WALL_LV=[null,{n:'Stakes',hp:150},{n:'Double stakes',hp:300,c:{planks:3}},{n:'Iron-bound stakes',hp:500,c:{planks:3,iron:1}}];
 const RAIDER={hp:26,dps:3.4,sp:1.05,carry:20};
-const VR_COL={raid:['#4A4F57','#8E2F2A'],def:['#5E6E4A','#9AA0A4']};
+const VR_COL={raid:['#3E4248','#2A2724'],def:['#5E6E4A','#9AA0A4']};
 let VR=null;                       /* the fight on screen (not saved; a save mid-fight is settled on the next day) */
 function wallLv(){return Math.max(1,Math.min(3,S.wallLvl||1));}
 function wallMax(i){return WALL_LV[wallLv()].hp*(walls[i]===2?1.3:1);}
@@ -59,7 +59,7 @@ function vrStart(){const th=B.find(b=>b.t==='th');if(!th){S.vr=null;return;}reco
   if(!best){S.vr=null;return;}
   S.vr.on=true;S.wdmg=S.wdmg||{};const lx=best.i%N,ly=(best.i/N)|0;
   VR={t:0,land:best.i,u:[],fx:[],broke:0,killed:0,loot:{},lost:[],stolen:{},arch:0};
-  for(let k=0;k<S.vr.n;k++)VR.u.push({side:'raid',x:lx+U(-0.4,0.4),y:ly+U(-0.4,0.4),hp:RAIDER.hp,mx:RAIDER.hp,dps:RAIDER.dps*U(0.85,1.15),c:VR_COL.raid,ph:Math.random()*6,carry:'spear',st:'in',bag:{},bagN:0,cd:0});
+  for(let k=0;k<S.vr.n;k++)VR.u.push({side:'raid',x:lx+U(-0.4,0.4),y:ly+U(-0.4,0.4),hp:RAIDER.hp,mx:RAIDER.hp,dps:RAIDER.dps*U(0.85,1.15),c:VR_COL.raid,sh:SHIELD_RAID,ph:Math.random()*6,carry:'spear',st:'in',bag:{},bagN:0,cd:0});
   const def=S.people.filter(p=>p.w&&!p.away&&p.sick<=0&&p.w!=='archer');
   def.forEach((p,k)=>{const a=k/Math.max(1,def.length)*6.283;VR.u.push({side:'def',p:p,x:cx+Math.cos(a)*(th.w/2+0.8),y:cy+Math.sin(a)*(th.h/2+0.8),hp:18+10*soldierStr(p),mx:18+10*soldierStr(p),dps:2.4*soldierStr(p),c:VR_COL.def,ph:Math.random()*6,carry:'spear',cd:0});});
   VR.towers=B.filter(b=>b.t==='tower').slice(0,Math.floor(S.people.filter(p=>p.w==='archer'&&!p.away&&p.sick<=0).length/2)).map(b=>({b:b,cd:Math.random()}));
@@ -126,8 +126,9 @@ function vrCasualty(p,out){if(!p||!S.people.includes(p))return;
 function vrEnd(){const out={dead:[],wounded:0};for(const u of VR.u)if(u.side==='def'&&u.hp<=0)vrCasualty(u.p,out);
   vrReport(VR.killed,S.vr.n,VR.stolen,out,VR.broke);VR=null;}
 function vrAuto(){/* settled without the scene (a save mid-fight, or no screen) */
-  const a=S.vr.n*RAIDER.dps*(S.wallClosed?1.2+0.4*wallLv():1)*2.2,d=defenceValue()*3.2;const k=Math.min(S.vr.n,Math.round(S.vr.n*Math.min(1,d/Math.max(1,a))));const stolen={};
-  if(d<a){for(const key of STEAL){const v=Math.floor((S.res[key]||0)*0.12*(1-d/a));if(v>0){S.res[key]-=v;stolen[key]=v;}}}
+  /* a closed palisade makes the village harder to take; survivors carry off what they can, as in the scene (6 silver or 3 of a good per grab, 20 each) */
+  const a=S.vr.n*RAIDER.dps*2.2,d=defenceValue()*3.2*(S.wallClosed?1.2+0.4*wallLv():1);const k=Math.min(S.vr.n,Math.round(S.vr.n*Math.min(1,d/Math.max(1,a))));const stolen={};
+  if(d<a){for(let r=0;r<S.vr.n-k;r++){let bag=0;while(bag<RAIDER.carry){const ks=STEAL.filter(x=>(S.res[x]||0)>=1);if(!ks.length)break;const key=pick(ks),v=Math.min(Math.floor(S.res[key]),key==='silver'?6:3,RAIDER.carry-bag);if(v<=0)break;S.res[key]-=v;stolen[key]=(stolen[key]||0)+v;bag+=v;}}}
   const out={dead:[],wounded:0};const def=S.people.filter(p=>p.w&&!p.away);const hurt=Math.min(def.length,Math.round(S.vr.n*0.25*Math.min(1.5,a/Math.max(1,d))));for(let i=0;i<hurt;i++)vrCasualty(def[i],out);
   VR=null;vrReport(k,S.vr.n,stolen,out,0);}
 function vrReport(killed,n,stolen,out,broke){const got=Object.keys(stolen).filter(k=>stolen[k]>0).map(k=>Math.round(stolen[k])+' '+k);

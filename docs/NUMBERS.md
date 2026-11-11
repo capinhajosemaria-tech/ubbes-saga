@@ -1,4 +1,4 @@
-# Ubbe's Saga: numbers (Beta 0.10.0)
+# Ubbe's Saga: numbers (Beta 0.11.0)
 
 Generated from the game by `tools/gen_numbers.py`. Do not edit by hand.
 
@@ -136,8 +136,8 @@ Limits are per Town Hall level 1 / 2 / 3 / 4 / 5. Workers: +1 at building level 
 | Jutland | scand | Hall of Jarl Sigvard | 24 |  | 110 silver, 3 swords, 50 iron, 40 meat |
 | Hedeby | scand | Great market behind a rampart | 44 | yes | 320 silver, 30 cloth, 6 swords, 10 tools |
 | Birka | scand | Trading town on an island | 32 | yes | 240 silver, 30 hides, 20 cloth, 12 misc |
-| Shetland | isles | Fishing steadings | 12 |  | 80 fish, 40 wool, 30 dfish, 25 silver |
-| The Hebrides | isles | Farms of the western isles | 16 |  | 90 grain, 60 meat, 40 wool, 40 silver |
+| Shetland | isles | Fishing steadings | 12 |  | 80 fish, 40 wool, 30 dfish, 45 silver |
+| The Hebrides | isles | Farms of the western isles | 16 |  | 90 grain, 60 meat, 40 wool, 60 silver |
 | Orkney | isles | Hall of the Orkney jarl | 30 |  | 150 silver, 10 gold, 50 meat, 3 swords |
 | Lindisfarne | england | Monastery on a holy island | 12 |  | 40 gold, 120 silver, 20 cloth, 20 misc |
 | Iona | england | Monastery of the west | 10 |  | 30 gold, 90 silver, 15 cloth, 15 misc |

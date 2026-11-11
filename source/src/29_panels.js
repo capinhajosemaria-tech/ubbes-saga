@@ -134,11 +134,12 @@ function altarHtml(on){let h='<p>Offer goods to raise a god’s favour. At 50 th
       if(k==='freyja')S.blessOn.freyja=S.day+15;if(k==='thor')S.blessOn.thor=S.day+30;if(k==='odin')S.blessOn.odinR=1;if(k==='njord')S.blessOn.njordV=1;if(k==='loki')S.blessOn.lokiR=1;
       toast(GODS[k].bless.n+': '+GODS[k].bless.d+'.',4000);checkMilestones();buildingSheet(sel.b);save();});});
   return h;}
-function trainHtml(b,on){const room=warCap()-S.warriors,batch=Math.min(room,b.lvl>=2?8:5);const avT=Object.keys(TROOPS).filter(k=>TROOPS[k].lv<=thLevel()&&k!=='merc');if(!avT.includes(S.trainType))S.trainType=avT[avT.length-1];
+function trainHtml(b,on){const avT=Object.keys(TROOPS).filter(k=>TROOPS[k].lv<=thLevel()&&k!=='merc');if(!avT.includes(S.trainType))S.trainType=avT[avT.length-1];
   let h='<table class="t"><tr><td>Warriors</td><td>'+S.warriors+' / '+warCap()+'</td></tr>'+(S.train?'<tr><td>In training</td><td>'+S.train.n+' '+TROOPS[S.train.type].n.toLowerCase()+'s · '+S.train.left+' days left</td></tr>':'')+'</table>';
   h+='<h3>Train as</h3><div class="prio" role="group">'+avT.map(k=>'<button type="button" data-tt="'+k+'" aria-pressed="'+(S.trainType===k)+'">'+TROOPS[k].n+'</button>').join('')+'</div>';
-  const T=TROOPS[S.trainType];h+='<p>'+esc(T.d)+' Strength '+T.str+'. Each recruit takes '+esc(costStr(T.eq))+'.</p><p class="meta">A batch trains for 10 days. Recruits leave their work. Warriors eat 1½ meals but help with chores in winter.</p>';
+  const tp=trainPlan(S.trainType,b.lvl),batch=tp.batch;const T=TROOPS[S.trainType];h+='<p>'+esc(T.d)+' Strength '+T.str+'. Each recruit takes '+esc(costStr(T.eq))+'.</p><p class="meta">A batch trains for 10 days. Recruits leave their work. Warriors eat 1½ meals but help with chores in winter.</p>';
   if(!S.train&&batch>0)h+='<div class="acts">'+btn('tr-go','Train '+batch+' '+T.n.toLowerCase()+'s',{cls:'primary'})+'</div>';
+  if(tp.up.length)h+='<div class="meta">The warrior limit is full: '+tp.up.length+' weaker '+(tp.up.length>1?'troops':'troop')+' at home will retrain as '+T.n.toLowerCase()+'s.</div>';
   if(batch<=0)h+='<div class="meta">The Town Hall must rise to hold more warriors.</div>';
   on.push(()=>{$('sheet-card').querySelectorAll('[data-tt]').forEach(x=>x.onclick=()=>{S.trainType=x.dataset.tt;buildingSheet(b);});if($('tr-go'))$('tr-go').onclick=()=>{const why=startTraining(S.trainType);if(why){toast(why);return;}toast('Training has begun.');buildingSheet(b);save();};});
   return h;}

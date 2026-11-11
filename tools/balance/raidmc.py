@@ -1,49 +1,119 @@
-import random,statistics as st,sys
-T=[('hval','Hvalsey',3,4,{'fish':60,'dfish':30,'misc':6,'silver':10},4,0),
-   ('sogn','Sogn',3,8,{'wood':80,'iron':30,'hides':10,'silver':20},4,0),
-   ('hord','Hordaland',4,18,{'silver':70,'iron':40,'spears':6,'shields':4,'meat':30},8,0),
-   ('ringa','Ringsaker',4,9,{'grain':80,'meat':60,'wool':30,'silver':25},6,0),
-   ('skir','Skiringssal',5,15,{'silver':90,'cloth':15,'salt':30,'tools':4},6,0),
-   ('jut','Jutland',6,24,{'silver':110,'swords':3,'iron':50,'meat':40},8,0),
-   ('hedeby','Hedeby',7,44,{'silver':240,'cloth':30,'swords':6,'tools':10},12,1),
-   ('birka','Birka',9,32,{'silver':180,'hides':30,'cloth':20,'misc':12},10,1)]
-VAL={'silver':1,'fish':0.3,'dfish':0.6,'misc':0.3,'wood':0.3,'iron':1,'hides':0.8,'spears':6,'shields':8,'meat':0.3,'grain':0.3,'wool':0.6,'cloth':1.5,'salt':0.3,'tools':6,'swords':20}
-STR={'skirm':1,'spear':1.6,'archer':1.4,'warrior':2.2}
-CREWS={'5 skirm (L2-early)':['skirm']*5,'12 mixed':['skirm']*5+['spear']*5+['warrior']*2,'12 elite xp2':['warrior']*6+['spear']*4+['archer']*2}
-WARVAL=25  # silver-equivalent of a trained warrior lost (weapons+training+worker)
-def sim(t,crew,xp,tactic,n=4000,mult=1.0):
-    _,name,d,df,loot,pris,walls=t
-    travel=max(2,round(d*0.7));days=2*travel+1
-    res=[]
+# Raid Monte Carlo: expected outcome of an overseas raid for typical crews against every target.
+# Targets, troops and goods values are read from the game source (no copies to keep in step).
+# Mirrors arrive()/battle()/lootFor() in 14_people_lineage_morale_gods_r.js and the siege options.
+# Usage (from tools/): python3 balance/raidmc.py [runs] [--th N]   (default 4000 runs, all crews)
+import json, os, random, re, statistics as st, subprocess, sys
+
+SRC = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'source', 'src')
+
+def grab(text, start):
+    """Return the balanced {...} or [...] literal that starts at text[start]."""
+    open_c = text[start]; close_c = '}' if open_c == '{' else ']'; depth = 0; q = None
+    for i in range(start, len(text)):
+        c = text[i]
+        if q:
+            if c == q and text[i - 1] != '\\': q = None
+            continue
+        if c in '\'"`': q = c
+        elif c == open_c: depth += 1
+        elif c == close_c:
+            depth -= 1
+            if depth == 0: return text[start:i + 1]
+    raise ValueError('unbalanced literal')
+
+def load_game():
+    a = open(os.path.join(SRC, '14_people_lineage_morale_gods_r.js')).read()
+    b = open(os.path.join(SRC, '14_zcontent45.js')).read()
+    troops = grab(a, a.index('const TROOPS=') + len('const TROOPS='))
+    targets = grab(a, a.index('const TARGETS=') + len('const TARGETS='))
+    i = b.index('Object.assign(TROOPS,') + len('Object.assign(TROOPS,'); troops2 = grab(b, i)
+    i = b.index('TARGETS.push(') + len('TARGETS.push('); pushed = '[' + b[i:b.index(');', i)] + ']'
+    basep = grab(b, b.index('const BASEP=') + len('const BASEP='))
+    regions = grab(b, b.index('const REGIONS=') + len('const REGIONS='))
+    js = ('const TROOPS=%s;Object.assign(TROOPS,%s);const T=%s.concat(%s);const BASEP=%s;const REGIONS=%s;'
+          'console.log(JSON.stringify({troops:TROOPS,targets:T,basep:BASEP,regions:REGIONS},(k,v)=>typeof v==="function"?undefined:v));'
+          % (troops, troops2, targets, pushed, basep, regions))
+    out = subprocess.run(['node', '-e', js], capture_output=True, text=True, check=True).stdout
+    return json.loads(out)
+
+G = load_game()
+TROOPS, TARGETS, VAL, REGIONS = G['troops'], G['targets'], G['basep'], G['regions']
+VAL.setdefault('animals', 7)
+EAT_RAID = 0.5 * 1.5          # meals per man per day at sea (EAT × 1.5)
+MEAL_SILVER = 0.4             # silver value of one meal
+WARVAL = 30                   # silver-equivalent of a trained warrior lost (weapons + training + a worker)
+CARGO_PER_SHIP, CREW_PER_SHIP = 120, 15   # karvi
+
+def U(a, b): return random.uniform(a, b)
+def travel(t): return max(2, round(t['d'] * 0.7))
+def loot_for(t, mult):
+    return {k: round(v * mult * 1.75 * 1.4 * U(0.85, 1.15)) for k, v in t['loot'].items()}
+def loot_value(l, cap):
+    units = sum(v * (0.1 if k == 'silver' else 1) for k, v in l.items())
+    f = min(1, cap / units) if units else 1
+    return sum(v * f * VAL.get(k, 1) for k, v in l.items())
+def tgt_def(t, tactic, siege):
+    d = t['def']
+    if t.get('walls'): d *= 1.25 if siege else 1.6
+    if tactic == 'quick': d *= 0.8
+    return d
+
+def sim(t, crew, xp, tactic, n, mult=1.0):
+    base = sum(TROOPS[c]['str'] for c in crew) * (1 + 0.1 * min(3, xp)) * mult
+    ships = -(-len(crew) // CREW_PER_SHIP); cap = ships * CARGO_PER_SHIP
+    tr = travel(t); out = []
+    est = base / tgt_def(t, tactic, tactic == 'siege')
     for _ in range(n):
-        alive=len(crew);s=sum(STR[c]*(1+0.1*xp) for c in crew)*mult*random.uniform(0.65,1.35)
-        extra=0
-        if tactic=='siege':
-            rounds=5;defF=0.9**(rounds-1);D=df*1.25*defF*0.9;extra=2*rounds
-            alive-=sum(1 for _ in range(rounds-1) if random.random()<0.25)
-            s=s*alive/len(crew)
+        men = len(crew); days = 2 * tr; dead = 0; val = 0; win = False; tribute = False
+        if est >= 2:                                   # they pay without a fight
+            tribute = win = True; val = loot_value({k: v * 0.5 for k, v in loot_for(t, 1).items()}, cap)
         else:
-            D=df*(1.6 if walls else 1)*((0.8 if random.random()<0.7 else 1) if tactic=='quick' else 1)
-        ratio=s/D;win=ratio>=1
-        if win: fd=min(0.6,0.2/ratio**1.3*random.uniform(0.6,1.4))
-        else: fd=min(0.6,max(0.15,0.35/ratio*random.uniform(0.7,1.2)))
-        dead=round(alive*fd)+(len(crew)-alive)
-        prov=(len(crew))*0.75*(2*travel+3+extra*1.5)
-        val=0
-        if win:
-            m=0.6 if tactic=='quick' else 1
-            l={k:v*m*1.4*random.uniform(0.85,1.15) for k,v in loot.items()}
-            units=sum(v*(0.1 if k=='silver' else 1) for k,v in l.items())
-            p=round(pris*(0.5 if tactic=='quick' else 1)*random.uniform(0.7,1.2)*0.5)
-            cap=120;room=max(0,cap-p*4);k=min(1,room/units) if units else 1
-            val=sum(v*k*VAL[k2] for k2,v in l.items())+p*12
-        res.append((win,dead,val-prov*0.4-dead*WARVAL,val))
-    w=sum(r[0] for r in res)/n
-    return w,st.mean(r[1] for r in res),st.mean(r[3] for r in res),st.mean(r[2] for r in res),days+(10 if tactic=='siege' else 0)
-for cname,crew in CREWS.items():
-    xp=2 if 'xp2' in cname else 0
-    print('==',cname,'str',round(sum(STR[c]*(1+0.1*xp) for c in crew),1))
-    for t in T:
-        for tac in (['quick','assault']+(['siege'] if t[6] else [])):
-            w,dead,val,net,days=sim(t,crew,xp,tac)
-            print(f"  {t[1]:12s} {tac:7s} win {w*100:5.1f}%  dead {dead:4.1f}  loot {val:6.0f}  net {net:6.0f}  days {days}  net/day {net/days:5.1f}")
+            d = tgt_def(t, tactic, tactic == 'siege'); siege_days = 0
+            if t.get('walls') and tactic == 'siege':   # hold the blockade, then storm on the last round
+                rounds = 3 + random.randrange(3); f = 1
+                for _r in range(rounds - 1):
+                    f *= 0.9
+                    if random.random() < 0.25: men -= 1; dead += 1
+                d *= f; siege_days = 2 * rounds
+            elif tactic == 'quick' and random.random() < 0.3: d /= 0.8
+            s = base * men / len(crew) * U(0.65, 1.35); ratio = s / d; win = ratio >= 1
+            fr = min(0.6, 0.2 / ratio ** 1.3 * U(0.6, 1.4)) if win else min(0.6, max(0.15, 0.35 / ratio * U(0.7, 1.2)))
+            dead += round(men * fr); days += siege_days
+            if win:
+                l = loot_for(t, 0.6 if tactic == 'quick' else 1)
+                if t.get('herd'): l['animals'] = t['herd']
+                p = round(t.get('pris', 0) * (0.5 if tactic == 'quick' else 1) * U(0.7, 1.2))
+                val = loot_value(l, max(0, cap - p * 4)) + p * VAL.get('thrall', 18) * 0.5
+        food = len(crew) * EAT_RAID * days * MEAL_SILVER
+        out.append((win, tribute, dead, val, val - food - dead * WARVAL, days))
+    m = lambda i: st.mean(r[i] for r in out)
+    return {'win': m(0), 'trib': m(1), 'dead': m(2), 'loot': m(3), 'net': m(4), 'days': m(5)}
+
+CREWS = [  # (name, Town Hall level, troops, xp)
+    ('TH3: 12 mixed', 3, ['skirm'] * 5 + ['spear'] * 5 + ['warrior'] * 2, 0),
+    ('TH3: 12 veterans xp2', 3, ['warrior'] * 6 + ['spear'] * 4 + ['archer'] * 2, 2),
+    ('TH4: 15 vikings and warriors', 4, ['viking'] * 8 + ['warrior'] * 5 + ['archer'] * 2, 1),
+    ('TH5: 15 berserks and vikings xp2', 5, ['berserk'] * 6 + ['viking'] * 7 + ['archer'] * 2, 2),
+    ('TH5: 30 in two ships xp1', 5, ['berserk'] * 8 + ['viking'] * 12 + ['warrior'] * 6 + ['archer'] * 4, 1),
+]
+
+def main():
+    args = sys.argv[1:]; n = 4000; only = None
+    if '--th' in args: only = int(args[args.index('--th') + 1]); del args[args.index('--th'):args.index('--th') + 2]
+    if args: n = int(args[0])
+    print('troops:', ', '.join(f"{k} {v['str']} (TH{v['lv']})" for k, v in TROOPS.items()))
+    for name, lv, crew, xp in CREWS:
+        if only and lv != only: continue
+        s = sum(TROOPS[c]['str'] for c in crew) * (1 + 0.1 * min(3, xp))
+        print(f'== {name}  strength {s:.1f}')
+        for t in TARGETS:
+            rlv = REGIONS.get(t.get('reg', 'scand'), {}).get('lv', 3)
+            if rlv > lv: continue
+            for tac in ['quick', 'assault'] + (['siege'] if t.get('walls') else []):
+                r = sim(t, crew, xp, tac, n)
+                flag = '  tribute' if r['trib'] > 0.99 else ''
+                print(f"  {t['n'][:14]:14s} {tac:7s} win {r['win']*100:5.1f}%  dead {r['dead']:4.1f}  loot {r['loot']:6.0f}"
+                      f"  net {r['net']:6.0f}  days {r['days']:4.1f}  net/day {r['net']/r['days']:6.1f}{flag}")
+
+if __name__ == '__main__':
+    main()

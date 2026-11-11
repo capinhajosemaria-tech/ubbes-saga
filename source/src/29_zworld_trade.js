@@ -1,21 +1,22 @@
 /* =================== world map (Bad North style), trade market, level 4–5 sheets =================== */
 /* World chart: 1000 × 800 units, north up. Drag or swipe to move, wheel or pinch to zoom. */
-const WPOS={home:[590,240],hval:[610,125],sogn:[615,195],hord:[565,310],ringa:[680,280],skir:[660,385],jut:[620,530],hedeby:[632,615],birka:[845,375],
+const WPOS={home:[590,240],hval:[610,125],sogn:[615,195],hord:[565,310],ringa:[680,280],skir:[660,385],jut:[620,530],hedeby:[632,615],birka:[896,398],
   shet:[402,155],ork:[342,246],heb:[232,315],lind:[408,462],iona:[214,374],york:[384,535],london:[448,676]};
 const WLANDS=[
   {r:'scand',n:'Norway',lp:[760,150],p:'650,-160 640,0 618,40 600,88 586,130 570,170 576,210 560,250 548,300 556,340 584,380 618,408 650,424 700,440 760,470 800,500 832,480 862,420 882,360 902,300 932,240 962,170 1000,100 1160,70 1160,-160'},
-  {r:'scand',n:'Jutland',lp:[612,470],p:'600,468 640,458 662,500 656,560 672,600 690,640 642,652 610,622 600,562 594,512'},
+  {r:'scand',p:'600,468 640,458 662,500 656,560 672,600 690,640 642,652 610,622 600,562 594,512'},
   {r:'scand',p:'690,556 728,560 734,598 700,604'},{r:'scand',p:'742,566 772,560 780,590 752,596'},
   {r:'scand',n:'Gotland',p:'918,468 934,460 940,500 924,508'},
+  {r:'scand',p:'884,404 896,388 912,394 908,414 892,418'},{r:'scand',n:'Sweden',lp:[808,432]},
   {r:'isles',p:'390,130 412,126 418,170 398,182'},{r:'isles',p:'322,236 356,230 362,256 330,262'},{r:'isles',p:'212,290 242,284 252,330 226,348'},
-  {r:'england',n:'Scotland',lp:[300,380],p:'330,280 382,268 402,300 386,340 410,380 420,420 432,462 300,470 270,460 250,420 238,380 268,340 298,302'},
+  {r:'england',n:'Scotland',lp:[322,414],p:'330,280 382,268 402,300 386,340 410,380 420,420 432,462 300,470 270,460 250,420 238,380 268,340 298,302'},
   {r:'england',n:'England',lp:[380,600],p:'300,470 432,462 446,500 470,560 492,620 502,660 470,700 400,712 330,722 280,700 302,660 270,620 300,580 280,540 300,500'},
   {r:'england',p:'200,362 228,358 232,388 206,392'},
   {r:'west',n:'Ireland',lp:[150,560],p:'100,480 170,450 222,480 226,560 200,640 130,662 80,602 70,530'},
   {r:'far',n:'Iceland',lp:[120,70],p:'40,40 150,20 222,50 200,110 90,122 30,90'},
   {r:'far',n:'Frankia',lp:[700,740],p:'380,800 420,762 520,742 600,702 662,672 760,662 880,640 1000,622 1160,610 1160,960 350,960'},
   {r:'far',n:'Baltic',lp:[975,330],p:'1000,200 962,262 950,340 968,420 1000,462 1160,490 1160,170'}];
-const WMTN=[[600,60],[640,100],[700,90],[660,170],[620,150],[740,150],[700,220],[780,230],[640,250],[720,320],[820,300],[760,380],[310,330],[350,360],[140,60]];
+const WMTN=[[600,60],[640,100],[700,90],[660,170],[620,150],[740,150],[700,220],[780,230],[640,250],[720,320],[812,290],[742,372],[310,330],[350,360],[140,60]];
 let WV=null;/* view box */
 function wOpen(r){return r==='west'||r==='far'?false:regionOpen(r);}
 function worldSVG(){const reg=r=>wOpen(r);
@@ -33,14 +34,14 @@ function worldSVG(){const reg=r=>wOpen(r);
   const H=WPOS.home;
   for(const t of TARGETS){if(!reg(t.reg))continue;const p=WPOS[t.id];if(!p)continue;const mx=(H[0]+p[0])/2+(p[1]-H[1])*0.18,my=(H[1]+p[1])/2-(p[0]-H[0])*0.18;
     o+='<path d="M'+H[0]+' '+H[1]+' Q'+mx+' '+my+' '+p[0]+' '+p[1]+'" stroke="#E7E3D2" stroke-width="'+(worldSel===t.id?2.2:1.4)+'" stroke-dasharray="6 6" fill="none" opacity="'+(worldSel===t.id?0.95:0.35)+'"/>';}
-  for(const L of WLANDS){const pts=L.p.split(' ').map(q=>q.split(',').map(Number));const sh=pts.map(q=>q[0]+','+(q[1]+9)).join(' ');const op=reg(L.r);
+  for(const L of WLANDS){if(!L.p)continue;const pts=L.p.split(' ').map(q=>q.split(',').map(Number));const sh=pts.map(q=>q[0]+','+(q[1]+9)).join(' ');const op=reg(L.r);
     o+='<polygon points="'+sh+'" fill="#4A5547"/><polygon points="'+L.p+'" fill="'+(op?'#B3BC9E':'#9AA392')+'" stroke="#EDE8D6" stroke-width="1.2" stroke-opacity="0.55" stroke-linejoin="round"/>';
     /* low-poly facets: two lighter planes toward the centre */
     const cx=pts.reduce((a,q)=>a+q[0],0)/pts.length,cy=pts.reduce((a,q)=>a+q[1],0)/pts.length;const half=pts.slice(0,Math.ceil(pts.length/2));
     o+='<polygon points="'+half.map(q=>((q[0]*0.55+cx*0.45))+','+((q[1]*0.55+cy*0.45))).join(' ')+' '+cx+','+cy+'" fill="#C8CFB4" opacity="0.5"/>';
     o+='<polygon points="'+pts.slice(Math.floor(pts.length/2)).map(q=>((q[0]*0.7+cx*0.3))+','+((q[1]*0.7+cy*0.3))).join(' ')+' '+cx+','+cy+'" fill="#8E9A80" opacity="0.28"/>';}
   for(const q of WMTN){o+='<polygon points="'+(q[0]-16)+','+(q[1]+10)+' '+q[0]+','+(q[1]-18)+' '+(q[0]+16)+','+(q[1]+10)+'" fill="#8F9A90"/><polygon points="'+q[0]+','+(q[1]-18)+' '+(q[0]+16)+','+(q[1]+10)+' '+(q[0]+4)+','+(q[1]+10)+'" fill="#7A847B"/><polygon points="'+(q[0]-6)+','+(q[1]-8)+' '+q[0]+','+(q[1]-18)+' '+(q[0]+6)+','+(q[1]-8)+'" fill="#F1F0EA"/>';}
-  for(const L of WLANDS)if(L.n&&L.lp)o+='<text x="'+L.lp[0]+'" y="'+L.lp[1]+'" text-anchor="middle" font-family="Marcellus SC, Georgia, serif" font-size="17" letter-spacing="3" fill="#56604E" opacity="0.75">'+esc(L.n.toUpperCase())+'</text>';
+  for(const L of WLANDS)if(L.n&&L.lp&&!(L.n==='England'&&!reg(L.r)))o+='<text x="'+L.lp[0]+'" y="'+L.lp[1]+'" text-anchor="middle" font-family="Marcellus SC, Georgia, serif" font-size="17" letter-spacing="3" fill="#56604E" opacity="0.75">'+esc(L.n.toUpperCase())+'</text>';
   /* places (dim when their land is still in the mist) */
   for(const t of TARGETS){const lk=!reg(t.reg);const p=WPOS[t.id];if(!p)continue;const st=S.tg[t.id]||{},sel=worldSel===t.id,col=t.walls?'#A34A3A':t.trade?'#C9A64A':'#F3EBD8';
     o+='<g '+(lk?'opacity="0.55"':'data-tg="'+t.id+'" style="cursor:pointer"')+' transform="translate('+p[0]+' '+p[1]+')"><circle r="22" fill="transparent"/>';
@@ -53,12 +54,12 @@ function worldSVG(){const reg=r=>wOpen(r);
     o+='<text x="13" y="5" font-family="Marcellus SC, Georgia, serif" font-size="15" fill="#F3EBD8" stroke="#26404B" stroke-width="3.6" paint-order="stroke">'+esc(t.n)+'</text></g>';}
   /* mist over every land not yet open, and over the edges of the known world */
   o+='<g filter="url(#wblur)" pointer-events="none">';
-  for(const L of WLANDS){if(reg(L.r))continue;o+='<polygon points="'+L.p+'" fill="#E2E7E6" opacity="'+(L.r==='far'?0.82:0.62)+'" transform="translate(0 0)"/>';}
-  const blobs={isles:[[360,230,120,90]],england:[[340,520,190,240]],west:[[150,560,120,140]],far:[[120,70,160,90],[700,760,380,90],[1000,320,80,200]]};
+  for(const L of WLANDS){if(reg(L.r)||!L.p)continue;o+='<polygon points="'+L.p+'" fill="#E2E7E6" opacity="'+(L.r==='far'?0.82:L.r==='england'?0.34:0.62)+'" transform="translate(0 0)"/>';}
+  const blobs={isles:[[360,230,120,90]],west:[[150,560,120,140]],far:[[120,70,160,90],[700,760,380,90],[1000,320,80,200]]};
   for(const k in blobs){if(reg(k))continue;for(const e of blobs[k])o+='<ellipse cx="'+e[0]+'" cy="'+e[1]+'" rx="'+e[2]+'" ry="'+e[3]+'" fill="#E2E7E6" opacity="0.5"/>';}
   o+='</g>';
-  for(const k in REGIONS){if(reg(k))continue;const c=k==='isles'?[330,200]:[360,420];o+='<g pointer-events="none"><text x="'+c[0]+'" y="'+c[1]+'" text-anchor="middle" font-family="Marcellus SC, Georgia, serif" font-size="22" fill="#3D3129">'+esc(REGIONS[k].n)+'</text><text x="'+c[0]+'" y="'+(c[1]+20)+'" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" fill="#3D3129">'+(k==='england'&&thLevel()>=5?'Buy the traveller’s map':'Opens at Town Hall '+REGIONS[k].lv)+'</text></g>';}
-  o+='<g pointer-events="none"><rect x="-300" y="-300" width="1600" height="440" fill="url(#fgT)"/><rect x="-300" y="660" width="1600" height="440" fill="url(#fgB)"/><rect x="-300" y="-300" width="440" height="1400" fill="url(#fgL)"/><rect x="860" y="-300" width="440" height="1400" fill="url(#fgR)"/></g>';
+  for(const k in REGIONS){if(reg(k))continue;const c=k==='isles'?[330,200]:[392,604];o+='<g pointer-events="none"><text x="'+c[0]+'" y="'+c[1]+'" text-anchor="middle" font-family="Marcellus SC, Georgia, serif" font-size="22" fill="#3D3129">'+esc(REGIONS[k].n)+'</text><text x="'+c[0]+'" y="'+(c[1]+20)+'" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" fill="#3D3129">'+(k==='england'&&thLevel()>=5?'Buy the traveller’s map':'Opens at Town Hall '+REGIONS[k].lv)+'</text></g>';}
+  o+='<g pointer-events="none"><rect x="-300" y="-300" width="1600" height="440" fill="url(#fgT)"/><rect x="-300" y="660" width="1600" height="440" fill="url(#fgB)"/><rect x="-300" y="-300" width="440" height="1400" fill="url(#fgL)"/><rect x="925" y="-300" width="440" height="1400" fill="url(#fgR)"/></g>';
   /* home */
   o+='<g pointer-events="none"><circle cx="'+H[0]+'" cy="'+H[1]+'" r="10" fill="#2F2620" stroke="#C9A64A" stroke-width="2.6"/><text x="'+(H[0]+15)+'" y="'+(H[1]+6)+'" font-family="Marcellus SC, Georgia, serif" font-size="19" fill="#F3EBD8" stroke="#26404B" stroke-width="4" paint-order="stroke">Kaldstrand</text></g>';
   return o+'</svg>';}
@@ -66,7 +67,7 @@ function worldSVG(){const reg=r=>wOpen(r);
 function wSetView(){const sv=$('wsvg');if(sv&&WV)sv.setAttribute('viewBox',WV.x.toFixed(1)+' '+WV.y.toFixed(1)+' '+WV.w.toFixed(1)+' '+WV.h.toFixed(1));}
 function wClamp(){const r=WV.h/WV.w;WV.w=Math.max(240,Math.min(1100,WV.w));WV.h=WV.w*r;if(WV.h>1000){WV.h=1000;WV.w=WV.h/r;}WV.x=Math.max(-100,Math.min(1100-WV.w,WV.x));WV.y=Math.max(-90,Math.min(890-WV.h,WV.y));}
 function wInit(box){const sv=$('wsvg');const R=box.getBoundingClientRect();const asp=R.height/Math.max(1,R.width);
-  if(!WV||Math.abs(WV.h/WV.w-asp)>0.01){const w=Math.min(1000,Math.max(420,R.width*0.9));const c=worldSel&&WPOS[worldSel]?WPOS[worldSel]:WPOS.home;WV={x:c[0]-w/2,y:c[1]-w*asp/2,w:w,h:w*asp};}
+  if(!WV||Math.abs(WV.h/WV.w-asp)>0.01){let w=Math.min(1000,Math.max(420,R.width*0.9)),c=worldSel&&WPOS[worldSel]?WPOS[worldSel]:WPOS.home;if(!(worldSel&&WPOS[worldSel])){/* frame Kaldstrand and every open place, so new lands are not cut off */let x0=WPOS.home[0],x1=x0,y0=WPOS.home[1],y1=y0;for(const t of TARGETS){const p=WPOS[t.id];if(!p||!wOpen(t.reg))continue;x0=Math.min(x0,p[0]);x1=Math.max(x1,p[0]+70);y0=Math.min(y0,p[1]);y1=Math.max(y1,p[1]);}c=[(x0+x1)/2,(y0+y1)/2];w=Math.min(1000,Math.max(w,x1-x0+140,(y1-y0+150)/asp));}WV={x:c[0]-w/2,y:c[1]-w*asp/2,w:w,h:w*asp};}
   wClamp();sv.setAttribute('preserveAspectRatio','none');wSetView();
   const pts=new Map();let moved=0,pinch=null;
   const toW=(px,py)=>[WV.x+(px-R.left)/R.width*WV.w,WV.y+(py-R.top)/R.height*WV.h];
@@ -99,12 +100,12 @@ function tradeHtml(b,on){if(!has('harbour'))return '<p style="color:#8E3B2F">Mer
   const deals=(S.trader.deals||[]).filter(d=>d.left>0);if(deals.length)h+='<h3>Special orders</h3><table class="t">'+deals.map(d=>'<tr><td>Wants '+d.left+' '+esc((RNAME[d.k]||d.k).toLowerCase())+'</td><td>pays 50% more</td></tr>').join('')+'</table>';
   const sellKeys=Object.keys(BASEP).filter(k=>k!=='silver'&&k!=='pig'&&k!=='sheep'&&(k==='thrall'?S.thralls>0:(S.res[k]||0)>=1));
   h+='<h3>Sell</h3>'+(sellKeys.length?'<table class="t">'+sellKeys.map(k=>{const have=k==='thrall'?S.thralls:Math.floor(S.res[k]),p=priceSell(k);return '<tr><td>'+esc(k==='thrall'?'Thralls':RNAME[k])+' <span class="meta">'+have+' · '+p.toFixed(1)+' silver each'+(mktSat(k)<0.95?' (they have plenty)':'')+'</span></td><td><button type="button" class="btn small" data-sell="'+k+'" data-q="'+(k==='thrall'||k==='gold'?1:10)+'">Sell '+(k==='thrall'||k==='gold'?1:10)+'</button></td></tr>';}).join('')+'</table>':'<p>Nothing to sell.</p>');
-  h+='<h3>Buy</h3><table class="t">'+P.sells.map(k=>{const p=priceBuy(k),q=k==='arrows'?10:1;return '<tr><td>'+esc(k==='pig'?'A pig':k==='sheep'?'A sheep':k==='thrall'?'A thrall':q+' '+(RNAME[k]||k).toLowerCase())+'</td><td><button type="button" class="btn small" data-buy="'+k+'" '+(S.res.silver<p*q?'disabled':'')+'>'+Math.ceil(p*q)+' silver</button></td></tr>';}).join('')+'</table>';
+  h+='<h3>Buy</h3><table class="t">'+P.sells.map(k=>{const p=priceBuy(k),q=k==='arrows'?10:1;return '<tr><td>'+esc(k==='pig'?'A pig':k==='sheep'?'A sheep':k==='thrall'?'A thrall':q+' '+(RNAME[k]||k).toLowerCase())+(mktDem(k)>1.04?' <span class="meta">(price up: you bought a lot)</span>':'')+'</td><td><button type="button" class="btn small" data-buy="'+k+'" '+(S.res.silver<p*q?'disabled':'')+'>'+Math.ceil(p*q)+' silver</button></td></tr>';}).join('')+'</table>';
   on.push(()=>{const card=$('sheet-card');
     card.querySelectorAll('[data-sell]').forEach(x=>x.onclick=()=>{const k=x.dataset.sell;let q=+x.dataset.q;if(k==='thrall'){if(S.thralls<1)return;S.thralls--;}else{q=Math.min(q,Math.floor(S.res[k]));if(q<=0)return;S.res[k]-=q;}
       const p=priceSell(k)*q;S.res.silver+=p;const d=(S.trader.deals||[]).find(z=>z.k===k&&z.left>0);if(d)d.left=Math.max(0,d.left-q);S.mkt[k]=Math.max(0.4,mktSat(k)*Math.pow(0.93,q/10*(k==='gold'?10:1)));S.trades=(S.trades||0)+1;checkMilestones();buildingSheet(b);save();});
     card.querySelectorAll('[data-buy]').forEach(x=>x.onclick=()=>{const k=x.dataset.buy,q=k==='arrows'?10:1,p=Math.ceil(priceBuy(k)*q);if(S.res.silver<p)return;if((k==='pig'||k==='sheep')&&herdTotal()>=herdCap()){toast('No room in the pens.');return;}if(k==='thrall'&&S.thralls>=thrallCap()){toast('No room in the thrall pen.');return;}
-      S.res.silver-=p;if(k==='pig')S.herd.pigs++;else if(k==='sheep')S.herd.sheep++;else if(k==='thrall')S.thralls++;else S.res[k]=(S.res[k]||0)+q;S.trades=(S.trades||0)+1;checkMilestones();buildingSheet(b);save();});});
+      S.res.silver-=p;if(k==='pig')S.herd.pigs++;else if(k==='sheep')S.herd.sheep++;else if(k==='thrall')S.thralls++;else S.res[k]=(S.res[k]||0)+q;bought(k,q);S.trades=(S.trades||0)+1;checkMilestones();buildingSheet(b);save();});});
   return h;}
 function thExtraHtml(on){let h='';if(thLevel()<4)return h;
   h+='<h3>Banquets</h3><p class="meta">Each banquet this season costs more than the last.</p>'+Object.keys(BANQ).map(k=>{const c=banqCost(k);return '<div class="wk"><button type="button" class="btn small'+(afford(c)?' primary':'')+'" data-bq="'+k+'" '+(afford(c)?'':'disabled')+'>'+esc(BANQ[k].n)+'</button><span class="meta">'+esc(BANQ[k].d)+' · '+esc(costStr(c))+'</span></div>';}).join('');

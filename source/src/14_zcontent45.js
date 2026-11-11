@@ -9,8 +9,8 @@ SHIPCAP.snekkja={crew:25,cargo:160};
 const REGIONS={scand:{n:'Scandinavia',lv:3},isles:{n:'The Northern Isles',lv:4},england:{n:'England',lv:5,map:'england'}};
 TARGETS.forEach(t=>{t.reg='scand';});
 TARGETS.push(
-  {id:'shet',reg:'isles',n:'Shetland',type:'Fishing steadings',x:0,y:0,d:5,def:12,loot:{fish:80,wool:40,dfish:30,silver:25},pris:6,herd:2},
-  {id:'heb',reg:'isles',n:'The Hebrides',type:'Farms of the western isles',x:0,y:0,d:7,def:16,loot:{grain:90,meat:60,wool:40,silver:40},pris:8,herd:4},
+  {id:'shet',reg:'isles',n:'Shetland',type:'Fishing steadings',x:0,y:0,d:4,def:12,loot:{fish:80,wool:40,dfish:30,silver:45},pris:6,herd:2},
+  {id:'heb',reg:'isles',n:'The Hebrides',type:'Farms of the western isles',x:0,y:0,d:6,def:16,loot:{grain:90,meat:60,wool:40,silver:60},pris:8,herd:4},
   {id:'ork',reg:'isles',n:'Orkney',type:'Hall of the Orkney jarl',x:0,y:0,d:6,def:30,loot:{silver:150,gold:10,meat:50,swords:3},pris:10,jarl:true},
   {id:'lind',reg:'england',n:'Lindisfarne',type:'Monastery on a holy island',x:0,y:0,d:9,def:12,loot:{gold:40,silver:120,cloth:20,misc:20},pris:8},
   {id:'iona',reg:'england',n:'Iona',type:'Monastery of the west',x:0,y:0,d:10,def:10,loot:{gold:30,silver:90,cloth:15,misc:15},pris:6},
@@ -30,11 +30,15 @@ const BASEP={wood:0.4,planks:2,iron:3,tools:6,salt:1,wool:2,flax:1.2,grain:1,clo
 function partnerOk(id){const P=PARTNERS[id];return P&&P.open()&&!(((S.tg[id]||{}).ban||0)>S.day);}
 function mktSat(k){S.mkt=S.mkt||{};return S.mkt[k]===undefined?1:S.mkt[k];}
 function priceSell(k){const P=PARTNERS[S.trader.from]||{wants:[]};let p=BASEP[k]*(P.wants.includes(k)?1.35:1)*mktSat(k);if(hasAdv('athelstan'))p*=1.2;if(jt('wise'))p*=1.1;const d=(S.trader.deals||[]).find(x=>x.k===k&&x.left>0);if(d)p*=1.5;return p;}
-function priceBuy(k){const P=PARTNERS[S.trader.from]||{sells:[]};let p=BASEP[k]*1.45*(P.sells.includes(k)?0.85:1.2);if(hasAdv('athelstan'))p*=0.85;return Math.max(1,p);}
+/* buying: iron and tools cost more than their selling value; every iron or tool bought raises its price (2.5% each, up to ×2.5), easing back 1% a day */
+const BUYX={iron:1.35,tools:1.35};
+function mktDem(k){S.mktB=S.mktB||{};return S.mktB[k]===undefined?1:S.mktB[k];}
+function bought(k,q){if(!BUYX[k])return;S.mktB=S.mktB||{};S.mktB[k]=Math.min(2.5,mktDem(k)*Math.pow(1.025,k==='arrows'?q/10:q));}
+function priceBuy(k){const P=PARTNERS[S.trader.from]||{sells:[]};let p=BASEP[k]*1.45*(P.sells.includes(k)?0.85:1.2)*(BUYX[k]||1)*mktDem(k);if(hasAdv('athelstan'))p*=0.85;return Math.max(1,p);}
 function newTrader(){const ok=Object.keys(PARTNERS).filter(partnerOk);if(!ok.length)return null;const id=pick(ok),P=PARTNERS[id];
   const deals=[];const w=P.wants.slice().sort(()=>Math.random()-0.5).slice(0,2);w.forEach(k=>deals.push({k:k,left:Math.round(20+Math.random()*40)}));
   return {until:S.day+4,from:id,deals:deals};}
-function marketDay(){if(thLevel()>=3&&S.day%5===0&&!B.some(b=>b.t==='shipyard')&&typeof claimShore==='function'){const c=claimShore();if(c){S.shoreClaimed=true;toast('No free shore was left for a shipyard, so your jarl claimed '+zoneName(c.zx,c.zy)+'.',6000);}}S.mkt=S.mkt||{};for(const k in S.mkt){S.mkt[k]=Math.min(1,S.mkt[k]+0.008);}}
+function marketDay(){if(thLevel()>=3&&S.day%5===0&&!B.some(b=>b.t==='shipyard')&&typeof claimShore==='function'){const c=claimShore();if(c){S.shoreClaimed=true;toast('No free shore was left for a shipyard, so your jarl claimed '+zoneName(c.zx,c.zy)+'.',6000);}}S.mkt=S.mkt||{};for(const k in S.mkt){S.mkt[k]=Math.min(1,S.mkt[k]+0.008);}S.mktB=S.mktB||{};for(const k in S.mktB){S.mktB[k]=Math.max(1,S.mktB[k]-0.01);}}
 /* resources only appear once something can use them (or a merchant can buy them) */
 const tradeOpen=()=>has('trade')&&has('harbour');
 const woolUse=()=>has('weaver')||has('tailor')||tradeOpen();

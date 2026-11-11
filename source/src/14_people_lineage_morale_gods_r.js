@@ -271,13 +271,17 @@ function revoltDay(){if(S.morale<20){S.lowDays++;if(S.lowDays===1)queueModal({k:
     if(j&&h){S.saga.push({y:yearNow(),t:'The people rose and cast '+pname(j)+' from the high seat.'});j.jt=null;const old=j;S.jarl=0;old.num=old.num;succession('deposed');S.morale=45;addFame(-30);}}}
 
 /* ---------- training ---------- */
+/* recruits fill free warrior places first; when the limit is full, weaker troops at home retrain as the better kind */
+function trainPlan(type,lvl){const T=TROOPS[type]||TROOPS.skirm,max=lvl>=2?8:5,room=Math.max(0,warCap()-S.warriors);
+  const upg=type==='merc'?[]:S.people.filter(p=>p.w&&p.id!==S.jarl&&!p.away&&p.sick<=0&&p.a<45&&(TROOPS[p.w]||TROOPS.skirm).str<T.str).sort((a,b)=>(TROOPS[a.w]||TROOPS.skirm).str-(TROOPS[b.w]||TROOPS.skirm).str);
+  const nNew=Math.min(room,max),nUp=Math.min(upg.length,max-nNew);return {batch:nNew+nUp,nNew:nNew,up:upg.slice(0,nUp)};}
 function startTraining(type){type=type||'skirm';const tg=B.find(b=>b.t==='train');if(!tg||S.train)return 'A batch is already training';const T=TROOPS[type];if(T.lv>thLevel())return 'Needs Town Hall level '+T.lv;
-  const room=warCap()-S.warriors;const batch=Math.min(room,tg.lvl>=2?8:5);if(batch<=0)return 'Warrior limit reached for this Town Hall level';
+  const plan=trainPlan(type,tg.lvl),batch=plan.batch,nNew=plan.nNew;if(batch<=0)return 'Warrior limit reached for this Town Hall level, and no weaker troops at home to retrain';
   for(const k in T.eq)if(S.res[k]<T.eq[k]*batch)return 'Needs '+T.eq[k]*batch+' '+RNAME[k].toLowerCase()+' (you have '+fmt(S.res[k])+')';
   if(type==='merc')return 'Mercenaries are hired, not trained';const pool=S.people.filter(p=>p.id!==S.jarl&&!p.w&&p.a>=16&&p.a<45&&!p.away&&p.sick<=0).sort((a,b)=>((b.g==='m')-(a.g==='m'))||((b.tr==='hot'||b.tr==='strong'||(type==='archer'&&b.tr==='hawk'))-(a.tr==='hot'||a.tr==='strong'||(type==='archer'&&a.tr==='hawk'))));
-  if(pool.length<batch)return 'Needs '+batch+' fit adults aged 16–44 (you have '+pool.length+')';
-  assignWorkers();if(freeWorkers<batch)return 'Needs '+batch+' free workers (you have '+freeWorkers+'). Take people off a building first.';
-  for(const k in T.eq)S.res[k]-=T.eq[k]*batch;S.train={n:batch,left:10,type:type,ids:pool.slice(0,batch).map(p=>p.id)};assignWorkers();return '';}
+  if(pool.length<nNew)return 'Needs '+nNew+' fit adults aged 16–44 (you have '+pool.length+')';
+  assignWorkers();if(freeWorkers<nNew)return 'Needs '+nNew+' free workers (you have '+freeWorkers+'). Take people off a building first.';
+  for(const k in T.eq)S.res[k]-=T.eq[k]*batch;S.train={n:batch,left:10,type:type,ids:pool.slice(0,nNew).map(p=>p.id).concat(plan.up.map(p=>p.id))};assignWorkers();return '';}
 function trainDay(){if(!S.train)return;S.train.left-=1;if(S.train.left<=0){const T=TROOPS[S.train.type];let n=0;for(const id of S.train.ids){const p=PB(id);if(p){p.w=S.train.type;p.ua=0;n++;}}S.train=null;syncPop();toast(n+' '+T.n.toLowerCase()+'s finished their training.',3600);}}
 function rearm(p){const k=PRIMARY[p.w];if(!k)return;if(S.res[k]>=1){S.res[k]-=1;p.ua=0;}else p.ua=1;}
 
@@ -296,6 +300,9 @@ function lootFor(t,mult){const st=S.tg[t.id]||{};const f=mult*1.75*((st.pill||0)
 function lootUnits(l){let u=0;for(const k in l)u+=k==='silver'?l[k]*0.1:l[k];return u;}
 function cargoCap(r){return r.ships.map(shipById).filter(Boolean).reduce((a,s)=>a+SHIPCAP[s.type].cargo,0);}
 const travel=t=>Math.max(2,Math.round(t.d*0.7));
+const daysToWinter=()=>isWinter()?0:(SUMMER-S.gameT%YEAR)/DAY;
+/* food the village keeps when ships sail: 3 days of meals, or the whole winter when it is 10 days away or less; never more than 40% of the food stores */
+function homeFoodKeep(away){const need=Math.max(0,eatNeed()-away*EAT*WAR_EAT*RATION[S.pol.ration].f);return Math.ceil(Math.min(need*(daysToWinter()<=10?(YEAR-SUMMER)/DAY:3),capFood()*0.4));}
 function raidProvNeed(crew,t,jarl){return Math.ceil((crew+(jarl?1:0))*EAT*1.5*(2*travel(t)+3));}
 function canRaid(t){if(t&&!regionOpen(t.reg))return 'That land is not open to you yet';if(thLevel()<3)return 'Raids open at Town Hall level 3';if(isWinter())return 'Ships do not sail in winter';const home=S.ships.filter(s=>!s.away);if(!home.length)return 'No ship in the harbour';
   if(!S.people.some(p=>p.w&&!p.away))return 'No warriors at home';return '';}
@@ -303,6 +310,7 @@ function launchRaid(plan){const t=TG(plan.tgt);const why=canRaid(t);if(why)retur
   if(!plan.ships.length)return 'Choose at least one ship';if(!plan.crew.length)return 'Choose a crew';
   const cap=plan.ships.map(shipById).reduce((a,s)=>a+SHIPCAP[s.type].crew,0);if(plan.crew.length+(plan.jarl?1:0)>cap)return 'The ships hold '+cap+' men';
   const prov=raidProvNeed(plan.crew.length,t,plan.jarl);if(foodUnits()<prov)return 'Needs '+prov+' meals of provisions';
+  const keep=homeFoodKeep(plan.crew.length+(plan.jarl?1:0));if(foodUnits()-prov<keep)return 'The ships need '+prov+' meals, and the village must keep '+keep+' at home'+(daysToWinter()<=10?' for the winter':'')+' (you have '+Math.floor(foodUnits())+')';
   spendMeals(prov);
   const r={id:S.day*10+S.raids.length,tgt:t.id,ships:plan.ships.slice(),crew:plan.crew.slice(),tactic:plan.tactic,pris:!!plan.pris,jarl:!!plan.jarl,ph:'out',t:Math.max(1,Math.round(travel(t)*(((S.blessOn.njordV||0)>0)?0.5:1)*(plan.ships.map(shipById).every(s=>s&&s.type==='snekkja')?0.67:1))),d:Math.max(1,Math.round(travel(t)*(plan.ships.map(shipById).every(s=>s&&s.type==='snekkja')?0.67:1))),prov:prov,provUse:(plan.crew.length+(plan.jarl?1:0))*EAT*1.5,
     safe:(S.blessOn.njordV||0)>0,odin:(S.blessOn.odinR||0)>0,feast:(S.blessOn.feastR||0)>0,loki:(S.blessOn.lokiR||0)>0,evDone:false,loot:{},prisoners:0,dead:[],wounded:0,log:[],start:S.day,result:''};
@@ -321,7 +329,7 @@ function raidDay(){for(const r of S.raids.slice()){
     else if(r.ph==='back'){r.t--;if(r.t===1)animRaidIn(r);if(r.t<=0)homecoming(r);}
   }}
 function arrive(r){const t=TG(r.tgt);const st=S.tg[t.id]||{};const e=estimate(r);r.ph='wait';
-  if(e.ratio>=2||(st.beaten||0)>0){const offer={};const pot=lootFor(t,1);for(const k in pot)offer[k]=Math.round(pot[k]*0.6);r.offer=offer;queueModal({k:'raid',rid:r.id,step:'tribute'});}
+  if(e.ratio>=2||(st.beaten||0)>0){const offer={};const pot=lootFor(t,1);for(const k in pot)offer[k]=Math.round(pot[k]*0.5);r.offer=offer;queueModal({k:'raid',rid:r.id,step:'tribute'});}
   else if(t.walls&&r.tactic==='siege'){r.ph='siege';r.round=0;r.rounds=3+Math.floor(Math.random()*3);r.defF=1;r.t=2;r.log.push('The walls of '+t.n+' rose before them. The siege began.');queueModal({k:'raid',rid:r.id,step:'siegeStart'});}
   else battle(r,1);}
 function battle(r,defMul){const t=TG(r.tgt);const siege=r.ph==='siege';let def=tgtDef(t,r.tactic,siege)*defMul;if(siege)def*=r.defF;
@@ -346,6 +354,8 @@ function homecoming(r){const t=TG(r.tgt);const st=S.tg[t.id]=S.tg[t.id]||{};
   for(const id of r.crew){const p=PB(id);if(p){p.away=0;if(p.broke){p.broke=0;rearm(p);}if(p.w==='archer'){if(S.res.arrows>=10)S.res.arrows-=10;else p.ua=1;}}}
   if(r.jarl){const j=jarlP();if(j)j.away=0;}
   let got=[];
+  /* provisions not eaten come home as dried fish */
+  if(r.prov>=2){const df=Math.floor(r.prov/MEAL.dfish);if(df>0){addRes('dfish',df);got.push(df+' dried fish left over');}r.prov=0;}
   if(r.result==='win'||r.result==='tribute'){
     let share=S.pol.loot==='warriors'?0.85:1;
     for(const k in r.loot){if(k==='animals'){const n=Math.min(r.loot[k],Math.max(0,herdCap()-herdTotal()));for(let i=0;i<n;i++){if(S.herd.pigs<=S.herd.sheep)S.herd.pigs++;else S.herd.sheep++;}if(n)got.push(n+' animals');continue;}

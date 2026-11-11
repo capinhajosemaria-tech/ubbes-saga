@@ -11,16 +11,23 @@ Format: `- [ ] what · why / where seen` — screenshots welcome in the conversa
 - World map and raids (Beta 0.11.0).
 - Art 1 — "Frost & Ember" light and the fjord map (Beta 0.12.0).
 
-## Next round — Balance audit (Fable)
-Decided 2026-11-11, start in a new conversation after Beta 0.12.0. Method:
-1. `balance` agent (Sonnet) collects data into `tools/balance/audit_data.md`: several bot runs per profile (900 days), `jobs.py` per Town Hall, raid Monte Carlo, economy flows (food, wood, firewood per season, silver, population, deaths and people leaving with causes).
-2. One **Fable** agent pass reads `docs/NUMBERS.md`, `SPEC.md`, the data and the economy code, and writes an audit report with concrete numbers.
-3. José picks what goes in; Claude applies it; bots confirm.
-Focus:
-- [ ] **Clear imbalances in every Town Hall already made (TH1–TH5)**: costs vs output, buildings that never pay off, jumps in pacing between levels, shortages that always hit (firewood, tools, iron), workers vs jobs.
-- [ ] Errors and inconsistencies: production and consumption that don't add up, numbers in code vs NUMBERS.md vs SPEC, unused or dead values.
-- [ ] Consumption and production values, and the progression itself (requirements per Town Hall, unlock order).
-- [ ] Open items folded in: silver piling up, the peaceful bot reaching TH5 later, village raids with palisades (teach the bot to build one), market prices.
+## Next round — Balance fixes 1 (from the audit)
+Audit done 2026-11-11: data in `tools/balance/audit_data.md` (48 bot runs × 900 days), report in `tools/balance/audit_report.md` (finding IDs below refer to it; read the finding before applying). Key result: TH1–TH2 are sound; most TH3–TH5 bot data reflects bot weaknesses (22/48 runs stuck at TH3 because the bot boxes in its own shore — Shipyard placement is fine for a player).
+Claude's suggested round (José still has to pick; ask him about item A1 because fewer babies changes the feel):
+- [ ] **B1, B2 — fix the bot first**: keep shore reachable (`yardFits()` guard), staff every free worker, plank target = hall cost + 60. Needed so confirmation runs are trustworthy.
+- [ ] **E1 — rounding bugs**: Preserver levels 4/5 → 5/6 items a day; Smokehouse carries fractions (levels 2 and 4 add nothing now).
+- [ ] **E2 — ale and mead out of the meal count** (counted as meals, never eaten).
+- [ ] **A2 — Bakery 2 → 4 bread per worker a day** (weak link of TH5 winter food).
+- [ ] **A1 — too many children** (33–45% under 14): working age 14 → 12, birth chance 0.007 → 0.004, `jobs.py` with the real age mix (A/B test: workforce share ~45% → 58%). *Ask José.*
+- [ ] **E5–E7 — cleanup**: regenerate `NUMBERS.md` (header says 0.11.0, troop gear column empty), complete Test villages, remove dead constants.
+Then re-run bots (balance agent) before the next round.
+
+## Later — Balance fixes 2 (decide after re-measuring with the fixed bot)
+- [ ] **O1 — silver has no use** (~650/yr in vs ~2,000–2,500 sinks to TH5): merchant purse 100/150/200 at TH3/4/5; mercenaries 14 → 40; TH5 silver 250 → 400; Hof 50 → 150; silver on level 4/5 upgrades.
+- [ ] **E3** — Market bonus only with its worker; Pen loses its useless third slot.
+- [ ] **O3, E4 — village raids**: palisade bonus counted once (now twice); raiders 6+2/yr (max 24) → 8+3 (max 30); teach the bot to build a palisade.
+- [ ] **P3, P4 — pacing TH3–TH5**: hall population 22/32/48/80 → 22/40/70/110; TH5 fame 1,700 → 1,500 (low-raid players stuck; saga goals give ~1,300). Note: no fully peaceful path exists by rule (TH3 needs warriors, TH4 a raid).
+- [ ] Hold until re-measured: more food output (A3), TH4 cost cut (P2), pen scaling (A6), the "4–8 spare workers" rule target (A8 — today +11..+17 on the test village, about −15..−25 at full TH5 with real ages).
 
 ## Polish after Town Hall 5 (beta polish rounds)
 Merge José's play feedback here, grouped as visual / balance / organisation. **PC only for now** (decided 2026-11-10): tune everything on PC, then convert to iPhone; phone items wait in "Phone (later)".

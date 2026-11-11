@@ -23,7 +23,7 @@ function drawGround(b,win){
   const e=elev[b.fy*N+b.fx]||2,c=fp(b);
   ctx.save();ctx.translate(0,-e);
   if(FIELDS.has(b.t)){ctx.fillStyle=win?'rgba(200,205,202,0.5)':'rgba(120,108,80,0.35)';const r=jitterRing(c,3,b.id);poly(r,ctx.fillStyle);drawField(b,inset(c,0.02),win);ctx.restore();return;}
-  if(b.t==='harbour'||b.t==='shipyard'){ctx.restore();return;}
+  if(b.t==='harbour'||b.t==='shipyard'||b.t==='mill'){ctx.restore();return;}
   if(b.t==='th'){cobbles(b,c,win);ctx.restore();return;}
   const yard=(b.t==='pigpen'||b.t==='sheeppen')?(win?'rgba(210,213,208,0.8)':'rgba(150,134,100,0.62)'):b.t==='train'?(win?'rgba(216,218,213,0.85)':'rgba(190,176,136,0.75)'):(win?'rgba(214,217,213,0.7)':'rgba(160,150,112,0.42)');
   poly(jitterRing(c,7,b.id),win?'rgba(205,210,206,0.35)':'rgba(140,140,96,0.16)');

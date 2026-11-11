@@ -9,7 +9,7 @@ async def main():
         await pg.wait_for_timeout(300)
         await pg.evaluate("""(()=>{const G=__G;G.setSpeed(0);const S=G.S;S.th=3;S.fame=5000;const U=G.unlockedSet();for(let a=3;a<11;a++)for(let c=3;c<11;c++)U.add(a+','+c);
           const put=(t)=>{for(let y=20;y<64;y++)for(let x=20;x<64;x++)for(const rot of [0,1]){if(G.canPlace(t,x,y,rot,0).ok){const b=G.addBuilding(t,x,y,rot,false);b.desired=G.slotsOf(b);return b;}}return null;};
-          ['shipyard','harbour','trade','altar','train','arsenal','thrall','smith','pen','camp','bench','rune','herbs','prow','nets','wattle','wattle'].forEach(put);
+          ['shipyard','harbour','trade','altar','train','arsenal','thrall','smith','pigpen','sheeppen','camp','bench','rune','herbs','prow','nets','wattle','wattle'].forEach(put);
           Object.assign(S.res,{spears:30,shields:20,swords:12,bows:10,arrows:200,misc:30,silver:300,hides:30,meat:80,wool:40,rope:20,cloth:20});
           S.ships.push({id:S.shipSeq++,type:'karvi',name:'Sea-Raven',away:0,voy:0});S.ships.push({id:S.shipSeq++,type:'knarr',name:'Wave-Biter',away:0,voy:0});
           const ad=S.people.filter(p=>p.a>=16&&p.id!==S.jarl);const types=['warrior','spear','archer','skirm'];for(let i=0;i<10;i++){const p=G.newPerson({g:i%3?'m':'f',a:20+i,w:types[i%4],xp:i%3});}G.syncPop();S.thralls=4;S.gods.freyja=85;S.gods.odin=60;G.recalcMorale();})()""")

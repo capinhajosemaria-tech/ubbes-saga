@@ -8,6 +8,8 @@ function strawman(x,y){ctx.strokeStyle='#5A4636';ctx.lineWidth=2;ctx.beginPath()
 function spearRack(x,y){ctx.strokeStyle='#5A4636';ctx.lineWidth=1.6;ctx.beginPath();for(let k=0;k<4;k++){ctx.moveTo(x+k*4,y);ctx.lineTo(x+k*4+2,y-22);}ctx.moveTo(x-2,y-6);ctx.lineTo(x+16,y-6);ctx.stroke();ctx.fillStyle='#B7BCBF';for(let k=0;k<4;k++){ctx.beginPath();ctx.moveTo(x+k*4+1,y-22);ctx.lineTo(x+k*4+3,y-22);ctx.lineTo(x+k*4+2,y-27);ctx.fill();}}
 function pennant(b,e,col){const p=iso(b.fx+b.w/2-0.5,b.fy+b.h/2-0.5),x=p[0]+8,y=p[1]-e-Math.min(56,22+b.w*8);ctx.strokeStyle='#4E3C2E';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x,y-14);ctx.stroke();poly([x,y-14,x+10,y-11,x,y-8],col);}
 function drawExtra(b,win,c0,alongX){
+  if(b.t==='mill')return drawMill(b,win,c0);
+  if(b.t==='tavern')return drawTavern(b,win,c0,alongX);
   if(drawExtra2(b,win,c0,alongX))return true;
   const c=inset(c0,0.1),fb=c.Bt,fr2=lerp(c.Bt,c.R,0.5),fl=lerp(c.L,c.Bt,0.5);
   switch(b.t){
@@ -92,7 +94,7 @@ function drawBuilding0(b,win,alpha,ghost){
   if(!window.__OLDB&&drawShaped(b,win,c0,alongX)){if(!ghost&&b.lvl>=2)pennant(b,0,b.lvl>=3?'#A34A3A':'#C9A64A');ctx.restore();if(alpha<1)ctx.globalAlpha=1;return;}
   if(drawExtra(b,win,c0,alongX)){if(!ghost&&b.lvl>=2)pennant(b,0,b.lvl>=3?'#A34A3A':'#C9A64A');ctx.restore();if(alpha<1)ctx.globalAlpha=1;return;}
   switch(b.t){
-    case 'market':{const c=inset(c0,0.04);poly(P(c.T,c.R,c.Bt,c.L),win?'#D8DCDA':'#B5AE9F');
+    case 'market':{if(drawMarketV(b,c0,win))break;const c=inset(c0,0.04);poly(P(c.T,c.R,c.Bt,c.L),win?'#D8DCDA':'#B5AE9F');
       ctx.strokeStyle=win?'rgba(170,175,172,0.7)':'rgba(140,132,118,0.7)';ctx.lineWidth=1;ctx.beginPath();for(let k=1;k<8;k++){const a=lerp(c.T,c.R,k/8),b2=lerp(c.L,c.Bt,k/8);ctx.moveTo(a[0],a[1]);ctx.lineTo(b2[0],b2[1]);const a2=lerp(c.T,c.L,k/8),b3=lerp(c.R,c.Bt,k/8);ctx.moveTo(a2[0],a2[1]);ctx.lineTo(b3[0],b3[1]);}ctx.stroke();
       const stall=(px,py,col)=>{ctx.strokeStyle='#4E3C2E';ctx.lineWidth=2;ctx.beginPath();[[-12,0],[12,0],[-6,6],[18,6]].forEach(o=>{ctx.moveTo(px+o[0],py+o[1]);ctx.lineTo(px+o[0],py+o[1]-16);});ctx.stroke();
         poly([px-12,py+2-8,px+18,py+8-8,px+18,py+8-11,px-12,py+2-11],'#8A6E52');

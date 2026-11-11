@@ -19,7 +19,22 @@ Format: `- [ ] what · why / where seen` — screenshots welcome in the conversa
 - [x] **Village centre on the square**: centre the starting Town Hall on the square; the Jarl's house comes already built at the start; let the player move and rotate the Town Hall.
 - [x] **Locked buildings say what unlocks them** (e.g. "Unlocks with: Ready for winter") — José couldn't build the Jarl's house after TH2 because that saga goal was still open.
 - [x] **Art quality**: better textures and details everywhere; more realistic paths/roads. *(0.13.0: roads, grass, sand, yards; building textures still to do)*
-- [ ] **Art quality 2**: richer building textures and details (planks, roof materials, props), water depth near shores.
+- [ ] **Art quality 2**: richer building textures and details (planks, roof materials, props), water depth near shores. → now planned in "Art redesign" below.
+
+## Art redesign (José, 2026-11-11) — next conversation: José plays first and brings more art feedback
+Prototypes are saved on branch `art-prototypes` (code, switches and option sheets: `docs/art/README.md` on that branch). Nothing is released.
+Decided:
+- [ ] **Roads = option B "trodden earth"**: dark mud, deep wheel ruts, puddles reflecting the sky, stones, round worn bends, grass tufts over the edge. Door tracks and winter roads must match.
+- [ ] **Grass = option B**: large soft colour drift (no tile chessboard), two-tone grass clumps, darker grass and trampled earth around buildings.
+- [ ] **Market = option M1**: cobbles like the Town Hall square, three timber booths with plank/turf roofs over the back half (goods visible: fish, pots, furs), a stone well with bucket instead of the modern fountain post, crates and barrels. The old striped stalls go.
+Open:
+- [ ] **Town Hall entrance**: choose from 6 options (1 Urnes portal, 2 carved porch, 3 iron gate, 4 dragon pillars, 5 painted hall, 6 vestibule with antlers) or a mix. Claude's view: 1 most beautiful close up, 6 reads best from afar, 2 needs geometry work. The door must be big and ornamented.
+- [ ] **Building grime** (contact shadow, damp walls, moss on footings, rain streaks) from option B — not chosen yet; ask.
+José's problems with buildings close up: many have **no door**, **chimneys badly seated on roofs**, **details sparse** and **lines too thick**.
+Plan (agreed in principle):
+1. **Style rules** (short doc): line widths (fine, ~0.5–1 px), door size/position on every building, chimney seating (on ridge or slope, with flashing and base), windows/shutters, boards, eaves. Derived from the chosen Town Hall entrance.
+2. **Shared parts kit**, drawn once with a close-up level: door, chimney, window/shutter, plank walls, roof edge, shields, torches. Every building uses it, so fixes apply everywhere.
+3. **Rebuild buildings in groups of 5–6** (44 types, ~30 real buildings): one before/after contact sheet per group, close up; several options only for key buildings (Town Hall, houses, Jarl's House, Hof, market). About 5–7 rounds in all. Fine detail only when zoomed in; measure performance each round.
 - [x] **Bottom menu bar**: the half-gold border must cover the whole bar; use the title font for the bar's text.
 
 ## Next round — Balance fixes 1 (from the audit)

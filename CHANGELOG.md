@@ -2,6 +2,9 @@
 
 Versions are `Beta 0.MINOR.PATCH` until Town Hall 10 (`1.0.0`).
 
+## Beta 0.9.1
+- Fix: roofs of buildings facing the other way (for example after rotating them) were drawn crossed, so the ground showed through. They are solid again.
+
 ## Beta 0.9.0
 - Town Hall 1 is quicker to get ready for winter: the Preserver unlocks with the first goal and the Granary and Warehouse with the planks goal. Iron and tools are now one goal, and the "4 houses" goal is gone (you start with 4).
 - A short guide for new sagas: a card next to the To do list walks you through seasons, food, wood, workers, fish, planks, winter stores and firewood, and moves on as you build. Close it any time; reopen it from the Saga panel.

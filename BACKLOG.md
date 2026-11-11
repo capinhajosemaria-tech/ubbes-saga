@@ -65,7 +65,7 @@ José's second play session (Relaxed, 2026-11-10, after Polish 1) added the item
 
 
 ## Bugs
-- [ ] **Round houses break when rotated or moved** (José, Beta 0.8.0): rotating or moving a round house turns it square, or the rotation doesn't update, or it draws wrong.
+- [ ] **Round houses break when rotated or moved** (José, Beta 0.8.0): rotating or moving a round house turns it square, or the rotation doesn't update, or it draws wrong. (Beta 0.9.1 fixed crossed hip roofs after rotation; re-check round houses.)
 
 ## Wanted
 - [ ] Hof: the raised upper roof reads as a flat stripe; redraw as a proper stave-church tier.

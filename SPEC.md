@@ -1,4 +1,4 @@
-# Ubbe's Saga — specification (Beta 0.9.0)
+# Ubbe's Saga — specification (Beta 0.9.1)
 
 How the game works **today**. Numbers are in `docs/NUMBERS.md` (generated). The long-term vision for Town Hall 6–10 is in `docs/DESIGN.md`.
 

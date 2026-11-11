@@ -54,7 +54,7 @@ José's second play session (Relaxed, 2026-11-10, after Polish 1) added the item
 - [x] **Road texture breaks from grass to sand** (visual, minor): the road texture is discontinuous where it crosses from grass to sand.
 
 ### Play 4 feedback (José, Beta 0.8.0)
-- [ ] **Houses: one shape for all** (visual): houses should all keep the same shape (no round small houses); keep the varied shapes for the other buildings.
+- [ ] **Houses: one shape for all again** (visual, José insists, do together with the bug above): all houses share one shape like before 0.8.0 (no round small houses, no mixed silhouettes); keep the colour schemes and keep the varied shapes for the other buildings.
 
 ### Phone (later — after PC is polished)
 - [ ] Convert the PC interface to iPhone 14 once PC is settled.
@@ -65,7 +65,8 @@ José's second play session (Relaxed, 2026-11-10, after Polish 1) added the item
 
 
 ## Bugs
-- [ ] **Round houses break when rotated or moved** (José, Beta 0.8.0): rotating or moving a round house turns it square, or the rotation doesn't update, or it draws wrong. (Beta 0.9.1 fixed crossed hip roofs after rotation; re-check round houses.)
+- [ ] **Houses change when moved or rotated — still there after 0.9.1** (José, 2026-11-11, top priority next round): moving a house changes its type (shape and colour); rotating it still gives the crossed / broken roof. Likely the house look is picked from position or id (hash) instead of being stored with the house, and the round/other house shapes have their own rotation bug that 0.9.1 did not cover.
+- [ ] **Check every building for the same problem** (from 0.8.0's new shapes): place, move and rotate each building type (all 4 rotations) and look for crossed roofs, missing faces or a look that changes; fix all of them.
 
 ## Wanted
 - [ ] Hof: the raised upper roof reads as a flat stripe; redraw as a proper stave-church tier.

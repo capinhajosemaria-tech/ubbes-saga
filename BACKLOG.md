@@ -11,6 +11,17 @@ Format: `- [ ] what · why / where seen` — screenshots welcome in the conversa
 - World map and raids (Beta 0.11.0).
 - Art 1 — "Frost & Ember" light and the fjord map (Beta 0.12.0).
 
+## Next round — Balance audit (Fable)
+Decided 2026-11-11, start in a new conversation after Beta 0.12.0. Method:
+1. `balance` agent (Sonnet) collects data into `tools/balance/audit_data.md`: several bot runs per profile (900 days), `jobs.py` per Town Hall, raid Monte Carlo, economy flows (food, wood, firewood per season, silver, population, deaths and people leaving with causes).
+2. One **Fable** agent pass reads `docs/NUMBERS.md`, `SPEC.md`, the data and the economy code, and writes an audit report with concrete numbers.
+3. José picks what goes in; Claude applies it; bots confirm.
+Focus:
+- [ ] **Clear imbalances in every Town Hall already made (TH1–TH5)**: costs vs output, buildings that never pay off, jumps in pacing between levels, shortages that always hit (firewood, tools, iron), workers vs jobs.
+- [ ] Errors and inconsistencies: production and consumption that don't add up, numbers in code vs NUMBERS.md vs SPEC, unused or dead values.
+- [ ] Consumption and production values, and the progression itself (requirements per Town Hall, unlock order).
+- [ ] Open items folded in: silver piling up, the peaceful bot reaching TH5 later, village raids with palisades (teach the bot to build one), market prices.
+
 ## Polish after Town Hall 5 (beta polish rounds)
 Merge José's play feedback here, grouped as visual / balance / organisation. **PC only for now** (decided 2026-11-10): tune everything on PC, then convert to iPhone; phone items wait in "Phone (later)".
 Sources: José's first play feedback (Relaxed mode) and Claude's first review (Beta 0.6.1).

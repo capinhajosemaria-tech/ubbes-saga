@@ -85,7 +85,7 @@ Later art:
 Audit 2026-11-11: data in `tools/balance/audit_data.md`, report in `tools/balance/audit_report.md` (finding IDs refer to it; read the finding before applying). TH1–TH2 are sound. The bot was fixed (B1, B2): 24/24 runs reach TH5 in 434–587 days.
 - [ ] **E1 — rounding bugs** (Smokehouse part may go with 1B): Preserver levels 4/5 → 5/6 items a day; Smokehouse carries fractions (levels 2 and 4 add nothing now).
 - [ ] **E2 — ale and mead out of the meal count** (counted as meals, never eaten).
-- [ ] **A2 — replaced by 1B (new bread chain)**: was Bakery 2 → 4 bread per worker a day** (weak link of TH5 winter food).
+- [ ] **A2 — replaced by 1B (new bread chain)**: was Bakery 2 → 4 bread per worker a day (weak link of TH5 winter food).
 - [ ] **A1 — too many children** (33–45% under 14): working age 14 → 12, birth chance 0.007 → 0.004, `jobs.py` with the real age mix (workforce share ~45% → 58%). *Ask José.*
 - [ ] **E5–E7 — cleanup**: regenerate `NUMBERS.md` (header says 0.11.0, troop gear column empty), complete Test villages, remove dead constants.
 

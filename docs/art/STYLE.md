@@ -240,6 +240,12 @@ This file is mirrored in the claude.ai project as `claude/Estilo dos edificios.m
 - **A pier like the Harbour's, shorter** (about 2 tiles), out from the quay: piles, plank deck, mooring posts, a lantern at its head; **one berth** with the finished ship (BACKLOG: a new ship goes to a Harbour with a free berth, else waits here; while one waits, no new ship can be started).
 - The sea side is found from the sea tiles around the plot (`ydFrame`). Own shadow. Prototype: `window.__setYard(3)` (1 log hall, 2 big A-frame, 4 plank hall with open bay kept, with a ship on stocks in the yard).
 
+## Thrall Pen (chosen: option 4 "Two sunken huts", 2026-11-12)
+- 3×2; houses thralls, who may try to flee — so the yard is fenced. Humble, undecorated.
+- **Two small sunken huts** (thatch roofs almost to the ground, low plank walls), **turned so their door gables face the gate**, side by side with a small gap between them (José).
+- **Fence of sharpened stakes** all round (as option 2: a low palisade with a rail), a plank gate at the front **barred** with an iron bar.
+- No props. Own shadow. Prototype: `window.__setThrall(4)` (1 thatched longhouse + wattle, 2 log house + stakes, 3 wattle-and-daub with trough kept).
+
 ## Shadows (shared rule, 2026-11-12)
 - José: the dark box shadow (and the ground patch) does not match the buildings' shapes.
 - Each redrawn building gives its own **shadow volumes** (`shShape(b)` in `20_zzhouseopt.js`: ground outline + height); the cast shadow is the union of those, swept along the sun. The old box shadow stays only for buildings not yet redrawn. Done for the Iron Mine; to do for every building when the styles are rolled out.
@@ -248,4 +254,4 @@ This file is mirrored in the claude.ai project as `claude/Estilo dos edificios.m
 ## Next buildings
 One at a time. José (2026-11-12): **send 4 drawn options straight away** (no separate "current look" step) → José's choice and notes → recorded here.
 When José asks for a fix, change only that (no extra changes without asking).
-Order still to do: Ship-Tomb → Decor. (Everything else is decided.)
+Order still to do: Ship-Tomb, Trading House, Beehives → Decor (Community Fire, Wooden Benches, Wattle Fence, Rune Post, Herb Garden, Carved Prow, Drying Nets). Maybe later: palisade and gate in the new style.

@@ -279,6 +279,12 @@ This file is mirrored in the claude.ai project as `claude/Estilo dos edificios.m
 - **Rune Post: 2** — a carved runestone (rounded top, red serpent band, runes, lichen).
 - The plot keeps its grass round every decor piece.
 
+## Grass (chosen: option 2 "Tall grass in the wind" + sparse flowers, 2026-11-12)
+- Clumps of long tapered blades in three tones (green, olive, straw), leaning one way and **swaying in the wind** (a slow wave across the map); straw-coloured seed heads.
+- **Sparse wildflowers** (yellow, blue, white, pink) standing just above the grass: none on most tiles, one on some, a little cluster of three now and then; summer only.
+- Smooth colour drift: each tile is tinted from low-frequency noise so lush hollows and dry tops blend across tiles (no blobs cut at tile edges — that made a checkerboard).
+- Fine blades and flowers only when zoomed in; fewer clumps when zoomed out. Prototype: `window.__setGrass(2)` (1 dense meadow, 3 grazed pasture, 4 heath, 5 flowering meadow, 6 painterly kept); screenshots `tools/ui/tmp_grass.py`.
+
 ## Shadows (shared rule, 2026-11-12)
 - José: the dark box shadow (and the ground patch) does not match the buildings' shapes.
 - Each redrawn building gives its own **shadow volumes** (`shShape(b)` in `20_zzhouseopt.js`: ground outline + height); the cast shadow is the union of those, swept along the sun. The old box shadow stays only for buildings not yet redrawn. Done for the Iron Mine; to do for every building when the styles are rolled out.
@@ -287,4 +293,4 @@ This file is mirrored in the claude.ai project as `claude/Estilo dos edificios.m
 ## Next buildings
 One at a time. José (2026-11-12): **send 4 drawn options straight away** (no separate "current look" step) → José's choice and notes → recorded here.
 When José asks for a fix, change only that (no extra changes without asking).
-All buildings and decor are decided. Next: grass (6 options, José 2026-11-12). Maybe later: palisade and gate in the new style.
+All buildings, decor and the grass are decided. Maybe later: palisade and gate in the new style.

@@ -271,10 +271,7 @@ function drawJarlOpt(b,win,opt){const J=JARL_SET[opt]||JARL_SET[1],f0=hoFrame(b)
   if(!win){const gr={sd,rt:J.rt,rh:J.rt==='scale'?20:rh,roofD:J.roofD,blue:J.blue};hoRoofSurface(r.at,gr,win);
     /* hip end: courses parallel to the eave */const E=hipEdges(cR,ax),e0=up(E.fe[0],wh-1),e1=up(E.fe[1],wh-1);ctx.strokeStyle=J.rt==='turf'?'rgba(60,84,44,0.4)':'rgba(20,16,12,0.35)';ctx.lineWidth=0.5;ctx.beginPath();
     for(let k=1;k<8;k++){const v=k/8,a=lerp(e0,r.rf,v),b2=lerp(e1,r.rf,v);ctx.moveTo(a[0],a[1]);ctx.lineTo(b2[0],b2[1]);}ctx.stroke();}
-  /* ridge beam in the same wood as the dragons, so beam and heads read as one piece */
-  ctx.strokeStyle=J.dc;ctx.lineWidth=2.6;ctx.lineCap='round';ctx.beginPath();for(let k=0;k<=20;k++){const q=r.ridge(k/20);k?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]);}ctx.stroke();ctx.lineCap='butt';
-  ctx.strokeStyle=J.da;ctx.lineWidth=0.4;ctx.beginPath();for(let k=0;k<=20;k++){const q=r.ridge(k/20);k?ctx.lineTo(q[0],q[1]-0.3):ctx.moveTo(q[0],q[1]-0.3);}ctx.stroke();
-  hoDragonBeam(r,1,ax?1:-1,1.25,J.dc,J.da);hoDragonBeam(r,0,ax?-1:1,1.25,J.dc,J.da);}
+  hoRidgeDragons(r,ax,1.25,J.dc,J.da);}
 /* the ridge beam itself rises at each end into a carved dragon: one tapered piece of wood, head at the top */
 function hoDragonBeam(r,end,dir,s,col,acc){const p=end?r.rf:r.rb,q=r.ridge(end?0.9:0.1);let ux=p[0]-q[0],uy=p[1]-q[1];const L=Math.hypot(ux,uy)||1;ux/=L;uy/=L;
   const P0=[p[0]-ux*10*s,p[1]-uy*10*s],P1=[p[0]+ux*4*s,p[1]+uy*4*s-1*s],P2=[p[0]+dir*8*s,p[1]-11*s],P3=[p[0]+dir*4.6*s,p[1]-19*s];
@@ -289,3 +286,24 @@ function hoDragonBeam(r,end,dir,s,col,acc){const p=end?r.rf:r.rb,q=r.ridge(end?0
   /* crest: two thin backward tendrils, the second curling */ctx.strokeStyle=col;ctx.lineWidth=0.9;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(0,-2.8);ctx.quadraticCurveTo(-2.5,-4.6,-4.6,-3.6);ctx.moveTo(1,-3.2);ctx.quadraticCurveTo(-1,-6.4,-3.4,-6);ctx.quadraticCurveTo(-4.6,-5.6,-3.8,-4.8);ctx.stroke();ctx.lineCap='butt';
   /* carving: eye slit, jaw line, a spiral on the cheek, in the accent */ctx.strokeStyle=acc;ctx.lineWidth=0.35;ctx.beginPath();ctx.moveTo(3.6,-2.2);ctx.lineTo(5.2,-2.4);ctx.moveTo(3.2,0.2);ctx.lineTo(6.4,-0.6);ctx.moveTo(2.3,-0.6);ctx.arc(1.5,-0.6,0.8,0,5.2);ctx.stroke();
   ctx.restore();}
+/* ridge beam + both dragon necks as ONE ribbon of wood (one fill, one outline), heads joined under it */
+function hoHead(P3,dir,s,col,acc){ctx.save();ctx.translate(P3[0],P3[1]);ctx.scale(dir*s,s);
+  ctx.beginPath();ctx.moveTo(-1.1,0.6);ctx.lineTo(-1.6,-1.6);ctx.quadraticCurveTo(0.5,-3.6,3,-3.4);ctx.lineTo(8.6,-2.6);ctx.quadraticCurveTo(9.8,-2.4,9.6,-1.4);ctx.lineTo(6.2,-0.9);ctx.lineTo(8.8,0.6);ctx.quadraticCurveTo(9.2,1.3,8.2,1.3);ctx.lineTo(3.4,1.1);ctx.quadraticCurveTo(1.2,1.6,1.1,2.6);ctx.closePath();
+  ctx.fillStyle=col;ctx.fill();ctx.strokeStyle='rgba(15,10,6,0.6)';ctx.lineWidth=0.45/s;ctx.stroke();
+  ctx.strokeStyle=col;ctx.lineWidth=0.9;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(0,-2.8);ctx.quadraticCurveTo(-2.5,-4.6,-4.6,-3.6);ctx.moveTo(1,-3.2);ctx.quadraticCurveTo(-1,-6.4,-3.4,-6);ctx.quadraticCurveTo(-4.6,-5.6,-3.8,-4.8);ctx.stroke();ctx.lineCap='butt';
+  ctx.strokeStyle=acc;ctx.lineWidth=0.35;ctx.beginPath();ctx.moveTo(3.6,-2.2);ctx.lineTo(5.2,-2.4);ctx.moveTo(3.2,0.2);ctx.lineTo(6.4,-0.6);ctx.moveTo(2.3,-0.6);ctx.arc(1.5,-0.6,0.8,0,5.2);ctx.stroke();ctx.restore();}
+function hoRidgeDragons(r,ax,s,col,acc){const dirF=ax?1:-1,dirB=-dirF;
+  const neck=(p,q,dir)=>{let ux=p[0]-q[0],uy=p[1]-q[1];const L=Math.hypot(ux,uy)||1;ux/=L;uy/=L;const P0=p,P1=[p[0]+ux*6*s,p[1]+uy*6*s],P2=[p[0]+dir*8*s,p[1]-11*s],P3=[p[0]+dir*4.6*s,p[1]-19*s];
+    const pts=[];for(let k=1;k<=14;k++){const t=k/14,a=1-t;pts.push([a*a*a*P0[0]+3*a*a*t*P1[0]+3*a*t*t*P2[0]+t*t*t*P3[0],a*a*a*P0[1]+3*a*a*t*P1[1]+3*a*t*t*P2[1]+t*t*t*P3[1]]);}return {pts,P3};};
+  const F=neck(r.rf,r.ridge(0.96),dirF),Bk=neck(r.rb,r.ridge(0.04),dirB);
+  const ridge=[];for(let k=0;k<=24;k++)ridge.push(r.ridge(k/24));
+  const C=[...Bk.pts.slice().reverse(),...ridge,...F.pts],nb=Bk.pts.length,nr=ridge.length,N0=C.length;
+  const W=i=>{const base=1.35;if(i<nb)return base-0.4*(nb-i)/nb;if(i>=nb+nr)return base-0.4*(i-nb-nr+1)/F.pts.length;return base;};
+  const Lp=[],Rp=[];for(let i=0;i<N0;i++){const a=C[Math.max(0,i-1)],b2=C[Math.min(N0-1,i+1)];let nx=-(b2[1]-a[1]),ny=b2[0]-a[0];const ln=Math.hypot(nx,ny)||1;nx/=ln;ny/=ln;const w=W(i)*s;Lp.push([C[i][0]+nx*w,C[i][1]+ny*w]);Rp.push([C[i][0]-nx*w,C[i][1]-ny*w]);}
+  hoHead(Bk.P3,dirB,s*1.35,col,acc);hoHead(F.P3,dirF,s*1.35,col,acc);
+  ctx.fillStyle=col;ctx.beginPath();ctx.moveTo(Lp[0][0],Lp[0][1]);for(const q of Lp)ctx.lineTo(q[0],q[1]);for(let i=N0-1;i>=0;i--)ctx.lineTo(Rp[i][0],Rp[i][1]);ctx.closePath();ctx.fill();
+  /* outline the two long sides only, stopping short of the heads so the joint has no seam */
+  ctx.strokeStyle='rgba(15,10,6,0.6)';ctx.lineWidth=0.45;for(const side of [Lp,Rp]){ctx.beginPath();for(let i=2;i<N0-2;i++){const q=side[i];i===2?ctx.moveTo(q[0],q[1]):ctx.lineTo(q[0],q[1]);}ctx.stroke();}
+  /* top highlight and one carved groove running the whole length */
+  ctx.strokeStyle='rgba(255,236,200,0.22)';ctx.lineWidth=0.5;ctx.beginPath();for(let i=1;i<N0-1;i++){const q=lerp(C[i],Lp[i],0.6);i===1?ctx.moveTo(q[0],q[1]):ctx.lineTo(q[0],q[1]);}ctx.stroke();
+  ctx.strokeStyle=acc;ctx.lineWidth=0.4;ctx.beginPath();for(let i=1;i<N0-1;i++){const q=C[i];i===1?ctx.moveTo(q[0],q[1]):ctx.lineTo(q[0],q[1]);}ctx.stroke();}

@@ -29,5 +29,15 @@ Prototype code: branch `house-options`, `source/src/20_zzhouseopt.js` (switch `w
 - **Ridge beam and dragons are one carved piece**: one ribbon of dark wood from snout to snout, single outline, tapering up into the necks, one gold groove the whole length; flat carved heads (long snout, open jaw, swept crest, eye slit, cheek spiral) — not cartoon-like.
 - Prototype: `window.__setJarl(2)`.
 
+## Town Hall (chosen: option 2 "Red-board hall", 2026-11-12)
+- Bowed hip-roof great hall, **brick-red board roof** (boards + battens), dark tarred staves on a frame; gilded eave trim from TH4.
+- **Dark cut-stone plinth** (bigger, darker blocks than the Jarl's House), two tiers from TH4, wide stair to the plaza (3 steps, 4 from TH4).
+- **Vestibule** facing the plaza: own gable, **Urnes portal** (gold interlace) around an arched carved double door, antlers on the apex, gold/blue shield in the gable (TH2+), a side window, **two small wall torches** beside the door.
+- Walls: **shield – window – shield** on each side of the vestibule; gable: window – shield – window. Windows glow.
+- **Raised lantern** (TH3+): walls stand on the roof and follow the slope, lead flashing + shadow at the foot, glowing windows, own red-board roof.
+- **Ridge beam + dragons** (one carved piece, dark wood, gold groove); from TH3 the beam stops at the lantern: the back piece hides behind it, the front piece comes out of the lantern's end wall (cut end visible).
+- **Plaza cleared**: no runestone, banners, barrels, posts or tables. Only lights are the windows and the two door torches. The **feast hearth** stands out: its own circle of light flagstones with a kerb, log benches, raised two-course stone hearth, embers, crossed logs, layered flames and sparks; feast adds the spit and dancers.
+- Prototype: `window.__setTH(2)`.
+
 ## Next buildings
 One at a time: show the current look close up → José's notes → 2–4 options → choice, recorded here.

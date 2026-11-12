@@ -350,7 +350,7 @@ function drawTHOpt(b,win,opt){const J=TH_SET[opt]||TH_SET[1],L=thLevel(),hb=thHa
   if(L>=4){hoPlinthDark(fPl,hl+pad+0.14,hw+off+pad+0.14,ph*0.42,win,sd+1,J.st);const fUp=(a,c,h)=>fPl(a,c,(h||0)+ph*0.42);hoPlinthDark(fUp,hl+pad,hw+off+pad,ph*0.58,win,sd,J.st);}
   else hoPlinthDark(fPl,hl+pad,hw+off+pad,ph,win,sd,J.st);
   /* stair toward the plaza, in front of the vestibule */const fS=(a,c,h)=>f0(c,a,h);hoStair(fS,hw+vl+pad+(L>=4?0.14:0),0,0.36,ph,L>=4?4:3,win);
-  {const sf=hw+vl+pad+(L>=4?0.14:0)+(L>=4?0.44:0.33)+0.08;hoLampPost(f0(-0.5,sf,0),18);if(L>=5){hoBrazier(f0(0.55,sf,0));}else hoLampPost(f0(0.5,sf,0),18);}
+  
   /* back annex from level 2 (a low lean-to behind, peeks over the roof line) */
   const g={sd,hl,hw,fh:1.6,wh,rh:0,wt:'staves',wall:J.wall,wallD:J.wallD,frame:true,frameCol:'#2E2018',k:1,v:1};
   hoWalls(fP,g,win);
@@ -387,7 +387,9 @@ function drawTHOpt(b,win,opt){const J=TH_SET[opt]||TH_SET[1],L=thLevel(),hb=thHa
   hoDoor(fv,gv,'G',0,0.34,gv.wh-5,{arch:true,portal:'#C9A64A',col:'#5E3E26',frame:'#24180F',steps:0});
   {/* Urnes interlace: extra gold ribbons over the door frame */const fh=gv.fh,hd=gv.wh-5,pt=(s,h)=>fv(gv.hl,s,h);ctx.strokeStyle='#D9B356';ctx.lineWidth=0.7;ctx.beginPath();for(let k=0;k<5;k++){const s=-0.2+0.1*k,p=pt(s,fh+hd+3),q=pt(s+0.1,fh+hd+3);ctx.moveTo(p[0],p[1]);ctx.bezierCurveTo(p[0]+2,p[1]-5,q[0]-2,q[1]+3,q[0],q[1]);}ctx.stroke();
     ctx.beginPath();for(const s of [-0.21,0.21]){const a=pt(s,fh),b2=pt(s,fh+hd);ctx.moveTo(a[0],a[1]);for(let k=1;k<=8;k++){const p=lerp(a,b2,k/8);ctx.bezierCurveTo(p[0]+3,p[1]+3,p[0]-3,p[1]+1,p[0],p[1]);}}ctx.stroke();}
-  for(const s of [-0.3,0.3]){const p=fv(gv.hl+0.02,s,gv.wh-6);ctx.fillStyle='rgba(255,190,100,0.25)';ctx.beginPath();ctx.ellipse(p[0],p[1]-6,5,4,0,0,6.3);ctx.fill();hoLine(p,[p[0],p[1]-4],'#2E2018',1);ctx.fillStyle='#F0A040';ctx.beginPath();ctx.moveTo(p[0]-1.5,p[1]-4);ctx.quadraticCurveTo(p[0],p[1]-9,p[0]+1.5,p[1]-4);ctx.fill();}
+  for(const s2 of [-0.27,0.27]){/* small wall torch: iron bracket, wrapped head, little flame */const p=fv(gv.hl+0.02,s2,gv.wh-8),fl=typeof t==='number'?Math.sin(t*9+s2*10)*0.8:0;
+    ctx.fillStyle='rgba(255,190,100,0.22)';ctx.beginPath();ctx.ellipse(p[0],p[1]-5,4,3,0,0,6.3);ctx.fill();hoLine([p[0],p[1]+1.5],[p[0],p[1]-2.5],'#4A3424',0.9);hoLine([p[0]-0.9,p[1]],[p[0]+0.9,p[1]],'#2A2622',0.6);
+    ctx.fillStyle='#6E5440';ctx.fillRect(p[0]-0.7,p[1]-3.5,1.4,1.2);ctx.fillStyle='#E8742A';ctx.beginPath();ctx.moveTo(p[0]-1.1,p[1]-3.4);ctx.quadraticCurveTo(p[0],p[1]-7.5-fl,p[0]+1.1,p[1]-3.4);ctx.fill();ctx.fillStyle='#F7C25A';ctx.beginPath();ctx.moveTo(p[0]-0.5,p[1]-3.4);ctx.quadraticCurveTo(p[0],p[1]-5.6-fl,p[0]+0.5,p[1]-3.4);ctx.fill();}
   hoWindow(fv,gv,'L',0,0.12,8,13,{shutters:'#7A2E22'});
   rv.front();rv.ridge();hoBarge(fv,gv,J.dc,0.25,true);hoAntlers(fv(gv.hl+gv.ov,0,gv.wh+gv.rh+1),1.15,'#E6DCC4');
   if(L>=2&&opt!==3)hoShield(fv(gv.hl,0,gv.wh+gv.rh*0.38),'#C9A042','#2E3A44',3.6);}
@@ -428,5 +430,5 @@ const _drawPlaza0=drawPlaza;drawPlaza=function(b,win){if(!TH_OPT)return _drawPla
   if(feast){ctx.strokeStyle='#3A2A1E';ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(F[0]-16,F[1]-2);ctx.lineTo(F[0]-16,F[1]-20);ctx.moveTo(F[0]+16,F[1]-2);ctx.lineTo(F[0]+16,F[1]-20);ctx.moveTo(F[0]-19,F[1]-18);ctx.lineTo(F[0]+19,F[1]-18);ctx.stroke();
     ctx.fillStyle='#B0705A';ctx.beginPath();ctx.ellipse(F[0],F[1]-18,10,5.5,0,0,6.3);ctx.fill();const cols=['#5E7F8C','#8E5A4E','#7C8A6A','#4B6A76','#A34A3A','#6E5248','#C9A64A','#5E7F8C'];for(let k=0;k<8;k++){const a=tt*0.6+k/8*6.283;dancer(F[0]+Math.cos(a)*36-4,F[1]+Math.sin(a)*18-14,tt*2+k,cols[k]);}}
   /* lights: lantern posts at the plaza corners and beside the hearth (level 2+: more) */
-  const posts=[[0.5,5.6],[5.6,0.5]];if(L>=2)posts.push([3.9,5.7],[5.7,3.9]);for(const q of posts){const p=at(q[0],q[1]);hoLampPost(p,16);}
+  
   ctx.restore();};

@@ -1674,6 +1674,16 @@ function drawBrewOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot
     const sh=(a,c,h)=>f(a+0.42,c+0.2,h),sl=0.5,sw=0.34;hoQ([sh(-sl,-sw,0),sh(sl,-sw,0),sh(sl,sw,0),sh(-sl,sw,0)],'rgba(70,60,50,0.3)');
     brVat(sh(-0.25,-0.02,0),0.85,win,true);brVat(sh(0.12,-0.04,0),0.85,win,true);brBarrel(sh(0.36,0.24,0),1,win);brBarrel(sh(-0.36,0.26,0),1,win);
     bkLeanTo(sh,-sl,sl,-sw,sw,12,20,win,J,sd);}
+  else if(opt===5){/* big A-frame brewhouse: the roof comes down to a low stone footing, plank gable with a tall door and a vent, steam from ridge louvres; two barrels against the gable (José) */
+    const R=WOOD_SET[4],hl=L>=5?0.84:0.78,fwa=(a,c,h)=>f(a-0.08,c,h),ga={sd,hl,hw:0.72,fh:2.4,wh:3.4,rh:L>=5?42:38,ov:0.05,th:1.8,wt:'planks',wall:'#7A5E46',wallD:'#5E4834',roof:R.roof,roofD:R.roofD,roofE:shade(R.roofD,0.7),rt:R.rt,frame:true,frameCol:'#3A2A1C',k:1,v:1};
+    const r=hoRoof(fwa,ga,win);r.back();hoFooting(fwa,ga,win);hoWalls(fwa,ga,win);r.end();
+    {const P=(c,h)=>fwa(ga.hl+0.004,c,h),dw=0.13,dh=15;hoQ([P(-dw,ga.fh),P(dw,ga.fh),P(dw,ga.fh+dh),P(0,ga.fh+dh+4),P(-dw,ga.fh+dh)],'#4A3424');ctx.strokeStyle='rgba(20,12,6,0.5)';ctx.lineWidth=0.45;ctx.beginPath();for(const c of [-0.065,0,0.065]){const p=P(c,ga.fh),q=P(c,ga.fh+dh+(c?2:4));ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);}ctx.stroke();
+      for(const hh of [ga.fh+3,ga.fh+dh-2.5])hoLine(P(-dw+0.01,hh),P(dw-0.01,hh),'#2A2622',0.8);{const rr=P(dw*0.55,ga.fh+dh*0.5);ctx.strokeStyle='#2A2622';ctx.lineWidth=0.6;ctx.beginPath();ctx.arc(rr[0],rr[1]+0.8,1,0,6.3);ctx.stroke();}
+      for(const c of [-dw-0.02,dw+0.02])hoLine(P(c,ga.fh),P(c,ga.fh+dh+0.3),'#3A2A1C',1.3);hoLine(P(-dw-0.02,ga.fh+dh+0.3),P(0,ga.fh+dh+4.4),'#3A2A1C',1.3);hoLine(P(dw+0.02,ga.fh+dh+0.3),P(0,ga.fh+dh+4.4),'#3A2A1C',1.3);
+      const vh=ga.wh+ga.rh-11;hoQ([P(-0.07,vh),P(0.07,vh),P(0.07,vh+5),P(-0.07,vh+5)],'#1E1A16');for(let h=vh+0.6;h<vh+5;h+=1)hoLine(P(-0.07,h),P(0.07,h+0.4),'#7A5A3C',0.6);
+      const st=fwa(ga.hl+0.1,0,0);ctx.fillStyle=win?'#E2E4E0':'#8E877B';ctx.beginPath();ctx.ellipse(st[0],st[1],5,2.1,0,0,6.3);ctx.fill();
+      /* two barrels standing against the gable, either side of the door */brBarrel(fwa(ga.hl+0.09,-0.36,0),1.15,win);brBarrel(fwa(ga.hl+0.09,0.36,0),1.15,win);}
+    r.front();r.ridge();hoBarge(fwa,ga,'#4A3424',0.22,L>=5);for(const a of (L>=3?[-0.3,0.15]:[-0.05])){hoLouvre(fwa,ga,a,'#3A2A1C');brSteam(fwa(a,0,ga.wh+ga.rh+5),win,a*7+3);}}
   else{house();brKiln(f,0.48,0.42,win,sd,J);for(let i=0;i<3;i++)brBarrel(f(0.82-i*0.0,-0.25+i*0.18,0),1,win);brBarrel(f(-0.1,0.8,0),1,win);brBarrel(f(0.08,0.86,0),1,win);}}
 {const _shW=shShape;shShape=function(b){if(b.t==='brewery'&&BREW_OPT){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),box=(a,c,sa,sc,h)=>({pts:[f(a-sa,c-sc,0),f(a+sa,c-sc,0),f(a+sa,c+sc,0),f(a-sa,c+sc,0)],h});
-  const V=[box(-0.38,-0.42,0.5,0.4,0.75)];if(BREW_OPT===1||BREW_OPT===3)V.push(box(0.42,0.2,0.5,0.34,0.5));else if(BREW_OPT===2)V.push(box(0.5,0.45,0.4,0.3,0.45));else V.push(box(0.48,0.42,0.24,0.24,0.8));return V;}return _shW(b);};}
+  if(BREW_OPT===5)return [box(-0.08,0,0.82,0.75,0.15),box(-0.08,0,0.82,0.05,1.6)];const V=[box(-0.38,-0.42,0.5,0.4,0.75)];if(BREW_OPT===1||BREW_OPT===3)V.push(box(0.42,0.2,0.5,0.34,0.5));else if(BREW_OPT===2)V.push(box(0.5,0.45,0.4,0.3,0.45));else V.push(box(0.48,0.42,0.24,0.24,0.8));return V;}return _shW(b);};}

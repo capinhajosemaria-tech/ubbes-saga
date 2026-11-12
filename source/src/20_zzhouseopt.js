@@ -432,3 +432,90 @@ const _drawPlaza0=drawPlaza;drawPlaza=function(b,win){if(!TH_OPT)return _drawPla
   /* lights: lantern posts at the plaza corners and beside the hearth (level 2+: more) */
   
   ctx.restore();};
+
+/* =================== Hof options (prototype) — window.__setHof(n) ===================
+   Stave-church temple: hall on a plinth, covered gallery, a tower that stands ON the roof (its walls follow the roof slopes, flashing at the foot),
+   stacked pyramid skirts, spire, ridge-beam dragons that stop at the tower, carved portal, geometric sacred pole and stone altar beside the door. */
+let HOF_OPT=0;window.__setHof=n=>{HOF_OPT=n|0;};
+const _drawExtra2_0=drawExtra2;drawExtra2=function(b,win,c0,ax){if(HOF_OPT&&b.t==='hof'){drawHofOpt(b,win,HOF_OPT);return true;}return _drawExtra2_0(b,win,c0,ax);};
+const HOF_SET={1:{n:'Black stave',rt:'scale',roof:'#2F2C2A',roofD:'#211F1D',dc:'#2A1F18',da:'#C9A042',wall:'#4E3A2C',wallD:'#3E2E22'},
+  2:{n:'Silver shingles',rt:'scale',roof:'#8C877F',roofD:'#706B64',dc:'#7A2E22',da:'#E0B54E',wall:'#5E4636',wallD:'#4B3729'},
+  3:{n:'Uppsala gold',rt:'scale',roof:'#2F2C2A',roofD:'#211F1D',dc:'#C9A042',da:'#5A3A12',wall:'#3E3028',wallD:'#30251F',chain:true},
+  4:{n:'Turf and stave',rt:'scale',roof:'#2F2C2A',roofD:'#211F1D',dc:'#2A1F18',da:'#C9A042',wall:'#4E3A2C',wallD:'#3E2E22',turfGal:true}};
+/* pyramid skirt around a square of half-size s at height e, apex at height ap (centre a0,c0); returns plane mapper for texture */
+function hoPyramid(f,a0,c0,s,e,ap,col,colD,rt,win,sd){const A=f(a0,c0,ap),q=(da,dc)=>f(a0+da*s,c0+dc*s,e);
+  hoQ([q(-1,-1),q(1,-1),A],colD);hoQ([q(-1,-1),q(-1,1),A],colD);
+  hoQ([q(1,-1),q(1,1),A],win?'#D3DAD9':colD);hoQ([q(-1,1),q(1,1),A],win?'#EEF1F0':col);
+  if(!win){hoRoofSurface((u,v)=>lerp(lerp(q(-1,1),q(1,1),u),A,v),{sd,rt,rh:Math.max(8,(ap-e)*0.8),roofD:colD},win);
+    ctx.strokeStyle='rgba(15,12,10,0.4)';ctx.lineWidth=0.45;ctx.beginPath();for(let k=1;k<6;k++){const v=k/6,a=lerp(q(1,-1),A,v),b2=lerp(q(1,1),A,v);ctx.moveTo(a[0],a[1]);ctx.lineTo(b2[0],b2[1]);}ctx.stroke();}
+  hoLine(q(1,1),A,'rgba(10,8,6,0.6)',0.7);hoLine(q(-1,1),q(1,1),'rgba(255,240,210,0.2)',0.6);return {A,q};}
+function hoBox(f,a0,c0,s,h1,h2b,W,WD,win){hoQ([f(a0-s,c0+s,h1),f(a0+s,c0+s,h1),f(a0+s,c0+s,h2b),f(a0-s,c0+s,h2b)],win?'#C9CCC8':W);hoQ([f(a0+s,c0-s,h1),f(a0+s,c0+s,h1),f(a0+s,c0+s,h2b),f(a0+s,c0-s,h2b)],win?'#B5B9B6':WD);
+  ctx.strokeStyle='rgba(20,14,10,0.45)';ctx.lineWidth=0.45;ctx.beginPath();for(let k=1;k<6;k++){const p=f(a0-s+2*s*k/6,c0+s,h1),p2=f(a0-s+2*s*k/6,c0+s,h2b),q=f(a0+s,c0-s+2*s*k/6,h1),q2=f(a0+s,c0-s+2*s*k/6,h2b);ctx.moveTo(p[0],p[1]);ctx.lineTo(p2[0],p2[1]);ctx.moveTo(q[0],q[1]);ctx.lineTo(q2[0],q2[1]);}ctx.stroke();}
+function hoChain(pts,col){/* golden chain hanging in swags between points */ctx.strokeStyle=col;ctx.lineWidth=0.7;for(let i=0;i<pts.length-1;i++){const a=pts[i],b2=pts[i+1],m=[(a[0]+b2[0])/2,(a[1]+b2[1])/2+4];ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.quadraticCurveTo(m[0],m[1]+2,b2[0],b2[1]);ctx.stroke();
+  for(let k=1;k<6;k++){const tt=k/6,x=(1-tt)*(1-tt)*a[0]+2*(1-tt)*tt*m[0]+tt*tt*b2[0],y=(1-tt)*(1-tt)*a[1]+2*(1-tt)*tt*(m[1]+2)+tt*tt*b2[1];ctx.fillStyle=col;ctx.fillRect(x-0.5,y-0.5,1,1);}}}
+/* geometric sacred pole: stepped stone base, square shaft in two shades, carved painted bands (chevrons, diamonds, triangles), stepped capital, one-eyed mask and a gold valknut */
+function hoSacredPole(f,a,c,win){const H=42,w=0.06,col='#6E5038',colD='#56402C',P=(da,dc,h)=>f(a+da,c+dc,h);
+  for(let k=0;k<2;k++){const s=0.16-k*0.05,h1=k*2.2,h2b=h1+2.2;hoBox(f,a,c,s,h1,h2b,win?'#D0D2CE':'#9C978D',win?'#B9BBB7':'#827D74',win);hoQ([P(-s,s,h2b),P(s,s,h2b),P(s,-s,h2b),P(-s,-s,h2b)],win?'#E4E6E2':'#B4AFA4');}
+  const h0=4.4;hoQ([P(-w,w,h0),P(w,w,h0),P(w,w,H),P(-w,w,H)],col);hoQ([P(w,-w,h0),P(w,w,h0),P(w,w,H),P(w,-w,H)],colD);
+  /* bands on both faces */const band=(h1,h2b,kind,c1)=>{for(const face of [0,1]){const pt=(s,h)=>face?P(w,s,h):P(s,w,h),shd=face?0.8:1;
+      hoQ([pt(-w,h1),pt(w,h1),pt(w,h1+0.6),pt(-w,h1+0.6)],'rgba(20,14,10,0.6)');
+      if(kind==='chev'){for(let k=0;k<3;k++){const y=h1+1+k*((h2b-h1-1)/3);ctx.strokeStyle=shade(c1,shd);ctx.lineWidth=0.8;ctx.beginPath();const p1=pt(-w,y),p2=pt(0,y+1.6),p3=pt(w,y);ctx.moveTo(p1[0],p1[1]);ctx.lineTo(p2[0],p2[1]);ctx.lineTo(p3[0],p3[1]);ctx.stroke();}}
+      else if(kind==='dia'){const m=(h1+h2b)/2,d=(h2b-h1)/2-0.6;hoQ([pt(0,m-d),pt(w,m),pt(0,m+d),pt(-w,m)],shade(c1,shd));hoQ([pt(0,m-d*0.45),pt(w*0.45,m),pt(0,m+d*0.45),pt(-w*0.45,m)],'#2A1F18');}
+      else{hoQ([pt(-w,h1+0.8),pt(w,h1+0.8),pt(0,h2b-0.4)],shade(c1,shd));hoQ([pt(-w,h2b-0.4),pt(0,h1+0.8),pt(-w,h1+0.8)].map(q=>q),'rgba(0,0,0,0)');}}};
+  band(7,12,'chev','#A34A3A');band(12,18,'dia','#C9A042');band(18,23,'tri','#2E2A26');band(23,28,'chev','#C9A042');band(28,33,'dia','#A34A3A');
+  /* stepped capital */hoBox(f,a,c,w+0.025,H,H+1.5,'#5A4230','#46341F',win);hoBox(f,a,c,w+0.045,H+1.5,H+2.8,'#6E5038','#56402C',win);
+  /* one-eyed mask on the front face, just under the capital */const m=(s,h)=>P(s,w+0.001,h);hoQ([m(-w,H-1),m(w,H-1),m(w*0.6,H-7),m(0,H-8.5),m(-w*0.6,H-7)],'#8A6A4A');
+  hoQ([m(-w*0.9,H-2),m(-w*0.1,H-2.6),m(-w*0.2,H-3.4),m(-w*0.9,H-3)],'#2A1F18');hoQ([m(w*0.1,H-2.6),m(w*0.9,H-2),m(w*0.9,H-3),m(w*0.2,H-3.4)],'#2A1F18');
+  {const e=m(-w*0.45,H-4.2);ctx.fillStyle='#E0D4B0';ctx.beginPath();ctx.arc(e[0],e[1],0.7,0,6.3);ctx.fill();const e2=m(w*0.45,H-4.2);hoLine([e2[0]-0.8,e2[1]],[e2[0]+0.8,e2[1]],'#2A1F18',0.6);}
+  /* gold valknut on top */const tp=P(0,0,H+3);ctx.strokeStyle='#D9B356';ctx.lineWidth=0.8;for(let k=0;k<3;k++){const ox=(k-1)*2.4,oy=k===1?-2.4:0;ctx.beginPath();ctx.moveTo(tp[0]+ox,tp[1]-7+oy);ctx.lineTo(tp[0]+ox+3,tp[1]-2+oy);ctx.lineTo(tp[0]+ox-3,tp[1]-2+oy);ctx.closePath();ctx.stroke();}}
+function hoAltar(f,a,c,win){/* hörgr: stacked stones, flat slab, a bronze bowl */hoBox(f,a,c,0.15,0,3.2,win?'#C9CBC7':'#8E8980',win?'#B2B4B0':'#76726A',win);hoBox(f,a,c,0.12,3.2,5.6,win?'#D0D2CE':'#9C978D',win?'#B9BBB7':'#827D74',win);
+  const P=(da,dc,h)=>f(a+da,c+dc,h);hoQ([P(-0.17,0.17,6.6),P(0.17,0.17,6.6),P(0.17,-0.17,6.6),P(-0.17,-0.17,6.6)],win?'#E8EAE6':'#B4AFA4');hoQ([P(-0.17,0.17,5.6),P(0.17,0.17,5.6),P(0.17,0.17,6.6),P(-0.17,0.17,6.6)],win?'#D6D8D4':'#A19C92');hoQ([P(0.17,-0.17,5.6),P(0.17,0.17,5.6),P(0.17,0.17,6.6),P(0.17,-0.17,6.6)],win?'#C6C8C4':'#8E897F');
+  const bw=P(0,0,6.6);ctx.fillStyle='#8A6A3A';ctx.beginPath();ctx.ellipse(bw[0],bw[1]-1,3,1.4,0,0,3.14);ctx.fill();ctx.fillStyle='#B88A4A';ctx.beginPath();ctx.ellipse(bw[0],bw[1]-1,3,1.2,0,3.14,6.28);ctx.fill();ctx.fillStyle='#6A1E18';ctx.beginPath();ctx.ellipse(bw[0],bw[1]-1,2.2,0.8,0,0,6.3);ctx.fill();}
+function drawHofOpt(b,win,opt){const J=HOF_SET[opt]||HOF_SET[1],f0=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.w>=b.h?0:1}),ax=f0.alongX,sd=(b.id||0)*17+opt;
+  const hl=1.32,hw=0.6,gw=0.2,pad=0.1,ph=5,wh=19,rh=22,ov=0.06,fP=(a,c,h)=>f0(a,c,(h||0)+ph);
+  hoQ([f0(-hl-gw-pad+0.2,-hw-gw-pad+0.2,0),f0(hl+gw+pad+0.3,-hw-gw-pad+0.2,0),f0(hl+gw+pad+0.3,hw+gw+pad+0.3,0),f0(-hl-gw-pad+0.2,hw+gw+pad+0.3,0)],'rgba(30,38,42,0.2)');
+  hoPlinth(f0,hl+gw+pad,hw+gw+pad,ph,win,sd);hoStair(f0,hl+gw+pad,0,0.26,ph,2,win);
+  /* hall */const g={sd,hl,hw,fh:1.4,wh,rh,ov,th:1.8,wt:'staves',wall:J.wall,wallD:J.wallD,roof:J.roof,roofD:J.roofD,roofE:shade(J.roofD,0.7),rt:J.rt,frame:true,frameCol:'#2A1F18',k:1,v:1};
+  const R=hoRoof(fP,g,win);R.back();hoWalls(fP,g,win);R.end();
+  hoDoor(fP,g,'G',0,0.26,13,{arch:true,portal:'#C9A64A',col:'#5E3E26',frame:'#24180F',steps:0});
+  /* covered gallery (svalgang) along the long side and the front gable: lean-to roof on posts, arched openings */
+  const gt=wh*0.62,gl=6.5,galRoof=J.turfGal?'#7E9656':J.roof,galRoofD=J.turfGal?'#62773F':J.roofD;
+  const arches=(face)=>{const len=face==='L'?hl+gw:hw+gw,n=face==='L'?7:4,pt=(s,h)=>face==='L'?fP(s,hw+gw,h):fP(hl+gw,s,h);
+    if(face==='G'){hoQ([pt(-len,0),pt(-0.32,0),pt(-0.32,3),pt(-len,3)],shade(J.wall,0.85));hoQ([pt(0.32,0),pt(len,0),pt(len,3),pt(0.32,3)],shade(J.wall,0.85));}else hoQ([pt(-len,0),pt(len,0),pt(len,3),pt(-len,3)],shade(J.wall,0.85));/* low rail wall, open at the portal */
+    for(let k=0;k<n;k++){const s1=-len+2*len*k/n,s2=-len+2*len*(k+1)/n,m=(s1+s2)/2,wide=face==='G'&&k===Math.floor(n/2)-0?1:0;
+      if(face==='G'&&(k===1||k===2)){continue;}
+      const a1=pt(s1+0.03,3),a2=pt(s2-0.03,3),t1=pt(s1+0.03,gl-1),t2=pt(s2-0.03,gl-1),tc=pt(m,gl+0.6);ctx.fillStyle='rgba(20,14,10,0.0)';
+      hoQ([pt(s1,3),pt(s1+0.035,3),pt(s1+0.035,gl+1),pt(s1,gl+1)],'#2A1F18');}
+    hoQ([pt(len-0.035,0),pt(len,0),pt(len,gl+1),pt(len-0.035,gl+1)],'#2A1F18');
+    /* carved arch band */ctx.strokeStyle='#2A1F18';ctx.lineWidth=0.8;ctx.beginPath();for(let k=0;k<n;k++){if(face==='G'&&(k===1||k===2))continue;const s1=-len+2*len*k/n,s2=-len+2*len*(k+1)/n,p1=pt(s1+0.03,gl-0.6),p2=pt(s2,gl-0.6),pc=pt((s1+s2)/2,gl+1.4);ctx.moveTo(p1[0],p1[1]);ctx.quadraticCurveTo(pc[0],pc[1]-1.5,p2[0],p2[1]);}ctx.stroke();};
+  arches('L');
+  /* gallery roofs: long side, then the front one (open in the middle for the portal) */
+  hoQ([fP(-hl-gw,hw,gt),fP(hl+gw,hw,gt),fP(hl+gw,hw+gw+0.05,gl+1),fP(-hl-gw,hw+gw+0.05,gl+1)],win?'#EEF1F0':galRoof);
+  if(!win)hoRoofSurface((u,v)=>lerp(fP(-hl-gw+(2*hl+2*gw)*u,hw+gw+0.05,gl+1),fP(-hl-gw+(2*hl+2*gw)*u,hw,gt),v),{sd:sd+1,rt:J.turfGal?'turf':J.rt,rh:9,roofD:galRoofD},win);
+  hoLine(fP(-hl-gw,hw+gw+0.05,gl+1),fP(hl+gw,hw+gw+0.05,gl+1),'rgba(10,8,6,0.5)',0.7);
+  arches('G');
+  for(const side of [-1,1]){const s1=side<0?-hw-gw:0.32,s2=side<0?-0.32:hw+gw;hoQ([fP(hl,s1,gt),fP(hl,s2,gt),fP(hl+gw+0.05,s2,gl+1),fP(hl+gw+0.05,s1,gl+1)],win?'#DCE2E1':galRoofD);}
+  hoDoor(fP,g,'G',0,0.26,13,{arch:true,portal:'#C9A64A',col:'#5E3E26',frame:'#24180F',steps:0});
+  /* the portal stays open and visible: gold arch over the gap */{const p1=fP(hl+gw,-0.3,gl+0.5),p2=fP(hl+gw,0.3,gl+0.5),pc=fP(hl+gw,0,gl+4);ctx.strokeStyle='#C9A64A';ctx.lineWidth=1.1;ctx.beginPath();ctx.moveTo(p1[0],p1[1]);ctx.quadraticCurveTo(pc[0],pc[1]-3,p2[0],p2[1]);ctx.stroke();}
+  if(J.chain){hoChain([fP(-hl-gw,hw+gw+0.05,gl+0.5),fP(-0.6,hw+gw+0.05,gl+0.5),fP(0.2,hw+gw+0.05,gl+0.5),fP(hl+gw,hw+gw+0.05,gl+0.5)],'#D9B356');}
+  /* main roof front */R.front();
+  /* tower standing on the ridge: walls follow the roof slopes; flashing at the foot */
+  const top=wh+rh,ce=hw+ov,eH=wh-ov/hw*rh,onRoof=c=>top-(top-eH)*Math.abs(c)/ce,ts=0.34,hb=onRoof(ts),T1=top+13;
+  const ridgeObj={ridge:u=>fP(-hl-ov+(2*hl+2*ov)*u,0,top+0.5),rf:fP(hl+ov,0,top+0.5),rb:fP(-hl-ov,0,top+0.5)},uA=(-ts+hl+ov)/(2*hl+2*ov),uB=(ts+hl+ov)/(2*hl+2*ov);
+  hoRidgePiece(ridgeObj,ax,1.3,J.dc,J.da,0,uA,true,false);
+  /* shadow on the roof below the tower */hoQ([fP(-ts,ts+0.06,onRoof(ts+0.06)),fP(ts+0.06,ts+0.06,onRoof(ts+0.06)),fP(ts+0.06,ts,hb),fP(-ts,ts,hb)],'rgba(10,8,6,0.25)');
+  hoQ([fP(-ts,ts,hb),fP(ts,ts,hb),fP(ts,ts,T1),fP(-ts,ts,T1)],win?'#C9CCC8':J.wall);
+  hoQ([fP(ts,-ts,hb),fP(ts,0,top),fP(ts,ts,hb),fP(ts,ts,T1),fP(ts,-ts,T1)],win?'#B5B9B6':J.wallD);
+  ctx.strokeStyle='rgba(20,14,10,0.45)';ctx.lineWidth=0.45;ctx.beginPath();for(let k=1;k<6;k++){const s=-ts+2*ts*k/6,p=fP(s,ts,hb),p2=fP(s,ts,T1),q=fP(ts,s,onRoof(s)),q2=fP(ts,s,T1);ctx.moveTo(p[0],p[1]);ctx.lineTo(p2[0],p2[1]);ctx.moveTo(q[0],q[1]);ctx.lineTo(q2[0],q2[1]);}ctx.stroke();
+  /* louvred openings */for(const s of [-0.15,0.15]){hoQ([fP(s-0.06,ts,T1-8),fP(s+0.06,ts,T1-8),fP(s+0.06,ts,T1-2.5),fP(s-0.06,ts,T1-2.5)],'#1E1612');}hoQ([fP(ts,-0.06,T1-8),fP(ts,0.06,T1-8),fP(ts,0.06,T1-2.5),fP(ts,-0.06,T1-2.5)],'#1E1612');
+  ctx.strokeStyle=win?'#E8ECEC':'#8A8F94';ctx.lineWidth=1.2;ctx.beginPath();{const a=fP(-ts,ts,hb+0.3),b2=fP(ts,ts,hb+0.3),c2=fP(ts,0,top+0.3),d=fP(ts,-ts,hb+0.3);ctx.moveTo(a[0],a[1]);ctx.lineTo(b2[0],b2[1]);ctx.lineTo(c2[0],c2[1]);ctx.lineTo(d[0],d[1]);}ctx.stroke();
+  hoRidgePiece(ridgeObj,ax,1.3,J.dc,J.da,uB,1,false,true);
+  /* skirt 1, tier 2, skirt 2, spire */const sk1=ts+0.12,ap1=T1+11,P1=hoPyramid(fP,0,0,sk1,T1-2,ap1,J.roof,J.roofD,J.rt,win,sd+7);
+  const ts2=0.22,b2h=T1-2+(ap1-T1+2)*(1-ts2/sk1);hoBox(fP,0,0,ts2,b2h,b2h+9,J.wall,J.wallD,win);hoLine(fP(-ts2,ts2,b2h+0.3),fP(ts2,ts2,b2h+0.3),win?'#E8ECEC':'#8A8F94',1);hoLine(fP(ts2,ts2,b2h+0.3),fP(ts2,-ts2,b2h+0.3),win?'#E8ECEC':'#8A8F94',1);
+  for(const s of [-0.08,0.08])hoQ([fP(s-0.035,ts2,b2h+2.5),fP(s+0.035,ts2,b2h+2.5),fP(s+0.035,ts2,b2h+7),fP(s-0.035,ts2,b2h+7)],'#1E1612');
+  const sk2=ts2+0.09,ap2=b2h+9+30;const P2=hoPyramid(fP,0,0,sk2,b2h+8,ap2,J.roof,J.roofD,J.rt,win,sd+9);
+  if(J.chain){hoChain([P1.q(-1,1),P1.q(1,1),P1.q(1,-1)],'#D9B356');hoLine(P2.A,[P2.A[0],P2.A[1]-3],'#D9B356',1.2);}
+  /* small dragon heads at the visible skirt corners */for(const q of [[1,1,ax?1:-1],[-1,1,ax?-1:1],[1,-1,ax?1:-1]]){const p=P1.q(q[0],q[1]);hoLine(p,[p[0]+q[2]*2,p[1]-3],J.dc,1.4);hoHead([p[0]+q[2]*2,p[1]-3],q[2],0.75,J.dc,J.da);}
+  /* weathervane */{const p=P2.A;hoLine(p,[p[0],p[1]-7],'#2A2622',0.7);ctx.fillStyle='#C9A042';ctx.beginPath();ctx.moveTo(p[0],p[1]-7);ctx.lineTo(p[0]+5,p[1]-6);ctx.quadraticCurveTo(p[0]+3,p[1]-4.5,p[0]+4.5,p[1]-3);ctx.lineTo(p[0],p[1]-4);ctx.fill();}
+  /* sacred pole and altar beside the door, never in front of it */
+  hoSacredPole(f0,hl+gw+pad+0.32,-hw-gw+0.05,win);hoAltar(f0,hl+gw+pad+0.28,-hw-gw-0.42,win);}

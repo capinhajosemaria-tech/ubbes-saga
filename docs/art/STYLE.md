@@ -108,6 +108,14 @@ Prototype code: branch `house-options`, `source/src/20_zzhouseopt.js` (switch `w
 - Grows each level; small glowing lattice window with red shutters from L3; L5: gold interlace on the door arch and a **rope net with hanging stone weights** over the thatch.
 - Own shadow (cylinder + cone). Prototype: `window.__setBerry(1)`.
 
+## Fisher's Hut (chosen: mix of plank hut + stilts, 2026-11-12)
+- **Plank hut on stilts** (posts with diagonal braces, sill beam), weathered grey planks, black scale-shingle roof, crossed barge boards; door on the gable opening onto the jetty (no stone steps).
+- **Plank jetty** on piles from the door along the plot, mooring post at the end.
+- **Stockfish rack** behind the jetty: posts, rail, split cod hung in pairs (second rack from L3).
+- **Færing at real size** (José): about as long as the hut, a quarter as wide; clinker strakes with rivets, rising sheer, curled stem and stern posts, two thwarts, oars inside; pulled up on **two log rollers** (the hut is not always beside water).
+- L3: window with blue shutters; L5: longer hut, carved barge ends, a net drying on the jetty, a lantern at its end.
+- Own shadow. Prototype: `window.__setFish(1)`.
+
 ## Shadows (shared rule, 2026-11-12)
 - José: the dark box shadow (and the ground patch) does not match the buildings' shapes.
 - Each redrawn building gives its own **shadow volumes** (`shShape(b)` in `20_zzhouseopt.js`: ground outline + height); the cast shadow is the union of those, swept along the sun. The old box shadow stays only for buildings not yet redrawn. Done for the Iron Mine; to do for every building when the styles are rolled out.
@@ -116,4 +124,4 @@ Prototype code: branch `house-options`, `source/src/20_zzhouseopt.js` (switch `w
 ## Next buildings
 One at a time: show the current look close up → José's notes → 2–4 options → choice, recorded here.
 When José asks for a fix, change only that (no extra changes without asking).
-Order still to do: Fisher's Hut → Preserver → Smokehouse → Pig Pen → Sheep Pen → Fields / Water Mill / Bakery → Brewery, Weaver, Tailor, Tavern → Training Ground, Arsenal, Watchtower → Shipyard / Harbour → Funeral Pyre, Altar, Ship-Tomb → Decor.
+Order still to do: Preserver → Smokehouse → Pig Pen → Sheep Pen → Fields / Water Mill / Bakery → Brewery, Weaver, Tailor, Tavern → Training Ground, Arsenal, Watchtower → Shipyard / Harbour → Funeral Pyre, Altar, Ship-Tomb → Decor.

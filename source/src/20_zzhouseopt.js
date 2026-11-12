@@ -803,10 +803,11 @@ function hoBooth(f,a0,c0,face,o,win){const fl=face.endsWith('-'),fc=face[0];cons
   hoQ([P(-sl+0.01,sw-0.24,5.5),P(sl-0.01,sw-0.24,5.5),P(sl-0.01,sw-0.08,5.5),P(-sl+0.01,sw-0.08,5.5)],'#A88A62');hoGoods(P,0,sw-0.16,2*sl-0.12,5.5,o.kind,win);
   for(const q of [[-sl,sw,hF],[sl,sw,hF]])hoQ([P(q[0]-0.025,q[1],0),P(q[0]+0.025,q[1],0),P(q[0]+0.025,q[1],q[2]),P(q[0]-0.025,q[1],q[2])],'#4A3424');
   const A=[P(-sl-0.05,-sw-0.05,hB+0.5),P(sl+0.05,-sw-0.05,hB+0.5),P(sl+0.05,sw+0.07,hF),P(-sl-0.05,sw+0.07,hF)];
+  if(o.cloth){/* awning frame under the cloth: middle pole and guy ropes to pegs (drawn first so the cloth hides any part behind it) */const mp=P(0,sw+0.07,0),mt=P(0,sw+0.07,hF);hoLine(mp,mt,'#4A3424',1);
+    for(const q of [A[3],A[2]]){const pg=[q[0]+(q[0]-P(0,0,hF)[0])*0.15,q[1]+9];hoLine(q,pg,'rgba(200,180,140,0.75)',0.4);ctx.fillStyle='#4A3424';ctx.fillRect(pg[0]-0.6,pg[1]-1.4,1.2,1.4);}}
   if(o.cloth&&!win){/* muted wool awning: a main colour with one narrow stripe, slight sag, hem */hoQ(A,o.cloth[0]);const s1=lerp(lerp(A[0],A[3],0.62),lerp(A[1],A[2],0.62),0),s2=lerp(A[1],A[2],0.62);hoQ([lerp(A[0],A[3],0.6),lerp(A[1],A[2],0.6),lerp(A[1],A[2],0.72),lerp(A[0],A[3],0.72)],o.cloth[1]);
     ctx.strokeStyle='rgba(0,0,0,0.12)';ctx.lineWidth=0.5;ctx.beginPath();for(let k=1;k<5;k++){const p=lerp(A[0],A[1],k/5),q=lerp(A[3],A[2],k/5);ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);}ctx.stroke();hoLine(A[3],A[2],shade(o.cloth[0],0.7),1);}
-  if(o.cloth){/* awning frame: a ridge rod and a front rod on the poles, a middle pole, guy ropes to pegs */hoLine(A[0],A[1],'#4A3424',0.9);hoLine(A[3],A[2],'#4A3424',0.9);const mp=P(0,sw+0.07,0),mt=P(0,sw+0.07,hF);hoLine(mp,mt,'#4A3424',1);
-    for(const q of [A[3],A[2]]){const pg=[q[0]+(q[0]-P(0,0,hF)[0])*0.15,q[1]+9];hoLine(q,pg,'rgba(200,180,140,0.75)',0.4);ctx.fillStyle='#4A3424';ctx.fillRect(pg[0]-0.6,pg[1]-1.4,1.2,1.4);}}
+  if(o.cloth){hoLine(A[0],A[1],'#4A3424',0.9);hoLine(A[3],A[2],'#4A3424',0.9);}
   else{hoQ(A,win?'#EEF1F0':o.roof);if(!win)hoRoofSurface((u,v)=>lerp(lerp(A[3],A[2],u),lerp(A[0],A[1],u),v),{sd:o.sd||3,rt:o.rt,rh:6,roofD:shade(o.roof,0.75)},win);hoLine(A[3],A[2],'rgba(10,8,6,0.5)',0.7);}
   hoQ([A[1],A[2],[A[2][0],A[2][1]+1.4],[A[1][0],A[1][1]+1.4]],'#3A2A1C');}
 function hoFlagstones(f,hs,win,sd){const FL=window.__FLOOR|0;if(FL===2)return hoFloorSlabs(f,hs,win,sd);if(FL===3)return hoFloorPlanks(f,hs,win,sd);if(FL===4||window.__FLAG)return hoFlag0(f,hs,win,sd);if(!window.__FANS)return hoSetts(f,hs,win,sd);

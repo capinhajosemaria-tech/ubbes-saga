@@ -85,14 +85,14 @@ Prototype code: branch `house-options`, `source/src/20_zzhouseopt.js` (switch `w
 - **Anvil** on an oak block under the shed, hammer resting on it. Iron bars stacked from L3. No charcoal pile.
 - Prototype: `window.__setSmith(2)`.
 
-## Market Square (in progress, 2026-11-12 — not approved yet)
-- Current draft: `window.__setMarket(5)` (realistic take on the first idea). José likes the booths ("bancas mais fixes, sim").
-- **Booths** round the whole perimeter (7, all facing the centre): plank back wall + half side wall, plank counter with goods, a basket inside, goods hanging on the back wall; front-row booths have a low back wall so goods stay visible. Covers: muted natural-dyed wool awnings (with ridge rod, front rod, middle pole, guy ropes and pegs) or black-shingle / red-board roofs.
-- **Well**: round stone shaft of staggered blocks, coping ring, dark water, two posts, windlass with rope and crank, bucket, little shingle roof with **thin** crossed boards, stone trough. José: better than before.
-- **Floor**: José did not like the cobble fans; now trying **dark granite setts in running bond** (`window.__FANS=1` shows the fans again). Still to approve.
-- Rejected concepts: dyed-stripe stalls round a well, tent fair, covered hall, market tree ("pouco realista").
+## Market Square (chosen: draft 5 with floor A, 2026-11-12)
+- **Booths** round the whole perimeter (7, all facing the centre): plank back wall + half side wall, plank counter with goods, a basket inside, goods hanging on the back wall; front-row booths have a low back wall so goods stay visible. Covers: muted natural-dyed wool awnings (ridge rod, front rod, middle pole, guy ropes and pegs — pole and ropes drawn **under** the cloth, never over it) or black-shingle / red-board roofs.
+- **Well**: round stone shaft of staggered blocks, coping ring, dark water, two posts, windlass with rope and crank, bucket, little shingle roof with **thin** crossed boards, stone trough.
+- **Floor A**: dark granite setts in running bond, kerb of dressed stones, a little moss at the edges. (Other floors kept in the prototype: `window.__FLOOR=2` slabs, `3` earth + plank walks, `4` light flagstones.)
+- Rejected concepts: dyed-stripe stalls round a well, tent fair, covered hall, market tree ("pouco realista"), cobble fans.
+- Prototype: `window.__setMarket(5)`.
 
 ## Next buildings
 One at a time: show the current look close up → José's notes → 2–4 options → choice, recorded here.
 When José asks for a fix, change only that (no extra changes without asking).
-Order still to do: **Market (finish)** → Iron Mine → Berry Gatherer → Fisher's Hut → Preserver → Smokehouse → Pig Pen → Sheep Pen → Fields / Water Mill / Bakery → Brewery, Weaver, Tailor, Tavern → Training Ground, Arsenal, Watchtower → Shipyard / Harbour → Funeral Pyre, Altar, Ship-Tomb → Decor.
+Order still to do: Iron Mine → Berry Gatherer → Fisher's Hut → Preserver → Smokehouse → Pig Pen → Sheep Pen → Fields / Water Mill / Bakery → Brewery, Weaver, Tailor, Tavern → Training Ground, Arsenal, Watchtower → Shipyard / Harbour → Funeral Pyre, Altar, Ship-Tomb → Decor.

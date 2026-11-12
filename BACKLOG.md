@@ -24,6 +24,9 @@ Order: Round 1 (done, 0.14.0) → 1C (done, 0.15.0) → **1H** → 1D → 1I →
 
 ## Next rounds (in this order)
 
+### Small art fixes (seen 2026-11-12)
+- [ ] **Night lights at the door**: the warm light pool at night sits beside the building (old door position), not at its drawn door; the drawn windows should also glow at night.
+
 ### 1H. Living village (José, 2026-11-11)
 - [ ] **Real people walk**: each villager is a walker (today only 3–10 decorative ones wander near the hall). At dawn they walk from their own house to their workplace along roads, at dusk back home; children play near home, warriors at the Training Ground, elders walk slower. Commute follows the light cycle (3 game days), not every 27-second day.
 - [ ] **Click a person**: sheet with name, age, traits, family, house and workplace; buttons to show their house and workplace. Click a house or building → list of who lives / works there.

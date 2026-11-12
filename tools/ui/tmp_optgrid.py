@@ -19,7 +19,7 @@ async def main():
             for L in LVS:
                 it=bylv.get(L) or list(bylv.values())[0]
                 await pg.evaluate(f"window.{SET}({o});__G.setView({Z},{it['x']-0.4},{it['y']-0.4})");await pg.wait_for_timeout(300)
-                await pg.screenshot(path='shots/og_raw.png');im=Image.open('shots/og_raw.png');cx,cy=im.width//2,im.height//2;row.append((L,im.crop((cx-260,cy-260,cx+260,cy+200))))
+                await pg.screenshot(path='shots/og_raw.png');im=Image.open('shots/og_raw.png');cx,cy=im.width//2,im.height//2;row.append((L,im.crop((cx-260,cy-280,cx+260,cy+180))))
             rows.append((o,row))
         await b.close()
     sh=Image.new('RGB',(520*len(LVS),460*len(rows)),(30,30,30));d=ImageDraw.Draw(sh);font=ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf',20)

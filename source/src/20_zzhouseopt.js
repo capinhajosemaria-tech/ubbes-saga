@@ -722,3 +722,72 @@ function drawSmithOpt(b,win,opt){const J=WOOD_SET[opt]||WOOD_SET[1],L=Math.min(5
     ctx.strokeStyle=win?'#E8ECEC':'#8A8F94';ctx.lineWidth=1.2;ctx.beginPath();{const a=P(-cs-0.01,cs+0.01,R(fc+cs)+0.3),b2=P(cs+0.01,cs+0.01,R(fc+cs)+0.3),c2=P(cs+0.01,-cs,R(fc-cs)+0.3);ctx.moveTo(a[0],a[1]);ctx.lineTo(b2[0],b2[1]);ctx.lineTo(c2[0],c2[1]);}ctx.stroke();
     hoQ([P(-cs-0.02,cs+0.02,cTop),P(cs+0.02,cs+0.02,cTop),P(cs+0.02,cs+0.02,cTop+1.4),P(-cs-0.02,cs+0.02,cTop+1.4)],'#6E6A64');hoQ([P(cs+0.02,-cs-0.02,cTop),P(cs+0.02,cs+0.02,cTop),P(cs+0.02,cs+0.02,cTop+1.4),P(cs+0.02,-cs-0.02,cTop+1.4)],'#5A5752');
     hoQ([P(-cs-0.02,-cs-0.02,cTop+1.4),P(cs+0.02,-cs-0.02,cTop+1.4),P(cs+0.02,cs+0.02,cTop+1.4),P(-cs-0.02,cs+0.02,cTop+1.4)],'#2A2622');hoSmoke(P(0,0,cTop+2));}}
+
+/* =================== Market options (prototype) — window.__setMarket(n) ===================
+   1 Dyed-cloth stalls round a covered well · 2 Viking tent fair · 3 Covered market hall · 4 The market tree */
+let MK_OPT=0;window.__setMarket=n=>{MK_OPT=n|0;};
+{const _mk=drawMarketV;drawMarketV=function(b,c0,win){if(MK_OPT){drawMarketOpt(b,win,MK_OPT);return true;}return _mk(b,c0,win);};}
+function hoPaving(f,hs,win,sd,round){const base=win?'#E4E6E2':'#B9B1A2',kerb=win?'#C9CBC7':'#8E877B';
+  if(round){const C=f(0,0,0);ctx.fillStyle=kerb;ctx.beginPath();ctx.ellipse(C[0],C[1],hs*36+3,hs*18+1.5,0,0,6.3);ctx.fill();ctx.fillStyle=base;ctx.beginPath();ctx.ellipse(C[0],C[1],hs*36,hs*18,0,0,6.3);ctx.fill();
+    ctx.strokeStyle='rgba(80,72,60,0.35)';ctx.lineWidth=0.5;for(let r=1;r<5;r++){ctx.beginPath();ctx.ellipse(C[0],C[1],hs*36*r/5,hs*18*r/5,0,0,6.3);ctx.stroke();}ctx.beginPath();for(let k=0;k<24;k++){const a=k/24*6.283;ctx.moveTo(C[0]+Math.cos(a)*hs*7,C[1]+Math.sin(a)*hs*3.5);ctx.lineTo(C[0]+Math.cos(a)*hs*36,C[1]+Math.sin(a)*hs*18);}ctx.stroke();return;}
+  hoQ([f(-hs-0.06,-hs-0.06,0),f(hs+0.06,-hs-0.06,0),f(hs+0.06,hs+0.06,0),f(-hs-0.06,hs+0.06,0)],kerb);hoQ([f(-hs,-hs,0),f(hs,-hs,0),f(hs,hs,0),f(-hs,hs,0)],base);
+  ctx.strokeStyle='rgba(80,72,60,0.35)';ctx.lineWidth=0.5;ctx.beginPath();const n=Math.round(hs*6);for(let i=1;i<2*n;i++){const v=-hs+hs*i/n,p=f(-hs,v,0),q=f(hs,v,0);ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);for(let k=0;k<2*n;k++){const u=-hs+hs*(k+(i%2?0.5:0))/n;if(u>hs)continue;const a=f(u,v,0),b2=f(u,v-hs/n,0);ctx.moveTo(a[0],a[1]);ctx.lineTo(b2[0],b2[1]);}}ctx.stroke();
+  for(let k=0;k<26;k++){const p=f((h2(sd,k,91)-0.5)*2*hs,(h2(sd,k,92)-0.5)*2*hs,0);ctx.fillStyle=k%2?'rgba(255,250,235,0.12)':'rgba(40,34,26,0.1)';ctx.beginPath();ctx.ellipse(p[0],p[1],4,2,0,0,6.3);ctx.fill();}}
+/* goods on a counter top: kind = fish, pots, furs, apples, cloth, amber */
+function hoGoods(f,a,c,len,h,kind,win){const n=Math.round(len/0.07);for(let i=0;i<n;i++){const p=f(a-len/2+0.035+i*(len/n),c,h);
+  if(kind==='fish'){ctx.fillStyle=i%2?'#AEB8BE':'#8E9AA2';ctx.beginPath();ctx.ellipse(p[0],p[1]-0.8,2.4,0.9,0.4,0,6.3);ctx.fill();}
+  else if(kind==='pots'){ctx.fillStyle=i%2?'#9A5A3A':'#B0704A';ctx.beginPath();ctx.ellipse(p[0],p[1]-1.8,1.6,1.9,0,0,6.3);ctx.fill();ctx.fillStyle='#5A3020';ctx.fillRect(p[0]-0.7,p[1]-3.8,1.4,0.6);}
+  else if(kind==='furs'){ctx.fillStyle=['#8A6A4A','#C9B49A','#5A4636'][i%3];ctx.fillRect(p[0]-2.2,p[1]-1.8,4.4,1.8);ctx.fillStyle='rgba(255,255,255,0.12)';ctx.fillRect(p[0]-2.2,p[1]-1.8,4.4,0.5);}
+  else if(kind==='apples'){for(let k=0;k<3;k++){ctx.fillStyle=k%2?'#B8423A':'#C9A042';ctx.beginPath();ctx.arc(p[0]-1+k,p[1]-1-(k%2),0.9,0,6.3);ctx.fill();}}
+  else if(kind==='cloth'){ctx.fillStyle=['#A34A3A','#3E6A8A','#C9A042','#4E6A44'][i%4];ctx.beginPath();ctx.ellipse(p[0],p[1]-1.2,2.2,1.2,0,0,6.3);ctx.fill();ctx.fillStyle='rgba(0,0,0,0.18)';ctx.beginPath();ctx.ellipse(p[0]+1.6,p[1]-1.2,0.7,1.2,0,0,6.3);ctx.fill();}
+  else{ctx.fillStyle=i%2?'#D9902E':'#E8B04A';ctx.beginPath();ctx.arc(p[0],p[1]-0.8,0.9,0,6.3);ctx.fill();}}}
+/* a market stall: four posts, counter at the front with goods, cloth awning (striped) or a small roof, sloping down to the front */
+function hoStall(f,a,c,o,win){const sl=o.sl||0.32,sw=o.sw||0.22,hB=12,hF=10,P=(da,dc,h)=>f(a+da,c+dc,h);
+  hoQ([P(-sl,-sw,0),P(sl,-sw,0),P(sl,sw,0),P(-sl,sw,0)],'rgba(60,50,38,0.22)');
+  hoQ([P(-sl+0.03,sw-0.12,0),P(sl-0.03,sw-0.12,0),P(sl-0.03,sw-0.12,5),P(-sl+0.03,sw-0.12,5)],'#7A5A3C');hoQ([P(sl-0.03,sw-0.22,0),P(sl-0.03,sw-0.12,0),P(sl-0.03,sw-0.12,5),P(sl-0.03,sw-0.22,5)],'#5E4430');
+  hoQ([P(-sl+0.03,sw-0.22,5),P(sl-0.03,sw-0.22,5),P(sl-0.03,sw-0.1,5),P(-sl+0.03,sw-0.1,5)],'#A88A62');hoGoods(f,a,c+sw-0.16,2*sl-0.12,5,o.kind,win);
+  for(const q of [[-sl,sw,hF],[sl,sw,hF],[sl,-sw,hB]])hoQ([P(q[0]-0.02,q[1],0),P(q[0]+0.02,q[1],0),P(q[0]+0.02,q[1],q[2]),P(q[0]-0.02,q[1],q[2])],'#4A3424');
+  const A=[P(-sl-0.04,-sw-0.04,hB+0.5),P(sl+0.04,-sw-0.04,hB+0.5),P(sl+0.04,sw+0.06,hF),P(-sl-0.04,sw+0.06,hF)];
+  if(o.cloth&&!win){const cols=o.cloth,n=6;for(let i=0;i<n;i++){const u0=i/n,u1=(i+1)/n;hoQ([lerp(A[0],A[1],u0),lerp(A[0],A[1],u1),lerp(A[3],A[2],u1),lerp(A[3],A[2],u0)],cols[i%cols.length]);}
+    /* scalloped valance along the front edge */ctx.fillStyle=cols[0];for(let i=0;i<n*2;i++){const p=lerp(A[3],A[2],(i+0.5)/(n*2));ctx.beginPath();ctx.arc(p[0],p[1],1.3,0,3.14);ctx.fill();}hoLine(A[3],A[2],'rgba(0,0,0,0.25)',0.5);}
+  else{hoQ(A,win?'#EEF1F0':o.roof||'#2F2C2A');if(!win)hoRoofSurface((u,v)=>lerp(lerp(A[3],A[2],u),lerp(A[0],A[1],u),v),{sd:o.sd||1,rt:o.rt||'scale',rh:6,roofD:o.roofD||'#211F1D'},win);}}
+/* Viking A-frame tent: striped wool, ridge pole, carved crossed boards with small dragon heads at both ends, open front */
+function hoTent(f,a,c,o,win){const tl=o.tl||0.36,tw=o.tw||0.26,th=13,P=(da,dc,h)=>f(a+da,c+dc,h);
+  hoQ([P(-tl,-tw,0),P(tl,-tw,0),P(tl,tw,0),P(-tl,tw,0)],'rgba(60,50,38,0.22)');
+  hoQ([P(-tl,-tw,0),P(tl,-tw,0),P(tl,0,th),P(-tl,0,th)],win?'#D3DAD9':shade(o.cols[0],0.75));
+  /* open front gable: dark inside, goods at the door */hoQ([P(tl,-tw,0),P(tl,tw,0),P(tl,0,th)],'#2A2018');hoGoods((da,dc,h)=>P(tl+0.06,dc-0.0,h),0,0,0.3,0.8,o.kind,win);
+  const n=7;for(let i=0;i<n;i++){const u0=i/n,u1=(i+1)/n,x0=-tl+2*tl*u0,x1=-tl+2*tl*u1;hoQ([P(x0,tw,0),P(x1,tw,0),P(x1,0,th),P(x0,0,th)],win?'#EEF1F0':o.cols[i%o.cols.length]);}
+  hoLine(P(-tl,tw,0.3),P(tl,tw,0.3),'rgba(0,0,0,0.3)',0.6);hoLine(P(-tl-0.05,0,th+0.4),P(tl+0.05,0,th+0.4),'#4A3424',1.1);
+  for(const end of [tl,-tl]){const dir=(end>0)===f(1,0,0)[0]>f(0,0,0)[0]?1:-1;for(const s of [1,-1]){const e=P(end,s*tw,0),r=P(end,0,th),x=[r[0]+(r[0]-e[0])*0.3,r[1]+(r[1]-e[1])*0.3];hoLine(e,x,'#5A4230',1.3);}
+    const r=P(end,0,th);hoHead([r[0],r[1]-4],end>0?(f(1,0,0)[0]>f(0,0,0)[0]?1:-1):(f(1,0,0)[0]>f(0,0,0)[0]?-1:1),0.6,'#5A4230','#C9A042');}
+  /* guy ropes and pegs */for(const s of [-1,1]){const p=P(-tl*0.6,s*tw*1.6,0),q=P(-tl*0.6,s*tw*0.4,th*0.6);if(s>0){hoLine(p,q,'rgba(200,180,140,0.7)',0.4);ctx.fillStyle='#4A3424';ctx.fillRect(p[0]-0.6,p[1]-1.5,1.2,1.5);}}}
+function hoWell(f,a,c,win,roof){const P=(da,dc,h)=>f(a+da,c+dc,h),C=P(0,0,0);for(let k=0;k<3;k++){ctx.fillStyle=k%2?'#8E8980':'#A39D92';ctx.beginPath();ctx.ellipse(C[0],C[1]-k*2.2,8,4,0,0,6.3);ctx.fill();}
+  ctx.strokeStyle='rgba(40,36,30,0.5)';ctx.lineWidth=0.4;for(let k=0;k<3;k++){ctx.beginPath();ctx.ellipse(C[0],C[1]-k*2.2,8,4,0,0,3.14);ctx.stroke();}ctx.fillStyle='#B4AFA4';ctx.beginPath();ctx.ellipse(C[0],C[1]-6.6,8,4,0,0,6.3);ctx.fill();ctx.fillStyle='#1E2A30';ctx.beginPath();ctx.ellipse(C[0],C[1]-6.6,5.6,2.7,0,0,6.3);ctx.fill();
+  if(roof){const h=17;for(const s of [-1,1]){hoLine(P(0,s*0.2,6.6),P(0,s*0.2,h),'#4A3424',1.4);}hoLine(P(0,-0.2,11),P(0,0.2,11),'#5A4230',1.6);const rp=P(0,0.05,11);hoLine(rp,[rp[0],rp[1]+7],'#C9B38A',0.5);ctx.fillStyle='#6E5038';ctx.fillRect(rp[0]-1.4,rp[1]+7,2.8,2.2);
+    const crank=P(0,0.24,11);hoLine(crank,[crank[0]+2,crank[1]+2],'#2A2622',0.8);
+    const g={sd:5,hl:0.16,hw:0.28,fh:0,wh:h,rh:7,ov:0.04,th:1.4,roof:roof.roof,roofD:roof.roofD,roofE:shade(roof.roofD,0.7),rt:roof.rt};const fr=(a2,c2,hh)=>f(a+c2,c+a2,hh),rr=hoRoof(fr,g,win);rr.back();rr.end();rr.front();rr.ridge();hoBarge(fr,g,'#4A3424',0.25,false);}}
+function hoTree(f,a,c,win,sd){const P=(da,dc,h)=>f(a+da,c+dc,h),b0=P(0,0,0);ctx.fillStyle='#5A4230';ctx.beginPath();ctx.moveTo(b0[0]-4,b0[1]);ctx.quadraticCurveTo(b0[0]-2,b0[1]-14,b0[0]-1.6,b0[1]-30);ctx.lineTo(b0[0]+1.6,b0[1]-30);ctx.quadraticCurveTo(b0[0]+2,b0[1]-14,b0[0]+4,b0[1]);ctx.fill();
+  hoLine([b0[0]-1,b0[1]-24],[b0[0]-9,b0[1]-34],'#5A4230',1.6);hoLine([b0[0]+1,b0[1]-22],[b0[0]+10,b0[1]-32],'#5A4230',1.6);
+  const cols=win?['#E8ECEC','#D6DCDC','#C4CCCC']:['#4E6A3A','#5E7E44','#3E5A2E','#6E8E4E'];for(let k=0;k<26;k++){const ang=h2(sd,k,1)*6.283,rr=h2(sd,k,2),x=b0[0]+Math.cos(ang)*rr*26,y=b0[1]-42+Math.sin(ang)*rr*14-(k%3)*2;ctx.fillStyle=cols[k%cols.length];ctx.beginPath();ctx.ellipse(x,y,9-rr*3,6-rr*2,0,0,6.3);ctx.fill();}
+  ctx.fillStyle='rgba(255,250,200,0.12)';for(let k=0;k<8;k++){const x=b0[0]-14+h2(sd,k,3)*20,y=b0[1]-52+h2(sd,k,4)*10;ctx.beginPath();ctx.ellipse(x,y,4,2.5,0,0,6.3);ctx.fill();}}
+function drawMarketOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),sd=(b.id||0)*41+opt,hs=1.75;
+  if(opt===1){/* dyed-cloth stalls (madder red, woad blue, weld yellow) round a covered well */hoPaving(f,hs,win,sd);
+    const S=[[-1.05,-1.05,'furs',['#A34A3A','#E6DCC4']],[0.15,-1.15,'cloth',['#3E6A8A','#E6DCC4']],[-1.15,0.15,'pots',['#C9A042','#7A5A2C']],[1.1,-0.2,'fish',['#3E6A8A','#C9A042']],[-0.2,1.1,'apples',['#A34A3A','#C9A042']],[1.05,1.05,'amber',['#4E6A44','#E6DCC4']]];
+    S.sort((p,q)=>(p[0]+p[1])-(q[0]+q[1]));let well=false;for(const s of S){if(!well&&s[0]+s[1]>0){hoWell(f,0,0,win,{rt:'scale',roof:'#2F2C2A',roofD:'#211F1D'});well=true;}hoStall(f,s[0],s[1],{kind:s[2],cloth:s[3]},win);}if(!well)hoWell(f,0,0,win,{rt:'scale',roof:'#2F2C2A',roofD:'#211F1D'});return;}
+  if(opt===2){/* Viking tent fair on trodden ground, a merchant's scale in the middle */const C=f(0,0,0);ctx.fillStyle=win?'#E4E6E2':'#A8987C';ctx.beginPath();ctx.ellipse(C[0],C[1],hs*38,hs*19,0,0,6.3);ctx.fill();ctx.fillStyle='rgba(60,46,30,0.18)';for(let k=0;k<30;k++){const p=f((h2(sd,k,5)-0.5)*3,(h2(sd,k,6)-0.5)*3,0);ctx.beginPath();ctx.ellipse(p[0],p[1],3,1.4,0,0,6.3);ctx.fill();}
+    const T=[[-1.0,-1.0,'furs',['#A34A3A','#E6DCC4']],[0.4,-1.1,'cloth',['#C9A042','#6E4A2C']],[-1.1,0.4,'amber',['#3E6A8A','#E6DCC4']],[1.05,0.35,'fish',['#7A2E22','#D2B48A']],[0.35,1.05,'pots',['#4E6A44','#E6DCC4']]];
+    T.sort((p,q)=>(p[0]+p[1])-(q[0]+q[1]));let sc=false;for(const s of T){if(!sc&&s[0]+s[1]>0){/* balance scale on a post */const p=f(0,0,0);hoLine(p,[p[0],p[1]-16],'#4A3424',1.4);hoLine([p[0]-7,p[1]-15],[p[0]+7,p[1]-15],'#6E5038',0.9);for(const d of [-7,7]){hoLine([p[0]+d,p[1]-15],[p[0]+d,p[1]-10],'rgba(80,60,40,0.8)',0.4);ctx.fillStyle='#B88A4A';ctx.beginPath();ctx.ellipse(p[0]+d,p[1]-10,2.4,0.9,0,0,6.3);ctx.fill();}sc=true;}hoTent(f,s[0],s[1],{kind:s[2],cols:s[3]},win);}return;}
+  if(opt===3){/* covered market hall: high open timber hall, black shingles, tables along both open sides, a central aisle */hoPaving(f,hs,win,sd);
+    const hl=1.45,hw=0.85,wh=16,rh=14,P=(a,c,h)=>f(a,c,h);
+    /* back tables first */for(const a of [-1.0,-0.33,0.33,1.0]){hoQ([P(a-0.25,-hw+0.2,5),P(a+0.25,-hw+0.2,5),P(a+0.25,-hw+0.38,5),P(a-0.25,-hw+0.38,5)],'#A88A62');}
+    for(let k=0;k<=6;k++){const a=-hl+2*hl*k/6;hoQ([P(a-0.035,-hw,0),P(a+0.035,-hw,0),P(a+0.035,-hw,wh),P(a-0.035,-hw,wh)],'#3A2A1C');}
+    const kinds=['fish','furs','pots','cloth'];for(let i=0;i<4;i++){const a=-1.0+i*0.667;hoQ([P(a-0.25,hw-0.38,0),P(a+0.25,hw-0.38,0),P(a+0.25,hw-0.38,5),P(a-0.25,hw-0.38,5)],'#7A5A3C');hoQ([P(a-0.25,hw-0.38,5),P(a+0.25,hw-0.38,5),P(a+0.25,hw-0.2,5),P(a-0.25,hw-0.2,5)],'#A88A62');hoGoods(f,a,hw-0.29,0.44,5,kinds[i],win);}
+    for(let k=0;k<=6;k++){const a=-hl+2*hl*k/6;hoQ([P(a-0.035,hw,0),P(a+0.035,hw,0),P(a+0.035,hw,wh),P(a-0.035,hw,wh)],'#4A3424');}for(const cc of [-hw*0.5,0,hw*0.5])hoQ([P(hl,cc-0.035,0),P(hl,cc+0.035,0),P(hl,cc+0.035,wh),P(hl,cc-0.035,wh)],'#3A2A1C');
+    hoLine(P(-hl,hw,wh),P(hl,hw,wh),'#3A2A1C',1.8);hoLine(P(hl,-hw,wh),P(hl,hw,wh),'#2E2018',1.8);
+    const g={sd,hl,hw,fh:0,wh,rh,ov:0.08,th:1.8,roof:'#2F2C2A',roofD:'#211F1D',roofE:'#171514',rt:'scale'};const r=hoRoof(P,g,win);r.back();r.end();
+    /* gable: open truss with a carved sun disc */hoLine(P(hl,-hw,wh),P(hl,0,wh+rh),'#3A2A1C',1.2);hoLine(P(hl,hw,wh),P(hl,0,wh+rh),'#3A2A1C',1.2);hoLine(P(hl,0,wh),P(hl,0,wh+rh),'#3A2A1C',1);{const m=P(hl,0,wh+rh*0.4);ctx.strokeStyle='#C9A042';ctx.lineWidth=0.8;ctx.beginPath();ctx.arc(m[0],m[1],3,0,6.3);ctx.stroke();for(let k=0;k<8;k++){const an=k/8*6.283;ctx.moveTo(m[0]+Math.cos(an)*3.6,m[1]+Math.sin(an)*3.6);ctx.lineTo(m[0]+Math.cos(an)*5,m[1]+Math.sin(an)*5);}ctx.stroke();}
+    r.front();r.ridge();hoBarge(P,g,'#3A2A1C',0.3,true);return;}
+  if(opt===4){/* the market tree: a great linden in a round square, ring bench, stalls in a ring under it */hoPaving(f,hs,win,sd,true);
+    const R=[[-1.1,-0.5,'furs','#2F2C2A'],[-0.5,-1.1,'cloth','#7A3428'],[0.75,-0.95,'pots','#2F2C2A'],[-0.95,0.75,'amber','#7A3428'],[1.0,0.55,'fish','#2F2C2A'],[0.55,1.0,'apples','#7A3428']];
+    R.sort((p,q)=>(p[0]+p[1])-(q[0]+q[1]));let tr=false;for(const s of R){if(!tr&&s[0]+s[1]>0){const C=f(0,0,0);ctx.fillStyle='#7A5A3C';ctx.beginPath();ctx.ellipse(C[0],C[1],14,7,0,0,6.3);ctx.fill();ctx.fillStyle='#A88A62';ctx.beginPath();ctx.ellipse(C[0],C[1]-3,14,7,0,0,6.3);ctx.fill();ctx.fillStyle='#8A6A48';ctx.beginPath();ctx.ellipse(C[0],C[1]-3,10,5,0,0,6.3);ctx.fill();hoTree(f,0,0,win,sd);tr=true;}
+      hoStall(f,s[0],s[1],{kind:s[2],roof:s[3],roofD:shade(s[3],0.75),rt:s[3]==='#7A3428'?'boards':'scale',sd:sd+s[0]*10|0,sl:0.26,sw:0.2},win);}return;}}

@@ -10,7 +10,7 @@ async def main():
         pg.on('pageerror',lambda e:errs.append(str(e)))
         await pg.goto('file://'+os.path.abspath('test.html'));await pg.wait_for_timeout(500)
         await pg.click('#t-new');await pg.click('[data-sl="1"]');await pg.click('[data-md="test"]');await pg.click('[data-tl="g"]');await pg.wait_for_timeout(2500)
-        await pg.evaluate("__G.setSpeed(0);document.querySelectorAll('.modal').forEach(m=>m.hidden=true)")
+        await pg.evaluate("__G.setSpeed(0);window.__NOFOG=1;document.querySelectorAll('.modal').forEach(m=>m.hidden=true)")
         if OPT: await pg.evaluate(OPT)
         its=await pg.evaluate(f"__G.B.filter(b=>b.gallery&&b.t==='{T}').map(b=>({{l:b.lvl||1,x:b.fx+b.w/2,y:b.fy+b.h/2,w:b.w}})).sort((a,c)=>a.l-c.l)")
         seen=set();sel=[]

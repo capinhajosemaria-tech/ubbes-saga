@@ -528,3 +528,45 @@ function drawHofOpt(b,win,opt){const J=HOF_SET[opt]||HOF_SET[1],f0=hoFrame({fx:b
 const _roofSurfClip=hoRoofSurface;hoRoofSurface=function(at,g,win){const v0=g.rt==='turf'?-0.08:0;ctx.save();ctx.beginPath();
   const pts=[];for(let k=0;k<=12;k++)pts.push(at(k/12,v0));for(let k=12;k>=0;k--)pts.push(at(k/12,1));ctx.moveTo(pts[0][0],pts[0][1]);for(const q of pts)ctx.lineTo(q[0],q[1]);ctx.closePath();ctx.clip();
   try{_roofSurfClip(at,g,win);}finally{ctx.restore();}};
+
+/* =================== Granary options (prototype) — window.__setGran(n) =================== */
+let GRAN_OPT=0;window.__setGran=n=>{GRAN_OPT=n|0;};
+{const _ds1=drawShaped;drawShaped=function(b,win,c0,ax){if(GRAN_OPT&&b.t==='gran'){drawGranOpt(b,win,GRAN_OPT);return true;}return _ds1(b,win,c0,ax);};}
+const GRAN_SET={1:{n:'Log stabbur, thatch',wt:'logs',wall:'#8A6440',wallD:'#6E4E32',rt:'thatch',roof:'#C2A25C',roofD:'#9E8042'},
+  2:{n:'Tarred planks, black shingles',wt:'planks',wall:'#5E4636',wallD:'#4B3729',rt:'scale',roof:'#2F2C2A',roofD:'#211F1D'},
+  3:{n:'Falu red, red boards',wt:'planks',wall:'#8E3B2C',wallD:'#742F23',rt:'boards',roof:'#5A2E24',roofD:'#46241C',trim:'#E2D8C2'},
+  4:{n:'Stabbur + hay barrack',wt:'logs',wall:'#8A6440',wallD:'#6E4E32',rt:'scale',roof:'#2F2C2A',roofD:'#211F1D',barrack:true}};
+function hoSack(p,c){ctx.fillStyle=c||'#CDBB8E';ctx.beginPath();ctx.ellipse(p[0],p[1]-2.6,2.6,3,0,0,6.3);ctx.fill();ctx.fillStyle='rgba(60,40,20,0.25)';ctx.beginPath();ctx.ellipse(p[0]+0.8,p[1]-2.2,1.6,2.6,0,0,6.3);ctx.fill();hoLine([p[0]-1,p[1]-5.4],[p[0]+1,p[1]-5.4],'#6E5440',0.7);}
+function hoBasket(p){ctx.fillStyle='#A6844E';ctx.beginPath();ctx.moveTo(p[0]-3,p[1]-4);ctx.lineTo(p[0]+3,p[1]-4);ctx.lineTo(p[0]+2.4,p[1]);ctx.lineTo(p[0]-2.4,p[1]);ctx.fill();ctx.strokeStyle='rgba(70,46,22,0.6)';ctx.lineWidth=0.4;ctx.beginPath();for(let k=1;k<3;k++){ctx.moveTo(p[0]-3+k*0.2,p[1]-4+k*1.3);ctx.lineTo(p[0]+3-k*0.2,p[1]-4+k*1.3);}ctx.stroke();ctx.fillStyle='#D9B356';ctx.beginPath();ctx.ellipse(p[0],p[1]-4,3,1,0,0,6.3);ctx.fill();}
+function hoSheaf(p){ctx.fillStyle='#D2B062';ctx.beginPath();ctx.moveTo(p[0]-1.6,p[1]);ctx.lineTo(p[0]+1.6,p[1]);ctx.lineTo(p[0]+0.6,p[1]+4);ctx.lineTo(p[0]-0.6,p[1]+4);ctx.fill();hoLine([p[0]-0.9,p[1]+1.6],[p[0]+0.9,p[1]+1.6],'#8A6A3A',0.5);ctx.fillStyle='#E2C478';ctx.beginPath();ctx.ellipse(p[0],p[1]+4.6,1.4,1.2,0,0,6.3);ctx.fill();}
+/* stabbur: posts with rat stones, lower storey, wider upper storey, gable roof, door + notched log ladder */
+function hoStabbur(f0,ao,co,k,J,win,sd,L,full){const f=(a,c,h)=>f0(a*k+ao,c*k+co,h*k);const st=9,lw=11,uw=10,hl=0.62,hw=0.5,hl1=0.5,hw1=0.4;
+  hoQ([f(-hl,-hw,0),f(hl+0.15,-hw,0),f(hl+0.15,hw+0.2,0),f(-hl,hw+0.2,0)],'rgba(30,38,42,0.16)');
+  /* posts and rat stones */for(const q of [[hl1-0.04,hw1-0.04],[-hl1+0.04,hw1-0.04],[hl1-0.04,-hw1+0.04]]){const p0=f(q[0],q[1],0),p1=f(q[0],q[1],st-1.3);ctx.fillStyle='#8E8A84';ctx.beginPath();ctx.ellipse(p0[0],p0[1],2.4*k,1.2*k,0,0,6.3);ctx.fill();
+    hoLine(p0,p1,'#5A4230',2.4*k);hoLine([p0[0]+0.6*k,p0[1]],[p1[0]+0.6*k,p1[1]],'rgba(255,230,190,0.18)',0.5);ctx.fillStyle='#9C978D';ctx.beginPath();ctx.ellipse(p1[0],p1[1],3.4*k,1.6*k,0,0,6.3);ctx.fill();ctx.fillStyle='#B4AFA4';ctx.beginPath();ctx.ellipse(p1[0],p1[1]-0.8*k,3.4*k,1.5*k,0,0,6.3);ctx.fill();}
+  /* sill beams */const fL=(a,c,h)=>f(a,c,h+st);hoQ([fL(-hl1,hw1,0),fL(hl1,hw1,0),fL(hl1,hw1,1.6),fL(-hl1,hw1,1.6)],'#4A3424');hoQ([fL(hl1,-hw1,0),fL(hl1,hw1,0),fL(hl1,hw1,1.6),fL(hl1,-hw1,1.6)],'#3A2A1C');
+  const g1={sd,hl:hl1,hw:hw1,fh:1.6,wh:lw,rh:0,wt:J.wt,wall:J.wall,wallD:J.wallD,frame:J.wt!=='logs',frameCol:'#3A2A1C',k:k,v:k};hoWalls(fL,g1,win);
+  hoDoor(fL,g1,'G',0,0.16,8.5,{col:'#5A4430',frame:'#2E2018',steps:0});
+  /* upper storey: wider, joist ends under it */const fU=(a,c,h)=>f(a,c,h+st+lw);for(let i=0;i<7;i++){const a=-hl+0.06+(2*hl-0.12)*i/6;hoQ([fU(a,hw,-1.2),fU(a+0.05,hw,-1.2),fU(a+0.05,hw,0),fU(a,hw,0)],'#3A2A1C');}
+  for(let i=0;i<5;i++){const c=-hw+0.06+(2*hw-0.12)*i/4;hoQ([fU(hl,c,-1.2),fU(hl,c+0.05,-1.2),fU(hl,c+0.05,0),fU(hl,c,0)],'#2E2018');}
+  const g2={sd:sd+1,hl,hw,fh:0,wh:uw,rh:13,ov:0.07,th:J.rt==='thatch'?4:1.8,wt:J.wt==='logs'?'planks':J.wt,wall:J.wt==='logs'?shade(J.wall,1.05):J.wall,wallD:J.wt==='logs'?shade(J.wallD,1.05):J.wallD,roof:J.roof,roofD:J.roofD,roofE:shade(J.roofD,0.7),rt:J.rt,frame:true,frameCol:J.trim||'#3A2A1C',k:k,v:k};
+  const r=hoRoof(fU,g2,win);r.back();hoWalls(fU,g2,win);r.end();
+  if(J.trim){hoRect(fU,g2,'L',-hl,hl,uw-1.2,uw,J.trim);hoRect(fU,g2,'G',-hw,hw,uw-1.2,uw,shade(J.trim,0.85));}
+  /* small vent hatch in the upper gable */hoRect(fU,g2,'G',-0.07,0.07,uw+2,uw+6,'#2A1F18');
+  r.front();r.ridge();hoBarge(fU,g2,'#5A4230',0.3,L>=5);
+  if(full&&L>=5){for(let i=0;i<5;i++)hoSheaf(fU(-hl+0.15+i*0.25,hw+0.08,-3));}
+  if(full){/* notched log ladder from the ground to the door sill */const a1=f(hl1+0.42,0.02,0),a2=f(hl1+0.02,0.02,st+1.6);hoLine(a1,a2,'#6E5038',2.6*k);hoLine([a1[0]+0.8*k,a1[1]],[a2[0]+0.8*k,a2[1]],'rgba(255,230,190,0.2)',0.6);
+    for(let i=1;i<5;i++){const p=lerp(a1,a2,i/5);hoLine([p[0]-1.4*k,p[1]],[p[0]+1.4*k,p[1]],'#3A2A1C',0.7);}}}
+function drawGranOpt(b,win,opt){const J=GRAN_SET[opt]||GRAN_SET[1],L=Math.min(5,b.lvl||1),f0=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.w>=b.h?0:1}),sd=(b.id||0)*19+opt;
+  /* back: a smaller second stabbur from level 3, or the hay barrack */
+  if(J.barrack){const ao=-0.82,s=0.34,hh=L>=3?26:20,P=(a,c,h)=>f0(ao+a,c,h);hoQ([P(-s,-s,0),P(s+0.1,-s,0),P(s+0.1,s+0.12,0),P(-s,s+0.12,0)],'rgba(30,38,42,0.14)');
+    /* hay mound */ctx.fillStyle=win?'#E4E2D6':'#C9A85A';const m=P(0,0,0);ctx.beginPath();ctx.ellipse(m[0],m[1]-5,22,9,0,3.14,6.28);ctx.lineTo(m[0]+22,m[1]-2);ctx.ellipse(m[0],m[1]-2,22,6,0,0,3.14);ctx.fill();
+    ctx.fillStyle='rgba(120,90,30,0.35)';for(let i=0;i<14;i++){const p=[m[0]+(h2(sd,i,1)-0.5)*36,m[1]-4-h2(sd,i,2)*8];ctx.fillRect(p[0],p[1],2,0.6);}
+    if(L>=3){ctx.fillStyle=win?'#E4E2D6':'#D2B062';ctx.beginPath();ctx.ellipse(m[0],m[1]-12,18,8,0,3.14,6.28);ctx.lineTo(m[0]+18,m[1]-6);ctx.lineTo(m[0]-18,m[1]-6);ctx.fill();}
+    for(const q of [[-s,s],[s,s],[s,-s],[-s,-s]]){const p0=P(q[0],q[1],0),p1=P(q[0],q[1],hh+10);hoLine(p0,p1,'#5A4230',1.8);for(let i=1;i<6;i++){const p=lerp(p0,p1,i/6);hoLine([p[0]-1,p[1]],[p[0]+1,p[1]],'#3A2A1C',0.5);}}
+    hoPyramid(P,0,0,s+0.08,hh,hh+12,J.roof,J.roofD,J.rt,win,sd+3);}
+  else if(L>=3)hoStabbur(f0,-0.88,-0.28,0.7,J,win,sd+5,L,false);
+  hoStabbur(f0,0.32,0,1,J,win,sd,L,true);
+  /* sacks and baskets on the ground */const props=[[0.95,0.55],[1.1,0.4],[0.82,0.66]];hoSack(f0(1.0,0.62,0));if(L>=2){hoSack(f0(1.18,0.48,0),'#BFAE84');hoBasket(f0(0.85,-0.62,0));}if(L>=4){hoSack(f0(1.05,0.4,0));hoBasket(f0(1.12,-0.45,0));}}
+/* test switch: hide the sea-mist at the map edge (gallery screenshots) */
+{const _ef=drawEdgeFog;drawEdgeFog=function(win,vis){if(window.__NOFOG)return;return _ef(win,vis);};}

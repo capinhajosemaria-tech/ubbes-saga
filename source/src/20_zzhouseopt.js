@@ -6,6 +6,15 @@ window.__setHouse=n=>{HOUSE_OPT=n|0;};
 const _drawHouseOld=drawHouse;
 drawHouse=function(b,win){if(!HOUSE_OPT)return _drawHouseOld(b,win);drawHouseOpt(b,win,HOUSE_OPT);};
 /* option 1 roofs: 11 straw thatch, 12 blue slate, 13 black tarred shingles, 14 brick-red boards */
+/* colour schemes on house 1 (opt 21..28): roof, walls, frame, door, shutters, shield */
+const HO_SCH={21:{n:'Pine and straw',r:11,wall:'#B08A5C',wallD:'#93714A',frame:'#6E4E32',door:'#9A3E2E',shut:'#9A3E2E',sh:['#9A3E2E','#E0D4B8']},
+  22:{n:'Tar and slate',r:12,wall:'#4A3A2E',wallD:'#3A2D23',frame:'#2A201A',door:'#C9A042',shut:'#C9A042',sh:['#C9A042','#2E3A44']},
+  23:{n:'Falu red',r:13,wall:'#8E3B2C',wallD:'#742F23',frame:'#E2D8C2',door:'#3E3028',shut:'#E2D8C2',sh:['#E2D8C2','#2F2C2A']},
+  24:{n:'Silver grey',r:11,wall:'#9A948A',wallD:'#7E786F',frame:'#5A544C',door:'#3E6A8A',shut:'#3E6A8A',sh:['#3E6A8A','#D8CFB8']},
+  25:{n:'Oak and red boards',r:14,wall:'#7E5A3C',wallD:'#664830',frame:'#4A3424',door:'#4E6A44',shut:'#4E6A44',sh:['#4E6A44','#C9A64A']},
+  26:{n:'Birch and black',r:13,wall:'#C9BFA8',wallD:'#ADA38D',frame:'#3A322C',door:'#7A3A2C',shut:'#2F2C2A',sh:['#7A3A2C','#2F2C2A']},
+  27:{n:'Ochre and slate',r:12,wall:'#B8893E',wallD:'#9A7032',frame:'#4A3828',door:'#2E4A5E',shut:'#2E4A5E',sh:['#2E4A5E','#B8893E']},
+  28:{n:'Black and red',r:14,wall:'#2E2824',wallD:'#231E1B',frame:'#9A4434',door:'#9A4434',shut:'#9A4434',sh:['#9A4434','#D8CFB8']}};
 const HO_ROOFS={11:{rt:'thatch',roof:'#C2A25C',roofD:'#9E8042',roofE:'#7A6234',th:4.5},12:{rt:'slab',roof:'#5E7488',roofD:'#4A5D6E',roofE:'#38464F',th:2,blue:1},
   13:{rt:'scale',roof:'#2F2C2A',roofD:'#211F1D',roofE:'#171514',th:1.8},14:{rt:'boards',roof:'#9A4434',roofD:'#7A3428',roofE:'#55251C',th:1.6}};
 
@@ -141,9 +150,9 @@ function hoLouvre(f,g,a,col){const top=g.wh+g.rh,w=0.09;hoQ([f(a-w,0.06,top-1),f
 function drawHouseOpt(b,win,opt){const L=Math.min(5,b.lvl||1),f=hoFrame(b),sd=(b.id||0)*7+3;
   const K=1.45,V=1.35,sc=g=>{for(const k of ['hl','hw'])g[k]*=K;for(const k of ['fh','wh','rh'])g[k]*=V;g.k=K;g.v=V;return g;};
   const shadowBox=(g)=>{hoQ([f(-g.hl-g.ov+0.15,-g.hw-g.ov+0.15,0),f(g.hl+g.ov+0.15,-g.hw-g.ov+0.15,0),f(g.hl+g.ov+0.15,g.hw+g.ov+0.2,0),f(-g.hl-g.ov+0.15,g.hw+g.ov+0.2,0)],'rgba(38,48,53,0.16)');};
-  if(opt===1||HO_ROOFS[opt]){const RP=HO_ROOFS[opt];/* TURF COTTAGE — the reference: turf roof, open timber frame, stone footing, lean-to woodshed */
+  if(opt===1||HO_ROOFS[opt]||HO_SCH[opt]){const SCx=HO_SCH[opt],RP=SCx?HO_ROOFS[SCx.r]:HO_ROOFS[opt];/* TURF COTTAGE — the reference: turf roof, open timber frame, stone footing, lean-to woodshed */
     const g=sc({sd,hl:[0.42,0.5,0.52,0.58,0.62][L-1],hw:[0.4,0.44,0.46,0.5,0.52][L-1],fh:3.2,wh:[10,11,12,13,14][L-1],rh:[13,14,15,17,18][L-1],ov:0.07,th:3.5,
-      wt:'planks',wall:'#8E6A48',wallD:'#74563A',roof:'#7E9656',roofD:'#62773F',roofE:'#5A4A36',rt:'turf',frame:true,frameCol:'#5C3F2A',midPost:L>=2});if(RP)Object.assign(g,RP);
+      wt:'planks',wall:'#8E6A48',wallD:'#74563A',roof:'#7E9656',roofD:'#62773F',roofE:'#5A4A36',rt:'turf',frame:true,frameCol:'#5C3F2A',midPost:L>=2});if(RP)Object.assign(g,RP);if(SCx){g.wall=SCx.wall;g.wallD=SCx.wallD;g.frameCol=SCx.frame;}const DC=SCx?SCx.door:null,SH=SCx?SCx.shut:null,SHD=SCx?SCx.sh:['#3E6A8A','#A34A3A'];
     shadowBox(g);
     /* lean-to woodshed behind, along the ridge (level 3+) */
     if(L>=3){const s={sd,hl:0.22*K,hw:g.hw,fh:0,wh:g.wh-3,rh:g.rh-4,ov:0.06,th:g.th,roof:g.roof,roofD:g.roofD,roofE:g.roofE,rt:g.rt};const off=-g.hl-s.hl+0.02;const fs=(a,c,h)=>f(a+off,c,h);
@@ -153,10 +162,10 @@ function drawHouseOpt(b,win,opt){const L=Math.min(5,b.lvl||1),f=hoFrame(b),sd=(b
       for(const a of [-s.hl,0,s.hl-0.04])hoQ([fs(a,s.hw,0),fs(a+0.045,s.hw,0),fs(a+0.045,s.hw,s.wh),fs(a,s.hw,s.wh)],'#5C3F2A');
       rs.front();}
     const r=hoRoof(f,g,win);r.back();hoFooting(f,g,win);hoWalls(f,g,win);r.end();
-    hoDoor(f,g,'G',0,0.17,Math.min(10.5,g.wh-2),{steps:L>=2?2:1});
-    if(L>=2)hoWindow(f,g,'G',-g.hw*0.55,0.1,g.fh+3.5,g.fh+7.5);
-    if(L>=4)hoWindow(f,g,'L',g.hl*0.35,0.1,g.fh+3.5,g.fh+7.5);
-    if(L>=3)hoShield(f(g.hl,0,g.wh+g.rh*0.3),'#3E6A8A','#A34A3A',3.2);
+    hoDoor(f,g,'G',0,0.17,Math.min(10.5,g.wh-2),{steps:L>=2?2:1,col:DC||undefined});
+    if(L>=2)hoWindow(f,g,'G',-g.hw*0.55,0.1,g.fh+3.5,g.fh+7.5,{shutters:SH});
+    if(L>=4)hoWindow(f,g,'L',g.hl*0.35,0.1,g.fh+3.5,g.fh+7.5,{shutters:SH});
+    if(L>=3)hoShield(f(g.hl,0,g.wh+g.rh*0.3),SHD[0],SHD[1],3.2);
     r.front();r.ridge();hoBarge(f,g,'#6E4E34',0.32,L>=5);
     if(L>=2){const p=f(g.hl+0.32,g.hw+0.2,0);hoChop(p);}
     if(L>=5){const p=f(-g.hl*0.4,g.hw+0.04,0);ctx.fillStyle='#8A6E52';ctx.fillRect(p[0]-4,p[1]-3,8,3);}

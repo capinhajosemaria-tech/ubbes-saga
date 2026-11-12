@@ -2,6 +2,13 @@
 
 Versions are `Beta 0.MINOR.PATCH` until Town Hall 10 (`1.0.0`).
 
+## Beta 0.16.0
+- New art for every building, drawn in one style: fine lines, a real door on every building, stone footings, timber frames, glowing windows with shutters, and roofs of thatch, slate, black shingles or red boards.
+- Houses are cottages that grow with each level, in 8 colour schemes (pick one in the house sheet, or keep a mixed village).
+- New Town Hall (red-board hall with a carved portal and a feast hearth on the plaza), Jarl's House, Hof, Market, Harbour, Shipyard, Ship-Tomb and all workshops, pens, fields and decor.
+- The Funeral Pyre only burns after a cremation.
+- New grass: tall grass that sways in the wind, with a few wildflowers in summer.
+
 ## Beta 0.15.5
 - A Woodcutter's Lodge now needs 45 trees of its own for full output (was 90).
 - A Fisher's Hut needs 5 water tiles of its own for full output; each water tile serves one hut only.

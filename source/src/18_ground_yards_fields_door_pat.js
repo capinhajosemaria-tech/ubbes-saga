@@ -20,6 +20,7 @@ function drawField(b,c,win){
   }
 }
 function drawGround(b,win){
+  if(typeof groundShape==='function'){const e0=elev[b.fy*N+b.fx]||2;ctx.save();ctx.translate(0,-e0);const done=groundShape(b,win);ctx.restore();if(done)return;}
   const e=elev[b.fy*N+b.fx]||2,c=fp(b);
   ctx.save();ctx.translate(0,-e);
   if(FIELDS.has(b.t)){ctx.fillStyle=win?'rgba(200,205,202,0.5)':'rgba(120,108,80,0.35)';const r=jitterRing(c,3,b.id);poly(r,ctx.fillStyle);drawField(b,inset(c,0.02),win);ctx.restore();return;}

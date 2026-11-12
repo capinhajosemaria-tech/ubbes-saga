@@ -10,7 +10,7 @@ function modalSpec(m){
   if(m.k==='funeral'){const h=PB(m.heir);if(m.cause==='deposed')return {title:'A New Jarl',portrait:h,text:pname(h)+' takes the high seat. The old Jarl lives on, a man without a hall.',opts:[{l:'So be it',f:()=>''}]};
     return {title:'The Jarl Is Dead',portrait:h,text:'The old Jarl is dead. '+pname(h)+' takes the high seat of Kaldstrand. How shall the Jarl be sent to the gods?',opts:[
       {l:'Burn him in a ship',pay:[{n:40,k:'wood'},{n:20,k:'planks'}],get:[{t:'Morale +10 for 30 days'},{t:'Odin +10 favour'},{n:10,k:'fame'}],dis:S.res.wood<40||S.res.planks<20,f:()=>{S.res.wood-=40;S.res.planks-=20;addMod('funeral','A ship-burial for the Jarl',10,30);addFavor('odin',10);addFame(10);return 'The burning ship drifted out into the bay.';}},
-      {l:'Burn him on the pyre',pay:[{n:20,k:'wood'}],get:[{t:'Morale +4 for 20 days'},{t:'Odin +4 favour'}],dis:S.res.wood<20,f:()=>{S.res.wood-=20;addMod('funeral','The Jarl’s pyre',4,20);addFavor('odin',4);return 'The pyre burned all night.';}},
+      {l:'Burn him on the pyre',pay:[{n:20,k:'wood'}],get:[{t:'Morale +4 for 20 days'},{t:'Odin +4 favour'}],dis:S.res.wood<20,f:()=>{S.res.wood-=20;S.pyreT=S.gameT;addMod('funeral','The Jarl’s pyre',4,20);addFavor('odin',4);return 'The pyre burned all night.';}},
       {l:'Bury him in a mound',pay:[{t:'The river turns foul for a while'}],f:()=>{S.contam=Math.max(S.contam,10);return 'A mound was raised above the shore.';}}]};}
   if(m.k==='info')return {title:m.title,text:m.text,opts:[{l:'So be it',f:()=>''}]};
   if(m.k==='report')return {title:m.title,text:m.text,table:[['Brought home',m.got.length?m.got.join(', '):'nothing'],['Dead',m.dead.length?m.dead.join(', '):'none'],['Wounded',String(m.wounded||0)]],opts:[{l:'To the hall',f:()=>''}]};

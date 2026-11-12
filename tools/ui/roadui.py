@@ -29,7 +29,7 @@ async def main():
             await pg.screenshot(path='shots/pc_roadlock.png')
             r0=await pg.evaluate("__G.roads.reduce((a,b)=>a+b,0)")
             print('L1',n1[:200]);print('L2',n2[:200])
-            await btn.click(timeout=2000);await pg.wait_for_timeout(150)
+            await btn.click(timeout=6000);await pg.wait_for_timeout(150)
             r1=await pg.evaluate("__G.roads.reduce((a,b)=>a+b,0)")
             print('locked msg',n1[:120]);print('after move',n2[:120]);print('roads',r0,'->',r1,'errs',errs)
             await ctx.close()

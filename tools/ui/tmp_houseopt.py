@@ -5,7 +5,7 @@ from PIL import Image, ImageDraw, ImageFont
 PC={'width':1440,'height':900}
 OPTS=[int(x) for x in (sys.argv[1] if len(sys.argv)>1 else '0,1,2,3,4').split(',')]
 Z=float(sys.argv[2]) if len(sys.argv)>2 else 2.7
-NAMES={0:'0 Today',1:'1 Turf cottage',2:'2 Stave house',3:'3 Log house (laft)',4:'4 Timber & daub longhouse'}
+NAMES={11:'A Straw thatch',12:'B Blue slate',13:'C Black tarred shingles',14:'D Brick-red boards',0:'0 Today',1:'1 Turf cottage',2:'2 Stave house',3:'3 Log house (laft)',4:'4 Timber & daub longhouse'}
 async def main():
     errs=[];rows=[]
     async with async_playwright() as p:

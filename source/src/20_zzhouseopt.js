@@ -5,6 +5,9 @@ let HOUSE_OPT=0;
 window.__setHouse=n=>{HOUSE_OPT=n|0;};
 const _drawHouseOld=drawHouse;
 drawHouse=function(b,win){if(!HOUSE_OPT)return _drawHouseOld(b,win);drawHouseOpt(b,win,HOUSE_OPT);};
+/* option 1 roofs: 11 straw thatch, 12 blue slate, 13 black tarred shingles, 14 brick-red boards */
+const HO_ROOFS={11:{rt:'thatch',roof:'#C2A25C',roofD:'#9E8042',roofE:'#7A6234',th:4.5},12:{rt:'slab',roof:'#5E7488',roofD:'#4A5D6E',roofE:'#38464F',th:2,blue:1},
+  13:{rt:'scale',roof:'#2F2C2A',roofD:'#211F1D',roofE:'#171514',th:1.8},14:{rt:'boards',roof:'#9A4434',roofD:'#7A3428',roofE:'#55251C',th:1.6}};
 
 function hoFrame(b){const alongX=b.rot%2===0,cx=b.fx+b.w/2-0.5,cy=b.fy+b.h/2-0.5;
   const f=(a,c,h)=>{const p=alongX?iso(cx+a,cy+c):iso(cx+c,cy+a);return [p[0],p[1]-(h||0)];};f.alongX=alongX;f.dir=alongX?1:-1;return f;}
@@ -88,9 +91,20 @@ function hoRoofSurface(at,g,win){const det=zoom>1.2,sd=g.sd;
     for(let r=1;r<=rows;r++){const v=r/(rows+1),a=at(0,v),b2=at(1,v);ctx.moveTo(a[0],a[1]);ctx.lineTo(b2[0],b2[1]);
       if(det)for(let k=0;k<26;k++){const u=(k+(r%2?0.5:0))/26;if(u>=1)continue;const p=at(u,v),q=at(u,v-1/(rows+1));ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);}}ctx.stroke();
     if(det){/* rounded shingle tips */ctx.fillStyle='rgba(255,240,210,0.07)';for(let r=0;r<rows;r+=2){const v=(r+0.5)/(rows+1);const a=at(0,v),b2=at(1,v),a2=at(1,v+0.04),b3=at(0,v+0.04);hoQ([a,b2,a2,b3],'rgba(255,240,210,0.06)');}}}
+  else if(g.rt==='scale'){/* tarred wooden shingles with rounded ends (dragon scales), a soft sheen */const rows=Math.round(10*g.rh/16);
+    for(let r=0;r<rows;r++){const v=(r+0.5)/rows,n=det?22:12;for(let k=0;k<n;k++){const u=(k+(r%2?0.5:0)+0.5)/n;if(u>1)continue;const p=at(u,v-0.5/rows);
+        ctx.fillStyle=((k*7+r*3+sd)%5===0)?'rgba(90,80,70,0.35)':'rgba(255,240,220,0.06)';ctx.beginPath();ctx.ellipse(p[0],p[1]+0.6,det?2.2:3.4,1.3,0,0,3.14);ctx.fill();
+        if(det){ctx.strokeStyle='rgba(0,0,0,0.5)';ctx.lineWidth=0.45;ctx.beginPath();ctx.ellipse(p[0],p[1]+0.6,2.2,1.3,0,0,3.14);ctx.stroke();}}}
+    hoLine(at(0,0.985),at(1,0.985),'rgba(160,150,140,0.25)',0.6);}
+  else if(g.rt==='boards'){/* painted boards running down the slope, battens over the joints, a weathered sheen */const n=det?30:16;
+    for(let k=0;k<n;k++){const u=k/n;if(k%2===0){hoQ([at(u,0),at(u+1/n,0),at(u+1/n,1),at(u,1)],'rgba(255,220,190,0.05)');}
+      hoLine(at(u,0.01),at(u,0.99),'rgba(60,20,14,0.55)',det?0.9:0.7);if(det)hoLine([at(u,0.01)[0]+0.6,at(u,0.01)[1]],[at(u,0.99)[0]+0.6,at(u,0.99)[1]],'rgba(255,200,170,0.18)',0.4);}
+    if(det){ctx.fillStyle='rgba(40,14,10,0.25)';for(let k=0;k<20;k++){const p=at(h2(sd,k,71),h2(sd,k,72));ctx.fillRect(p[0],p[1],0.6,2.5);}}
+    for(const v of [0.25,0.75])hoLine(at(0,v),at(1,v),'rgba(40,14,10,0.3)',0.5);}
   else if(g.rt==='slab'){/* stone slabs, irregular */ctx.strokeStyle='rgba(30,30,30,0.45)';ctx.lineWidth=0.5;ctx.beginPath();const rows=6;
     for(let r=1;r<=rows;r++){const v=r/(rows+1),a=at(0,v),b2=at(1,v);ctx.moveTo(a[0],a[1]);ctx.lineTo(b2[0],b2[1]);let u=h2(sd,r,61)*0.1;while(u<1){const p=at(u,v),q=at(u,v-1/(rows+1));ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);u+=0.07+0.08*h2(sd,r*30+(u*100|0),62);}}ctx.stroke();
-    for(let k=0;k<10;k++){const p=at(h2(sd,k,63),h2(sd,k,64));ctx.fillStyle='rgba(120,140,90,0.35)';ctx.beginPath();ctx.ellipse(p[0],p[1],2,1,0,0,6.3);ctx.fill();}}}
+    if(g.blue){for(let r=0;r<6;r++){let u=h2(sd,r,65)*0.1;while(u<1){const w=0.07+0.08*h2(sd,r*40+(u*100|0),66);const tone=h2(sd,r*50+(u*100|0),67);if(tone>0.55){hoQ([at(u,r/7+0.01),at(Math.min(1,u+w),r/7+0.01),at(Math.min(1,u+w),(r+1)/7),at(u,(r+1)/7)],tone>0.8?'rgba(200,215,230,0.12)':'rgba(20,30,40,0.14)');}u+=w;}}}
+    for(let k=0;k<(g.blue?0:10);k++){const p=at(h2(sd,k,63),h2(sd,k,64));ctx.fillStyle='rgba(120,140,90,0.35)';ctx.beginPath();ctx.ellipse(p[0],p[1],2,1,0,0,6.3);ctx.fill();}}}
 /* crossed barge boards at the front gable (vindskier): thin, natural wood, ends past the ridge */
 function hoBarge(f,g,col,ext,carve){const {hl,hw,wh,rh,ov}=g,a1=hl+ov+0.01,top=wh+rh,eH=wh-ov/hw*rh,ce=hw+ov;
   for(const s of [1,-1]){const e=f(a1,s*ce,eH),r=f(a1,0,top),dx=r[0]-e[0],dy=r[1]-e[1],k=ext;const x=[r[0]+dx*k,r[1]+dy*k];
@@ -127,12 +141,12 @@ function hoLouvre(f,g,a,col){const top=g.wh+g.rh,w=0.09;hoQ([f(a-w,0.06,top-1),f
 function drawHouseOpt(b,win,opt){const L=Math.min(5,b.lvl||1),f=hoFrame(b),sd=(b.id||0)*7+3;
   const K=1.45,V=1.35,sc=g=>{for(const k of ['hl','hw'])g[k]*=K;for(const k of ['fh','wh','rh'])g[k]*=V;g.k=K;g.v=V;return g;};
   const shadowBox=(g)=>{hoQ([f(-g.hl-g.ov+0.15,-g.hw-g.ov+0.15,0),f(g.hl+g.ov+0.15,-g.hw-g.ov+0.15,0),f(g.hl+g.ov+0.15,g.hw+g.ov+0.2,0),f(-g.hl-g.ov+0.15,g.hw+g.ov+0.2,0)],'rgba(38,48,53,0.16)');};
-  if(opt===1){/* TURF COTTAGE — the reference: turf roof, open timber frame, stone footing, lean-to woodshed */
+  if(opt===1||HO_ROOFS[opt]){const RP=HO_ROOFS[opt];/* TURF COTTAGE — the reference: turf roof, open timber frame, stone footing, lean-to woodshed */
     const g=sc({sd,hl:[0.42,0.5,0.52,0.58,0.62][L-1],hw:[0.4,0.44,0.46,0.5,0.52][L-1],fh:3.2,wh:[10,11,12,13,14][L-1],rh:[13,14,15,17,18][L-1],ov:0.07,th:3.5,
-      wt:'planks',wall:'#8E6A48',wallD:'#74563A',roof:'#7E9656',roofD:'#62773F',roofE:'#5A4A36',rt:'turf',frame:true,frameCol:'#5C3F2A',midPost:L>=2});
+      wt:'planks',wall:'#8E6A48',wallD:'#74563A',roof:'#7E9656',roofD:'#62773F',roofE:'#5A4A36',rt:'turf',frame:true,frameCol:'#5C3F2A',midPost:L>=2});if(RP)Object.assign(g,RP);
     shadowBox(g);
     /* lean-to woodshed behind, along the ridge (level 3+) */
-    if(L>=3){const s={sd,hl:0.22*K,hw:g.hw,fh:0,wh:g.wh-3,rh:g.rh-4,ov:0.06*K,th:3*V,roof:g.roof,roofD:g.roofD,roofE:g.roofE,rt:'turf'};const off=-g.hl-s.hl+0.02;const fs=(a,c,h)=>f(a+off,c,h);
+    if(L>=3){const s={sd,hl:0.22*K,hw:g.hw,fh:0,wh:g.wh-3,rh:g.rh-4,ov:0.06,th:g.th,roof:g.roof,roofD:g.roofD,roofE:g.roofE,rt:g.rt};const off=-g.hl-s.hl+0.02;const fs=(a,c,h)=>f(a+off,c,h);
       const rs=hoRoof(fs,s,win);rs.back();
       hoQ([fs(-s.hl,s.hw,0),fs(s.hl,s.hw,0),fs(s.hl,s.hw,s.wh),fs(-s.hl,s.hw,s.wh)],'#3B2C20');
       hoLogEnds(fs,-s.hl,s.hl,s.hw,0,s.wh*0.62,win);hoQ([fs(-s.hl,s.hw,0),fs(s.hl,s.hw,0),fs(s.hl,s.hw,2.6),fs(-s.hl,s.hw,2.6)],'#8F8C84');

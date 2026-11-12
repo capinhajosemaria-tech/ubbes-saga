@@ -18,7 +18,7 @@ async def main():
             row=[]
             for L in LVS:
                 it=list(bylv.values())[0]
-                await pg.evaluate(f"window.__TOMBSTAGE={L};window.{SET}({o});__G.setView({Z},{it['x']-0.4},{it['y']-0.4})");await pg.wait_for_timeout(300)
+                await pg.evaluate(f"window.__TOMBSTAGE={L};window.{SET}({o});__G.setView({Z},{it['x']-1.6},{it['y']-1.6})");await pg.wait_for_timeout(300)
                 await pg.screenshot(path='shots/og_raw.png');im=Image.open('shots/og_raw.png');cx,cy=im.width//2,im.height//2;row.append((L,im.crop((cx-260,cy-250,cx+260,cy+210))))
             rows.append((o,row))
         await b.close()

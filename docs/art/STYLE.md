@@ -246,6 +246,15 @@ This file is mirrored in the claude.ai project as `claude/Estilo dos edificios.m
 - **Fence of sharpened stakes** all round (as option 2: a low palisade with a rail), a plank gate at the front **barred** with an iron bar.
 - No props. Own shadow. Prototype: `window.__setThrall(4)` (1 thatched longhouse + wattle, 2 log house + stakes, 3 wattle-and-daub with trough kept).
 
+## Ragnar's Ship-Tomb (chosen: option 8 "Ring of warrior posts", 2026-11-12)
+- José rejected the burial mound (options 1–4) — **no mound**.
+- 4×4 wonder, three stages (`window.__TOMBSTAGE` 0/1/2 for screenshots): **waiting** — the ship's outline staked out with a rope, a pile of logs; **building** — the ship on its trestles, the warrior posts raised one by one as the work goes on; **finished** — all posts, the dragon gate and torches.
+- **Ragnar's longship on low trestles** in the middle, drawn finely (`tmShipFine`): planked floor and thwarts inside, strakes of single planks in varied tints with lap lines and rivets, oar ports, a gunwale rail, **mast with the sail furled on its yard** (red stripes), stays, a **steering oar** on the stern quarter, **shields** along the gunwale, a **dragon-head stem** with gold carving and teeth, a curled stern. **No burial chamber on the deck** (José).
+- **Ring of carved warrior posts** round it: each post with red bands, a helmeted head on top and a painted round shield.
+- **Dragon gate** at the front: two tall posts, a lintel with a gold line, dragon heads facing out; a small torch either side.
+- **Ground**: an oval of trodden earth under the ring only; **the rest of the plot keeps its grass** (José: no square patch). Done by drawing the plot's tiles as grass for shaped buildings (`GRASSY_PLOT`); use it for every redrawn building with its own ground shape.
+- Prototype: `window.__setTomb(8)` (5 stone plinth, 6 upturned-hull mausoleum, 7 open stone-lined grave, 1–4 mounds kept).
+
 ## Shadows (shared rule, 2026-11-12)
 - José: the dark box shadow (and the ground patch) does not match the buildings' shapes.
 - Each redrawn building gives its own **shadow volumes** (`shShape(b)` in `20_zzhouseopt.js`: ground outline + height); the cast shadow is the union of those, swept along the sun. The old box shadow stays only for buildings not yet redrawn. Done for the Iron Mine; to do for every building when the styles are rolled out.
@@ -254,4 +263,4 @@ This file is mirrored in the claude.ai project as `claude/Estilo dos edificios.m
 ## Next buildings
 One at a time. José (2026-11-12): **send 4 drawn options straight away** (no separate "current look" step) → José's choice and notes → recorded here.
 When José asks for a fix, change only that (no extra changes without asking).
-Order still to do: Ship-Tomb, Trading House, Beehives → Decor (Community Fire, Wooden Benches, Wattle Fence, Rune Post, Herb Garden, Carved Prow, Drying Nets). Maybe later: palisade and gate in the new style.
+Order still to do: Trading House, Beehives → Decor (Community Fire, Wooden Benches, Wattle Fence, Rune Post, Herb Garden, Carved Prow, Drying Nets). Maybe later: palisade and gate in the new style.

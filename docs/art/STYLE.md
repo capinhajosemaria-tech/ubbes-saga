@@ -60,7 +60,7 @@ Prototype code: branch `house-options`, `source/src/20_zzhouseopt.js` (switch `w
 - Long plank store on a stone footing, visible frame, **brick-red board roof**, grey weathered walls, shuttered window in the gable.
 - **Wide double gate** on the long side (Z-braces, iron straps, rings) with a low stone ramp; a second gate at L5 (longer building).
 - **Covered loading lean-to** on the front gable from L3, crates stacked neatly under it. **No hoist.**
-- Shared rule (all buildings): crossed barge boards at **both** gables — the back pair shows its tips above the ridge.
+- Shared rule (all buildings): crossed barge boards at **both** gables — the back pair: the board on the visible slope runs its full length, the other shows only its tip above the ridge.
 - Prototype: `window.__setWare(3)`.
 
 ## Woodcutter's Lodge (chosen: option 2, 2026-11-12)

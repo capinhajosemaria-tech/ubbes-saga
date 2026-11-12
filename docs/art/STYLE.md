@@ -242,7 +242,7 @@ This file is mirrored in the claude.ai project as `claude/Estilo dos edificios.m
 
 ## Thrall Pen (chosen: option 4 "Two sunken huts", 2026-11-12)
 - 3×2; houses thralls, who may try to flee — so the yard is fenced. Humble, undecorated.
-- **Two small sunken huts** (thatch roofs almost to the ground, low plank walls), **turned so their door gables face the gate**, side by side with a small gap between them (José).
+- **Two small sunken huts** (thatch roofs almost to the ground with no dark band at the eave, low plank walls), **turned so their door gables face the gate**, side by side with a small gap between them (José).
 - **Fence of sharpened stakes** all round (as option 2: a low palisade with a rail), a plank gate at the front **barred** with an iron bar.
 - No props. Own shadow. Prototype: `window.__setThrall(4)` (1 thatched longhouse + wattle, 2 log house + stakes, 3 wattle-and-daub with trough kept).
 

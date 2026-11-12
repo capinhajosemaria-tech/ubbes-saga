@@ -1518,8 +1518,8 @@ function drawFieldOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,ro
   const hesC=-inner+0.14,useHesje=opt===2;
   for(let k=0;k<rows.length;k++){const c=rows[k];if(opt===4&&(Math.abs(c+0.48)<0.1||Math.abs(c-0.48)<0.1))continue;
     if(useHesje&&(k===0||(reaped&&k%4===0))){fdHesje(f,-inner+0.15,inner-0.15,c,win,t,p,sd+k);continue;}
-    if(reaped&&t!=='fodder'){/* stubble and stooks */if(!win){ctx.strokeStyle='#B8A060';ctx.lineWidth=0.5;ctx.beginPath();for(let i=0;i<24;i++){const q=f(-inner+0.1+i*(2*inner-0.2)/24,c,0);ctx.moveTo(q[0],q[1]);ctx.lineTo(q[0],q[1]-1.4);}ctx.stroke();}
-      if(k%2===1&&!useHesje)for(let i=0;i<4;i++)fdStook(f,-inner+0.4+i*(2*inner-0.8)/3+(h2(sd,k*5+i,91)-0.5)*0.1,c,win,t==='flax'?'#B8A46A':null);continue;}
+    if(reaped&&(t!=='fodder'||opt===1)){/* stubble and stooks */if(!win){ctx.strokeStyle=t==='fodder'?'#9AA462':t==='flax'?'#A89A64':'#B8A060';ctx.lineWidth=0.5;ctx.beginPath();for(let i=0;i<24;i++){const q=f(-inner+0.1+i*(2*inner-0.2)/24,c,0);ctx.moveTo(q[0],q[1]);ctx.lineTo(q[0],q[1]-1.4);}ctx.stroke();}
+      continue;}
     if(reaped&&t==='fodder'){if(k%3===1)for(let i=0;i<4;i++){const q=f(-inner+0.4+i*(2*inner-0.8)/3,c,0);ctx.fillStyle=win?'#E8E8E2':'#A8A660';ctx.beginPath();ctx.ellipse(q[0],q[1]-3,5,4.2,0,3.14,6.3);ctx.lineTo(q[0]-5,q[1]-3);ctx.fill();ctx.beginPath();ctx.ellipse(q[0],q[1]-3,5,1.6,0,0,3.14);ctx.fill();if(!win){ctx.fillStyle='rgba(60,60,20,0.2)';ctx.beginPath();ctx.ellipse(q[0]+2,q[1]-3,3,4,0,3.14,6.3);ctx.fill();}}continue;}
     fdRow(f,t,-inner+0.06,inner-0.06,c,opt===4?p*(Math.abs(c)<0.48?1:c<0?0.92:1.05):p,win,sd,k);}
   if(opt===4){/* boundary stone at the front corner */alStone(f(E-0.05,E-0.05,0),2.2,7,sd,3,win);}

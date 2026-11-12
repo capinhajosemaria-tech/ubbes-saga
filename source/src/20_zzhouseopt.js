@@ -249,10 +249,10 @@ function hoPlinth(f,hl,hw,ph,win,sd){const S1=win?'#C9CBC7':'#9C978D',S2=win?'#B
   if(!win){ctx.fillStyle='rgba(92,118,66,0.5)';for(let k=0;k<10;k++){const p=k%2?f((h2(sd,k,82)-0.5)*2*hl,hw,0.6):f(hl,(h2(sd,k,82)-0.5)*2*hw,0.6);ctx.beginPath();ctx.ellipse(p[0],p[1],2.6,1.1,0,0,6.3);ctx.fill();}}}
 function hoStair(f,a0,c0,w,ph,n,win){for(let k=0;k<n;k++){const h=ph*(n-k)/n,a=a0+k*0.11;hoQ([f(a,c0-w,h),f(a,c0+w,h),f(a+0.11,c0+w,h),f(a+0.11,c0-w,h)],win?'#E4E6E2':(k%2?'#ABA69B':'#B6B1A6'));
     hoQ([f(a+0.11,c0-w,h),f(a+0.11,c0+w,h),f(a+0.11,c0+w,0),f(a+0.11,c0-w,0)],win?'#BFC1BD':'#8A857C');hoQ([f(a,c0+w,h),f(a+0.11,c0+w,h),f(a+0.11,c0+w,0),f(a,c0+w,0)],win?'#CFD1CD':'#9A958B');}}
-const JARL_SET={1:{n:'Turf',rt:'turf',roof:'#7E9656',roofD:'#62773F',dc:'#9A3A2C',da:'#E0B54E',wall:'#5E4636',wallD:'#4B3729'},
-  2:{n:'Black shingles',rt:'scale',roof:'#2F2C2A',roofD:'#211F1D',dc:'#C9A042',da:'#5A3A12',wall:'#6A4E38',wallD:'#553E2C'},
-  3:{n:'Straw thatch',rt:'thatch',roof:'#C2A25C',roofD:'#9E8042',dc:'#4A3628',da:'#D9B356',wall:'#5E4636',wallD:'#4B3729'},
-  4:{n:'Blue slate',rt:'slab',blue:1,roof:'#5E7488',roofD:'#4A5D6E',dc:'#C9A042',da:'#7A2E22',wall:'#8E3B2C',wallD:'#742F23'}};
+const JARL_SET={1:{n:'Turf',rt:'turf',roof:'#7E9656',roofD:'#62773F',dc:'#4A3426',da:'#B04434',wall:'#5E4636',wallD:'#4B3729'},
+  2:{n:'Black shingles',rt:'scale',roof:'#2F2C2A',roofD:'#211F1D',dc:'#3A2A1E',da:'#C9A042',wall:'#6A4E38',wallD:'#553E2C'},
+  3:{n:'Straw thatch',rt:'thatch',roof:'#C2A25C',roofD:'#9E8042',dc:'#5A4230',da:'#9A7A50',wall:'#5E4636',wallD:'#4B3729'},
+  4:{n:'Blue slate',rt:'slab',blue:1,roof:'#5E7488',roofD:'#4A5D6E',dc:'#2E2620',da:'#C9A042',wall:'#8E3B2C',wallD:'#742F23'}};
 function drawJarlOpt(b,win,opt){const J=JARL_SET[opt]||JARL_SET[1],f0=hoFrame(b),ax=f0.alongX,sd=(b.id||0)*13+5;
   const hl=1.22,hw=0.8,pad=0.13,ph=7.5,wh=24,rh=26,fP=(a,c,h)=>f0(a,c,(h||0)+ph);
   hoQ([f0(-hl-pad+0.2,-hw-pad+0.2,0),f0(hl+pad+0.25,-hw-pad+0.2,0),f0(hl+pad+0.25,hw+pad+0.3,0),f0(-hl-pad+0.2,hw+pad+0.3,0)],'rgba(38,48,53,0.18)');
@@ -271,4 +271,21 @@ function drawJarlOpt(b,win,opt){const J=JARL_SET[opt]||JARL_SET[1],f0=hoFrame(b)
   if(!win){const gr={sd,rt:J.rt,rh:J.rt==='scale'?20:rh,roofD:J.roofD,blue:J.blue};hoRoofSurface(r.at,gr,win);
     /* hip end: courses parallel to the eave */const E=hipEdges(cR,ax),e0=up(E.fe[0],wh-1),e1=up(E.fe[1],wh-1);ctx.strokeStyle=J.rt==='turf'?'rgba(60,84,44,0.4)':'rgba(20,16,12,0.35)';ctx.lineWidth=0.5;ctx.beginPath();
     for(let k=1;k<8;k++){const v=k/8,a=lerp(e0,r.rf,v),b2=lerp(e1,r.rf,v);ctx.moveTo(a[0],a[1]);ctx.lineTo(b2[0],b2[1]);}ctx.stroke();}
-  hoDragon(r.rf,ax?1:-1,1.25,J.dc,J.da);hoDragon(r.rb,ax?-1:1,1.25,J.dc,J.da);}
+  /* ridge beam in the same wood as the dragons, so beam and heads read as one piece */
+  ctx.strokeStyle=J.dc;ctx.lineWidth=2.6;ctx.lineCap='round';ctx.beginPath();for(let k=0;k<=20;k++){const q=r.ridge(k/20);k?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]);}ctx.stroke();ctx.lineCap='butt';
+  ctx.strokeStyle=J.da;ctx.lineWidth=0.4;ctx.beginPath();for(let k=0;k<=20;k++){const q=r.ridge(k/20);k?ctx.lineTo(q[0],q[1]-0.3):ctx.moveTo(q[0],q[1]-0.3);}ctx.stroke();
+  hoDragonBeam(r,1,ax?1:-1,1.25,J.dc,J.da);hoDragonBeam(r,0,ax?-1:1,1.25,J.dc,J.da);}
+/* the ridge beam itself rises at each end into a carved dragon: one tapered piece of wood, head at the top */
+function hoDragonBeam(r,end,dir,s,col,acc){const p=end?r.rf:r.rb,q=r.ridge(end?0.9:0.1);let ux=p[0]-q[0],uy=p[1]-q[1];const L=Math.hypot(ux,uy)||1;ux/=L;uy/=L;
+  const P0=[p[0]-ux*10*s,p[1]-uy*10*s],P1=[p[0]+ux*4*s,p[1]+uy*4*s-1*s],P2=[p[0]+dir*8*s,p[1]-11*s],P3=[p[0]+dir*4.6*s,p[1]-19*s];
+  const bz=t=>{const a=1-t;return [a*a*a*P0[0]+3*a*a*t*P1[0]+3*a*t*t*P2[0]+t*t*t*P3[0],a*a*a*P0[1]+3*a*a*t*P1[1]+3*a*t*t*P2[1]+t*t*t*P3[1]];};
+  const n=16,L1=[],R1=[];for(let k=0;k<=n;k++){const t=k/n,a=bz(Math.max(0,t-0.02)),b2=bz(Math.min(1,t+0.02));let nx=-(b2[1]-a[1]),ny=b2[0]-a[0];const ln=Math.hypot(nx,ny)||1;nx/=ln;ny/=ln;const w=(1.7-0.6*t)*s,c=bz(t);L1.push([c[0]+nx*w,c[1]+ny*w]);R1.push([c[0]-nx*w,c[1]-ny*w]);}
+  ctx.fillStyle=col;ctx.beginPath();ctx.moveTo(L1[0][0],L1[0][1]);for(const q2 of L1)ctx.lineTo(q2[0],q2[1]);for(let k=n;k>=0;k--)ctx.lineTo(R1[k][0],R1[k][1]);ctx.closePath();ctx.fill();ctx.strokeStyle='rgba(15,10,6,0.6)';ctx.lineWidth=0.45;ctx.stroke();
+  /* carved groove along the beam */ctx.strokeStyle=acc;ctx.lineWidth=0.4;ctx.beginPath();for(let k=2;k<=n;k++){const c=bz(k/n);k===2?ctx.moveTo(c[0],c[1]):ctx.lineTo(c[0],c[1]);}ctx.stroke();
+  /* head: long narrow snout, open jaw, swept-back crest; flat carved silhouette */
+  ctx.save();ctx.translate(P3[0],P3[1]);ctx.scale(dir*s*1.35,s*1.35);
+  ctx.beginPath();ctx.moveTo(-1.1,0.6);ctx.lineTo(-1.6,-1.6);ctx.quadraticCurveTo(0.5,-3.6,3,-3.4);ctx.lineTo(8.6,-2.6);ctx.quadraticCurveTo(9.8,-2.4,9.6,-1.4);ctx.lineTo(6.2,-0.9);ctx.lineTo(8.8,0.6);ctx.quadraticCurveTo(9.2,1.3,8.2,1.3);ctx.lineTo(3.4,1.1);ctx.quadraticCurveTo(1.2,1.6,1.1,2.6);ctx.closePath();
+  ctx.fillStyle=col;ctx.fill();ctx.strokeStyle='rgba(15,10,6,0.6)';ctx.lineWidth=0.45/s;ctx.stroke();
+  /* crest: two thin backward tendrils, the second curling */ctx.strokeStyle=col;ctx.lineWidth=0.9;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(0,-2.8);ctx.quadraticCurveTo(-2.5,-4.6,-4.6,-3.6);ctx.moveTo(1,-3.2);ctx.quadraticCurveTo(-1,-6.4,-3.4,-6);ctx.quadraticCurveTo(-4.6,-5.6,-3.8,-4.8);ctx.stroke();ctx.lineCap='butt';
+  /* carving: eye slit, jaw line, a spiral on the cheek, in the accent */ctx.strokeStyle=acc;ctx.lineWidth=0.35;ctx.beginPath();ctx.moveTo(3.6,-2.2);ctx.lineTo(5.2,-2.4);ctx.moveTo(3.2,0.2);ctx.lineTo(6.4,-0.6);ctx.moveTo(2.3,-0.6);ctx.arc(1.5,-0.6,0.8,0,5.2);ctx.stroke();
+  ctx.restore();}

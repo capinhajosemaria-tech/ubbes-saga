@@ -474,7 +474,7 @@ function hoAltar(f,a,c,win){/* hörgr: stacked stones, flat slab, a bronze bowl 
 function drawHofOpt(b,win,opt){const J=HOF_SET[opt]||HOF_SET[1],f0=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.w>=b.h?0:1}),ax=f0.alongX,sd=(b.id||0)*17+opt;
   const hl=1.32,hw=0.6,gw=0.2,pad=0.1,ph=5,wh=19,rh=22,ov=0.06,fP=(a,c,h)=>f0(a,c,(h||0)+ph);
   hoQ([f0(-hl-gw-pad+0.2,-hw-gw-pad+0.2,0),f0(hl+gw+pad+0.3,-hw-gw-pad+0.2,0),f0(hl+gw+pad+0.3,hw+gw+pad+0.3,0),f0(-hl-gw-pad+0.2,hw+gw+pad+0.3,0)],'rgba(30,38,42,0.2)');
-  hoPlinth(f0,hl+gw+pad,hw+gw+pad,ph,win,sd);hoStair(f0,hl+gw+pad,0,0.26,ph,2,win);
+  {/* plinth flush with the back gallery (no empty ledge on that side), a margin in front */const fPl=(a2,c2,h)=>f0(a2,c2+pad/2,h);hoPlinth(fPl,hl+gw+pad,hw+gw+pad/2,ph,win,sd);}hoStair(f0,hl+gw+pad,0,0.26,ph,2,win);
   /* back gallery (behind the hall): drawn first, only its ends and roof edge show past the hall */
   {const gt0=wh*0.62,gl0=6.5,gR=J.turfGal?'#62773F':J.roofD,cB=-hw-gw;
     hoQ([fP(-hl-gw,cB,0),fP(hl+gw,cB,0),fP(hl+gw,cB,3),fP(-hl-gw,cB,3)],shade(J.wall,0.7));

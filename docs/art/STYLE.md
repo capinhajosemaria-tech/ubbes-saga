@@ -78,5 +78,12 @@ Prototype code: branch `house-options`, `source/src/20_zzhouseopt.js` (switch `w
 - Sawhorse with bow saw from L3.
 - Prototype: `window.__setCarp(2)`.
 
+## Smithy (chosen: option 2, 2026-11-12)
+- Workshop at the back: stone lower walls, timber above, door, window; **black tarred scale-shingle roof**.
+- **Open forge shed** in front (lean-to rising toward the viewer): **stone forge** near the open front with glowing embers, bellows, tools hanging on the back wall, water bucket.
+- **Stone chimney** from the forge up **through the shed roof**: above the roof its walls start on the roof surface, lead flashing at the joint, stone cap, smoke.
+- **Anvil** on an oak block under the shed, hammer resting on it. Iron bars stacked from L3. No charcoal pile.
+- Prototype: `window.__setSmith(2)`.
+
 ## Next buildings
 One at a time: show the current look close up → José's notes → 2–4 options → choice, recorded here.

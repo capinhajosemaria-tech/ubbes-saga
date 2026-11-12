@@ -711,7 +711,7 @@ function drawSmithOpt(b,win,opt){const J=WOOD_SET[opt]||WOOD_SET[1],L=Math.min(5
   /* anvil under the shed, a water bucket, iron bars and charcoal from L3 */hoAnvil(sh,0.17,0.2,win);
   {const p=sh(0.4,0.22,0);ctx.fillStyle='#6E5038';ctx.fillRect(p[0]-2.4,p[1]-4,4.8,4);ctx.fillStyle='#4E6A7A';ctx.beginPath();ctx.ellipse(p[0],p[1]-4,2.4,1,0,0,6.3);ctx.fill();hoLine([p[0]-2.4,p[1]-2],[p[0]+2.4,p[1]-2],'#2E2C2A',0.5);}
   if(L>=3){for(let k=0;k<3;k++)for(let i=0;i<4-k;i++){const p=sh(-0.42+i*0.035+k*0.017,0.22,1+k*1.2);hoQ([[p[0]-3,p[1]],[p[0]+3,p[1]+1.5],[p[0]+3,p[1]+0.5],[p[0]-3,p[1]-1]],k%2?'#5A5856':'#6E6C6A');}
-    const cp=f(-0.75,0.7,0);ctx.fillStyle='#1E1C1A';ctx.beginPath();ctx.ellipse(cp[0],cp[1]-2,9,4.5,0,3.14,6.28);ctx.lineTo(cp[0]+9,cp[1]);ctx.ellipse(cp[0],cp[1],9,3,0,0,3.14);ctx.fill();ctx.fillStyle='rgba(255,255,255,0.12)';for(let i=0;i<6;i++){ctx.fillRect(cp[0]-6+i*2.2,cp[1]-3-(i%3),1,0.7);}}
+    /* charcoal pile removed (José) */}
   /* posts and the roof */for(const q of [[-sl,sw,hF],[sl,sw,hF],[sl,-sw,hB]])hoQ([sh(q[0]-0.03,q[1],0),sh(q[0]+0.03,q[1],0),sh(q[0]+0.03,q[1],q[2]),sh(q[0]-0.03,q[1],q[2])],'#3A2A1C');hoLine(sh(-sl,sw,hF),sh(sl,sw,hF),'#3A2A1C',1.4);
   hoQ([sh(-sl-0.05,-sw-0.05,hB+0.5),sh(sl+0.05,-sw-0.05,hB+0.5),sh(sl+0.05,sw+0.05,hF+1),sh(-sl-0.05,sw+0.05,hF+1)],win?'#EEF1F0':J.roof);
   if(!win)hoRoofSurface((u,v)=>lerp(sh(-sl-0.05+(2*sl+0.1)*u,-sw-0.05,hB+0.5),sh(-sl-0.05+(2*sl+0.1)*u,sw+0.05,hF+1),v),{sd:sd+4,rt:J.rt,rh:8,roofD:J.roofD,blue:J.blue},win);

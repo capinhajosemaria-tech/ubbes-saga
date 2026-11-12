@@ -1683,7 +1683,7 @@ function drawBrewOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot
       const vh=ga.wh+ga.rh-11;hoQ([P(-0.07,vh),P(0.07,vh),P(0.07,vh+5),P(-0.07,vh+5)],'#1E1A16');for(let h=vh+0.6;h<vh+5;h+=1)hoLine(P(-0.07,h),P(0.07,h+0.4),'#7A5A3C',0.6);
       const st=fwa(ga.hl+0.1,0,0);ctx.fillStyle=win?'#E2E4E0':'#8E877B';ctx.beginPath();ctx.ellipse(st[0],st[1],5,2.1,0,0,6.3);ctx.fill();
       /* two barrels standing against the gable, either side of the door */brBarrel(fwa(ga.hl+0.09,-0.36,0),1.15,win);brBarrel(fwa(ga.hl+0.09,0.36,0),1.15,win);}
-    r.front();r.ridge();hoBarge(fwa,ga,'#4A3424',0.22,L>=5);for(const a of (L>=3?[-0.3,0.15]:[-0.05])){hoLouvre(fwa,ga,a,'#3A2A1C');brSteam(fwa(a,0,ga.wh+ga.rh+5),win,a*7+3);}}
+    r.front();r.ridge();hoBarge(fwa,ga,'#4A3424',0.22,L>=5);bkChimney(fwa,ga,-0.12,win,sd);}
   else{house();brKiln(f,0.48,0.42,win,sd,J);for(let i=0;i<3;i++)brBarrel(f(0.82-i*0.0,-0.25+i*0.18,0),1,win);brBarrel(f(-0.1,0.8,0),1,win);brBarrel(f(0.08,0.86,0),1,win);}}
 {const _shW=shShape;shShape=function(b){if(b.t==='brewery'&&BREW_OPT){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),box=(a,c,sa,sc,h)=>({pts:[f(a-sa,c-sc,0),f(a+sa,c-sc,0),f(a+sa,c+sc,0),f(a-sa,c+sc,0)],h});
   if(BREW_OPT===5)return [box(-0.08,0,0.82,0.75,0.15),box(-0.08,0,0.82,0.05,1.6)];const V=[box(-0.38,-0.42,0.5,0.4,0.75)];if(BREW_OPT===1||BREW_OPT===3)V.push(box(0.42,0.2,0.5,0.34,0.5));else if(BREW_OPT===2)V.push(box(0.5,0.45,0.4,0.3,0.45));else V.push(box(0.48,0.42,0.24,0.24,0.8));return V;}return _shW(b);};}

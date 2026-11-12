@@ -555,8 +555,9 @@ function hoStabbur(f0,ao,co,k,J,win,sd,L,full){const f=(a,c,h)=>f0(a*k+ao,c*k+co
   /* small vent hatch in the upper gable */hoRect(fU,g2,'G',-0.07,0.07,uw+2,uw+6,'#2A1F18');
   r.front();r.ridge();hoBarge(fU,g2,'#5A4230',0.3,L>=5);
   if(full&&L>=5){for(let i=0;i<5;i++)hoSheaf(fU(-hl+0.15+i*0.25,hw+0.08,-3));}
-  if(full){/* notched log ladder from the ground to the door sill */const a1=f(hl1+0.42,0.02,0),a2=f(hl1+0.02,0.02,st+1.6);hoLine(a1,a2,'#6E5038',2.6*k);hoLine([a1[0]+0.8*k,a1[1]],[a2[0]+0.8*k,a2[1]],'rgba(255,230,190,0.2)',0.6);
-    for(let i=1;i<5;i++){const p=lerp(a1,a2,i/5);hoLine([p[0]-1.4*k,p[1]],[p[0]+1.4*k,p[1]],'#3A2A1C',0.7);}}}
+  if(full){/* a real ladder: two rails and rungs, leaning from the ground to the door sill */const r1=[f(hl1+0.4,-0.07,0),f(hl1+0.02,-0.07,st+1.6)],r2=[f(hl1+0.4,0.09,0),f(hl1+0.02,0.09,st+1.6)];
+    for(let i=1;i<7;i++){const t2=i/7,p=lerp(r1[0],r1[1],t2),q=lerp(r2[0],r2[1],t2);hoLine(p,q,'#6E5038',1.1*k);hoLine([p[0],p[1]-0.5],[q[0],q[1]-0.5],'rgba(255,230,190,0.2)',0.4);}
+    for(const r of [r1,r2]){hoLine(r[0],[r[1][0],r[1][1]-2*k],'#5A4230',1.5*k);hoLine([r[0][0]+0.6*k,r[0][1]],[r[1][0]+0.6*k,r[1][1]-2*k],'rgba(255,230,190,0.18)',0.4);}}}
 function drawGranOpt(b,win,opt){const J=GRAN_SET[opt]||GRAN_SET[1],L=Math.min(5,b.lvl||1),f0=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.w>=b.h?0:1}),sd=(b.id||0)*19+opt;
   /* back: a smaller second stabbur from level 3, or the hay barrack */
   if(J.barrack){const ao=-0.82,s=0.34,hh=L>=3?26:20,P=(a,c,h)=>f0(ao+a,c,h);hoQ([P(-s,-s,0),P(s+0.1,-s,0),P(s+0.1,s+0.12,0),P(-s,s+0.12,0)],'rgba(30,38,42,0.14)');
@@ -567,6 +568,6 @@ function drawGranOpt(b,win,opt){const J=GRAN_SET[opt]||GRAN_SET[1],L=Math.min(5,
     hoPyramid(P,0,0,s+0.08,hh,hh+12,J.roof,J.roofD,J.rt,win,sd+3);}
   else if(L>=3)hoStabbur(f0,-0.88,-0.28,0.7,J,win,sd+5,L,false);
   hoStabbur(f0,0.32,0,1,J,win,sd,L,true);
-  /* sacks and baskets on the ground */const props=[[0.95,0.55],[1.1,0.4],[0.82,0.66]];hoSack(f0(1.0,0.62,0));if(L>=2){hoSack(f0(1.18,0.48,0),'#BFAE84');hoBasket(f0(0.85,-0.62,0));}if(L>=4){hoSack(f0(1.05,0.4,0));hoBasket(f0(1.12,-0.45,0));}}
+  /* no props scattered on the ground */}
 /* test switch: hide the sea-mist at the map edge (gallery screenshots) */
 {const _ef=drawEdgeFog;drawEdgeFog=function(win,vis){if(window.__NOFOG)return;return _ef(win,vis);};}

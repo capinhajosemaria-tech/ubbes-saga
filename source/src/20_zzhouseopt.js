@@ -70,8 +70,8 @@ function hoWalls(f,g,win){const {hl,hw,fh,wh,rh}=g,W=g.wall,WD=g.wallD;
     hoRect(f,g,'G',-hw,hw,wh-1.2,wh+0.6,shade(T,0.85));hoRect(f,g,'L',-hl,hl,wh-1.2,wh,T);
     if(g.midPost){hoRect(f,g,'L',-0.03,0.03,fh,wh,T);}}}
 /* the roof: back slope, gable-end edges, front slope, surface (turf, thatch, shingle, slab), barge boards, ridge */
-function hoRoof(f,g,win){const {hl,hw,wh,rh,ov}=g,top=wh+rh,eH=wh-ov/hw*rh,ce=hw+ov,a0=-hl-ov,a1=hl+ov,t=g.th;
-  const R=win?'#EEF1F0':g.roof,RD=win?'#D3DAD9':g.roofD,E=win?'#C9CED0':g.roofE;
+function hoRoof(f,g,win){const {hl,hw,wh,rh,ov}=g,top=wh+rh,eH=wh-ov/hw*rh,ce=hw+ov,a0=-hl-ov,a1=hl+ov,th0=g.rt==='thatch',t=th0?Math.min(g.th,1.2):g.th;/* thatch: no dark band at the eave (José) */
+  const R=win?'#EEF1F0':g.roof,RD=win?'#D3DAD9':g.roofD,E=win?'#C9CED0':th0?g.roofD:g.roofE;
   return {back:()=>{hoQ([f(a0,0,top),f(a1,0,top),f(a1,-ce,eH),f(a0,-ce,eH)],RD);},
     end:()=>{/* overhang of the back slope over the gable, with its thickness */hoQ([f(hl,0,top),f(a1,0,top),f(a1,-ce,eH),f(hl,-ce,eH)],RD);
       hoQ([f(a1,0,top),f(a1,-ce,eH),f(a1,-ce,eH-t),f(a1,0,top-t)],E);

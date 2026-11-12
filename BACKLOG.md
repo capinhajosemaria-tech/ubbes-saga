@@ -18,10 +18,13 @@ Finished items are removed from this file; what each version changed is in `CHAN
 
 ## 1. Core redesign (decided with José, 2026-11-11)
 Goal: fewer systems, each one counts more; decisions matter, but the player stays free to build his own way and can always progress (maybe more slowly). City building and resources first; the lineage matters later, when resources are less of a worry.
-Order: Round 1 (done, 0.14.0) → 1C (done, 0.15.0) → **1H** → 1D → 1I → 1E → 1F → 1G → 1J. Balance fixes 1 items E1 (Smokehouse) and A2 (Bakery) are replaced by Round 1; re-check the rest after it.
+Order: Round 1 (done, 0.14.0) → 1C (done, 0.15.0) → **1H** → 1D → 1I → 1E → 1F → 1G → 1J → 1K (1K's place not decided yet — ask José). Balance fixes 1 items E1 (Smokehouse) and A2 (Bakery) are replaced by Round 1; re-check the rest after it.
 
 ## This round
 - (none — next is 1H. Firewood option A was assumed in 0.14.0; tune after José plays.)
+
+## Bugs and small fixes
+- [ ] **Gold has no counter in the top bar** (José, 2026-11-12): `CHIPS` in `26_hud.js` has silver but no gold, so the player can't see how much gold he has (it only shows in the trader sheet). Also, **silver only appears from Town Hall 3** (`chip-silver` hidden below TH3). Show silver from the start, or as soon as there is any, and add a gold chip that appears once there is gold.
 
 ## Next rounds (in this order)
 
@@ -44,7 +47,7 @@ Order: Round 1 (done, 0.14.0) → 1C (done, 0.15.0) → **1H** → 1D → 1I →
 - [ ] **Events tied to the player's choices**: fewer, stronger events (26 today) that react to the patron god and Ubbe's trait (Thor's sign before a battle, merchants for a Trader, wolves only in winter).
 
 ### 1E. Trade and land
-- [ ] **Land costs silver**; fame earned gives the right to claim the next ring of land.
+- Land stays as it is now: bought with fame, no silver cost (José, 2026-11-12: "fame is fine").
 - [ ] **New trade screen**: map with the trading partners; click one to see its requests and send our offers (good + price, for another good or for silver); they accept, refuse or counter. Each village has a relation that improves with good deals. Goods travel by knarr (takes days). Silver buys goods at the market.
 
 ### 1F. World map
@@ -52,6 +55,13 @@ Order: Round 1 (done, 0.14.0) → 1C (done, 0.15.0) → **1H** → 1D → 1I →
 
 ### 1G. Worker priorities
 - [ ] Setting: keep today's per-building − / +, or **priorities by category** (food, materials, crafts, building: high / normal / low).
+
+### 1K. Sources run out again (José's play feedback, 2026-11-12)
+Wood is still the limit, and iron piles up far too fast. José wants each source to have a **yearly cap that gets used up**. This undoes 0.15.4's "sources never run out" (`SRC_ENDLESS`, `SRC_Y`, `refillSources()` in `10_zsources.js`).
+- [ ] **Trees**: high cap per tree. A tree that is used up is drawn as a **stump**: only the trunk is left and the rest of the tree is gone (`drawStump` exists in `16_drawing_helpers.js`). It **grows back 3 days after winter ends**.
+- [ ] **Fish**: high cap per water tile. **Berry bushes**: lower cap.
+- [ ] **Iron**: very high cap per outcrop, refilled **every two years, at the start of winter** (not every year).
+- [ ] Show in the building sheet and on hover how much each source has left, and when it comes back. Check that wood is not still the bottleneck afterwards, and that iron no longer piles up.
 
 ### 1J. Tutorial
 - [ ] Rewrite the guide for the new game, with more explanations (seasons, source limits, firewood, construction, production panel, reserves, Town Hall requirements).
@@ -67,12 +77,8 @@ Decided: roads B, grass B (now in Round 1).
 - [x] **Shadows and ground patch follow the building shape**: done in Beta 0.16.1 (`20_zzzshade.js`).
 - [ ] Tidy the art code: fold `20_zzstyle.js` into the old drawing files and remove the unused options and old drawings (smaller file, faster load); phone check.
 To decide:
-- [ ] **Building grime** (contact shadow, damp walls, moss on footings, rain streaks) from option B — ask José.
-Plan (agreed in principle):
-1. **Style rules** (short doc): line widths (fine, ~0.5–1 px), door size/position on every building, chimney seating (on ridge or slope, with flashing and base), windows/shutters, boards, eaves. Derived from the chosen Town Hall entrance.
-2. **Shared parts kit**, drawn once with a close-up level: door, chimney, window/shutter, plank walls, roof edge, shields, torches. Every building uses it, so fixes apply everywhere.
-3. **Rebuild buildings in groups of 5–6** (44 types, ~30 real buildings): one before/after contact sheet per group, close up; several options only for key buildings (Town Hall, houses, Jarl's House, Hof, market). About 5–7 rounds in all. Fine detail only when zoomed in; measure performance each round.
-Covers also: richer building textures (planks, roof materials, props), darker shingle and thatch roofs, proper timber framing, more contrast between building kinds.
+- [ ] **Building grime** (contact shadow, damp walls, moss on footings, rain streaks): later. First show José the options that exist (José, 2026-11-12).
+- The building redesign plan (style rules, parts kit, groups of 5–6) is **not needed for now**: the building art was already updated in 0.16.0 (José, 2026-11-12).
 Later art:
 - [ ] Water depth near shores.
 - [ ] Ships, palisade and walls: warm rim light at dusk, torches on gates and towers at night.
@@ -88,7 +94,7 @@ Audit 2026-11-11: data in `tools/balance/audit_data.md`, report in `tools/balanc
 - [ ] **E5–E7 — cleanup**: regenerate `NUMBERS.md` (header says 0.11.0, troop gear column empty), complete Test villages, remove dead constants.
 
 ## 4. Balance fixes 2 (decide after re-measuring)
-- [ ] **O1 — silver has no use** (~650/yr in vs ~2,000–2,500 sinks to TH5; bots end with 8–17k unspent) — mostly answered by 1E (land and goods cost silver); then maybe: merchant purse 100/150/200 at TH3/4/5; mercenaries 14 → 40; TH5 silver 250 → 400; Hof 50 → 150; silver on level 4/5 upgrades.
+- [ ] **O1 — silver has no use** (~650/yr in vs ~2,000–2,500 sinks to TH5; bots end with 8–17k unspent) — partly answered by 1E (goods cost silver; land stays on fame); then maybe: merchant purse 100/150/200 at TH3/4/5; mercenaries 14 → 40; TH5 silver 250 → 400; Hof 50 → 150; silver on level 4/5 upgrades.
 - [ ] **E3** — Market bonus only with its worker; Pen loses its useless third slot.
 - [ ] **O3, E4 — village raids**: palisade bonus counted once (now twice); raiders 6+2/yr (max 24) → 8+3 (max 30); teach the bot to wall the Town Hall at TH5 (bots never build a palisade, so walls can't be measured yet). Then balance raid frequency, size and loot after José has met a few.
 - [ ] **P3, P4 — pacing TH3–TH5**: hall population 22/32/48/80 → 22/40/70/110; TH5 fame 1,700 → 1,500 (low-raid players stuck; saga goals give ~1,300). Note: no fully peaceful path exists by rule (TH3 needs warriors, TH4 a raid).

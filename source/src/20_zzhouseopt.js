@@ -215,3 +215,60 @@ function drawHouseOpt(b,win,opt){const L=Math.min(5,b.lvl||1),f=hoFrame(b),sd=(b
     if(L>=5){hoShield(f(g.hl,0,g.wh+g.rh*0.38),'#A34A3A','#D7CDB4',3);}
     return;}
   _drawHouseOld(b,win);}
+
+/* =================== Jarl's House options (prototype) — window.__setJarl(n) ===================
+   Same bowed hip-roof longhouse, taller, on an imposing cut-stone plinth with a stair, carved double door,
+   windows on the long side, detailed roof textures and carved Norse dragon finials; no banner. */
+let JARL_OPT=0,HO_NOTEX=false;
+window.__setJarl=n=>{JARL_OPT=n|0;};
+const _roofTex0=roofTex;roofTex=function(at,rt,win,seed){if(HO_NOTEX&&!win)return;return _roofTex0(at,rt,win,seed);};
+const _drawShaped0=drawShaped;drawShaped=function(b,win,c0,ax){if(JARL_OPT&&b.t==='jarl'){drawJarlOpt(b,win,JARL_OPT);return true;}return _drawShaped0(b,win,c0,ax);};
+/* carved Norse dragon head on a curled neck; dir +1/-1 = facing right/left on screen */
+function hoDragon(p,dir,s,col,acc){ctx.save();ctx.translate(p[0],p[1]);ctx.scale(dir*s,s);
+  const path=()=>{ctx.beginPath();ctx.moveTo(-2.4,0);ctx.quadraticCurveTo(-4.5,-9,-0.5,-16);ctx.lineTo(-2,-19.5);ctx.lineTo(1,-18.2);ctx.lineTo(1,-22.5);ctx.lineTo(3.4,-19.6);ctx.lineTo(4.2,-22);ctx.lineTo(5.4,-19.8);
+    ctx.quadraticCurveTo(9,-21,12.6,-19.2);ctx.lineTo(13.6,-17.6);ctx.lineTo(9.6,-16.8);ctx.lineTo(12.8,-14.4);ctx.lineTo(7.4,-13.6);ctx.quadraticCurveTo(4.4,-12.4,4.2,-9);ctx.quadraticCurveTo(3.2,-4,3.2,0);ctx.closePath();};
+  path();ctx.fillStyle=col;ctx.fill();ctx.strokeStyle='rgba(20,14,10,0.75)';ctx.lineWidth=0.5/s;ctx.stroke();
+  /* carving: neck scales, jaw line, mane curl, eye, tongue */
+  ctx.strokeStyle=acc;ctx.lineWidth=0.45;ctx.beginPath();for(let k=0;k<4;k++){const y=-2.5-k*3.2;ctx.moveTo(-1.6-k*0.5,y);ctx.quadraticCurveTo(0.5,y-1.6,2.6-k*0.1,y-0.2);}
+  ctx.moveTo(5.5,-16.2);ctx.quadraticCurveTo(8,-17,9.6,-16.8);ctx.moveTo(6,-14.6);ctx.lineTo(11.5,-14.7);
+  ctx.moveTo(0.5,-14);ctx.arc(-0.3,-13.2,1.3,-0.6,4.2);ctx.stroke();
+  ctx.fillStyle=acc;ctx.beginPath();ctx.ellipse(6.6,-18.3,1.1,0.8,0,0,6.3);ctx.fill();ctx.fillStyle='#1E1612';ctx.beginPath();ctx.arc(6.9,-18.3,0.45,0,6.3);ctx.fill();
+  ctx.strokeStyle='#A33A2C';ctx.lineWidth=0.6;ctx.beginPath();ctx.moveTo(10,-15.6);ctx.quadraticCurveTo(13.5,-15.8,14.6,-14.2);ctx.quadraticCurveTo(15,-13,14,-13.2);ctx.stroke();
+  ctx.fillStyle='rgba(255,240,200,0.18)';ctx.beginPath();ctx.moveTo(-1.8,-1);ctx.quadraticCurveTo(-3.6,-9,-0.4,-15.4);ctx.lineTo(0.4,-14.6);ctx.quadraticCurveTo(-2.2,-9,-0.6,-1);ctx.fill();
+  ctx.restore();}
+function hoPlinth(f,hl,hw,ph,win,sd){const S1=win?'#C9CBC7':'#9C978D',S2=win?'#B2B4B0':'#827D74';
+  hoQ([f(-hl,hw,0),f(hl,hw,0),f(hl,hw,ph),f(-hl,hw,ph)],S1);hoQ([f(hl,-hw,0),f(hl,hw,0),f(hl,hw,ph),f(hl,-hw,ph)],S2);
+  /* cut blocks, staggered, each a slightly different tone */const rows=Math.max(2,Math.round(ph/3.4));
+  for(const face of ['L','G']){const len=face==='L'?hl:hw,pt=(s,h)=>face==='L'?f(s,hw,h):f(hl,s,h);
+    for(let r=0;r<rows;r++){const h1=ph*r/rows,h2b=ph*(r+1)/rows,n=Math.round(len*7);for(let k=-1;k<n;k++){const s1=Math.max(-len,-len+2*len*(k+(r%2?0.5:0))/n),s2=Math.min(len,-len+2*len*(k+1+(r%2?0.5:0))/n);if(s2<=s1)continue;
+        const tone=h2(sd,r*40+k+(face==='L'?0:300),81);if(tone>0.6)hoQ([pt(s1,h1),pt(s2,h1),pt(s2,h2b),pt(s1,h2b)],tone>0.85?'rgba(255,250,235,0.10)':'rgba(30,26,20,0.10)');
+        ctx.strokeStyle='rgba(40,36,30,0.55)';ctx.lineWidth=0.5;ctx.beginPath();const a=pt(s1,h1),b2=pt(s1,h2b);ctx.moveTo(a[0],a[1]);ctx.lineTo(b2[0],b2[1]);ctx.stroke();}
+      hoLine(pt(-len,h1),pt(len,h1),'rgba(40,36,30,0.55)',0.5);}}
+  /* cap slab with a lit edge, moss at the foot */hoQ([f(-hl,hw,ph),f(hl,hw,ph),f(hl,hw,ph-1.2),f(-hl,hw,ph-1.2)],win?'#E2E4E0':'#B4AFA4');hoQ([f(hl,-hw,ph),f(hl,hw,ph),f(hl,hw,ph-1.2),f(hl,-hw,ph-1.2)],win?'#D0D2CE':'#A19C92');
+  hoLine(f(-hl,hw,ph),f(hl,hw,ph),'rgba(255,250,230,0.4)',0.6);hoLine(f(hl,-hw,ph),f(hl,hw,ph),'rgba(255,250,230,0.3)',0.6);
+  if(!win){ctx.fillStyle='rgba(92,118,66,0.5)';for(let k=0;k<10;k++){const p=k%2?f((h2(sd,k,82)-0.5)*2*hl,hw,0.6):f(hl,(h2(sd,k,82)-0.5)*2*hw,0.6);ctx.beginPath();ctx.ellipse(p[0],p[1],2.6,1.1,0,0,6.3);ctx.fill();}}}
+function hoStair(f,a0,c0,w,ph,n,win){for(let k=0;k<n;k++){const h=ph*(n-k)/n,a=a0+k*0.11;hoQ([f(a,c0-w,h),f(a,c0+w,h),f(a+0.11,c0+w,h),f(a+0.11,c0-w,h)],win?'#E4E6E2':(k%2?'#ABA69B':'#B6B1A6'));
+    hoQ([f(a+0.11,c0-w,h),f(a+0.11,c0+w,h),f(a+0.11,c0+w,0),f(a+0.11,c0-w,0)],win?'#BFC1BD':'#8A857C');hoQ([f(a,c0+w,h),f(a+0.11,c0+w,h),f(a+0.11,c0+w,0),f(a,c0+w,0)],win?'#CFD1CD':'#9A958B');}}
+const JARL_SET={1:{n:'Turf',rt:'turf',roof:'#7E9656',roofD:'#62773F',dc:'#9A3A2C',da:'#E0B54E',wall:'#5E4636',wallD:'#4B3729'},
+  2:{n:'Black shingles',rt:'scale',roof:'#2F2C2A',roofD:'#211F1D',dc:'#C9A042',da:'#5A3A12',wall:'#6A4E38',wallD:'#553E2C'},
+  3:{n:'Straw thatch',rt:'thatch',roof:'#C2A25C',roofD:'#9E8042',dc:'#4A3628',da:'#D9B356',wall:'#5E4636',wallD:'#4B3729'},
+  4:{n:'Blue slate',rt:'slab',blue:1,roof:'#5E7488',roofD:'#4A5D6E',dc:'#C9A042',da:'#7A2E22',wall:'#8E3B2C',wallD:'#742F23'}};
+function drawJarlOpt(b,win,opt){const J=JARL_SET[opt]||JARL_SET[1],f0=hoFrame(b),ax=f0.alongX,sd=(b.id||0)*13+5;
+  const hl=1.22,hw=0.8,pad=0.13,ph=7.5,wh=24,rh=26,fP=(a,c,h)=>f0(a,c,(h||0)+ph);
+  hoQ([f0(-hl-pad+0.2,-hw-pad+0.2,0),f0(hl+pad+0.25,-hw-pad+0.2,0),f0(hl+pad+0.25,hw+pad+0.3,0),f0(-hl-pad+0.2,hw+pad+0.3,0)],'rgba(38,48,53,0.18)');
+  hoPlinth(f0,hl+pad,hw+pad,ph,win,sd);hoStair(f0,hl+pad,0,0.3,ph,3,win);
+  const g={sd,hl,hw,fh:1.6,wh,rh:0,wt:'staves',wall:J.wall,wallD:J.wallD,frame:true,frameCol:'#3A2A1E',k:1,v:1};
+  hoWalls(fP,g,win);
+  /* windows along the long side, shields between them, high under the eaves */
+  for(const a of [-0.85,-0.32,0.32,0.85])hoWindow(fP,g,'L',a,0.16,9,14.5,{shutters:'#7A2E22'});
+  [-1.12,-0.575,0,0.575,1.12].forEach((a,i)=>hoShield(fP(a,hw,12),i%2?'#D7CDB4':'#A34A3A',i%2?'#A34A3A':'#D7CDB4',3.6));
+  hoDoor(fP,g,'G',0,0.4,18,{arch:true,portal:'#C9A64A',col:'#6E4A30',frame:'#2E2018',steps:1});
+  {const d1=fP(hl,0,g.fh),d2=fP(hl,0,g.fh+17);hoLine(d1,d2,'#2E2018',0.9);}
+  /* torches beside the door */for(const s of [-0.36,0.36]){const p=fP(hl+0.02,s,13);hoLine([p[0],p[1]],[p[0],p[1]-5],'#3A2A1E',1.1);ctx.fillStyle='rgba(255,190,100,0.25)';ctx.beginPath();ctx.ellipse(p[0],p[1]-7,5,4,0,0,6.3);ctx.fill();ctx.fillStyle='#F0A040';ctx.beginPath();ctx.moveTo(p[0]-1.6,p[1]-5);ctx.quadraticCurveTo(p[0],p[1]-10-(typeof t==='number'?Math.sin(t*7)*1.2:0),p[0]+1.6,p[1]-5);ctx.fill();}
+  /* the roof: same bowed hip shape as before, raised onto the plinth, with the new surface */
+  const cR=ax?{T:fP(-hl,-hw),R:fP(hl,-hw),Bt:fP(hl,hw),L:fP(-hl,hw)}:{T:fP(-hl,-hw),R:fP(-hl,hw),Bt:fP(hl,hw),L:fP(hl,-hw)};
+  HO_NOTEX=true;const r=hipRoof(cR,wh,rh,ax,{hp:0.16,sag:10,bow:3,rt:J.rt==='turf'?'turf':'shingle',roof:J.roof,roofD:J.roofD,ov:4,seed:b.id},win);HO_NOTEX=false;
+  if(!win){const gr={sd,rt:J.rt,rh:J.rt==='scale'?20:rh,roofD:J.roofD,blue:J.blue};hoRoofSurface(r.at,gr,win);
+    /* hip end: courses parallel to the eave */const E=hipEdges(cR,ax),e0=up(E.fe[0],wh-1),e1=up(E.fe[1],wh-1);ctx.strokeStyle=J.rt==='turf'?'rgba(60,84,44,0.4)':'rgba(20,16,12,0.35)';ctx.lineWidth=0.5;ctx.beginPath();
+    for(let k=1;k<8;k++){const v=k/8,a=lerp(e0,r.rf,v),b2=lerp(e1,r.rf,v);ctx.moveTo(a[0],a[1]);ctx.lineTo(b2[0],b2[1]);}ctx.stroke();}
+  hoDragon(r.rf,ax?1:-1,1.25,J.dc,J.da);hoDragon(r.rb,ax?-1:1,1.25,J.dc,J.da);}

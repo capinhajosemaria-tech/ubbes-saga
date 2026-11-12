@@ -1766,3 +1766,35 @@ function drawTailorOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,r
   else{house();tlFrame(f,0.35,0.35,8,win,'#8A6440');tlFrame(f,0.75,0.05,7,win,'#6E5038');}}
 {const _shT=shShape;shShape=function(b){if(b.t==='tailor'&&TAIL_OPT){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),box=(a,c,sa,sc,h)=>({pts:[f(a-sa,c-sc,0),f(a+sa,c-sc,0),f(a+sa,c+sc,0),f(a-sa,c+sc,0)],h});
   const V=[box(-0.38,-0.42,0.5,0.4,0.75)];if(TAIL_OPT===3)V.push(box(0.42,0.2,0.5,0.34,0.6));else if(TAIL_OPT===4){V.push(box(0.35,0.35,0.2,0.03,0.6),box(0.75,0.05,0.18,0.03,0.55));}else if(TAIL_OPT===1)V.push(box(0.37,0.5,0.47,0.03,0.55));return V;}return _shT(b);};}
+
+/* =================== Tavern options (prototype) — window.__setTavern(n) ===================
+   3×2, no levels; folk drink ale and mead here in the evenings. 1 Black-scale mead hall, open lit door, benches against the wall, horn sign, two torches
+   2 Red-board hall with a covered porch along the front: long table, benches, tankards · 3 Thatched hall + yard with a fire pit and log benches · 4 Stone-footed hall, slate roof, two barrels at the gable, sign */
+let TAV_OPT=0;window.__setTavern=n=>{TAV_OPT=n|0;};
+{const _dsK=drawShaped;drawShaped=function(b,win,c0,ax){if(TAV_OPT&&b.t==='tavern'){drawTavernOpt(b,win,TAV_OPT);return true;}return _dsK(b,win,c0,ax);};}
+function tvDoorLit(f,g,s,win){/* open door on the long wall: warm light inside, the leaf swung in, a pool of light on the ground */const w=0.18,hd=9,fh=g.fh;hoRect(f,g,'L',s-w/2-0.03,s+w/2+0.03,fh,fh+hd+1.6,'#3A2A1C');hoRect(f,g,'L',s-w/2,s+w/2,fh,fh+hd,win?'#C8C2B8':'#E8A048');
+  if(!win){hoRect(f,g,'L',s-w/2,s-w/2+0.05,fh,fh+hd,'#5A4230');const p=f(s,g.hw+0.18,0);ctx.fillStyle='rgba(255,190,100,0.28)';ctx.beginPath();ctx.ellipse(p[0],p[1],13,5.5,0,0,6.3);ctx.fill();ctx.fillStyle='rgba(255,220,150,0.35)';const q=f(s,g.hw+0.004,fh+hd*0.5);ctx.beginPath();ctx.ellipse(q[0],q[1],3,5,0,0,6.3);ctx.fill();}
+  const st=f(s,g.hw+0.1,0);ctx.fillStyle=win?'#E2E4E0':'#8E877B';ctx.beginPath();ctx.ellipse(st[0],st[1],4.6,1.9,0,0,6.3);ctx.fill();}
+function tvBench(f,a0,a1,c,win){/* plank bench along a: two legs, a seat */const h=2.6,w=0.045,col=win?'#D0C8B8':'#8A6A48',colD=win?'#B8B0A0':'#5E4630';for(const a of [a0+0.05,a1-0.05])hoLine(f(a,c+w*0.5,0),f(a,c+w*0.5,h),colD,1);hoQ([f(a0,c-w,h),f(a1,c-w,h),f(a1,c+w,h),f(a0,c+w,h)],col);hoQ([f(a0,c+w,h),f(a1,c+w,h),f(a1,c+w,h-0.7),f(a0,c+w,h-0.7)],colD);}
+function tvTable(f,a0,a1,c,win,mugs){const h=4.6,w=0.1,col=win?'#D8D0C0':'#9A7A52',colD=win?'#C0B8A8':'#6E5038';for(const a of [a0+0.06,a1-0.06])hoLine(f(a,c+w*0.6,0),f(a,c+w*0.6,h),colD,1.2);hoQ([f(a0,c-w,h),f(a1,c-w,h),f(a1,c+w,h),f(a0,c+w,h)],col);hoQ([f(a0,c+w,h),f(a1,c+w,h),f(a1,c+w,h-0.8),f(a0,c+w,h-0.8)],colD);
+  if(mugs&&!win)for(let i=0;i<mugs;i++){const p=f(a0+0.1+(a1-a0-0.2)*i/Math.max(1,mugs-1),c+(i%2?0.04:-0.03),h);ctx.fillStyle='#6E5038';ctx.fillRect(p[0]-0.9,p[1]-2.2,1.8,2.2);ctx.fillStyle='#E8D8A8';ctx.beginPath();ctx.ellipse(p[0],p[1]-2.2,0.9,0.4,0,0,6.3);ctx.fill();}}
+function tvSign(p,win){/* post with an arm, a hanging board with a carved drinking horn */const s=[p[0],p[1]];hoLine(s,[s[0],s[1]-22],win?'#B8B0A0':'#4E3C2E',1.4);hoLine([s[0],s[1]-22],[s[0]-8,s[1]-22],win?'#B8B0A0':'#4E3C2E',1.2);
+  hoLine([s[0]-2.5,s[1]-22],[s[0]-2.5,s[1]-19.5],'#3A2A1C',0.5);hoLine([s[0]-7,s[1]-22],[s[0]-7,s[1]-19.5],'#3A2A1C',0.5);const bx=s[0]-9;hoQ([[bx,s[1]-19.5],[bx+8,s[1]-19.5],[bx+8,s[1]-13.5],[bx,s[1]-13.5]],win?'#D0C8B8':'#8C6A48');
+  if(!win){ctx.strokeStyle='#C9A64A';ctx.lineWidth=1.1;ctx.beginPath();ctx.moveTo(bx+1.6,s[1]-18);ctx.quadraticCurveTo(bx+4.5,s[1]-13.5,bx+6.8,s[1]-18.4);ctx.stroke();}}
+function drawTavernOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),sd=(b.id||0)*61+opt,J=WOOD_SET[opt===1?2:opt===2?4:opt===3?1:3];
+  const hc=opt===3?-0.35:-0.3,ha=opt===3?-0.35:0,fw=(a,c,h)=>f(a+ha,c+hc,h);
+  const g={sd,hl:opt===3?1.0:1.2,hw:0.56,fh:opt===4?3.4:2.4,wh:13,rh:15,ov:0.07,th:J.rt==='thatch'?4.5:1.7,wt:opt===3?'logs':'planks',wall:opt===1?'#4E3C2E':opt===2?'#8A6A48':opt===3?'#7E6248':'#8A7A64',wallD:opt===1?'#3A2C22':opt===2?'#6E5038':opt===3?'#5F4936':'#6E604E',
+    roof:J.roof,roofD:J.roofD,roofE:shade(J.roofD,0.7),rt:J.rt,blue:J.blue,frame:opt!==3,frameCol:'#2A1F18',k:1,v:1};
+  const house=(extra)=>{const r=hoRoof(fw,g,win);r.back();hoFooting(fw,g,win);hoWalls(fw,g,win);if(opt===4)hoStoneBox(fw,0,0,g.hl,g.hw,1.2,g.fh+4,win,sd);r.end();
+    tvDoorLit(fw,g,0.05,win);for(const s of [-0.65,0.7])hoWindow(fw,g,'L',s,0.11,g.fh+4.5,g.fh+7.8,{shutters:opt===2?'#2E4A5E':'#7A2E24'});hoWindow(fw,g,'G',0,0.1,g.fh+5,g.fh+8.2,{});if(extra)extra();r.front();r.ridge();hoBarge(fw,g,'#4A3424',0.25,true);};
+  const fc=hc+g.hw;/* front wall line in plot coords */
+  if(opt===1){house();tvBench(fw,-1.0,-0.25,g.hw+0.1,win);tvBench(fw,0.35,1.05,g.hw+0.1,win);alTorch(fw(-0.2,g.hw+0.3,0),win);alTorch(fw(0.3,g.hw+0.3,0),win);tvSign(fw(g.hl+0.2,g.hw+0.25,0),win);}
+  else if(opt===2){house(()=>{});/* covered porch along the front wall */const P=(a,c,h)=>fw(a,c,h),c0=g.hw,c1=g.hw+0.42,hB=11,hF=10;tvTable(P,-0.9,-0.15,g.hw+0.22,win,4);tvBench(P,-0.9,-0.15,g.hw+0.36,win);tvTable(P,0.3,1.0,g.hw+0.22,win,3);tvBench(P,0.3,1.0,g.hw+0.36,win);
+    for(const a of [-g.hl,-0.45,0.45,g.hl])hoQ([P(a-0.025,c1,0),P(a+0.025,c1,0),P(a+0.025,c1,hF),P(a-0.025,c1,hF)],win?'#C8C2B4':'#3A2A1C');hoLine(P(-g.hl,c1,hF),P(g.hl,c1,hF),win?'#C8C2B4':'#3A2A1C',1.2);
+    const e=0.05,R=[P(-g.hl-e,c0,hB+0.6),P(g.hl+e,c0,hB+0.6),P(g.hl+e,c1+e,hF+0.6),P(-g.hl-e,c1+e,hF+0.6)];hoQ(R,win?'#EEF1F0':J.roof);if(!win)hoRoofSurface((u,v)=>lerp(lerp(R[0],R[1],u),lerp(R[3],R[2],u),v),{sd:sd+4,rt:J.rt,rh:6,roofD:J.roofD},win);hoQ([R[1],R[2],[R[2][0],R[2][1]+1.4],[R[1][0],R[1][1]+1.4]],shade(J.roofD,0.6));
+    tvSign(fw(g.hl+0.2,g.hw+0.55,0),win);}
+  else if(opt===3){house();/* yard with a fire pit and log benches */const yc=(a,c,h)=>f(a+0.85,c+0.25,h);{const p=yc(0,0,0);ctx.fillStyle=win?'rgba(220,220,214,0.6)':'rgba(140,120,90,0.45)';ctx.beginPath();ctx.ellipse(p[0],p[1],30,15,0,0,6.3);ctx.fill();}
+    const fs=(x,y,h)=>yc(y,x,h);hoLog(yc,-0.3,0.2,-0.38,1.6,1.6,win);hoLog(fs,-0.3,0.2,-0.42,1.6,1.6,win);alFire(yc(0,0,0),1,win);hoLog(fs,-0.25,0.25,0.42,1.6,1.6,win);hoLog(yc,-0.25,0.25,0.38,1.6,1.6,win);brBarrel(yc(0.5,-0.3,0),1,win);tvSign(fw(g.hl+0.2,g.hw+0.25,0),win);}
+  else{house();brBarrel(fw(g.hl+0.1,-0.3,0),1.1,win);brBarrel(fw(g.hl+0.1,-0.12,0),1.1,win);tvBench(fw,-1.0,-0.25,g.hw+0.12,win);tvBench(fw,0.35,1.05,g.hw+0.12,win);tvSign(fw(g.hl+0.2,g.hw+0.25,0),win);}}
+{const _shK=shShape;shShape=function(b){if(b.t==='tavern'&&TAV_OPT){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),box=(a,c,sa,sc,h)=>({pts:[f(a-sa,c-sc,0),f(a+sa,c-sc,0),f(a+sa,c+sc,0),f(a-sa,c+sc,0)],h});
+  const o=TAV_OPT,ha=o===3?-0.35:0,hc=o===3?-0.35:-0.3,hl=o===3?1.0:1.2;const V=[box(ha,hc,hl+0.07,0.62,0.6),box(ha,hc,hl+0.07,0.06,1.1)];if(o===2)V.push(box(0,-0.3+0.56+0.21,1.2,0.21,0.4));return V;}return _shK(b);};}

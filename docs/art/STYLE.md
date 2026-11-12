@@ -262,6 +262,13 @@ This file is mirrored in the claude.ai project as `claude/Estilo dos edificios.m
 - **Striped red-and-white awning** coming out from **under the main eave** in the inner corner of the L, ending against the wing, on three posts with a scalloped hem; under it a counter with furs, silver bars, amber, a balance and a bale.
 - Own shadow. Prototype: `window.__setTrade(5)` (drafts 1–4 kept).
 
+## Beehives (chosen: option 4 "Skeps on stone stands", 2026-11-12)
+- 2×2; straw skeps (3 at L1, 5 at L3, 7 at L5); bees fly round them in summer only.
+- A **small honey hut** at the back (planks on a frame, black scale shingles, door on the gable kept clear, carved barge ends at L5).
+- The **skeps stand on little stone pillars in the yard beside the hut's long side**, close to it, in rows (José: not in front of the door). Coiled straw bells with a dark entrance at the foot.
+- A flowering meadow (white, yellow, pink, blue); the rest of the plot keeps its grass (`GRASSY_PLOT`).
+- Own shadow. Prototype: `window.__setBees(4)` (1 covered bench, 2 stone bee wall with niches, 3 log hives in heather kept).
+
 ## Shadows (shared rule, 2026-11-12)
 - José: the dark box shadow (and the ground patch) does not match the buildings' shapes.
 - Each redrawn building gives its own **shadow volumes** (`shShape(b)` in `20_zzhouseopt.js`: ground outline + height); the cast shadow is the union of those, swept along the sun. The old box shadow stays only for buildings not yet redrawn. Done for the Iron Mine; to do for every building when the styles are rolled out.
@@ -270,4 +277,4 @@ This file is mirrored in the claude.ai project as `claude/Estilo dos edificios.m
 ## Next buildings
 One at a time. José (2026-11-12): **send 4 drawn options straight away** (no separate "current look" step) → José's choice and notes → recorded here.
 When José asks for a fix, change only that (no extra changes without asking).
-Order still to do: Beehives → Decor (Community Fire, Wooden Benches, Wattle Fence, Rune Post, Herb Garden, Carved Prow, Drying Nets). Maybe later: palisade and gate in the new style.
+Order still to do: Decor (Community Fire, Wooden Benches, Wattle Fence, Rune Post, Herb Garden, Carved Prow, Drying Nets). Maybe later: palisade and gate in the new style.

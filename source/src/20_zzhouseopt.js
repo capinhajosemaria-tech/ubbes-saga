@@ -1586,14 +1586,16 @@ function drawMillOpt(b,win,opt){const {F,s}=mlFrame(b),L=Math.min(5,b.lvl||1),sd
    3 Plank bakehouse + open shed with a griddle hearth for flatbread · 4 Plank bakehouse + two clay ovens under a shingle canopy */
 let BAKE_OPT=0;window.__setBake=n=>{BAKE_OPT=n|0;};
 {const _dsB=drawShaped;drawShaped=function(b,win,c0,ax){if(BAKE_OPT&&b.t==='bakery'){drawBakeOpt(b,win,BAKE_OPT);return true;}return _dsB(b,win,c0,ax);};}
-function bkOven(f,a,c,r,win,sd,lit){/* beehive clay oven on a stone plinth, arched mouth toward the viewer (+a), glow inside, a vent at the top */const ph=4;hoStoneBox(f,a,c,r+0.05,r+0.05,0,ph,win,sd);hoQ([f(a-r-0.05,c-r-0.05,ph),f(a+r+0.05,c-r-0.05,ph),f(a+r+0.05,c+r+0.05,ph),f(a-r-0.05,c+r+0.05,ph)],win?'#E2E4E0':'#A39D92');
+function bkOven(f,a,c,r,win,sd,lit,faceC){/* beehive clay oven on a stone plinth, arched mouth toward the viewer (+a), glow inside, a vent at the top */const ph=4;hoStoneBox(f,a,c,r+0.05,r+0.05,0,ph,win,sd);hoQ([f(a-r-0.05,c-r-0.05,ph),f(a+r+0.05,c-r-0.05,ph),f(a+r+0.05,c+r+0.05,ph),f(a-r-0.05,c+r+0.05,ph)],win?'#E2E4E0':'#A39D92');
   const base=f(a,c,ph),rx=r*36*1.05,ry=r*18*1.05,H=r*72,cl=win?'#E8E2D8':'#B8805A',clD=win?'#D4CEC4':'#96643F',clL=win?'#F2EEE6':'#CC9A72';
   ctx.fillStyle=cl;ctx.beginPath();ctx.ellipse(base[0],base[1],rx,ry,0,0,3.1416);ctx.bezierCurveTo(base[0]-rx,base[1]-H*0.9,base[0]+rx,base[1]-H*0.9,base[0]+rx,base[1]);ctx.fill();
   ctx.fillStyle=clD;ctx.beginPath();ctx.moveTo(base[0]+rx*0.15,base[1]+ry);ctx.ellipse(base[0],base[1],rx,ry,0,1.4,0,true);ctx.bezierCurveTo(base[0]+rx,base[1]-H*0.5,base[0]+rx*0.5,base[1]-H*0.72,base[0]+rx*0.1,base[1]-H*0.68);ctx.quadraticCurveTo(base[0]+rx*0.4,base[1]-H*0.2,base[0]+rx*0.15,base[1]+ry);ctx.fill();
   if(!win){ctx.fillStyle=clL;ctx.beginPath();ctx.ellipse(base[0]-rx*0.4,base[1]-H*0.45,rx*0.25,H*0.16,-0.5,0,6.3);ctx.fill();ctx.strokeStyle='rgba(90,56,30,0.35)';ctx.lineWidth=0.5;ctx.beginPath();for(let k=1;k<4;k++){const yy=base[1]-H*k*0.17;ctx.moveTo(base[0]-rx*(1-k*0.12),yy+ry*0.4);ctx.quadraticCurveTo(base[0],yy+ry*1.05,base[0]+rx*(1-k*0.12),yy+ry*0.4);}ctx.stroke();}
-  /* mouth */const m=f(a+r*0.95,c,ph),mw=r*16,mh=r*30;ctx.fillStyle=win?'#C8C2B8':'#2A1A10';ctx.beginPath();ctx.moveTo(m[0]-mw,m[1]-0.5);ctx.lineTo(m[0]-mw,m[1]-mh*0.55);ctx.quadraticCurveTo(m[0],m[1]-mh*1.25,m[0]+mw,m[1]-mh*0.55+mw*0.3);ctx.lineTo(m[0]+mw,m[1]+mw*0.5-0.5);ctx.closePath();ctx.fill();
-  if(!win&&lit){ctx.fillStyle='rgba(255,140,50,0.85)';ctx.beginPath();ctx.ellipse(m[0],m[1]-mh*0.2,mw*0.6,mh*0.22,0.45,0,6.3);ctx.fill();ctx.fillStyle='rgba(255,170,80,0.16)';ctx.beginPath();ctx.ellipse(m[0]+3,m[1]+2,12,6,0,0,6.3);ctx.fill();}
-  ctx.strokeStyle=win?'#B8B0A4':'#7A4E30';ctx.lineWidth=0.8;ctx.beginPath();ctx.moveTo(m[0]-mw-0.6,m[1]);ctx.lineTo(m[0]-mw-0.6,m[1]-mh*0.58);ctx.quadraticCurveTo(m[0],m[1]-mh*1.33,m[0]+mw+0.6,m[1]-mh*0.55+mw*0.3);ctx.lineTo(m[0]+mw+0.6,m[1]+mw*0.5);ctx.stroke();
+  /* mouth: on the +a face, or the +c face when faceC (the arch leans with that face) */const m=faceC?f(a,c+r*0.95,ph):f(a+r*0.95,c,ph),mw=r*16,mh=r*30,sx=faceC?-1:1;
+  const arch=(e)=>{ctx.beginPath();ctx.moveTo(m[0]-sx*(mw+e),m[1]-0.5+(e?0.5:0));ctx.lineTo(m[0]-sx*(mw+e),m[1]-mh*0.55-e*0.1);ctx.quadraticCurveTo(m[0],m[1]-mh*1.25-e,m[0]+sx*(mw+e),m[1]-mh*0.55+mw*0.3);ctx.lineTo(m[0]+sx*(mw+e),m[1]+mw*0.5-0.5+(e?0.5:0));};
+  ctx.fillStyle=win?'#C8C2B8':'#2A1A10';arch(0);ctx.closePath();ctx.fill();
+  if(!win&&lit){ctx.fillStyle='rgba(255,140,50,0.85)';ctx.beginPath();ctx.ellipse(m[0],m[1]-mh*0.2,mw*0.6,mh*0.22,0.45*sx,0,6.3);ctx.fill();ctx.fillStyle='rgba(255,170,80,0.16)';ctx.beginPath();ctx.ellipse(m[0]+3*sx,m[1]+2,12,6,0,0,6.3);ctx.fill();}
+  ctx.strokeStyle=win?'#B8B0A4':'#7A4E30';ctx.lineWidth=0.8;arch(0.6);ctx.stroke();
   const v=[base[0]+rx*0.05,base[1]-H*0.72];ctx.fillStyle=win?'#CCC6BC':'#3A2618';ctx.beginPath();ctx.ellipse(v[0],v[1],2,0.9,0,0,6.3);ctx.fill();if(!win&&lit)hoSmoke([v[0],v[1]-1]);}
 function bkPeel(p,win){/* a long wooden peel leaning on something */hoLine([p[0],p[1]],[p[0]+3,p[1]-16],win?'#C8C2B4':'#8A6A48',0.9);ctx.fillStyle=win?'#D0C8B8':'#A07E58';ctx.beginPath();ctx.ellipse(p[0]+0.3,p[1]-1.6,2.2,3.2,0.2,0,6.3);ctx.fill();}
 function bkLeanTo(f,a0,a1,c0,c1,hB,hF,win,J,sd,posts){/* lean-to rising toward the viewer (+c): posts at the front and the back corner, roof with texture */
@@ -1607,7 +1609,7 @@ function drawBakeOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot
   const house=(extra)=>{const r=hoRoof(fw,g,win);r.back();hoFooting(fw,g,win);hoWalls(fw,g,win);if(opt===2)hoStoneBox(fw,0,0,g.hl,g.hw,g.fh,g.wh,win,sd);r.end();
     hoDoor(fw,g,'G',0,0.16,8.5,{col:'#4A3424',steps:1});if(L>=3)hoWindow(fw,g,'L',-0.18,0.1,g.fh+5,g.fh+8,{shutters:'#7A2E24'});if(extra)extra();r.front();r.ridge();hoBarge(fw,g,'#4A3424',0.25,L>=5);};
   if(opt===1){house();hoLogPile(f,0.35,0.85,-0.75,[3,2],1.4,win);bkOven(f,0.42,0.3,0.26,win,sd,lit);bkPeel(f(0.1,0.62,0),win);if(L>=3){const p=f(0.82,-0.2,0);/* bread on a little bench */hoBox(f,0.8,-0.25,0.09,0,4,win?'#D0C8B8':'#8A6A48',win?'#B8B0A0':'#6E5038',win);bkFlatbread(f(0.8,-0.25,4.3),2.6,win);}}
-  else if(opt===2){/* the oven bulges out of the long wall, under its own little roof */house(()=>{const oc=g.hw+0.2,oa=0.05;const of=(a,c,h)=>fw(a,c,h);bkOven(of,oa,oc,0.2,win,sd,lit);
+  else if(opt===2){/* the oven bulges out of the long wall, under its own little roof */house(()=>{const oc=g.hw+0.2,oa=0.05;const of=(a,c,h)=>fw(a,c,h);bkOven(of,oa,oc,0.2,win,sd,lit,true);
 });hoLogPile(f,0.25,0.85,0.75,[3,2],1.4,win);}
   else if(opt===3){house();/* open shed in front with a long hearth and a griddle, flatbread on a rack */const sh=(a,c,h)=>f(a+0.42,c+0.2,h),sl=0.5,sw=0.34,hB=12,hF=20;
     hoQ([sh(-sl,-sw,0),sh(sl,-sw,0),sh(sl,sw,0),sh(-sl,sw,0)],'rgba(70,60,50,0.35)');hoQ([sh(-sl,-sw,0),sh(sl,-sw,0),sh(sl,-sw,hB),sh(-sl,-sw,hB)],win?'#C8C2B4':'#4A3424');

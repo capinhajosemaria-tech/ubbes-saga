@@ -1630,3 +1630,50 @@ function drawBakeOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot
     bkLeanTo(cf,-0.35,0.45,-0.45,0.5,16,22,win,J,sd,[[-0.35,0.5,22],[0.45,0.5,22],[0.45,-0.45,16]]);hoLogPile(f,-0.9,-0.4,0.75,[3,2],1.4,win);}}
 {const _shB=shShape;shShape=function(b){if(b.t==='bakery'&&BAKE_OPT){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),box=(a,c,sa,sc,h)=>({pts:[f(a-sa,c-sc,0),f(a+sa,c-sc,0),f(a+sa,c+sc,0),f(a-sa,c+sc,0)],h});
   const V=[box(-0.38,-0.42,0.5,0.4,0.75)];if(BAKE_OPT===1)V.push(box(0.42,0.3,0.3,0.3,0.4));else if(BAKE_OPT===3)V.push(box(0.42,0.2,0.5,0.34,0.45));else if(BAKE_OPT===4)V.push(box(0.5,0.17,0.4,0.48,0.5));return V;}return _shB(b);};}
+
+/* =================== Brewery options (prototype) — window.__setBrew(n) ===================
+   2×2, ale from grain and mead from honey. 1 Plank brewhouse + porch with a copper kettle and mash vat · 2 Stone brewhouse with a chimney + barrel lean-to
+   3 Log brewhouse with a steam louvre + open shed of tall vats · 4 Brewhouse + round stone malt kiln */
+let BREW_OPT=0;window.__setBrew=n=>{BREW_OPT=n|0;};
+{const _dsW=drawShaped;drawShaped=function(b,win,c0,ax){if(BREW_OPT&&b.t==='brewery'){drawBrewOpt(b,win,BREW_OPT);return true;}return _dsW(b,win,c0,ax);};}
+function brSteam(p,win,k){if(win)return;const tt=(typeof t==='number'?t:0)+(k||0);for(let i=0;i<4;i++){const q=(((tt*0.35+i/4)%1)+1)%1;ctx.fillStyle='rgba(245,245,240,'+(0.45*(1-q)).toFixed(2)+')';ctx.beginPath();ctx.arc(p[0]+Math.sin(tt*1.3+i)*2+q*4,p[1]-q*16,1.8+q*3.6,0,6.3);ctx.fill();}}
+function brBarrel(p,s,win,col){/* upright staved barrel: bulging body, iron hoops, lid */const w=3.2*s,h=7.5*s,C=win?'#D0C8B8':col||'#8A5E36',CD=win?'#B8B0A0':shade(col||'#8A5E36',0.75);
+  ctx.fillStyle=C;ctx.beginPath();ctx.moveTo(p[0]-w*0.88,p[1]);ctx.quadraticCurveTo(p[0]-w*1.12,p[1]-h/2,p[0]-w*0.88,p[1]-h);ctx.lineTo(p[0]+w*0.88,p[1]-h);ctx.quadraticCurveTo(p[0]+w*1.12,p[1]-h/2,p[0]+w*0.88,p[1]);ctx.closePath();ctx.fill();
+  ctx.fillStyle=CD;ctx.beginPath();ctx.moveTo(p[0]+w*0.2,p[1]);ctx.lineTo(p[0]+w*0.2,p[1]-h);ctx.lineTo(p[0]+w*0.88,p[1]-h);ctx.quadraticCurveTo(p[0]+w*1.12,p[1]-h/2,p[0]+w*0.88,p[1]);ctx.closePath();ctx.fill();
+  ctx.beginPath();ctx.ellipse(p[0],p[1],w*0.88,w*0.4,0,0,3.14);ctx.fill();
+  if(!win){ctx.strokeStyle='#2E2C2A';ctx.lineWidth=0.6;for(const u of [0.16,0.84]){ctx.beginPath();ctx.ellipse(p[0],p[1]-h*u,w*1.02,w*0.4,0,0,3.14);ctx.stroke();}ctx.strokeStyle='rgba(40,24,12,0.35)';ctx.lineWidth=0.35;ctx.beginPath();for(const u of [-0.5,0,0.5]){ctx.moveTo(p[0]+u*w,p[1]+w*0.3);ctx.lineTo(p[0]+u*w,p[1]-h+w*0.3);}ctx.stroke();}
+  ctx.fillStyle=win?'#E2DCD0':shade(col||'#8A5E36',1.12);ctx.beginPath();ctx.ellipse(p[0],p[1]-h,w*0.88,w*0.4,0,0,6.3);ctx.fill();}
+function brVat(p,s,win,steam){/* tall open vat with hoops, dark liquid, steam */const w=6*s,h=12*s;brBarrel(p,s*1.9,win,'#7A5232');const top=[p[0],p[1]-h*1.2];ctx.fillStyle=win?'#C8C0B0':'#3A2412';ctx.beginPath();ctx.ellipse(top[0],top[1],w*0.85,w*0.36,0,0,6.3);ctx.fill();if(!win){ctx.fillStyle='rgba(200,150,60,0.4)';ctx.beginPath();ctx.ellipse(top[0]-1,top[1]-0.2,w*0.5,w*0.18,0,0,6.3);ctx.fill();}if(steam)brSteam([top[0],top[1]-1],win,p[0]);}
+function brKettle(f,a,c,win,sd){/* copper kettle on a stone hearth, fire under it, steam */hoStoneBox(f,a,c,0.13,0.12,0,4.5,win,sd);hoQ([f(a-0.13,c-0.12,4.5),f(a+0.13,c-0.12,4.5),f(a+0.13,c+0.12,4.5),f(a-0.13,c+0.12,4.5)],win?'#D8DAD6':'#9C978D');
+  const m=f(a,c,4.5);if(!win){ctx.fillStyle='rgba(255,140,60,0.75)';ctx.beginPath();ctx.ellipse(m[0],m[1]+0.5,4.2,1.8,0,0,6.3);ctx.fill();}
+  const k0=f(a,c,5.4);ctx.fillStyle=win?'#D4CCC0':'#9A5630';ctx.beginPath();ctx.ellipse(k0[0],k0[1],5.6,2.6,0,0,3.14);ctx.lineTo(k0[0]-5.6,k0[1]-5);ctx.ellipse(k0[0],k0[1]-5,5.6,2.6,0,3.14,0,true);ctx.closePath();ctx.fill();
+  if(!win){ctx.fillStyle='rgba(255,210,160,0.35)';ctx.fillRect(k0[0]-4.4,k0[1]-4.6,1.4,4.6);}ctx.fillStyle=win?'#E2DCD0':'#C27A44';ctx.beginPath();ctx.ellipse(k0[0],k0[1]-5,5.6,2.6,0,0,6.3);ctx.fill();ctx.fillStyle=win?'#C8C0B0':'#5A3418';ctx.beginPath();ctx.ellipse(k0[0],k0[1]-5,4.6,2,0,0,6.3);ctx.fill();brSteam([k0[0],k0[1]-6],win,a*10);}
+function brKiln(f,a,c,win,sd,J){/* round stone malt kiln, conical scale-shingle roof, smoke from the top */const R=0.22,H=13,ring=(r,h,n)=>{const o=[];for(let k=0;k<n;k++){const t2=k/n*6.283;o.push(f(a+Math.cos(t2)*r,c+Math.sin(t2)*r,h));}return o;};
+  {const lo=ring(R,0,24),hi=ring(R,H,24),pts=[];for(let k=0;k<=12;k++)pts.push(lo[(k+21)%24]);for(let k=12;k>=0;k--)pts.push(hi[(k+21)%24]);hoQ(pts,win?'#C9CBC7':'#8E8980');
+    if(!win){ctx.strokeStyle='rgba(40,36,30,0.45)';ctx.lineWidth=0.45;ctx.beginPath();for(let h=2.2;h<H;h+=2.2){const r=ring(R,h,24);for(let k=0;k<=12;k++){const p=r[(k+21)%24];k?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]);}}ctx.stroke();
+      ctx.fillStyle='rgba(30,26,22,0.25)';const rp=[];for(let k=0;k<=6;k++)rp.push(lo[(k+3)%24]);for(let k=6;k>=0;k--)rp.push(hi[(k+3)%24]);hoQ(rp,'rgba(30,26,22,0.22)');}
+    /* stoke hole facing the viewer */const sp=f(a+R*0.71,c+R*0.71,0);ctx.fillStyle='#2A1A10';ctx.beginPath();ctx.moveTo(sp[0]-2.4,sp[1]);ctx.lineTo(sp[0]-2.4,sp[1]-3.4);ctx.quadraticCurveTo(sp[0],sp[1]-6,sp[0]+2.4,sp[1]-3.4);ctx.lineTo(sp[0]+2.4,sp[1]);ctx.fill();if(!win){ctx.fillStyle='rgba(255,130,50,0.7)';ctx.beginPath();ctx.ellipse(sp[0],sp[1]-1,1.6,0.9,0,0,6.3);ctx.fill();}}
+  /* cone roof */const ap=f(a,c,H+12),eave=ring(R+0.07,H-1,24);const front=[];for(let k=0;k<=12;k++)front.push(eave[(k+21)%24]);hoQ(front.concat([ap]),win?'#EEF1F0':J.roof);
+  if(!win){ctx.strokeStyle='rgba(10,8,6,0.45)';ctx.lineWidth=0.5;ctx.beginPath();for(let r=1;r<5;r++){const u=r/5;for(let k=0;k<=12;k++){const e=eave[(k+21)%24],p=lerp(e,ap,u);k?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]);}}for(let k=0;k<=12;k+=2){const e=eave[(k+21)%24];ctx.moveTo(e[0],e[1]);ctx.lineTo(ap[0],ap[1]);}ctx.stroke();
+    ctx.fillStyle='rgba(255,255,255,0.08)';const hl=[];for(let k=0;k<=5;k++)hl.push(eave[(k+21)%24]);hoQ(hl.concat([ap]),'rgba(255,255,255,0.08)');}
+  hoLine([ap[0],ap[1]],[ap[0],ap[1]-3],win?'#B8B0A0':'#3A2A1C',1.2);if(!win)hoSmoke([ap[0],ap[1]-3]);}
+function drawBrewOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),L=Math.min(5,b.lvl||1),sd=(b.id||0)*47+opt,J=WOOD_SET[opt===1?4:opt===2?3:2],fw=(a,c,h)=>f(a-0.38,c-0.42,h);
+  const g={sd,hl:L>=5?0.56:0.46,hw:0.36,fh:2.4,wh:12,rh:12,ov:0.06,th:1.6,wt:opt===3?'logs':'planks',wall:opt===1?'#9A7A52':opt===2?'#8A7A64':'#7E6248',wallD:opt===1?'#7A5E3E':opt===2?'#6E604E':'#5F4936',
+    roof:J.roof,roofD:J.roofD,roofE:shade(J.roofD,0.7),rt:J.rt,blue:J.blue,frame:opt!==3,frameCol:'#3A2A1C',k:1,v:1};
+  const house=()=>{const r=hoRoof(fw,g,win);r.back();hoFooting(fw,g,win);hoWalls(fw,g,win);if(opt===2)hoStoneBox(fw,0,0,g.hl,g.hw,g.fh,g.wh,win,sd);r.end();
+    hoDoor(fw,g,'G',0,0.16,8.5,{col:'#4A3424',steps:1});if(L>=3)hoWindow(fw,g,'L',-0.18,0.1,g.fh+5,g.fh+8,{shutters:'#2E4A5E'});r.front();r.ridge();hoBarge(fw,g,'#4A3424',0.25,L>=5);};
+  if(opt===1){house();const sh=(a,c,h)=>f(a+0.42,c+0.2,h),sl=0.5,sw=0.34;hoQ([sh(-sl,-sw,0),sh(sl,-sw,0),sh(sl,sw,0),sh(-sl,sw,0)],'rgba(70,60,50,0.3)');
+    brKettle(sh,-0.2,0.1,win,sd);brVat(sh(0.22,0.0,0),0.8,win,false);brBarrel(sh(0.36,0.26,0),1,win);brBarrel(sh(0.22,0.3,0),1,win);
+    bkLeanTo(sh,-sl,sl,-sw,sw,12,20,win,J,sd);}
+  else if(opt===2){house();bkChimney(fw,g,0.06,win,sd);/* barrel rack under a small lean-to on the front side */const rk=(a,c,h)=>f(a+0.5,c+0.45,h);
+    for(let i=0;i<3;i++)brBarrel(rk(-0.25+i*0.22,-0.12,0),1.05,win);for(let i=0;i<3;i++)brBarrel(rk(-0.3+i*0.22,0.15,0),1.05,win);
+    bkLeanTo(rk,-0.42,0.38,-0.3,0.3,11,17,win,J,sd);}
+  else if(opt===3){house();/* steam louvre on the ridge */{const top=g.wh+g.rh,P=(a,c,h)=>fw(a,c,h),la=0.05,lw=0.1,lc=0.08;hoQ([P(la-lw,lc,top-2),P(la+lw,lc,top-2),P(la+lw,lc,top+4),P(la-lw,lc,top+4)],win?'#C8C2B4':'#4A3424');
+      if(!win){ctx.strokeStyle='#2A1F18';ctx.lineWidth=0.6;ctx.beginPath();for(let h=top-1;h<top+4;h+=1.4){const p=P(la-lw,lc,h),q=P(la+lw,lc,h-0.6);ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);}ctx.stroke();}
+      hoQ([P(la-lw-0.03,-lc-0.04,top+5),P(la+lw+0.03,-lc-0.04,top+5),P(la+lw+0.03,lc+0.04,top+3.6),P(la-lw-0.03,lc+0.04,top+3.6)],win?'#EEF1F0':J.roof);brSteam(P(la,0,top+6),win,1);}
+    const sh=(a,c,h)=>f(a+0.42,c+0.2,h),sl=0.5,sw=0.34;hoQ([sh(-sl,-sw,0),sh(sl,-sw,0),sh(sl,sw,0),sh(-sl,sw,0)],'rgba(70,60,50,0.3)');
+    brVat(sh(-0.25,-0.02,0),0.85,win,true);brVat(sh(0.12,-0.04,0),0.85,win,true);brBarrel(sh(0.36,0.24,0),1,win);brBarrel(sh(-0.36,0.26,0),1,win);
+    bkLeanTo(sh,-sl,sl,-sw,sw,12,20,win,J,sd);}
+  else{house();brKiln(f,0.48,0.42,win,sd,J);for(let i=0;i<3;i++)brBarrel(f(0.82-i*0.0,-0.25+i*0.18,0),1,win);brBarrel(f(-0.1,0.8,0),1,win);brBarrel(f(0.08,0.86,0),1,win);}}
+{const _shW=shShape;shShape=function(b){if(b.t==='brewery'&&BREW_OPT){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),box=(a,c,sa,sc,h)=>({pts:[f(a-sa,c-sc,0),f(a+sa,c-sc,0),f(a+sa,c+sc,0),f(a-sa,c+sc,0)],h});
+  const V=[box(-0.38,-0.42,0.5,0.4,0.75)];if(BREW_OPT===1||BREW_OPT===3)V.push(box(0.42,0.2,0.5,0.34,0.5));else if(BREW_OPT===2)V.push(box(0.5,0.45,0.4,0.3,0.45));else V.push(box(0.48,0.42,0.24,0.24,0.8));return V;}return _shW(b);};}

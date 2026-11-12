@@ -355,8 +355,9 @@ function drawTHOpt(b,win,opt){const J=TH_SET[opt]||TH_SET[1],L=thLevel(),hb=thHa
   const g={sd,hl,hw,fh:1.6,wh,rh:0,wt:'staves',wall:J.wall,wallD:J.wallD,frame:true,frameCol:'#2E2018',k:1,v:1};
   hoWalls(fP,g,win);
   /* windows and shields along the front, clear of the vestibule */
-  const ws=L>=3?[-1.38,-0.98,-0.58,0.58,0.98,1.38]:[-1.2,-0.7,0.7,1.2];for(const a of ws)hoWindow(fP,g,'L',a*hl/1.74,0.17,10,16,{shutters:'#7A2E22'});
-  for(const cc of (L>=3?[-0.62,-0.2,0.2,0.62]:[-0.45,0.45]))hoWindow(fP,g,'G',cc*hw,0.14,10,16,{shutters:'#7A2E22'});
+  /* shield, window, shield on each side of the vestibule */const k=hl/1.74,SC=[['#A34A3A','#D7CDB4'],['#C9A042','#2E3A44']];
+  [-0.96,0.96].forEach(a=>hoWindow(fP,g,'L',a*k,0.17,10,16,{shutters:'#7A2E22'}));[-1.4,-0.56,0.56,1.4].forEach((a,i)=>hoShield(fP(a*k,hw,13),SC[i%2][0],SC[i%2][1],4.2));
+  for(const cc of [-0.5,0.5])hoWindow(fP,g,'G',cc*hw,0.14,10,16,{shutters:'#7A2E22'});hoShield(fP(hl,0,13),'#A34A3A','#D7CDB4',4.2);
   /* no shields on the walls: windows only */
   /* main roof */
   const cR=ax?{T:fP(-hl,-hw),R:fP(hl,-hw),Bt:fP(hl,hw),L:fP(-hl,hw)}:{T:fP(-hl,-hw),R:fP(-hl,hw),Bt:fP(hl,hw),L:fP(hl,-hw)};
@@ -412,13 +413,13 @@ function hoLampPost(p,h){const top=[p[0],p[1]-h];ctx.fillStyle='#2A2622';ctx.fil
   ctx.fillStyle='#2A2622';ctx.beginPath();ctx.moveTo(lx-2.2,ly+1);ctx.lineTo(lx+2.2,ly+1);ctx.lineTo(lx,ly-1);ctx.fill();ctx.fillRect(lx-1.8,ly+5,3.6,0.8);}
 /* plaza: only the feast hearth (raised stone ring on its own flagstone circle, log benches) and lights */
 const _drawPlaza0=drawPlaza;drawPlaza=function(b,win){if(!TH_OPT)return _drawPlaza0(b,win);
-  const L=thLevel(),mr=TH_MX[(b.rot|0)&3],at=(x,y)=>iso(b.fx+(mr[0]?6-x:x)-0.5,b.fy+(mr[1]?6-y:y)-0.5),fire=at(5.3,5.3),feast=feastOn(),F=fire;ctx.save();
-  /* flagstone circle, lighter than the plaza, with a kerb */ctx.fillStyle=win?'#E0E3E0':'#B9B2A4';ctx.beginPath();ctx.ellipse(F[0],F[1],40,20,0,0,6.3);ctx.fill();
-  for(let ring=0;ring<2;ring++){const R=ring?34:24,n=ring?22:15;for(let k=0;k<n;k++){const a=(k+ring*0.5)/n*6.283;ctx.fillStyle=(k+ring)%3===0?(win?'#CDD0CD':'#A79F90'):(win?'#D6D9D6':'#C3BCAE');ctx.beginPath();ctx.ellipse(F[0]+Math.cos(a)*R,F[1]+Math.sin(a)*R*0.5,ring?5:4.4,ring?2.4:2.1,0,0,6.3);ctx.fill();}}
-  ctx.strokeStyle=win?'#B9BCB9':'#7E776B';ctx.lineWidth=1.2;ctx.beginPath();ctx.ellipse(F[0],F[1],40,20,0,0,6.3);ctx.stroke();
-  /* log benches */const bench=(a)=>{const x=F[0]+Math.cos(a)*30,y=F[1]+Math.sin(a)*15;ctx.save();ctx.translate(x,y);ctx.rotate(a+1.57);ctx.scale(1,0.5);ctx.fillStyle='#7A5A3C';ctx.fillRect(-9,-2.2,18,4.4);ctx.fillStyle='#C9A779';ctx.beginPath();ctx.ellipse(-9,0,1.4,2.2,0,0,6.3);ctx.ellipse(9,0,1.4,2.2,0,0,6.3);ctx.fill();ctx.restore();};
+  const L=thLevel(),mr=TH_MX[(b.rot|0)&3],at=(x,y)=>iso(b.fx+(mr[0]?6-x:x)-0.5,b.fy+(mr[1]?6-y:y)-0.5),fire=at(5.12,5.12),feast=feastOn(),F=fire;ctx.save();
+  /* flagstone circle, lighter than the plaza, with a kerb */ctx.fillStyle=win?'#E0E3E0':'#B9B2A4';ctx.beginPath();ctx.ellipse(F[0],F[1],27,13.5,0,0,6.3);ctx.fill();
+  for(let ring=0;ring<2;ring++){const R=ring?23:16,n=ring?18:12;for(let k=0;k<n;k++){const a=(k+ring*0.5)/n*6.283;ctx.fillStyle=(k+ring)%3===0?(win?'#CDD0CD':'#A79F90'):(win?'#D6D9D6':'#C3BCAE');ctx.beginPath();ctx.ellipse(F[0]+Math.cos(a)*R,F[1]+Math.sin(a)*R*0.5,ring?5:4.4,ring?2.4:2.1,0,0,6.3);ctx.fill();}}
+  ctx.strokeStyle=win?'#B9BCB9':'#7E776B';ctx.lineWidth=1.1;ctx.beginPath();ctx.ellipse(F[0],F[1],27,13.5,0,0,6.3);ctx.stroke();
+  /* log benches */const bench=(a)=>{const x=F[0]+Math.cos(a)*21,y=F[1]+Math.sin(a)*10.5;ctx.save();ctx.translate(x,y);ctx.rotate(a+1.57);ctx.scale(1,0.5);ctx.fillStyle='#7A5A3C';ctx.fillRect(-7,-2,14,4);ctx.fillStyle='#C9A779';ctx.beginPath();ctx.ellipse(-7,0,1.3,2,0,0,6.3);ctx.ellipse(7,0,1.3,2,0,0,6.3);ctx.fill();ctx.restore();};
   [3.6,4.6,5.6,0.6,1.6].forEach(bench);
-  /* raised hearth: two courses of stones, ember bed, crossed logs */for(let c2=0;c2<2;c2++){for(let k=0;k<12;k++){const a=k/12*6.283;ctx.fillStyle=k%2?(win?'#B5B8B5':'#7C766C'):(win?'#C3C6C3':'#8E877B');ctx.beginPath();ctx.ellipse(F[0]+Math.cos(a)*12,F[1]+Math.sin(a)*6-c2*2.4,3.4,2.2,0,0,6.3);ctx.fill();}}
+  /* raised hearth: two courses of stones, ember bed, crossed logs */for(let c2=0;c2<2;c2++){for(let k=0;k<12;k++){const a=k/12*6.283;ctx.fillStyle=k%2?(win?'#B5B8B5':'#7C766C'):(win?'#C3C6C3':'#8E877B');ctx.beginPath();ctx.ellipse(F[0]+Math.cos(a)*10,F[1]+Math.sin(a)*5-c2*2.4,3,2,0,0,6.3);ctx.fill();}}
   ctx.fillStyle='#2A1E16';ctx.beginPath();ctx.ellipse(F[0],F[1]-3,9,4.4,0,0,6.3);ctx.fill();ctx.fillStyle='rgba(230,110,40,0.75)';ctx.beginPath();ctx.ellipse(F[0],F[1]-3,6.5,3,0,0,6.3);ctx.fill();
   hoLine([F[0]-6,F[1]-1],[F[0]+5,F[1]-6],'#4A3020',2);hoLine([F[0]+6,F[1]-1],[F[0]-5,F[1]-6],'#5A3A26',2);
   const big=feast?1.8:1.15,tt=typeof t==='number'?t:0;ctx.fillStyle='rgba(255,180,90,'+(feast?0.3:0.2)+')';ctx.beginPath();ctx.ellipse(F[0],F[1]-4,30*big,15*big,0,0,6.3);ctx.fill();

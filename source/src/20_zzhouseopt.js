@@ -1536,14 +1536,14 @@ function mlSide(b){/* toward the river water: centroid of river tiles in and aro
   for(let y=b.fy-1;y<=b.fy+b.h;y++)for(let x=b.fx-1;x<=b.fx+b.w;x++)if(isR(x,y)){const wgt=(x>=b.fx&&x<b.fx+b.w&&y>=b.fy&&y<b.fy+b.h)?2:1;sx+=(x-cx)*wgt;sy+=(y-cy)*wgt;n+=wgt;}
   if(!n)return millSide(b);return Math.abs(sx)>Math.abs(sy)?(sx>0?'+x':'-x'):(sy>0?'+y':'-y');}
 function mlFrame(b){const f0=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:0}),side=mlSide(b),s=side[0]==='+'?1:-1,F=side[1]==='y'?f0:(a,c,h)=>f0(c,a,h);return {F,s,side};}
-function mlWheel(F,a0,cw,hub,R,win,ang,s){/* vertical wheel in the (a,h) plane at c = cw: two rims, paddles between them, spokes, hub; the lower part runs in the water */
+function mlWheel(F,a0,cw,hub,R,win,ang,s,noFoam){/* vertical wheel in the (a,h) plane at c = cw: two rims, paddles between them, spokes, hub; the lower part runs in the water */
   const P=(th,r,c)=>F(a0+Math.cos(th)*r/36,c,hub+Math.sin(th)*r),cB=cw-0.05,cF=cw+0.05,wood=win?'#8A7A64':'#4E3828',lite=win?'#A8987E':'#7A5A3C',n=12;
   const ring=(c,r,col,w)=>{ctx.strokeStyle=col;ctx.lineWidth=w;ctx.beginPath();for(let k=0;k<=40;k++){const p=P(k/40*6.283,r,c);k?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]);}ctx.stroke();};
   ring(cB,R,wood,1.4);ring(cB,R*0.74,wood,0.9);
   for(let k=0;k<n;k++){const th=ang+k/n*6.283,p1=P(th,R,cB),p2=P(th,R,cF),q1=P(th,R*0.74,cB),q2=P(th,R*0.74,cF);hoQ([p1,p2,q2,q1],k%2?lite:shade(lite,0.85));}
   ctx.strokeStyle=wood;ctx.lineWidth=0.9;ctx.beginPath();for(let k=0;k<6;k++){const th=ang+k/6*6.283,p=P(th,R*0.74,cF),q=P(th+Math.PI,R*0.74,cF);ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);}ctx.stroke();
   ring(cF,R*0.74,lite,1);ring(cF,R,lite,1.6);const h=P(0,0,cF);ctx.fillStyle=wood;ctx.beginPath();ctx.arc(h[0],h[1],2.2,0,6.3);ctx.fill();ctx.fillStyle='#2E2C2A';ctx.beginPath();ctx.arc(h[0],h[1],1,0,6.3);ctx.fill();
-  if(!win){/* water at the wheel's foot: a band of river colour over the lowest paddles, foam */const wl=0;const pts=[F(a0-R/36-0.08,cB-0.06,wl),F(a0+R/36+0.08,cB-0.06,wl),F(a0+R/36+0.08,cF+0.08,wl),F(a0-R/36-0.08,cF+0.08,wl)];
+  if(!win&&!noFoam){/* water at the wheel's foot: a band of river colour over the lowest paddles, foam */const wl=0;const pts=[F(a0-R/36-0.08,cB-0.06,wl),F(a0+R/36+0.08,cB-0.06,wl),F(a0+R/36+0.08,cF+0.08,wl),F(a0-R/36-0.08,cF+0.08,wl)];
     ctx.save();ctx.beginPath();ctx.rect(-1e5,P(0,0,cF)[1]-1e3,2e5,1e3);ctx.restore();
     const tt=typeof t==='number'?t:0;ctx.fillStyle='rgba(240,246,248,0.75)';for(let k=0;k<7;k++){const ph=(tt*1.7+k*0.29)%1,p=F(a0+(k-3)*0.07+ph*0.08,cF+0.04,0);ctx.globalAlpha=0.8*(1-ph);ctx.beginPath();ctx.ellipse(p[0],p[1],2.2+ph*2,0.9+ph*0.6,0,0,6.3);ctx.fill();}ctx.globalAlpha=1;}
   return P;}
@@ -1568,7 +1568,7 @@ function drawMillOpt(b,win,opt){const {F,s}=mlFrame(b),L=Math.min(5,b.lvl||1),sd
       const r=hoRoof(K,gk,win);r.back();hoStilts(K,-gk.hl,gk.hl,-gk.hw,gk.hw,ST,win);hoWalls(K,gk,win);r.end();hoDoor(K,gk,'G',0,0.15,7.5,{col:'#4A3424'});r.front();r.ridge();hoBarge(K,gk,'#4A3424',0.25,L>=5);
       /* plank bridge from the bank to the door */const j0=gk.hl,jc=kc;hoQ([F(j0,jc-0.09,ST),F(0.95,jc-0.09,ST*0.2),F(0.95,jc+0.09,ST*0.2),F(j0,jc+0.09,ST)],win?'#D0C8B8':'#8A6A48');
       mlSacks(F(0.75,-s*0.55,0),win,L>=3?4:3);mlStone(F(0.45,-s*0.75,0),win);return;}
-    const R=opt===2?20:opt===4?21:17,hub=opt===2?R+3:R*0.5;const P=mlWheel(F,0,cw,hub,R,win,ang,s);
+    const R=opt===2?20:opt===4?21:17,hub=opt===2?R+3:R*0.5;const P=mlWheel(F,0,cw,hub,R,win,ang,s,opt===4);
     /* axle into the mill wall */const h0=P(0,0,cw),h1=F(0,wallC,hub);hoLine(h0,h1,win?'#8A7A64':'#3E2C1E',2);
     if(opt===2){/* flume on trestles from upstream to the top of the wheel */const top=hub+R+3,a1=-R/36*0.2,f0=F(-1.05,cw,top+3),f1=F(a1,cw,top);
       for(const u of [0.2,0.6]){const pa=-1.05+(a1+1.05)*u;hoLine(F(pa,cw,0),F(pa,cw,top+3-3*u),win?'#B8B0A0':'#4A3A2C',1.2);hoLine(F(pa,cw-0.06,0),F(pa,cw-0.06,top+3-3*u),win?'#B8B0A0':'#3A2A1C',1);}

@@ -872,3 +872,90 @@ function hoFloorPlanks(f,hs,win,sd){hoQ([f(-hs-0.05,-hs-0.05,0),f(hs+0.05,-hs-0.
       hoLine(f(a+w,c0,0),f(a+w,c1,0),'rgba(30,20,12,0.45)',0.6);hoLine(f(a-w,c0,0),f(a-w,c1,0),'rgba(30,20,12,0.3)',0.5);};
   const r=0.82;walkA(-r-w,r+w,-r);walkC(-r+w,r-w,-r);walkC(-r+w,r-w,r);walkA(-r-w,r+w,r);
   walkA(r+w,hs,0);walkC(r+w,hs,0);walkA(-r+w,-0.32,0);walkA(0.32,r-w,0);walkC(-r+w,-0.25,0);walkC(0.25,r-w,0);}
+
+/* =================== Iron Mine options (prototype) — window.__setMine(n) ===================
+   1 Hillside adit: a rock knoll with a timbered portal, rails and an ore cart · 2 Sloping shaft: a timber-lined ramp cut down into the grass under a shingled hood */
+let MINE_OPT=0;window.__setMine=n=>{MINE_OPT=n|0;};
+{const _dsM=drawShaped;drawShaped=function(b,win,c0,ax){if(MINE_OPT&&b.t==='mine'){drawMineOpt(b,win,MINE_OPT);return true;}return _dsM(b,win,c0,ax);};}
+function hoOre(p,n,sd,s){s=s||1;for(let k=0;k<n;k++){const dx=(h2(sd,k,41)-0.5)*7*s,dy=(h2(sd,k,42)-0.5)*3*s-k*0.25*s,t2=h2(sd,k,43);ctx.fillStyle=t2>0.6?'#9A5A3A':t2>0.3?'#7E4A32':'#5E4A40';ctx.beginPath();ctx.ellipse(p[0]+dx,p[1]+dy,1.6*s,1.1*s,0,0,6.3);ctx.fill();}
+  ctx.fillStyle='rgba(255,220,180,0.25)';ctx.fillRect(p[0]-1,p[1]-1.5*s,1,0.5);}
+function hoSpoil(p,r,sd,win){/* heap of grey spoil with a few rusty lumps */ctx.fillStyle='rgba(30,26,20,0.22)';ctx.beginPath();ctx.ellipse(p[0]+1.5,p[1]+0.5,r+1.5,r*0.5+0.8,0,0,6.3);ctx.fill();
+  ctx.fillStyle=win?'#C9CBC7':'#77716A';ctx.beginPath();ctx.ellipse(p[0],p[1],r,r*0.5,0,0,3.14);ctx.lineTo(p[0]-r,p[1]);ctx.quadraticCurveTo(p[0]-r*0.3,p[1]-r*0.75,p[0],p[1]-r*0.8);ctx.quadraticCurveTo(p[0]+r*0.3,p[1]-r*0.75,p[0]+r,p[1]);ctx.fill();
+  ctx.fillStyle=win?'#B2B4B0':'#625D57';ctx.beginPath();ctx.moveTo(p[0],p[1]-r*0.8);ctx.quadraticCurveTo(p[0]+r*0.3,p[1]-r*0.75,p[0]+r,p[1]);ctx.ellipse(p[0],p[1],r,r*0.5,0,0,1.2);ctx.closePath();ctx.fill();
+  for(let k=0;k<Math.round(r*1.2);k++){const a=h2(sd,k,44)*3.14,rr=h2(sd,k,45)*0.9,x=p[0]+Math.cos(a)*r*rr*0.9,y=p[1]-Math.sin(a)*r*0.6*rr;ctx.fillStyle=h2(sd,k,46)>0.75?'#8A5236':h2(sd,k,46)>0.4?'#8A847C':'#56514B';ctx.fillRect(x-0.8,y-0.5,1.6,1);}}
+function hoCart(f,a,c,along,win,sd){/* ore cart on wooden rails: plank box, iron bands, small wheels, heaped ore */const P=(da,dc,h)=>along==='c'?f(a+da,c+dc,h):f(a+dc,c+da,h),sa=0.07,sc=0.11;
+  for(const s of [-1,1])for(const t of [-0.07,0.07]){const w=along==='c'?f(a+s*(sa+0.005),c+t,1.6):f(a+t,c+s*(sa+0.005),1.6);ctx.fillStyle='#2A2622';ctx.beginPath();ctx.ellipse(w[0],w[1],1.7,1.7,0,0,6.3);ctx.fill();}
+  const fA=along==='c'?(h1,h2b)=>[P(-sa,sc,h1),P(sa,sc,h1),P(sa,sc,h2b),P(-sa,sc,h2b)]:(h1,h2b)=>[P(-sc,sa,h1),P(sc,sa,h1),P(sc,sa,h2b),P(-sc,sa,h2b)];
+  const fB=along==='c'?(h1,h2b)=>[P(sa,-sc,h1),P(sa,sc,h1),P(sa,sc,h2b),P(sa,-sc,h2b)]:(h1,h2b)=>[P(sc,-sa,h1),P(sc,sa,h1),P(sc,sa,h2b),P(sc,-sa,h2b)];
+  hoQ(fA(2,7.5),'#7A5A3C');hoQ(fB(2,7.5),'#5E4430');for(const hh of [3,6.4]){const q=fA(hh,hh+0.6);hoQ(q,'#3A3634');const q2=fB(hh,hh+0.6);hoQ(q2,'#2E2A28');}
+  const top=P(0,0,7.5);ctx.fillStyle='#2E2620';ctx.beginPath();ctx.ellipse(top[0],top[1],6,3,0,0,6.3);ctx.fill();hoOre([top[0],top[1]-0.5],9,sd,0.9);}
+function hoRails(f,a,c0,c1,win){/* two wooden rails on sleepers, along c */for(let c=c0+0.03;c<c1;c+=0.075)hoQ([f(a-0.085,c-0.015,0.3),f(a+0.085,c-0.015,0.3),f(a+0.085,c+0.015,0.3),f(a-0.085,c+0.015,0.3)],win?'#D8DAD6':'#5E4632');
+  for(const s of [-0.05,0.05]){hoLine(f(a+s,c0,0.9),f(a+s,c1,0.9),win?'#B8BAB6':'#7A5E44',1.1);}}
+function hoPortal(Q,pa,pw,ph,win,L){/* timbered adit mouth on a face: Q(s,h) gives a point on that face */const blk=Q(0,0);
+  hoQ([Q(pa-pw,0),Q(pa+pw,0),Q(pa+pw,ph),Q(pa-pw,ph)],'#0E0C0A');hoQ([Q(pa-pw*0.7,0),Q(pa+pw*0.7,0),Q(pa+pw*0.7,ph*0.72),Q(pa-pw*0.7,ph*0.72)],'#1E1A16');
+  /* inner frame further in, a glint of lamp light from L5 */hoLine(Q(pa-pw*0.7,0),Q(pa-pw*0.7,ph*0.72),'#3A2A1C',0.9);hoLine(Q(pa+pw*0.7,0),Q(pa+pw*0.7,ph*0.72),'#3A2A1C',0.9);hoLine(Q(pa-pw*0.7,ph*0.72),Q(pa+pw*0.7,ph*0.72),'#3A2A1C',1);
+  if(L>=5){const g=Q(pa,ph*0.35);ctx.fillStyle='rgba(255,170,80,0.35)';ctx.beginPath();ctx.ellipse(g[0],g[1],3,2,0,0,6.3);ctx.fill();}
+  for(const s of [-1,1])hoQ([Q(pa+s*pw-0.025,0),Q(pa+s*pw+0.025,0),Q(pa+s*pw+0.025,ph),Q(pa+s*pw-0.025,ph)],s<0?'#6E5038':'#5A4230');
+  hoQ([Q(pa-pw-0.06,ph),Q(pa+pw+0.06,ph),Q(pa+pw+0.06,ph+2.4),Q(pa-pw-0.06,ph+2.4)],'#7A5A3C');hoLine(Q(pa-pw-0.06,ph+2.4),Q(pa+pw+0.06,ph+2.4),'rgba(255,240,210,0.25)',0.5);
+  ctx.strokeStyle='rgba(30,20,12,0.5)';ctx.lineWidth=0.4;ctx.beginPath();for(const s of [-1,1]){const p=Q(pa+s*pw,ph+0.3),q=Q(pa+s*pw,ph+2.1);ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);}ctx.stroke();}
+function drawMineOpt(b,win,opt){const L=Math.min(5,b.lvl||1),f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),sd=(b.id||0)*29+opt*7;
+  if(opt===1){/* ---- hillside adit: an irregular rock knoll built in layers, grass on top, a timbered portal cut into its front ---- */
+    const ca=-0.12,cc=-0.42,RA=0.86,RC=0.56,N=6,LH=3.4,M=22,lay=[];
+    for(let k=0;k<=N;k++){const sh=1-0.78*Math.pow(k/N,1.3),pts=[];for(let m=0;m<M;m++){const th=m/M*6.283,nz=1+(h2(sd,k*31+m,61)-0.5)*0.22+(h2(sd,m,62)-0.5)*0.12;pts.push([ca+Math.cos(th)*RA*sh*nz,cc+Math.sin(th)*RC*sh*nz]);}lay.push(pts);}
+    hoQ(lay[0].map(q=>f(q[0]+0.03,q[1]+0.03,0)),'rgba(30,26,20,0.22)');
+    for(let k=0;k<N;k++){const A0=lay[k],A1=lay[k+1],h0=k*LH,h1=(k+1)*LH,quads=[];
+      for(let m=0;m<M;m++){const n=(m+1)%M,nx=(A0[m][1]-A0[n][1]),nc=(A0[n][0]-A0[m][0]);/* outward normal (a,c) */const face=nx+nc;if(face<-0.02)continue;quads.push({d:(A0[m][0]+A0[n][0]+A0[m][1]+A0[n][1]),m,n,face:nc>nx?1:0,t:h2(sd,k*17+m,63)});}
+      quads.sort((x,y)=>x.d-y.d);for(const q of quads){const col=win?(q.face?'#CFD1CD':'#C4C6C2'):q.face?(q.t>0.5?'#857E73':'#7A746A'):(q.t>0.5?'#6E685E':'#655F56');
+        hoQ([f(A0[q.m][0],A0[q.m][1],h0),f(A0[q.n][0],A0[q.n][1],h0),f(A1[q.n][0],A1[q.n][1],h1),f(A1[q.m][0],A1[q.m][1],h1)],col);
+        if(!win&&q.t>0.8&&q.face){const p2=lerp(f(A0[q.m][0],A0[q.m][1],h1-0.8),f(A0[q.n][0],A0[q.n][1],h1-0.8),0.5);ctx.fillStyle='rgba(150,80,45,0.35)';ctx.fillRect(p2[0]-1.5,p2[1],3,LH*0.6);}}
+      /* cap: grass on the upper layers, rock with a grass rim lower down */const cap=A1.map(q=>f(q[0],q[1],h1));hoQ(cap,win?'#DCDEDA':k>=N-3?'#8E9150':'#8A8478');
+      if(!win&&k<N-3){const in2=A1.map(q=>f(ca+(q[0]-ca)*0.86,cc+(q[1]-cc)*0.86,h1));hoQ(in2,'#8E9150');}}
+    if(!win){ctx.fillStyle='rgba(70,90,40,0.55)';for(let k=0;k<26;k++){const th=h2(sd,k,64)*6.283,r=h2(sd,k,65)*0.85,lv=2+(h2(sd,k,66)*(N-2)|0),sh=1-0.78*Math.pow(lv/N,1.3),p2=f(ca+Math.cos(th)*RA*sh*r,cc+Math.sin(th)*RC*sh*r,lv*LH);ctx.fillRect(p2[0]-0.4,p2[1]-2.6,0.8,2.6);}}
+    /* the cut: a flat rock face around the mouth, timber cribbing on both sides, the portal */
+    const pa=-0.2,pw=0.12,ph=12,cp=0.06,F=(s,h)=>f(s,cp,h);
+    hoQ([F(pa-0.3,0),F(pa+0.3,0),F(pa+0.26,16),F(pa+0.1,19),F(pa-0.14,18.5),F(pa-0.3,15)],win?'#BFC1BD':'#5E5850');
+    if(!win){ctx.strokeStyle='rgba(30,26,20,0.4)';ctx.lineWidth=0.5;ctx.beginPath();for(const [x,y,x2,y2] of [[-0.27,4,-0.2,9],[0.2,13,0.26,6],[-0.05,15,0.08,17]]){const p2=F(pa+x,y),q2=F(pa+x2,y2);ctx.moveTo(p2[0],p2[1]);ctx.lineTo(q2[0],q2[1]);}ctx.stroke();}
+    for(const sg of [-1,1]){for(let r=0;r<4;r++){const h=r*2.6+1.3,a=pa+sg*(pw+0.04),p2=f(a,cp+0.0,h),q2=f(a+sg*0.03,cp+0.2-r*0.035,h);hoLine(p2,q2,r%2?'#6E5038':'#5A4230',2.2);}}
+    hoPortal((s,h)=>f(s,cp+0.01,h),pa,pw,ph,win,L);
+    /* boulders at the foot of the knoll */for(let k=0;k<6;k++){const th=0.2+k*0.42,p2=f(ca+Math.cos(th)*RA*1.02,cc+Math.sin(th)*RC*1.05,0);if(Math.abs(ca+Math.cos(th)*RA-pa)<0.25&&Math.sin(th)>0.6)continue;ctx.fillStyle=k%2?'#6E685E':'#7E776C';ctx.beginPath();ctx.ellipse(p2[0],p2[1]-1.2,2.8,1.7,0,0,6.3);ctx.fill();}
+    /* spoil heap left, rails and cart, ore pile */hoSpoil(f(-0.72,0.45,0),L>=5?11:8,sd+6,win);if(L>=5)hoSpoil(f(-0.5,0.85,0),6,sd+7,win);
+    hoRails(f,pa,cp+0.02,0.97,win);hoCart(f,pa,0.55,'c',win,sd);
+    /* tool lean-to on the right from L3: back wall, posts, black shingles, tools hanging */
+    if(L>=3){const a0=0.32,a1=0.78,c0=0.06,c1=0.36,hB=11,hF=8;hoQ([f(a0,c0,0),f(a1,c0,0),f(a1,c1,0),f(a0,c1,0)],'rgba(40,34,28,0.3)');hoQ([f(a0,c0,0),f(a1,c0,0),f(a1,c0,hB),f(a0,c0,hB)],'#4A3828');
+      ctx.strokeStyle='rgba(20,14,8,0.45)';ctx.lineWidth=0.4;ctx.beginPath();for(let a=a0+0.06;a<a1;a+=0.06){const p2=f(a,c0,0),q2=f(a,c0,hB);ctx.moveTo(p2[0],p2[1]);ctx.lineTo(q2[0],q2[1]);}ctx.stroke();
+      for(let i=0;i<4;i++){const p2=f(a0+0.1+i*0.1,c0+0.01,hB-2);hoLine(p2,[p2[0],p2[1]+6],'#6E5038',0.7);ctx.fillStyle='#3A3836';ctx.fillRect(p2[0]-1.5,p2[1]+(i%2?5:0),3,1.1);}
+      for(const q of [[a0,c1,hF],[a1,c1,hF],[a1,c0,hB]])hoQ([f(q[0]-0.02,q[1],0),f(q[0]+0.02,q[1],0),f(q[0]+0.02,q[1],q[2]),f(q[0]-0.02,q[1],q[2])],'#4A3424');
+      const R=[f(a0-0.04,c0-0.03,hB+0.5),f(a1+0.04,c0-0.03,hB+0.5),f(a1+0.04,c1+0.05,hF),f(a0-0.04,c1+0.05,hF)];hoQ(R,win?'#EEF1F0':'#2F2C2A');if(!win)hoRoofSurface((u,v)=>lerp(lerp(R[3],R[2],u),lerp(R[0],R[1],u),v),{sd:sd+3,rt:'scale',rh:5,roofD:'#211F1D'},win);hoLine(R[3],R[2],'rgba(10,8,6,0.5)',0.7);
+      hoQ([R[1],R[2],[R[2][0],R[2][1]+1.3],[R[1][0],R[1][1]+1.3]],'#1E1C1A');}
+    hoOre(f(0.3,0.62,0),L>=3?16:10,sd+5,1.1);
+    {const p2=f(pa+pw+0.1,cp+0.08,0);hoLine(p2,[p2[0]+3,p2[1]-11],'#6E5038',0.8);hoLine([p2[0]+1.5,p2[1]-11.5],[p2[0]+5,p2[1]-9.5],'#3A3836',1.1);}
+    if(L>=5)hoLamp(f(pa-pw-0.07,cp+0.04,0));
+    return;}
+  /* ---- sloping shaft cut into the grass ---- */const w=0.16,a0=0.55,a1=-0.5,D=-24,P=(a,c,h)=>f(a,c,h);
+  hoSpoil(P(-0.55,-0.68,0),L>=5?12:9,sd+6,win);if(L>=3)hoOre(P(0.2,-0.7,0),12,sd+8,1.1);
+  /* dug-earth rim, then the cut itself (clipped to its mouth) */hoQ([P(a1-0.08,-w-0.08,0),P(a0+0.06,-w-0.08,0),P(a0+0.06,w+0.08,0),P(a1-0.08,w+0.08,0)],win?'#C4C6C2':'#6A5640');
+  ctx.save();{const m=[P(a1,-w,0),P(a0,-w,0),P(a0,w,0),P(a1,w,0)];ctx.beginPath();ctx.moveTo(m[0][0],m[0][1]);for(const z of m)ctx.lineTo(z[0],z[1]);ctx.closePath();ctx.clip();}
+  hoQ([P(a1,-w,0),P(a0,-w,0),P(a0,w,0),P(a1,w,0)],'#1E1812');
+  /* far wall lined with planks */hoQ([P(a0,-w,0),P(a1,-w,0),P(a1,-w,D),P(a0,-w,0)],win?'#BFC1BD':'#5A4634');if(!win){const g0=P(a0,-w,0),g1=P(a1,-w,D),g2=P(a1,-w,0),gr=ctx.createLinearGradient(g0[0],g0[1],g1[0],g1[1]);gr.addColorStop(0,'rgba(0,0,0,0)');gr.addColorStop(1,'rgba(0,0,0,0.55)');poly([g0[0],g0[1],g2[0],g2[1],g1[0],g1[1]],gr);}ctx.strokeStyle='rgba(25,18,12,0.55)';ctx.lineWidth=0.5;ctx.beginPath();for(let h=-2.5;h>D;h-=2.5){const u=h/D,p=P(a0-(a0-a1)*u,-w,h),q=P(a1,-w,h);ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);}ctx.stroke();
+  for(let a=a1+0.2;a<a0-0.1;a+=0.25){const u=(a0-a)/(a0-a1);hoLine(P(a,-w+0.01,0),P(a,-w+0.01,D*u),'#3A2A1C',1);}
+  /* floor ramp with rails, the end face with the portal */for(let k=0;k<8;k++){const u0=k/8,u1=(k+1)/8,A0=a0-(a0-a1)*u0,A1=a0-(a0-a1)*u1,v=Math.round(74-50*u1);hoQ([P(A0,-w,D*u0),P(A1,-w,D*u1),P(A1,w,D*u1),P(A0,w,D*u0)],win?'#CFD1CD':`rgb(${v},${Math.round(v*0.8)},${Math.round(v*0.6)})`);}
+  for(let k=0;k<12;k++){const u=k/12,a=a0-(a0-a1)*u,h=D*u;hoQ([P(a+0.012,-0.085,h),P(a-0.012,-0.085,h),P(a-0.012,0.085,h),P(a+0.012,0.085,h)],win?'#D8DAD6':'#5E4632');}
+  for(const s of [-0.05,0.05])hoLine(P(a0,s,0.6),P(a1,s,D+0.6),win?'#B8BAB6':'#7A5E44',1);
+  {const Q=(s,h)=>P(a1,s,h);hoQ([Q(-w,D),Q(w,D),Q(w,0),Q(-w,0)],win?'#B2B4B0':'#3A2C20');ctx.save();ctx.translate(0,0);hoPortal((s,h)=>P(a1+0.005,s,D+h),0,0.1,11,win,L);ctx.restore();}
+  ctx.restore();
+  /* log kerbs on the edges of the cut */for(const c of [-w-0.02,w+0.02])hoLine(P(a1-0.02,c,0.8),P(a0,c,0.8),'#6E5038',2.2);hoLine(P(a1-0.03,-w-0.03,0.8),P(a1-0.03,w+0.03,0.8),'#5A4230',2.4);
+  /* rails continue on the surface; cart on top (L1) or part-way down on a rope from the windlass (L3+) */hoRails(f,0,a0,0.98,win);
+  /* shingled hood over the deep end on four posts */{const hl=L>=5?0.3:0.22,hc=a1+hl-0.06,hw=w+0.07,wh=13,fr=(a,c,h)=>f(hc+a,c,h);
+    for(const q of [[-hl,-hw],[hl,-hw],[-hl,hw],[hl,hw]]){const p0=fr(q[0],q[1],0),p1=fr(q[0],q[1],wh);hoQ([[p0[0]-0.8,p0[1]],[p0[0]+0.8,p0[1]],[p1[0]+0.8,p1[1]],[p1[0]-0.8,p1[1]]],q[1]>0?'#5A4230':'#4A3424');}
+    hoLine(fr(-hl,hw,wh),fr(hl,hw,wh),'#4A3424',1.2);hoLine(fr(hl,-hw,wh),fr(hl,hw,wh),'#4A3424',1.2);
+    const g={sd:sd+2,hl,hw,wh,rh:7,ov:0.04,th:1.4,roof:'#2F2C2A',roofD:'#211F1D',roofE:'#171514',rt:'scale'};const rr=hoRoof(fr,g,win);rr.back();rr.end();rr.front();rr.ridge();
+    for(const ae of [hl+g.ov+0.01,-hl-g.ov-0.01])for(const sg of [1,-1]){const e=fr(ae,sg*(hw+g.ov),wh-g.ov/hw*g.rh),r2=fr(ae,0,wh+g.rh),x=[r2[0]+(r2[0]-e[0])*0.25,r2[1]+(r2[1]-e[1])*0.25];hoLine(ae>0||sg>0?e:r2,x,'#4A3424',0.8);}
+    if(L>=5)hoLamp(fr(hl,hw,wh-1));}
+  if(L>=3){/* windlass across the top of the ramp, rope down to a cart on the slope */const wa=a0+0.06;for(const s of [-1,1]){const p0=P(wa,s*(w+0.06),0),p1=P(wa,s*(w+0.06),9);hoQ([[p0[0]-0.9,p0[1]],[p0[0]+0.9,p0[1]],[p1[0]+0.9,p1[1]],[p1[0]-0.9,p1[1]]],s>0?'#5A4230':'#4A3424');}
+    const r0=P(wa,-w-0.06,7.5),r1=P(wa,w+0.06,7.5);hoLine(r0,r1,'#6E5038',2.6);{const ck=P(wa,w+0.12,7.5);hoLine(r1,ck,'#2A2622',0.8);hoLine(ck,[ck[0],ck[1]+3],'#2A2622',0.8);}
+    const ca=0.12,cu=(a0-ca)/(a0-a1);hoLine(P(wa,0,7.5),P(ca+0.1,0,D*cu+6),'#C9B38A',0.5);hoCartSlope(f,ca,D*cu,win,sd);hoOre(P(0.4,0.6,0),10,sd+5,1.1);}
+  else{hoCart(f,0,0.82,'a',win,sd);hoOre(P(0.42,0.55,0),8,sd+5,1.1);}
+  {const p=P(-0.15,w+0.22,0);hoLine(p,[p[0]+3,p[1]-11],'#6E5038',0.8);hoLine([p[0]+1.5,p[1]-11.5],[p[0]+5,p[1]-9.5],'#3A3836',1.1);}}
+function hoCartSlope(f,a,h,win,sd){const P=(da,dc,dh)=>f(a+da,dc,h+dh);hoQ([P(-0.11,0.07,1.5),P(0.11,0.07,3.5),P(0.11,0.07,8.5),P(-0.11,0.07,6.5)],'#7A5A3C');hoQ([P(0.11,-0.07,3.5),P(0.11,0.07,3.5),P(0.11,0.07,8.5),P(0.11,-0.07,8.5)],'#5E4430');
+  const top=P(0,0,7.5);ctx.fillStyle='#2E2620';ctx.beginPath();ctx.ellipse(top[0],top[1],5,2.5,0,0,6.3);ctx.fill();hoOre([top[0],top[1]-0.5],7,sd,0.9);}
+function hoLamp(p){hoLine(p,[p[0],p[1]-12],'#3A2A1C',0.9);ctx.fillStyle='#2A2622';ctx.fillRect(p[0]-1.4,p[1]-12,2.8,3.4);ctx.fillStyle='rgba(255,190,90,0.95)';ctx.fillRect(p[0]-0.8,p[1]-11.4,1.6,2.2);ctx.fillStyle='rgba(255,170,80,0.18)';ctx.beginPath();ctx.ellipse(p[0],p[1]-10,7,5,0,0,6.3);ctx.fill();}

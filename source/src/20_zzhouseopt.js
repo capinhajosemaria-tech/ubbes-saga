@@ -1798,3 +1798,42 @@ function drawTavernOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,r
   else{house();brBarrel(fw(g.hl+0.1,-0.3,0),1.1,win);brBarrel(fw(g.hl+0.1,-0.12,0),1.1,win);tvBench(fw,-1.0,-0.25,g.hw+0.12,win);tvBench(fw,0.35,1.05,g.hw+0.12,win);tvSign(fw(g.hl+0.2,g.hw+0.25,0),win);}}
 {const _shK=shShape;shShape=function(b){if(b.t==='tavern'&&TAV_OPT){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),box=(a,c,sa,sc,h)=>({pts:[f(a-sa,c-sc,0),f(a+sa,c-sc,0),f(a+sa,c+sc,0),f(a-sa,c+sc,0)],h});
   const o=TAV_OPT,ha=o===3?-0.35:0,hc=o===3?-0.35:-0.3,hl=o===3?1.0:1.2;const V=[box(ha,hc,hl+0.07,0.62,0.6),box(ha,hc,hl+0.07,0.06,1.1)];if(o===2)V.push(box(0,-0.3+0.56+0.21,1.2,0.21,0.4));return V;}return _shK(b);};}
+
+/* =================== Watchtower options (prototype) — window.__setTower(n) ===================
+   José (2026-11-12): slim, on ONE tile, standing in the palisade line; wall tiles beside it join it. The prototype draws a 1×1 tower when
+   DEF.tower is 1×1 (the screenshot script sets that and marks the tower's tile in walls with 3; see BACKLOG for the game change).
+   1 Open post tower: four posts with X-braces, a pointed-log parapet, black-scale pyramid · 2 Log shaft + overhanging plank gallery, red-board pyramid
+   3 Stone foot + timber shaft + gallery, slate pyramid · 4 Palisade tower: a tall ring of the same pointed logs as the wall, a platform roof on posts */
+let TOWER_OPT=0;window.__setTower=n=>{TOWER_OPT=n|0;};
+{const _dsQ=drawShaped;drawShaped=function(b,win,c0,ax){if(TOWER_OPT&&b.t==='tower'){drawTowerOpt(b,win,TOWER_OPT);return true;}return _dsQ(b,win,c0,ax);};}
+{const _dwt=drawWallTile;drawWallTile=function(i,win){if(walls[i]===3)return;return _dwt(i,win);};}
+function twLog(p,h,w,win){/* one palisade log: split face, shaded side, sharpened top (as drawWallTile) */w=w||2.3;const LT=win?'#9A8A78':'#8E6E4E',DK=win?'#6E6052':'#5A4230',TIP=win?'#B5A894':'#A88660';const px=p[0],py=p[1];
+  poly([px-w,py+0.6,px+w,py+0.6,px+w,py-h,px,py-h-3.6,px-w,py-h],LT);poly([px+w*0.15,py+0.6,px+w,py+0.6,px+w,py-h,px+w*0.15,py-h-3.1],DK);poly([px-w,py-h,px,py-h-3.6,px+w,py-h,px,py-h+1.2],TIP);
+  ctx.strokeStyle='rgba(34,24,16,0.55)';ctx.lineWidth=0.6;ctx.beginPath();ctx.moveTo(px-w,py+0.6);ctx.lineTo(px-w,py-h);ctx.stroke();}
+function twStubs(b,f0,front,win,s){/* palisade from the tower's base out to each side where a wall tile joins */const x=b.fx,y=b.fy;
+  for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){if(!inMap(x+dx,y+dy)||!walls[(y+dy)*N+x+dx])continue;if((dx+dy>0)!==front)continue;
+    const a0=f0(dx*s,dy*s,0),a1=f0(dx*0.5,dy*0.5,0);ctx.strokeStyle=win?'rgba(236,240,238,0.9)':'#6B5A40';ctx.lineWidth=6;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(a0[0],a0[1]+1.5);ctx.lineTo(a1[0],a1[1]+1.5);ctx.stroke();ctx.lineCap='butt';
+    const n=3,pts=[];for(let k=0;k<=n;k++)pts.push(lerp(a0,a1,k/n));pts.sort((p,q)=>p[1]-q[1]);for(const p of pts)twLog(p,20+((p[0]*7|0)%3),2.3,win);}}
+function drawTowerOpt(b,win,opt){const one=b.w===1,f0=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:0}),sd=(b.id||0)*67+opt,S=one?1:1.6,f=(a,c,h)=>f0(a*S,c*S,h);
+  const s=0.2,J=opt===1||opt===4?WOOD_SET[2]:opt===2?WOOD_SET[4]:WOOD_SET[3];if(one)twStubs(b,f0,false,win,s*S);
+  if(opt===1){/* open post tower */const H=40,P=(a,c,h)=>f(a,c,h),col=win?'#C8C2B4':'#4A3424',colL=win?'#D8D2C4':'#6E5038';hoQ([P(-s,-s,0),P(s+0.1,-s,0),P(s+0.1,s+0.1,0),P(-s,s+0.1,0)],'rgba(30,26,20,0.15)');
+    for(const [a,c] of [[-s,-s],[s,-s],[-s,s],[s,s]]){const t2=(a,c,h)=>P(a*(1-h/H*0.15),c*(1-h/H*0.15),h);hoQ([t2(a-0.02,c,0),t2(a+0.02,c,0),t2(a+0.02,c,H),t2(a-0.02,c,H)],a>0&&c>0?colL:col);}
+    for(const face of [0,1])for(let k=0;k<3;k++){const h0=4+k*12,h1=h0+12,sh=h=>1-h/H*0.15,Q=(u,h)=>face?P(s*sh(h),u*s*sh(h),h):P(u*s*sh(h),s*sh(h),h);hoLine(Q(-1,h0),Q(1,h1),col,0.9);hoLine(Q(1,h0),Q(-1,h1),col,0.9);hoLine(Q(-1,h1),Q(1,h1),col,1);}
+    /* ladder on the +a face */for(const u of [-0.25,0.25])hoLine(P(s+0.06,u*s,0),P(s*0.86+0.04,u*s,H),win?'#B8B0A0':'#7A5A3C',0.7);for(let h=3;h<H;h+=3.4){hoLine(P(s+0.06-h/H*0.03,-0.25*s,h),P(s+0.06-h/H*0.03,0.25*s,h),win?'#B8B0A0':'#7A5A3C',0.5);}
+    /* platform with a pointed-log parapet */const ps=0.27,pf=(a,c,h)=>P(a,c,h);hoQ([pf(-ps,-ps,H),pf(ps,-ps,H),pf(ps,ps,H),pf(-ps,ps,H)],win?'#D8D2C4':'#7A5A3C');hoQ([pf(-ps,ps,H),pf(ps,ps,H),pf(ps,ps,H-2),pf(-ps,ps,H-2)],win?'#C8C2B4':'#5A4230');hoQ([pf(ps,-ps,H),pf(ps,ps,H),pf(ps,ps,H-2),pf(ps,-ps,H-2)],win?'#B8B0A0':'#4A3424');
+    const pp=[];for(let k=0;k<=5;k++){pp.push(pf(-ps+2*ps*k/5,ps,H));pp.push(pf(ps,-ps+2*ps*k/5,H));}pp.sort((p,q)=>p[1]-q[1]);for(const p of pp)twLog(p,7,1.6,win);
+    for(const [a,c] of [[-ps+0.03,ps-0.03],[ps-0.03,ps-0.03],[ps-0.03,-ps+0.03]])hoLine(pf(a,c,H+5),pf(a,c,H+13),col,1);hoPyramid(f,0,0,ps+0.06,H+13,H+28,J.roof,J.roofD,'scale',win,sd);}
+  else if(opt===2||opt===3){const H=38,shaft={sd,hl:s,hw:s,fh:opt===3?1.2:2,wh:H,rh:0,ov:0,wt:'logs',wall:'#7E6248',wallD:'#5F4936',frame:false,k:1,v:1};
+    hoQ([f(-s,-s,0),f(s+0.12,-s,0),f(s+0.12,s+0.12,0),f(-s,s+0.12,0)],'rgba(30,26,20,0.15)');hoFooting(f,shaft,win);hoWalls(f,shaft,win);if(opt===3)hoStoneBox(f,0,0,s+0.02,s+0.02,0,14,win,sd);
+    hoDoor(f,shaft,'G',0,0.12,8,{col:'#4A3424'});
+    /* overhanging plank gallery with arrow slits */const gs=0.29,g0=H,g1=H+11,G=(a,c,h)=>f(a,c,h);for(const k of [-1,1]){hoLine(G(s,k*0.12,H-6),G(gs,k*0.12,g0),win?'#B8B0A0':'#3A2A1C',1);hoLine(G(k*0.12,s,H-6),G(k*0.12,gs,g0),win?'#B8B0A0':'#3A2A1C',1);}
+    hoQ([G(-gs,gs,g0),G(gs,gs,g0),G(gs,gs,g1),G(-gs,gs,g1)],win?'#D8D2C4':'#8A6A48');hoQ([G(gs,-gs,g0),G(gs,gs,g0),G(gs,gs,g1),G(gs,-gs,g1)],win?'#C8C2B4':'#6E5038');
+    if(!win){ctx.strokeStyle='rgba(30,20,12,0.45)';ctx.lineWidth=0.4;ctx.beginPath();for(let k=1;k<8;k++){const u=-gs+2*gs*k/8,p=G(u,gs,g0),q=G(u,gs,g1),r=G(gs,u,g0),t3=G(gs,u,g1);ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);ctx.moveTo(r[0],r[1]);ctx.lineTo(t3[0],t3[1]);}ctx.stroke();
+      for(const u of [-0.14,0.14]){hoQ([G(u-0.015,gs+0.002,g0+3),G(u+0.015,gs+0.002,g0+3),G(u+0.015,gs+0.002,g0+8),G(u-0.015,gs+0.002,g0+8)],'#1E1610');hoQ([G(gs+0.002,u-0.015,g0+3),G(gs+0.002,u+0.015,g0+3),G(gs+0.002,u+0.015,g0+8),G(gs+0.002,u-0.015,g0+8)],'#1E1610');}}
+    hoLine(G(-gs,gs,g0),G(gs,gs,g0),win?'#B8B0A0':'#3A2A1C',1.1);hoPyramid(f,0,0,gs+0.06,g1-0.5,g1+17,J.roof,J.roofD,J.rt,win,sd);}
+  else{/* palisade tower: a square of tall pointed logs, a platform roof on corner posts above */const H=44,ts=0.22,pts=[];hoQ([f(-ts,-ts,0),f(ts+0.1,-ts,0),f(ts+0.1,ts+0.1,0),f(-ts,ts+0.1,0)],'rgba(30,26,20,0.18)');
+    for(let k=0;k<=4;k++){pts.push({p:f(-ts+2*ts*k/4,ts,0),k});pts.push({p:f(ts,-ts+2*ts*k/4,0),k:k+10});}pts.sort((p,q)=>p.p[1]-q.p[1]);for(const q of pts)twLog(q.p,H-(q.k%3),2.9,win);
+    {/* a dark doorway at the foot on the +a face, a band of iron */const P=(c,h)=>f(ts+0.004,c,h);hoQ([P(-0.07,0),P(0.07,0),P(0.07,9),P(-0.07,9)],'#1E1610');for(const h of [12,30])hoLine(f(-ts,ts+0.01,h),f(ts,ts+0.01,h),'#4A4846',0.9),hoLine(f(ts+0.01,-ts,h),f(ts+0.01,ts,h),'#3A3836',0.9);}
+    for(const [a,c] of [[-ts+0.03,ts],[ts,ts],[ts,-ts+0.03]])hoLine(f(a,c,H),f(a,c,H+10),win?'#C8C2B4':'#3A2A1C',1.1);hoPyramid(f,0,0,ts+0.08,H+10,H+24,J.roof,J.roofD,'scale',win,sd);}
+  if(one)twStubs(b,f0,true,win,s*S);}
+{const _shQ=shShape;shShape=function(b){if(b.t==='tower'&&TOWER_OPT){const f0=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:0}),S=b.w===1?1:1.6,s=0.3*S;return [{pts:[f0(-s,-s,0),f0(s,-s,0),f0(s,s,0),f0(-s,s,0)],h:2.2}];}return _shQ(b);};}

@@ -1815,7 +1815,7 @@ function twStubs(b,f0,front,win,s){/* palisade from the tower's base out to each
     const a0=f0(dx*s,dy*s,0),a1=f0(dx*0.5,dy*0.5,0);ctx.strokeStyle=win?'rgba(236,240,238,0.9)':'#6B5A40';ctx.lineWidth=6;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(a0[0],a0[1]+1.5);ctx.lineTo(a1[0],a1[1]+1.5);ctx.stroke();ctx.lineCap='butt';
     const n=3,pts=[];for(let k=0;k<=n;k++)pts.push(lerp(a0,a1,k/n));pts.sort((p,q)=>p[1]-q[1]);for(const p of pts)twLog(p,20+((p[0]*7|0)%3),2.3,win);}}
 function drawTowerOpt(b,win,opt){const one=b.w===1,f0=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:0}),sd=(b.id||0)*67+opt,S=one?1:1.6,f=(a,c,h)=>f0(a*S,c*S,h);
-  const s=0.2,J=opt===1||opt===4?WOOD_SET[2]:opt===2?WOOD_SET[4]:WOOD_SET[3];if(one)twStubs(b,f0,false,win,s*S);
+  const s=0.2,J=opt===2?WOOD_SET[4]:WOOD_SET[2];/* option 3 chosen with the black scale roof (José) */if(one)twStubs(b,f0,false,win,s*S);
   if(opt===1){/* open post tower */const H=40,P=(a,c,h)=>f(a,c,h),col=win?'#C8C2B4':'#4A3424',colL=win?'#D8D2C4':'#6E5038';hoQ([P(-s,-s,0),P(s+0.1,-s,0),P(s+0.1,s+0.1,0),P(-s,s+0.1,0)],'rgba(30,26,20,0.15)');
     for(const [a,c] of [[-s,-s],[s,-s],[-s,s],[s,s]]){const t2=(a,c,h)=>P(a*(1-h/H*0.15),c*(1-h/H*0.15),h);hoQ([t2(a-0.02,c,0),t2(a+0.02,c,0),t2(a+0.02,c,H),t2(a-0.02,c,H)],a>0&&c>0?colL:col);}
     for(const face of [0,1])for(let k=0;k<3;k++){const h0=4+k*12,h1=h0+12,sh=h=>1-h/H*0.15,Q=(u,h)=>face?P(s*sh(h),u*s*sh(h),h):P(u*s*sh(h),s*sh(h),h);hoLine(Q(-1,h0),Q(1,h1),col,0.9);hoLine(Q(1,h0),Q(-1,h1),col,0.9);hoLine(Q(-1,h1),Q(1,h1),col,1);}

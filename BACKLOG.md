@@ -55,7 +55,7 @@ Order: Round 1 (done, 0.14.0) → 1C (done, 0.15.0) → **1H** → 1D → 1I →
 ## 2. Art redesign (José, 2026-11-11)
 Prototypes are on branch `art-prototypes` (code, switches and option sheets: `docs/art/README.md` on that branch). Nothing is released.
 José's problems with buildings close up: many have **no door**, **chimneys badly seated on roofs**, **details sparse** and **lines too thick**.
-Decided: roads B, grass B, market M1 (now in Round 1).
+Decided: roads B, grass B, market M1 (now in Round 1). **Houses** (2026-11-12): style, 4 roofs and 8 colour schemes in `docs/art/STYLE.md` (prototype on branch `house-options`). Next: the other buildings one at a time, recorded in the same file.
 To decide:
 - [ ] **Town Hall entrance**: 6 options (1 Urnes portal, 2 carved porch, 3 iron gate, 4 dragon pillars, 5 painted hall, 6 vestibule with antlers) or a mix. Claude's view: 1 most beautiful close up, 6 reads best from afar, 2 needs geometry work. The door must be big and ornamented.
 - [ ] **Building grime** (contact shadow, damp walls, moss on footings, rain streaks) from option B — ask José.

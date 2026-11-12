@@ -1194,3 +1194,55 @@ function drawPigOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:
     hoLine(G(0.18,1.5),G(0.72,FH-1.2),'#5A4230',1.2);for(const a of [0.15,0.75]){const p=G(a,0),q=G(a,FH+1.5);hoLine(p,q,'#3A2A1C',1.6);}}}
 {const _shG=shShape;shShape=function(b){if(b.t==='pigpen'&&PIG_OPT){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),L=Math.min(5,b.lvl||1),hl=L>=5?0.55:0.45,box=(a0,a1,c0,c1)=>[f(a0,c0,0),f(a1,c0,0),f(a1,c1,0),f(a0,c1,0)];
   return [{pts:box(-0.85-hl,-0.85+hl,-0.95-0.34,-0.95+0.34),h:0.4},{pts:box(-0.85-hl,-0.85+hl,-1,-0.9),h:0.68}];}return _shG(b);};}
+
+/* =================== Sheep Pen options (prototype) — window.__setSheep(n) ===================
+   Norse short-tailed sheep in mixed colours, some horned.
+   1 Wattle fence + plank fold (like the Pig Pen) · 2 Dry-stone wall + stone fold with a turf roof
+   3 Skigard (slanted split-rail) fence + open log fold with hay · 4 Round dry-stone fold + a small turf shieling */
+let SHEEP_OPT=0;window.__setSheep=n=>{SHEEP_OPT=n|0;};
+{const _dsSh=drawShaped;drawShaped=function(b,win,c0,ax){if(SHEEP_OPT&&b.t==='sheeppen'){drawSheepOpt(b,win,SHEEP_OPT);return true;}return _dsSh(b,win,c0,ax);};}
+function hoSheep(p,d,wool,face,horn,bob,win){const x=p[0],y=p[1]-bob;ctx.fillStyle='rgba(30,24,18,0.22)';ctx.beginPath();ctx.ellipse(x,y+0.5,5.6,2,0,0,6.3);ctx.fill();
+  for(const lx of [-3,-1.4,1.8,3.2]){ctx.fillStyle=face;ctx.fillRect(x+lx*d-0.45,y-2.8,0.9,3);}
+  const W=win?'#F2F2EE':wool;ctx.fillStyle=W;for(const [dx,dy,r] of [[-2.6,-4.6,2.4],[0,-5.2,2.7],[2.4,-4.8,2.4],[-1.2,-3.6,2.3],[1.4,-3.7,2.3],[-3.4,-3.9,1.8]]){ctx.beginPath();ctx.arc(x+dx*d,y+dy,r,0,6.3);ctx.fill();}
+  ctx.fillStyle=shade(W,1.12);ctx.beginPath();ctx.arc(x+0.2*d,y-6.2,1.5,0,6.3);ctx.fill();ctx.fillStyle=shade(W,0.82);ctx.beginPath();ctx.ellipse(x,y-2.7,3.8,1,0,0,3.14);ctx.fill();
+  /* head, ears, horns */const hx=x+d*5,hy=y-5.4;ctx.fillStyle=face;ctx.beginPath();ctx.ellipse(hx,hy,1.7,1.3,d*0.3,0,6.3);ctx.fill();ctx.beginPath();ctx.ellipse(hx+d*1.5,hy+0.6,1.1,0.9,0,0,6.3);ctx.fill();
+  ctx.beginPath();ctx.ellipse(hx-d*1.2,hy-0.5,1,0.45,-d*0.5,0,6.3);ctx.fill();ctx.fillStyle='#0E0A08';ctx.fillRect(hx+d*0.6-0.3,hy-0.6,0.6,0.6);
+  if(horn){ctx.strokeStyle=win?'#B8AE9A':'#A89A78';ctx.lineWidth=0.9;ctx.beginPath();ctx.arc(hx-d*0.6,hy-0.2,1.5,d>0?3.6:-0.5,d>0?8.5:4.4);ctx.stroke();}
+  ctx.fillStyle=shade(W,0.9);ctx.beginPath();ctx.arc(x-d*5,y-4.6,0.9,0,6.3);ctx.fill();}
+function hoStoneWall(f,p0,p1,h,win,sd){/* dry-stone wall: the face toward the viewer and the top, stones in courses, cap stones on edge */const t=0.07,dir=[p1[0]-p0[0],p1[1]-p0[1]],L=Math.hypot(dir[0],dir[1]),nrm=[-dir[1]/L,dir[0]/L],o=(nrm[0]+nrm[1]>=0)?1:-1,N=[nrm[0]*t*o,nrm[1]*t*o];
+  const F=(u,hh)=>{const a=p0[0]+dir[0]*u+N[0],c=p0[1]+dir[1]*u+N[1];return f(a,c,hh);},T=(u,hh)=>{const a=p0[0]+dir[0]*u-N[0],c=p0[1]+dir[1]*u-N[1];return f(a,c,hh);};
+  hoQ([T(0,h),T(1,h),F(1,h),F(0,h)],win?'#E8EAE6':'#9A948A');hoQ([F(0,0),F(1,0),F(1,h),F(0,h)],win?'#C9CBC7':'#7E786E');
+  const rows=Math.max(2,Math.round(h/1.6)),n=Math.max(3,Math.round(L/0.11));for(let r=0;r<rows;r++){const h0=h*r/rows,h1=h*(r+1)/rows;for(let k=0;k<n;k++){const u0=(k+(r%2?0.5:0)+h2(sd,r*31+k,97)*0.2)/n,u1=Math.min(1,u0+1/n-0.012);if(u0>=1)continue;const tn=h2(sd,r*17+k,98);hoQ([F(u0,h0+0.15),F(u1,h0+0.15),F(u1,h1-0.15),F(u0,h1-0.15)],win?(tn>0.5?'#D4D6D2':'#C4C6C2'):tn>0.66?'#8E877B':tn>0.33?'#857E72':'#746E64');}}
+  for(let k=0;k<n*1.4;k++){const u=(k+0.5)/(n*1.4),p=lerp(T(u,h),F(u,h),0.5);ctx.fillStyle=win?'#F2F4F0':(k%2?'#8A847A':'#9C968B');ctx.fillRect(p[0]-1,p[1]-2,2,2);}
+  if(!win){ctx.fillStyle='rgba(90,110,60,0.45)';for(let k=0;k<Math.round(L*4);k++){const p=F(h2(sd,k,99),0.3);ctx.fillRect(p[0]-1.2,p[1]-0.4,2.4,0.7);}}}
+function hoSkigard(f,p0,p1,h,win,sd){/* Norwegian skigard: pairs of upright stakes, split poles laid slanting between them */const n=Math.max(2,Math.round(Math.hypot(p1[0]-p0[0],p1[1]-p0[1])/0.42));const P=(u,hh)=>f(p0[0]+(p1[0]-p0[0])*u,p0[1]+(p1[1]-p0[1])*u,hh);
+  for(let k=0;k<n;k++){for(let j=0;j<5;j++){const u0=(k+j*0.2)/n,u1=Math.min(1,u0+1.1/n);hoLine(P(u0,0.4),P(u1,h),'#3A2A1C',2.2);hoLine(P(u0,0.4),P(u1,h),j%2?'#9A7A54':'#B08C62',1.4);}}
+  for(let k=0;k<=n;k++){const u=k/n,a=P(u,0),b2=P(u,h+1.6);hoLine([a[0]-0.9,a[1]],[b2[0]-0.9,b2[1]],'#4A3424',1);hoLine([a[0]+0.9,a[1]],[b2[0]+0.9,b2[1]],'#5A4230',1);hoLine([b2[0]-1.2,b2[1]+1.2],[b2[0]+1.2,b2[1]+1.2],'#6E5038',0.6);}}
+function drawSheepOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),sd=(b.id||0)*7+opt,L=Math.min(5,b.lvl||1),E=1.42,J=WOOD_SET[2];
+  const run=(p0,p1,k)=>{if(opt===1)hoWattle(f,p0,p1,7,win,sd+k);else if(opt===2)hoStoneWall(f,p0,p1,5,win,sd+k);else if(opt===3)hoSkigard(f,p0,p1,6.5,win,sd+k);};
+  const RR=1.3,ring=(front)=>{const n=20;for(let k=0;k<n;k++){const t0=k/n*6.283,t1=(k+1)/n*6.283,tm=(t0+t1)/2,fr=Math.cos(tm)+Math.sin(tm)>0;if(fr!==front)continue;if(front&&Math.abs(tm-Math.PI/4)<0.2)continue;hoStoneWall(f,[Math.cos(t0)*RR,Math.sin(t0)*RR],[Math.cos(t1)*RR,Math.sin(t1)*RR],5,win,sd+k);}};
+  if(opt===4)ring(false);else{run([-E,-E],[E,-E],0);run([-E,-E],[-E,E],1);}
+  /* the fold */const fw=(a,c,h)=>f(a+(opt===4?-0.55:-0.85),c+(opt===4?-0.55:-0.95),h),hl=opt===4?0.32:(L>=5?0.55:0.45),hw=opt===4?0.26:0.34;
+  if(opt===1||opt===3){const g={sd,hl,hw,fh:1.6,wh:8+(L>=3?1:0),rh:8,ov:0.05,th:1.6,wt:opt===3?'logs':'planks',wall:opt===3?'#7A5A3C':'#7A6450',wallD:opt===3?'#62482F':'#62503F',roof:J.roof,roofD:J.roofD,roofE:shade(J.roofD,0.7),rt:'scale',frame:opt===1,frameCol:'#3A2A1C',k:1,v:1};
+    const r=hoRoof(fw,g,win);r.back();hoFooting(fw,g,win);hoWalls(fw,g,win);r.end();
+    const P=(s,h)=>fw(s,hw+0.004,h),dw=opt===3?0.28:0.12;hoQ([P(-dw,g.fh),P(dw,g.fh),P(dw,g.fh+5.8),P(-dw,g.fh+5.8)],'#1A140F');
+    if(opt===3){/* open front full of hay */hoQ([P(-dw,g.fh),P(dw,g.fh),P(dw,g.fh+3.2),P(-dw+0.05,g.fh+3.8),P(-dw,g.fh+2.4)],'#C8A85A');ctx.strokeStyle='rgba(120,90,40,0.6)';ctx.lineWidth=0.4;ctx.beginPath();for(let k=0;k<10;k++){const p=P(-dw+0.05*k+0.02,g.fh+1+h2(sd,k,93)*2);ctx.moveTo(p[0],p[1]);ctx.lineTo(p[0]+1.5,p[1]-1);}ctx.stroke();}
+    else hoQ([P(-dw,g.fh),P(dw,g.fh),P(dw,g.fh+1.4),P(-dw,g.fh+1.4)],'#B8984E');
+    for(const s of [-dw-0.015,dw+0.015])hoLine(P(s,g.fh),P(s,g.fh+6.1),'#3A2A1C',1.1);hoLine(P(-dw-0.02,g.fh+6.1),P(dw+0.02,g.fh+6.1),'#3A2A1C',1.2);
+    r.front();r.ridge();hoBarge(fw,g,'#4A3424',0.22,L>=5);}
+  else{/* stone fold with a turf roof (2) or a small turf shieling (4) */const g={sd,hl,hw,fh:0.6,wh:opt===4?7:8+(L>=3?1:0),rh:opt===4?6:7,ov:0.06,th:4,wt:'planks',wall:'#857E72',wallD:'#6E685E',roof:'#6E7A44',roofD:'#56603A',roofE:'#3E4628',rt:'turf',frame:false,k:1,v:1};
+    const r=hoRoof(fw,g,win);r.back();hoWalls(fw,g,win);hoStoneBox(fw,0,0,hl,hw,0.6,g.wh,win,sd);
+    {const P=(c,h)=>fw(hl+0.004,c,h);hoQ([P(-0.05,g.wh),P(0.05,g.wh),P(0,g.wh+g.rh)].map(q=>q),'#5E5850');hoQ([P(-hw,g.wh),P(hw,g.wh),P(0,g.wh+g.rh)],win?'#C9CBC7':'#7A746A');}
+    r.end();const P=(s,h)=>fw(s,hw+0.004,h),dw=0.1;hoQ([P(-dw,0.6),P(dw,0.6),P(dw,5.6),P(-dw,5.6)],'#1A140F');hoQ([P(-dw-0.03,5.6),P(dw+0.03,5.6),P(dw+0.03,6.6),P(-dw-0.03,6.6)],'#6E685E');
+    if(opt===4){hoQ([P(dw,0.6),P(dw+0.08,0.6),P(dw+0.08,5.6),P(dw,5.6)],'#5A4230');}
+    r.front();r.ridge();if(!win){const tp=fw(0,0,g.wh+g.rh+1);ctx.fillStyle='rgba(110,130,60,0.7)';for(let k=0;k<6;k++)ctx.fillRect(tp[0]-6+k*2.2,tp[1]-1-(k%2),0.7,2.4);}}
+  /* sheep, sorted back to front */const tot=(typeof S!=='undefined'&&S.herd)?S.herd.sheep:7,pens=Math.max(1,B.filter(q=>q.t===b.t).length),n=Math.max(4,Math.min(12,Math.ceil(tot/pens)||0)),tt=typeof t==='number'?t:0;
+  const wools=['#ECE6D8','#ECE6D8','#D8D0C0','#8A7E70','#5E5248','#2E2A26','#B89A7A'],faces=['#2E2A26','#3A322C','#6E5E50','#ECE6D8'],Q=[];
+  for(let k=0;k<n;k++){let a=-1.1+h2(b.id||0,k,63)*2.3+Math.sin(tt*0.2+k*1.3)*0.1,c=-0.3+h2(b.id||0,k,64)*1.5+Math.cos(tt*0.17+k)*0.07;if(opt===4){const r=Math.hypot(a,c);if(r>1.05){a*=1.05/r;c*=1.05/r;}}Q.push({a,c,k});}
+  Q.sort((x,y)=>(x.a+x.c)-(y.a+y.c));for(const q of Q){const p=f(q.a,q.c,0),d=Math.sin(tt*0.2+q.k*1.3+1.1)>0?1:-1,w=wools[q.k%wools.length];hoSheep(p,d,w,w==='#2E2A26'||w==='#5E5248'?'#2A2420':faces[q.k%faces.length],q.k%3===0,Math.abs(Math.sin(tt*1.6+q.k))*0.4,win);}
+  /* front runs with a gate */if(opt===4){ring(true);const g0=[Math.cos(Math.PI/4-0.18)*RR,Math.sin(Math.PI/4-0.18)*RR],g1=[Math.cos(Math.PI/4+0.18)*RR,Math.sin(Math.PI/4+0.18)*RR];for(const q of [g0,g1]){const p=f(q[0],q[1],0),u=f(q[0],q[1],7);hoLine(p,u,'#3A2A1C',1.6);}hoLine(f(g0[0],g0[1],2),f(g1[0],g1[1],2),'#8A6E4E',1);hoLine(f(g0[0],g0[1],4.5),f(g1[0],g1[1],4.5),'#8A6E4E',1);return;}
+  run([E,-E],[E,E],2);run([-E,E],[0.15,E],3);run([0.75,E],[E,E],4);
+  {const G=(a,h)=>f(a,E,h),gh=opt===2?5:6.5;hoQ([G(0.17,0.5),G(0.73,0.5),G(0.73,gh-0.5),G(0.17,gh-0.5)],win?'#D8D2C6':'#8A6E4E');ctx.strokeStyle='rgba(30,20,12,0.5)';ctx.lineWidth=0.45;ctx.beginPath();for(let a=0.25;a<0.73;a+=0.08){const p=G(a,0.5),q=G(a,gh-0.5);ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);}ctx.stroke();
+    hoLine(G(0.18,1.3),G(0.72,gh-1),'#5A4230',1.2);for(const a of [0.15,0.75]){const p=G(a,0),q=G(a,gh+1.5);hoLine(p,q,'#3A2A1C',1.6);}}}
+{const _shSh=shShape;shShape=function(b){if(b.t==='sheeppen'&&SHEEP_OPT){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),o4=SHEEP_OPT===4,ca=o4?-0.55:-0.85,cc=o4?-0.55:-0.95,hl=o4?0.32:0.5,hw=o4?0.26:0.34,box=(a0,a1,c0,c1)=>[f(a0,c0,0),f(a1,c0,0),f(a1,c1,0),f(a0,c1,0)];
+  return [{pts:box(ca-hl,ca+hl,cc-hw,cc+hw),h:0.38},{pts:box(ca-hl,ca+hl,cc-0.05,cc+0.05),h:0.62}];}return _shSh(b);};}

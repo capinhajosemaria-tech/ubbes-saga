@@ -49,5 +49,12 @@ Prototype code: branch `house-options`, `source/src/20_zzhouseopt.js` (switch `w
 - Roof textures are clipped to their surface on every building.
 - Prototype: `window.__setHof(1)`.
 
+## Granary (chosen: option 4 "Stabbur + hay barrack", 2026-11-12)
+- Norwegian stabbur: posts on flat **rat stones**, sill beams, log lower storey with a door, **wider upper storey** (joist ends showing, vent hatch in the gable), black tarred scale-shingle roof, crossed barge boards (carved ends at L5).
+- **Real ladder** (two rails, rungs) from the ground to the door sill.
+- **Hay barrack** behind: four tall posts, pyramid roof over a hay mound that grows at L3.
+- **No props scattered on the ground**; at L5 grain sheaves hang under the eave.
+- Prototype: `window.__setGran(4)`.
+
 ## Next buildings
 One at a time: show the current look close up → José's notes → 2–4 options → choice, recorded here.

@@ -1104,3 +1104,52 @@ function drawPresOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot
 }
 {const _shP=shShape;shShape=function(b){if(b.t==='pres'&&PRES_OPT){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),{hl,hw,ha,hc,pd}=presDims(b),box=(a0,a1,c0,c1)=>[f(a0+ha,c0+hc,0),f(a1+ha,c0+hc,0),f(a1+ha,c1+hc,0),f(a0+ha,c1+hc,0)];
   return [{pts:box(-hl,hl,-hw,hw),h:0.55},{pts:box(-hl*0.8,hl*0.8,-0.05,0.05),h:0.95},{pts:box(-hl,hl,hw,hw+pd),h:0.55}];}return _shP(b);};}
+
+/* =================== Smokehouse options (prototype) — window.__setSmoke(n) ===================
+   Both: an open drying shed beside it with fish and hams hung to dry before the smoke.
+   1 Tall log smoke-tower with a steep pyramid roof and a slatted lantern · 2 A-frame smokehouse, roof down to the ground, smoke from ridge louvres */
+let SMOKE_OPT=0;window.__setSmoke=n=>{SMOKE_OPT=n|0;};
+{const _dsS=drawShaped;drawShaped=function(b,win,c0,ax){if(SMOKE_OPT&&b.t==='smoke'){drawSmokeOpt(b,win,SMOKE_OPT);return true;}return _dsS(b,win,c0,ax);};}
+function hoHam(p,win){ctx.fillStyle=win?'#D8D0C4':'#7A3A26';ctx.beginPath();ctx.moveTo(p[0]-0.5,p[1]+0.8);ctx.quadraticCurveTo(p[0]-2.8,p[1]+3.5,p[0]-1.8,p[1]+6.5);ctx.quadraticCurveTo(p[0],p[1]+8,p[0]+1.8,p[1]+6.5);ctx.quadraticCurveTo(p[0]+2.8,p[1]+3.5,p[0]+0.5,p[1]+0.8);ctx.closePath();ctx.fill();
+  ctx.fillStyle='rgba(255,210,170,0.25)';ctx.beginPath();ctx.ellipse(p[0]-0.9,p[1]+4.5,0.7,1.6,0,0,6.3);ctx.fill();ctx.fillStyle='#E8DCC4';ctx.fillRect(p[0]-0.45,p[1]-0.4,0.9,1.4);hoLine([p[0],p[1]-1.6],[p[0],p[1]-0.3],'rgba(200,180,140,0.9)',0.4);}
+function hoSmokedFish(p,s,win){const x=p[0]+s*1.3,y=p[1]+0.6;ctx.fillStyle=win?'#E8E0D0':'#B07A3A';ctx.beginPath();ctx.moveTo(x-0.5,y);ctx.lineTo(x+0.5,y);ctx.quadraticCurveTo(x+1.4*s+0.3,y+3,x+0.9,y+6);ctx.lineTo(x-0.9,y+6);ctx.quadraticCurveTo(x-1.1,y+3,x-0.5,y);ctx.fill();ctx.fillStyle='rgba(60,30,10,0.35)';ctx.fillRect(x-0.25,y+1,0.5,4.4);}
+function hoDryShed(f,a0,a1,c0,c1,L,win,sd){/* open drying shed: four posts, a lean-to rising toward the viewer, rails near the open front with fish (and hams from L3) */const hB=9,hF=13.5,J=WOOD_SET[2];
+  hoQ([f(a0,c0,0),f(a1,c0,0),f(a1,c1,0),f(a0,c1,0)],'rgba(70,58,44,0.3)');
+  for(const q of [[a1,c0,hB]])hoQ([f(q[0]-0.02,q[1],0),f(q[0]+0.02,q[1],0),f(q[0]+0.02,q[1],q[2]),f(q[0]-0.02,q[1],q[2])],'#3A2A1C');
+  /* a small smouldering-free hearth of nothing: the drying is in the open air; racks */
+  const rails=L>=3?[[c1-0.1,hF-2.5,'fish'],[c1-0.3,hF-3.2,'ham']]:[[c1-0.12,hF-2.5,'fish']];
+  for(const [rc,rh,kind] of rails.slice().reverse()){hoLine(f(a0+0.02,rc,rh),f(a1-0.02,rc,rh),'#6E5038',1.2);const n=Math.round((a1-a0)/(kind==='fish'?0.075:0.12));for(let i=0;i<n;i++){const a=a0+0.06+(a1-a0-0.12)*i/Math.max(1,n-1),p=f(a,rc,rh);if(kind==='fish'){hoSmokedFish(p,-1,win);hoSmokedFish(p,1,win);hoLine([p[0]-1.3,p[1]+0.4],[p[0]+1.3,p[1]+0.4],'rgba(200,180,140,0.8)',0.4);}else hoHam(p,win);}}
+  for(const q of [[a0,c1,hF],[a1,c1,hF],[a0,c0,hB]])hoQ([f(q[0]-0.02,q[1],0),f(q[0]+0.02,q[1],0),f(q[0]+0.02,q[1],q[2]),f(q[0]-0.02,q[1],q[2])],'#4A3424');
+  hoLine(f(a0,c1,hF),f(a1,c1,hF),'#3A2A1C',1.3);
+  const R=[f(a0-0.04,c0-0.04,hB+0.5),f(a1+0.04,c0-0.04,hB+0.5),f(a1+0.04,c1+0.05,hF+0.8),f(a0-0.04,c1+0.05,hF+0.8)];hoQ(R,win?'#EEF1F0':J.roof);if(!win)hoRoofSurface((u,v)=>lerp(lerp(R[3],R[2],u),lerp(R[0],R[1],u),v),{sd:sd+4,rt:'scale',rh:12,roofD:J.roofD},win);
+  hoQ([R[1],R[2],[R[2][0],R[2][1]+1.3],[R[1][0],R[1][1]+1.3]],'#1E1C1A');hoLine(R[3],R[2],'rgba(10,8,6,0.5)',0.7);}
+function smokeDims(b,opt){const L=Math.min(5,b.lvl||1);return opt===1?{L,ha:-0.42,hc:-0.22,s:0.32,wh:24+(L>=5?4:0)}:{L,ha:0.42,hc:-0.12,hl:0.44,hw:0.36,rh:30+(L>=5?3:0)};}
+function drawSmokeOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),sd=(b.id||0)*13+opt,D=smokeDims(b,opt),L=D.L,J=WOOD_SET[2];
+  if(opt===1){/* tall log tower */const fw=(a,c,h)=>f(a+D.ha,c+D.hc,h),s=D.s,wh=D.wh,g={sd,hl:s,hw:s,fh:2.4,wh,rh:0,ov:0.06,wt:'logs',wall:'#6E5038',wallD:'#56402C',frame:false,k:1,v:1};
+    hoQ([fw(-s,-s,0),fw(s+0.25,-s,0),fw(s+0.25,s+0.25,0),fw(-s,s+0.25,0)],'rgba(30,26,20,0.12)');hoFooting(fw,g,win);hoWalls(fw,g,win);
+    /* soot above the vents, slatted smoke vents high on both faces */for(const face of ['L','G']){const P=(x,h)=>face==='L'?fw(x,s+0.004,h):fw(s+0.004,x,h);hoQ([P(-0.09,wh-6),P(0.09,wh-6),P(0.09,wh-2.5),P(-0.09,wh-2.5)],'#1E1A16');for(let h=wh-5.6;h<wh-2.6;h+=0.9)hoLine(P(-0.09,h),P(0.09,h+0.4),'#5A4230',0.6);if(!win){ctx.fillStyle='rgba(30,26,22,0.25)';const p=P(0,wh-2.5);ctx.beginPath();ctx.ellipse(p[0],p[1]-1,3,2,0,0,6.3);ctx.fill();}}
+    /* door ajar: the leaf swung in, dark inside with fish hanging in the smoke and a faint glow */{const P=(x,h)=>fw(x,s+0.004,h),dw=0.11,dh=10;hoQ([P(-dw,2.4),P(dw,2.4),P(dw,2.4+dh),P(-dw,2.4+dh)],'#16110D');ctx.fillStyle='rgba(255,140,60,0.25)';{const p=P(0,3.5);ctx.beginPath();ctx.ellipse(p[0],p[1],3.5,1.5,0,0,6.3);ctx.fill();}
+      for(let i=0;i<3;i++){const p=P(-dw+0.05+i*0.06,2.4+dh-1.5);hoSmokedFish(p,i%2?1:-1,win);}hoQ([P(-dw,2.4),P(-dw+0.07,2.4),P(-dw+0.07,2.4+dh),P(-dw,2.4+dh)],'#4A3424');
+      for(const x of [-dw-0.02,dw+0.02])hoLine(P(x,2.4),P(x,2.4+dh+0.4),'#3A2A1C',1.2);hoLine(P(-dw-0.03,2.4+dh+0.6),P(dw+0.03,2.4+dh+0.6),'#3A2A1C',1.4);
+      const st=fw(0,s+0.1,0);ctx.fillStyle=win?'#E2E4E0':'#8E877B';ctx.beginPath();ctx.ellipse(st[0],st[1],4,1.8,0,0,6.3);ctx.fill();}
+    /* steep pyramid roof of black scales, slatted lantern, little pyramid cap, smoke */const so=s+0.07,ap=wh+16,pr=hoPyramid(fw,0,0,so,wh-0.5,ap,J.roof,J.roofD,'scale',win,sd);
+    const ls=0.085,lb=ap-6;hoBox(fw,0,0,ls,lb,lb+6.5,'#3A2A1C','#2E2016',win);for(const face of [0,1]){for(let h=lb+1;h<lb+6;h+=1.1){const p=face?fw(ls+0.003,-ls,h):fw(-ls,ls+0.003,h),q=face?fw(ls+0.003,ls,h+0.5):fw(ls,ls+0.003,h+0.5);hoLine(p,q,'#7A5A3C',0.6);}}
+    hoPyramid(fw,0,0,ls+0.04,lb+6.5,lb+12,J.roof,J.roofD,'scale',win,sd+1);if(L>=5){const tp=fw(0,0,lb+12);hoLine(tp,[tp[0],tp[1]-4],'#4A3424',1);ctx.fillStyle='#C9A24A';ctx.beginPath();ctx.arc(tp[0],tp[1]-4.5,1,0,6.3);ctx.fill();}
+    if(typeof t==='number'){for(let k=0;k<4;k++){const q=((t*0.22+k/4)%1),p=fw(0,0,lb+4);ctx.fillStyle=`rgba(225,222,215,${0.45*(1-q)})`;ctx.beginPath();ctx.ellipse(p[0]+q*10+Math.sin(q*5+k)*2,p[1]-q*22,2+q*5,1.5+q*3,0,0,6.3);ctx.fill();}}
+    hoDryShed(f,0.06,0.92,-0.62,0.12,L,win,sd);return;}
+  /* A-frame: the roof comes down to a low stone footing; plank gable with a door and a slatted vent; smoke from ridge louvres */
+  hoDryShed(f,-0.92,-0.08,-0.62,0.12,L,win,sd);
+  const fw=(a,c,h)=>f(a+D.ha,c+D.hc,h),g={sd,hl:D.hl,hw:D.hw,fh:2.2,wh:3.2,rh:D.rh,ov:0.05,th:1.8,wt:'planks',wall:'#6E5440',wallD:'#5A4434',roof:J.roof,roofD:J.roofD,roofE:shade(J.roofD,0.7),rt:'scale',frame:true,frameCol:'#3A2A1C',k:1,v:1};
+  hoQ([fw(-g.hl,-g.hw,0),fw(g.hl+0.2,-g.hw,0),fw(g.hl+0.2,g.hw+0.15,0),fw(-g.hl,g.hw+0.15,0)],'rgba(30,26,20,0.12)');
+  const r=hoRoof(fw,g,win);r.back();hoFooting(fw,g,win);hoWalls(fw,g,win);r.end();
+  /* gable: vertical planks already; a tall door and a slatted vent near the apex, soot stain */{const P=(c,h)=>fw(g.hl+0.004,c,h),dw=0.1,dh=12;hoQ([P(-dw,g.fh),P(dw,g.fh),P(dw,g.fh+dh),P(0,g.fh+dh+3),P(-dw,g.fh+dh)],'#4A3424');ctx.strokeStyle='rgba(20,12,6,0.5)';ctx.lineWidth=0.45;ctx.beginPath();for(const c of [-0.05,0,0.05]){const p=P(c,g.fh),q=P(c,g.fh+dh+(c?1.5:3));ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);}ctx.stroke();
+    for(const hh of [g.fh+2.5,g.fh+dh-2])hoLine(P(-dw+0.01,hh),P(dw-0.01,hh),'#2A2622',0.8);{const rr=P(dw*0.6,g.fh+dh*0.5);ctx.strokeStyle='#2A2622';ctx.lineWidth=0.6;ctx.beginPath();ctx.arc(rr[0],rr[1]+0.8,0.9,0,6.3);ctx.stroke();}
+    for(const c of [-dw-0.02,dw+0.02])hoLine(P(c,g.fh),P(c,g.fh+dh+0.3),'#3A2A1C',1.2);hoLine(P(-dw-0.02,g.fh+dh+0.3),P(0,g.fh+dh+3.4),'#3A2A1C',1.2);hoLine(P(dw+0.02,g.fh+dh+0.3),P(0,g.fh+dh+3.4),'#3A2A1C',1.2);
+    const vh=g.wh+g.rh-9;hoQ([P(-0.06,vh),P(0.06,vh),P(0.06,vh+4),P(-0.06,vh+4)],'#1E1A16');for(let h=vh+0.6;h<vh+4;h+=1)hoLine(P(-0.06,h),P(0.06,h+0.4),'#7A5A3C',0.6);if(!win){ctx.fillStyle='rgba(30,26,22,0.3)';const p=P(0,vh+4);ctx.beginPath();ctx.ellipse(p[0],p[1]-1.5,3,2.6,0,0,6.3);ctx.fill();}
+    const st=fw(g.hl+0.1,0,0);ctx.fillStyle=win?'#E2E4E0':'#8E877B';ctx.beginPath();ctx.ellipse(st[0],st[1],4.4,1.9,0,0,6.3);ctx.fill();}
+  r.front();r.ridge();hoBarge(fw,g,'#4A3424',0.22,L>=5);
+  /* two slatted ridge louvres letting the smoke out */for(const a of (L>=3?[-0.2,0.12]:[-0.05]))hoLouvre(fw,g,a,'#3A2A1C');
+}
+{const _shS=shShape;shShape=function(b){if(b.t==='smoke'&&SMOKE_OPT){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),D=smokeDims(b,SMOKE_OPT),box=(a0,a1,c0,c1)=>[f(a0,c0,0),f(a1,c0,0),f(a1,c1,0),f(a0,c1,0)],V=[];
+  if(SMOKE_OPT===1){V.push({pts:box(D.ha-D.s,D.ha+D.s,D.hc-D.s,D.hc+D.s),h:D.wh/26},{pts:box(D.ha-0.08,D.ha+0.08,D.hc-0.08,D.hc+0.08),h:(D.wh+28)/26});V.push({pts:box(0.06,0.92,-0.62,0.12),h:0.42});}
+  else{V.push({pts:box(D.ha-D.hl,D.ha+D.hl,D.hc-D.hw,D.hc+D.hw),h:0.15},{pts:box(D.ha-D.hl,D.ha+D.hl,D.hc-0.04,D.hc+0.04),h:(D.rh+3)/26});V.push({pts:box(-0.92,-0.08,-0.62,0.12),h:0.42});}return V;}return _shS(b);};}

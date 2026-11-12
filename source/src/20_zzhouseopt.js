@@ -1254,3 +1254,46 @@ function groundShape(b,win){if(b.t==='sheeppen'&&SHEEP_OPT===4){const f=hoFrame(
       /* a worn path out of the gate */const g=f(Math.cos(Math.PI/4)*1.3,Math.sin(Math.PI/4)*1.3,0),g2=f(1.42,1.42,0);ctx.strokeStyle='rgba(150,134,100,0.45)';ctx.lineWidth=9;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(g[0],g[1]);ctx.lineTo(g2[0],g2[1]);ctx.stroke();ctx.lineCap='butt';}
     return true;}
   return false;}
+
+/* =================== Training Ground options (prototype) — window.__setTrain(n) ===================
+   Round ring, sand floor following the circle. 1 Wattle ring · 2 Hazel staves and ropes (vébönd), holmgang cloak in the middle
+   3 Low pointed palisade with a gate · 4 Standing stones on an earth bank with log benches */
+let TRAIN_OPT=0;window.__setTrain=n=>{TRAIN_OPT=n|0;};
+{const _dsT=drawShaped;drawShaped=function(b,win,c0,ax){if(TRAIN_OPT&&b.t==='train'){drawTrainOpt(b,win,TRAIN_OPT);return true;}return _dsT(b,win,c0,ax);};}
+function hoRingRuns(R,n,front,gap,cb){for(let k=0;k<n;k++){const t0=k/n*6.283,t1=(k+1)/n*6.283,tm=(t0+t1)/2,fr=Math.cos(tm)+Math.sin(tm)>0;if(fr!==front)continue;if(gap&&Math.abs(tm-Math.PI/4)<gap)continue;cb([Math.cos(t0)*R,Math.sin(t0)*R],[Math.cos(t1)*R,Math.sin(t1)*R],k,tm);}}
+function hoDummy(f,a,c,win,col){const p=f(a,c,0),q=f(a,c,14);hoLine(p,q,'#5A4230',1.4);hoLine([q[0]-5,q[1]+4],[q[0]+5,q[1]+4],'#5A4230',1.2);
+  ctx.fillStyle=win?'#E8E2D2':'#C8A85A';ctx.beginPath();ctx.ellipse(q[0],q[1]+7.5,3.2,4.6,0,0,6.3);ctx.fill();ctx.strokeStyle='rgba(120,90,40,0.6)';ctx.lineWidth=0.5;ctx.beginPath();for(let k=0;k<4;k++){ctx.moveTo(q[0]-2.6,q[1]+5+k*1.6);ctx.lineTo(q[0]+2.6,q[1]+5.4+k*1.6);}ctx.stroke();
+  ctx.fillStyle=win?'#DDD6C4':'#B89A5A';ctx.beginPath();ctx.arc(q[0],q[1]+1,2.2,0,6.3);ctx.fill();hoLine([q[0]-2,q[1]+2.6],[q[0]+2,q[1]+2.6],'#6E5038',0.5);
+  hoShieldRound([q[0]-5.5,q[1]+7],3,col||['#8E3B2F','#E2D8C0']);}
+function hoShieldRound(p,r,c){ctx.fillStyle=c[0];ctx.beginPath();ctx.arc(p[0],p[1],r,0,6.3);ctx.fill();ctx.fillStyle=c[1];ctx.beginPath();ctx.moveTo(p[0],p[1]);ctx.arc(p[0],p[1],r,0,1.57);ctx.closePath();ctx.fill();ctx.beginPath();ctx.moveTo(p[0],p[1]);ctx.arc(p[0],p[1],r,3.14,4.71);ctx.closePath();ctx.fill();
+  ctx.strokeStyle='#3A2A1C';ctx.lineWidth=0.6;ctx.beginPath();ctx.arc(p[0],p[1],r,0,6.3);ctx.stroke();ctx.fillStyle='#8A8A86';ctx.beginPath();ctx.arc(p[0],p[1],r*0.28,0,6.3);ctx.fill();}
+function hoWeaponRack(f,a0,a1,c,win){const P=(a,h)=>f(a,c,h);for(const a of [a0,a1]){hoLine(P(a,0),P(a,10),'#4A3424',1.3);}hoLine(P(a0,9),P(a1,9),'#6E5038',1.1);hoLine(P(a0,4),P(a1,4),'#6E5038',1);
+  for(let i=0;i<5;i++){const a=a0+0.05+(a1-a0-0.1)*i/4,p=P(a,0.5),q=P(a+0.04,16);hoLine(p,q,'#8A6A4A',0.8);ctx.fillStyle='#9A9C9E';ctx.beginPath();ctx.moveTo(q[0]-0.9,q[1]+1);ctx.lineTo(q[0],q[1]-2.6);ctx.lineTo(q[0]+0.9,q[1]+1);ctx.closePath();ctx.fill();}
+  const cols=[['#8E3B2F','#E2D8C0'],['#2E4A5E','#C9A24A'],['#E2D8C0','#2F2C2A']];for(let i=0;i<3;i++){const p=P(a0+0.1+(a1-a0-0.2)*i/2,6.5);hoShieldRound(p,2.8,cols[i]);}}
+function hoPalisadeStake(p,h,col,win){ctx.fillStyle=col;ctx.beginPath();ctx.moveTo(p[0]-1.6,p[1]);ctx.lineTo(p[0]+1.6,p[1]);ctx.lineTo(p[0]+1.6,p[1]-h);ctx.lineTo(p[0],p[1]-h-2.6);ctx.lineTo(p[0]-1.6,p[1]-h);ctx.closePath();ctx.fill();ctx.fillStyle='rgba(255,240,210,0.15)';ctx.fillRect(p[0]-1.6,p[1]-h,0.8,h);ctx.strokeStyle='rgba(20,14,8,0.5)';ctx.lineWidth=0.4;ctx.beginPath();ctx.moveTo(p[0]+1.6,p[1]);ctx.lineTo(p[0]+1.6,p[1]-h);ctx.stroke();}
+function drawTrainOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),sd=(b.id||0)*3+opt,L=Math.min(5,b.lvl||1),R=1.3,N=26;
+  const ringPart=front=>{
+    if(opt===1)hoRingRuns(R,N,front,0.2,(p0,p1,k)=>hoWattle(f,p0,p1,6.5,win,sd+k));
+    else if(opt===2){hoRingRuns(R,16,front,0.22,(p0,p1,k)=>{const a=f(p0[0],p0[1],0),at=f(p0[0],p0[1],11);hoLine(a,at,'#7A6A4A',1.1);ctx.fillStyle='#5E7A3E';ctx.beginPath();ctx.ellipse(at[0],at[1]-0.5,1.3,0.8,0,0,6.3);ctx.fill();
+      const q=f(p1[0],p1[1],0),m1=lerp(f(p0[0],p0[1],9),f(p1[0],p1[1],9),0.5);ctx.strokeStyle='rgba(200,180,140,0.9)';ctx.lineWidth=0.6;ctx.beginPath();const s0=f(p0[0],p0[1],9),s1=f(p1[0],p1[1],9);ctx.moveTo(s0[0],s0[1]);ctx.quadraticCurveTo(m1[0],m1[1]+2,s1[0],s1[1]);ctx.stroke();});}
+    else if(opt===3){const H=front?7:9;hoRingRuns(R,40,front,0.16,(p0,p1,k)=>{const pts=[];for(let j=0;j<3;j++){pts.push(lerp(f(p0[0],p0[1],0),f(p1[0],p1[1],0),j/3));}for(const p of pts)hoPalisadeStake(p,H+(h2(sd,k*3,7)-0.5)*1.4,win?'#C9C3B8':(k%2?'#7A5A3C':'#6E5038'),win);});
+      if(!front)return;hoRingRuns(R,40,true,0.16,(p0,p1)=>{const a=f(p0[0],p0[1],3),c2=f(p1[0],p1[1],3);hoLine(a,c2,'#4A3424',1);});}
+    else{/* earth bank with turf, standing stones on it, log benches inside the back half */const bank=(p0,p1,k)=>{const o=1.18,A=[p0[0]*o,p0[1]*o],Bq=[p1[0]*o,p1[1]*o];hoQ([f(p0[0],p0[1],0),f(p1[0],p1[1],0),f(Bq[0],Bq[1],2.5),f(A[0],A[1],2.5)],win?'#E8EAE6':'#7E8A4E');};
+      hoRingRuns(R,N,front,0.2,bank);hoRingRuns(R*1.09,13,front,0.25,(p0,p1,k)=>{const p=f(p0[0],p0[1],2.5),h=9+h2(sd,k,8)*6;ctx.fillStyle=win?'#D4D6D2':(k%2?'#8E877B':'#7E776C');ctx.beginPath();ctx.moveTo(p[0]-2.4,p[1]);ctx.lineTo(p[0]-2,p[1]-h);ctx.quadraticCurveTo(p[0],p[1]-h-2.4,p[0]+2,p[1]-h+0.6);ctx.lineTo(p[0]+2.4,p[1]);ctx.closePath();ctx.fill();ctx.fillStyle='rgba(30,26,20,0.25)';ctx.fillRect(p[0]+0.6,p[1]-h+1,1.8,h-1);
+        if(!win){ctx.fillStyle='rgba(110,130,70,0.55)';ctx.fillRect(p[0]-2.2,p[1]-2,1.6,1.4);}});
+      if(!front){for(const [a,c] of [[-0.75,-0.55],[-0.2,-0.95],[0.45,-0.85]]){const P=(da,h)=>f(a+da,c,h);hoLine(P(-0.22,2.6),P(0.22,2.6),'#5A4230',3.2);hoLine(P(-0.22,3.3),P(0.22,3.3),'#8A6A4A',1);}}}};
+  ringPart(false);
+  /* inside: dummies, rack, the holmgang cloak (2) */
+  if(opt===2){const C=(a,c)=>f(a,c,0.3),s=0.32;hoQ([C(-s,-s),C(s,-s),C(s,s),C(-s,s)],win?'#E2DCD0':'#7A3A2C');hoQ([C(-s+0.04,-s+0.04),C(s-0.04,-s+0.04),C(s-0.04,s-0.04),C(-s+0.04,s-0.04)],win?'#E8E2D6':'#8E4A38');for(const q of [[-s,-s],[s,-s],[s,s],[-s,s]]){const p=C(q[0],q[1]);ctx.fillStyle='#4A3424';ctx.fillRect(p[0]-0.6,p[1]-2.2,1.2,2.4);}}
+  hoWeaponRack(f,-0.75,-0.15,-0.75,win);
+  hoDummy(f,0.55,-0.3,win,['#2E4A5E','#C9A24A']);if(L>=3)hoDummy(f,-0.65,0.35,win);if(L>=5)hoDummy(f,0.2,0.65,win,['#E2D8C0','#2F2C2A']);
+  if(opt!==2){/* a chopping-block target: round log with an axe in it */const p=f(0.1,0.15,0);ctx.fillStyle='#7A5A3C';ctx.fillRect(p[0]-2.6,p[1]-4,5.2,4);ctx.fillStyle='#C9A87A';ctx.beginPath();ctx.ellipse(p[0],p[1]-4,2.6,1.2,0,0,6.3);ctx.fill();hoLine([p[0],p[1]-4.4],[p[0]+2.5,p[1]-9],'#6E5038',0.8);ctx.fillStyle='#8A8C8E';ctx.fillRect(p[0]-1,p[1]-5.6,2.4,1.4);}
+  ringPart(true);
+  /* gate posts facing the viewer */{const g0=[Math.cos(Math.PI/4-0.2)*R,Math.sin(Math.PI/4-0.2)*R],g1=[Math.cos(Math.PI/4+0.2)*R,Math.sin(Math.PI/4+0.2)*R],H=opt===3?12:opt===4?0:9;if(H){for(const q of [g0,g1]){const p=f(q[0],q[1],0),u=f(q[0],q[1],H);hoQ([[p[0]-1.2,p[1]],[p[0]+1.2,p[1]],[u[0]+1.2,u[1]],[u[0]-1.2,u[1]]],'#4A3424');}if(opt===3)hoLine(f(g0[0],g0[1],H),f(g1[0],g1[1],H),'#5A4230',2);}}}
+{const _shT=shShape;shShape=function(b){if(b.t==='train'&&TRAIN_OPT){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),ring=(r,n)=>{const o=[];for(let m=0;m<n;m++){const t2=m/n*6.283;o.push(f(Math.cos(t2)*r,Math.sin(t2)*r,0));}return o;};
+  const V=[];const h=TRAIN_OPT===3?0.36:TRAIN_OPT===4?0.45:0.26;/* thin ring: approximate with small boxes around the circle */for(let m=0;m<24;m++){const t2=m/24*6.283,t3=(m+1)/24*6.283,R=1.3,a=[Math.cos(t2)*R,Math.sin(t2)*R],c=[Math.cos(t3)*R,Math.sin(t3)*R];V.push({pts:[f(a[0]*0.97,a[1]*0.97,0),f(c[0]*0.97,c[1]*0.97,0),f(c[0]*1.03,c[1]*1.03,0),f(a[0]*1.03,a[1]*1.03,0)],h});}return V;}return _shT(b);};}
+{const _gsT=groundShape;groundShape=function(b,win){if(b.t==='train'&&TRAIN_OPT){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),sd=(b.id||0)*5,ring=(r,n,j)=>{const o=[];for(let k=0;k<n;k++){const t2=k/n*6.283,rr=r*(1+(h2(sd,k,j)-0.5)*0.04);o.push(f(Math.cos(t2)*rr,Math.sin(t2)*rr,0));}return o;};
+    hoQ(ring(1.44,30,1),win?'rgba(225,228,224,0.5)':'rgba(170,150,110,0.3)');hoQ(ring(1.26,30,2),win?'rgba(232,230,222,0.85)':'rgba(206,184,136,0.78)');
+    if(!win){ctx.fillStyle='rgba(150,124,84,0.3)';for(let k=0;k<40;k++){const th=h2(sd,k,3)*6.283,r=h2(sd,k,4)*1.15,p=f(Math.cos(th)*r,Math.sin(th)*r,0);ctx.beginPath();ctx.ellipse(p[0],p[1],1.6+h2(sd,k,5)*2,0.7,0,0,6.3);ctx.fill();}
+      const g=f(Math.cos(Math.PI/4)*1.3,Math.sin(Math.PI/4)*1.3,0),g2=f(1.45,1.45,0);ctx.strokeStyle='rgba(170,150,110,0.45)';ctx.lineWidth=9;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(g[0],g[1]);ctx.lineTo(g2[0],g2[1]);ctx.stroke();ctx.lineCap='butt';}
+    return true;}return _gsT(b,win);};}

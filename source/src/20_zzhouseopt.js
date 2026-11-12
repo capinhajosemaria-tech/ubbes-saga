@@ -1868,3 +1868,58 @@ function drawArsenalOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,
     for(let i=0;i<7;i++)arShield(sh(-0.95+i*0.27,-sw+0.02,8.5),3,i,win);arSpears((a,c,h)=>sh(a,c,h),-0.9,0.2,0.0,13,win);arAxe(sh(0.5,0.05,0),win);arAxe(sh(0.62,0.08,0),win);bkLeanTo(sh,-sl,sl,-sw,sw,13,18,win,J,sd);}}
 {const _shA2=shShape;shShape=function(b){if(b.t==='arsenal'&&ARS_OPT){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),box=(a,c,sa,sc,h)=>({pts:[f(a-sa,c-sc,0),f(a+sa,c-sc,0),f(a+sa,c+sc,0),f(a-sa,c+sc,0)],h});
   const o=ARS_OPT,hc=o===3?-0.35:-0.25;const V=[box(0,hc,1.2,0.56,0.75),box(0,hc,1.2,0.06,1.25)];if(o===3)V.push(box(0,0.55,1.1,0.28,0.55));return V;}return _shA2(b);};}
+
+/* =================== Harbour (improved) and Shipyard options (prototype) ===================
+   Harbour (window.__setHarb(1)): same shape as today (shore platform + long pier); the boathouse redrawn with the style kit (plank walls on a frame,
+   black scales, crossed barge boards, door, window); no crane, nets or loose props; only TWO berths, one each side of the pier (José).
+   Shipyard (window.__setYard(n)): a big hall on the land side, a ship on the stocks in the open yard, a small pier with ONE berth (José).
+   1 Log ship-hall, black scales · 2 Big A-frame hall, red boards · 3 Stone + timber hall, slate · 4 Plank hall with an open side bay, black scales */
+let HARB_OPT=0,YARD_OPT=0;window.__setHarb=n=>{HARB_OPT=n|0;};window.__setYard=n=>{YARD_OPT=n|0;};
+{const _dsH=drawShaped;drawShaped=function(b,win,c0,ax){if(HARB_OPT&&b.t==='harbour'){drawHarbourOpt(b,win);return true;}if(YARD_OPT&&b.t==='shipyard'){drawYardOpt(b,win,YARD_OPT);return true;}return _dsH(b,win,c0,ax);};}
+function hb2Berths(b){/* the two inner berths at the middle of the pier, one each side */const all=harbourBerths(b).filter((o,i,arr)=>true);const F=hbFrame(b),mid=1.7+(F.L-1.7)/2;const pick=side=>{let best=null,bd=1e9;for(const o of all){if(o.side!==side)continue;const d=Math.abs(o.q[0]+o.q[1]-(F.w(mid,side?F.W+0.05:-0.05)[0]+F.w(mid,side?F.W+0.05:-0.05)[1]))+Math.abs(Math.hypot(o.q[0]-F.w(mid,0)[0],o.q[1]-F.w(mid,0)[1])-(side?F.W:0)*0);if(d<bd){bd=d;best=o;}}return best;};
+  return [pick(0),pick(1)].filter(Boolean);}
+function drawHarbourOpt(b,win){const F=hbFrame(b),Lp=F.L,W=F.W,hP=F.hL+4,hD=4,pa=1.7,ps0=W/2-0.36,ps1=W/2+0.36;const depth=(a,s)=>{const q=F.w(a,s);return q[0]+q[1];};const items=[];
+  const sea=(a,s)=>{const q=F.w(a,s);return tAt(Math.round(q[0]),Math.round(q[1]))===T.SEA;};
+  const home=S.ships.filter(s=>!s.away),berths=hb2Berths(b),back=depth(2,-1)<depth(2,W+1)?0:1;
+  const ships=PROP_B===b?home.slice(0,2).map((s,i)=>{const sp=berths.find(o=>o.side===(i===0?(1-back):back))||berths[i];if(!sp)return null;const p=iso(sp.q[0],sp.q[1]);return {side:sp.side,f:()=>{const bob=Math.sin(t*1.2+i)*1.0;drawShip(p[0],p[1]+3+bob,0.34,sp.flip,s.type);SHIP_HITS.push([p[0],p[1]]);}};}).filter(Boolean):[];
+  ships.filter(o=>o.side===back).forEach(o=>o.f());
+  if(!win){const c=hbRect(F,pa,Lp-0.05,ps0,ps1);poly(P([c.T[0]+3,c.T[1]+3],[c.R[0]+3,c.R[1]+3],[c.Bt[0]+3,c.Bt[1]+3],[c.L[0]+3,c.L[1]+3]),'rgba(20,34,44,0.25)');}
+  for(let a=0.3;a<pa;a+=0.55)for(const s of [0.12,W-0.12])if(sea(a,s)){const p=F.S(a,s,0);hbPile(p[0],p[1]+2,2,hP,win);}
+  for(let a=pa+0.15;a<Lp;a+=0.6)for(const s of [ps0+0.04,ps1-0.04]){const p=F.S(a,s,0);hbPile(p[0],p[1]+2,2,hD,win);}
+  hbDeck(F,0.04,pa+0.02,0.04,W-0.04,hP,win,'#9C7E5E',0.16);hbDeck(F,pa,Lp-0.05,ps0,ps1,hD,win,'#A88A69',0.14);
+  if(hP>hD+1){const a=F.S(pa,ps0,hP),b2=F.S(pa,ps1,hP),c2=F.S(pa+0.35,ps1,hD),d=F.S(pa+0.35,ps0,hD);poly(P(a,b2,c2,d),win?'#E2E3DF':'#97795A');}
+  for(let a=pa+0.6;a<Lp-0.2;a+=1.2)for(const s of [ps0+0.05,ps1-0.05]){const p=F.S(a,s,0);items.push({d:depth(a,s),f:()=>hbPile(p[0],p[1],0,hD+6,win)});}
+  {const a=Lp-0.22,s=ps1-0.06,p=F.S(a,s,hD);items.push({d:depth(a,s),f:()=>{hoLine(p,[p[0],p[1]-20],win?'#5E564C':'#3E2E22',1.4);hoLine([p[0],p[1]-19],[p[0]+(F.ax==='x'?-4:4),p[1]-19],win?'#5E564C':'#3E2E22',1);
+    const lx=p[0]+(F.ax==='x'?-4:4),ly=p[1]-17;ctx.fillStyle='#3E3A36';ctx.fillRect(lx-2,ly-1,4,5);ctx.fillStyle=win?'#FFD27A':'#E8B860';ctx.fillRect(lx-1.2,ly+0.2,2.4,2.8);if(!win){ctx.fillStyle='rgba(255,200,110,0.2)';ctx.beginPath();ctx.arc(lx,ly+1.5,6,0,6.3);ctx.fill();}}});}
+  /* boathouse in the style kit, on the platform */{const Q=F.w(0.68,W*0.3),q0=iso(Q[0],Q[1]),fx=(x,y,h)=>{const p=iso(Q[0]+x,Q[1]+y);return [p[0],p[1]-(h||0)-hP];},fh=F.ax==='x'?fx:(a,c,h)=>fx(c,a,h);
+    const J=WOOD_SET[2],g={sd:(b.id||0)*3,hl:0.5,hw:0.4,fh:1,wh:11,rh:11,ov:0.06,th:1.6,wt:'planks',wall:'#6E5442',wallD:'#54402F',roof:J.roof,roofD:J.roofD,roofE:shade(J.roofD,0.7),rt:J.rt,frame:true,frameCol:'#2A1F18',k:1,v:1};
+    items.push({d:depth(0.68,W*0.3)+0.3,f:()=>{const r=hoRoof(fh,g,win);r.back();hoWalls(fh,g,win);r.end();hoDoor(fh,g,'G',0,0.16,7.5,{col:'#4A3424'});hoWindow(fh,g,'L',-0.15,0.09,4.5,7.5,{shutters:'#2E4A5E'});r.front();r.ridge();hoBarge(fh,g,'#4A3424',0.25,true);}});}
+  /* a few goods only: two barrels and a crate by the boathouse */for(const [a,s,k] of [[1.4,W*0.82,'barrel'],[1.25,W*0.9,'barrel'],[1.45,W*0.66,'crate']]){const p=F.S(a,s,hP);items.push({d:depth(a,s),f:()=>{if(k==='crate')hbCrate(p[0],p[1]+2,win);else brBarrel([p[0],p[1]+2],1,win);}});}
+  items.sort((x,y)=>x.d-y.d).forEach(o=>o.f());ships.filter(o=>o.side!==back).forEach(o=>o.f());}
+function ydFrame(b){/* the sea side of the shipyard plot: F has +a,+c toward the viewer; the sea lies at c = s·C */const f0=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:0}),isS=(x,y)=>inMap(x,y)&&ter[y*N+x]===T.SEA,cx=b.fx+b.w/2-0.5,cy=b.fy+b.h/2-0.5;
+  let sx=0,sy=0,n=0;for(let y=b.fy-1;y<=b.fy+b.h;y++)for(let x=b.fx-1;x<=b.fx+b.w;x++)if(isS(x,y)){sx+=x-cx;sy+=y-cy;n++;}const alongY=Math.abs(sy)>=Math.abs(sx);
+  const s=(alongY?sy:sx)>=0?1:-1,F=alongY?f0:(a,c,h)=>f0(c,a,h),A=(alongY?b.w:b.h)/2,C=(alongY?b.h:b.w)/2;return {F,s,A,C,flip:alongY};}
+function drawYardOpt(b,win,opt){const {F,s,A,C,flip}=ydFrame(b),sd=(b.id||0)*73+opt,J=WOOD_SET[opt===2?4:opt===3?3:2],tt=typeof t==='number'?t:0;
+  const hc=-s*(C-0.55),H=(a,c,h)=>F(a,c+hc,h);const big=opt===2;
+  const g={sd,hl:A-0.25,hw:big?0.62:0.48,fh:big?2.2:2.4,wh:big?3.4:15,rh:big?40:18,ov:0.07,th:1.7,wt:opt===1?'logs':'planks',wall:opt===1?'#7E6248':opt===3?'#8A7A64':'#6E5442',wallD:opt===1?'#5F4936':opt===3?'#6E604E':'#54402F',
+    roof:J.roof,roofD:J.roofD,roofE:shade(J.roofD,0.7),rt:J.rt,blue:J.blue,frame:opt!==1,frameCol:'#2A1F18',k:1,v:1};
+  const hall=()=>{const r=hoRoof(H,g,win);r.back();hoFooting(H,g,win);hoWalls(H,g,win);if(opt===3)hoStoneBox(H,0,0,g.hl,g.hw,g.fh,g.fh+7,win,sd);r.end();
+    if(!big){/* wide double gate on the long wall facing the yard (if that wall is the visible one), otherwise a door on the gable */if(s>0){const P=(a,h)=>H(a,g.hw+0.004,h);hoQ([P(-0.3,g.fh),P(0.3,g.fh),P(0.3,g.fh+10),P(-0.3,g.fh+10)],'#4A3424');if(!win){ctx.strokeStyle='rgba(20,12,6,0.5)';ctx.lineWidth=0.45;ctx.beginPath();for(let k=1;k<8;k++){const p=P(-0.3+0.6*k/8,g.fh),q=P(-0.3+0.6*k/8,g.fh+10);ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);}ctx.stroke();hoLine(P(0,g.fh),P(0,g.fh+10),'#2A1F18',0.8);for(const h of [g.fh+2.5,g.fh+7.5])hoLine(P(-0.29,h),P(0.29,h),'#2E2C2A',0.8);}}
+      hoDoor(H,g,'G',0,0.16,8.5,{col:'#4A3424',steps:1});for(const a of [-g.hl+0.35,g.hl-0.35])hoWindow(H,g,'L',a,0.1,g.fh+6,g.fh+9.4,{shutters:'#2E4A5E'});}
+    else{/* A-frame: tall pointed door on the gable */const P=(c,h)=>H(g.hl+0.004,c,h),dw=0.16,dh=16;hoQ([P(-dw,g.fh),P(dw,g.fh),P(dw,g.fh+dh),P(0,g.fh+dh+5),P(-dw,g.fh+dh)],'#4A3424');for(const c of [-dw-0.02,dw+0.02])hoLine(P(c,g.fh),P(c,g.fh+dh+0.3),'#3A2A1C',1.3);hoLine(P(-dw-0.02,g.fh+dh+0.3),P(0,g.fh+dh+5.4),'#3A2A1C',1.3);hoLine(P(dw+0.02,g.fh+dh+0.3),P(0,g.fh+dh+5.4),'#3A2A1C',1.3);}
+    if(opt===4&&s>0){/* open bay at the end of the long wall: planks stacked inside */const P=(a,h)=>H(a,g.hw+0.004,h),a0=g.hl-0.95,a1=g.hl-0.45;hoQ([P(a0,g.fh),P(a1,g.fh),P(a1,g.wh-2),P(a0,g.wh-2)],win?'#C8C2B8':'#1E160F');if(!win)for(let k=0;k<5;k++)hoQ([P(a0+0.04,g.fh+k*1.6),P(a1-0.04,g.fh+k*1.6),P(a1-0.04,g.fh+k*1.6+1.1),P(a0+0.04,g.fh+k*1.6+1.1)],k%2?'#C8A878':'#B8966A');}
+    r.front();r.ridge();hoBarge(H,g,'#4A3424',0.25,true);};
+  /* yard: trodden ground, the slipway (two timber ways down to the water), a ship on the stocks with a few props */
+  const ya=-A*0.35,yc0=hc+s*(g.hw+0.15),yc1=s*(C+0.25);
+  const yard=()=>{const ways=[-0.16,0.16];for(const o of ways){const p0=F(ya+o,yc0,1.5),p1=F(ya+o,yc1,-1);hoLine(p0,p1,win?'#B8B0A0':'#5A4230',2.2);}for(let k=0;k<=6;k++){const c=yc0+(yc1-yc0)*k/6;hoLine(F(ya-0.24,c,1.5-2.5*k/6),F(ya+0.24,c,1.5-2.5*k/6),win?'#C8C2B4':'#6E5038',0.9);}
+    const pr=b.proj?b.proj.done/SHIPS[b.proj.type].work:0.55,m=F(ya,(yc0+yc1)/2,4);drawShip(m[0],m[1],0.3,flip,b.proj?b.proj.type:'karvi',pr);
+    /* stocks: a few props under the hull */if(!win)for(const k of [-0.25,0.25])for(const o of [-0.2,0.2]){const p=F(ya+o,(yc0+yc1)/2+k*s,0);hoLine(p,[p[0],p[1]-5],'#4A3424',1);}};
+  /* pier with one berth, at the other end of the shore */const pa=A*0.45,pc0=s*0.1,pc1=s*(C+0.9),pw=0.17;
+  const pier=()=>{for(let k=0;k<=5;k++){const c=pc0+(pc1-pc0)*k/5;for(const o of [-pw+0.03,pw-0.03]){const p=F(pa+o,c,0);hbPile(p[0],p[1]+2,2,3,win);}}const D=[F(pa-pw,pc0,3),F(pa+pw,pc0,3),F(pa+pw,pc1,3),F(pa-pw,pc1,3)];hoQ([F(pa-pw,Math.max(pc0,pc1)*(s>0?1:0)+Math.min(pc0,pc1)*(s>0?0:1),3)].length?D:D,win?'#E2E3DF':'#A88A69');
+    if(!win){ctx.strokeStyle='rgba(50,36,26,0.38)';ctx.lineWidth=0.5;ctx.beginPath();for(let k=1;k<14;k++){const c=pc0+(pc1-pc0)*k/14,p=F(pa-pw,c,3),q=F(pa+pw,c,3);ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);}ctx.stroke();hoQ([F(pa-pw,pc1,3),F(pa+pw,pc1,3),F(pa+pw,pc1,1.6),F(pa-pw,pc1,1.6)],'#5C4634');hoQ([F(pa+pw,pc0,3),F(pa+pw,pc1,3),F(pa+pw,pc1,1.6),F(pa+pw,pc0,1.6)],'#4A382A');}
+    for(const c of [pc0+(pc1-pc0)*0.45,pc0+(pc1-pc0)*0.9]){const p=F(pa+pw-0.03,c,0);hbPile(p[0],p[1],0,9,win);}};
+  const moored=()=>{/* one finished ship lying at the yard's pier */const home=S.ships.filter(x=>!x.away);if(!home.length&&!b.gallery)return;const p=F(pa+pw+0.45,pc0+(pc1-pc0)*0.62,0);drawShip(p[0],p[1]+3+Math.sin(tt*1.2)*1,0.32,!flip,'karvi');};
+  /* order: things nearer the back of the screen first */
+  const parts=[{d:hc+(-0.1),f:hall},{d:(yc0+yc1)/2*s>0?0.5:-0.5,f:yard},{d:0.6,f:pier},{d:0.9,f:moored}];
+  if(s>0){hall();yard();pier();moored();}else{moored();pier();yard();hall();}}
+{const _shY2=shShape;shShape=function(b){if(b.t==='shipyard'&&YARD_OPT){const {F,s,A,C}=ydFrame(b),hc=-s*(C-0.55),box=(a,c,sa,sc,h)=>({pts:[F(a-sa,c-sc,0),F(a+sa,c-sc,0),F(a+sa,c+sc,0),F(a-sa,c+sc,0)],h});return [box(0,hc,A-0.2,0.55,YARD_OPT===2?0.2:0.9),box(0,hc,A-0.2,0.06,YARD_OPT===2?1.6:1.4)];}return _shY2(b);};}

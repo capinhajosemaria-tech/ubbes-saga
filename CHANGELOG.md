@@ -2,6 +2,10 @@
 
 Versions are `Beta 0.MINOR.PATCH` until Town Hall 10 (`1.0.0`).
 
+## Beta 0.15.5
+- A Woodcutter's Lodge now needs 45 trees of its own for full output (was 90).
+- A Fisher's Hut needs 5 water tiles of its own for full output; each water tile serves one hut only.
+
 ## Beta 0.15.4
 - Sources still never run out, but each tree, bush and iron outcrop now belongs to one building only. Full output needs 90 trees for a Woodcutter's Lodge, 6 bushes for a Berry Gatherer and 5 iron outcrops for a mine; with fewer, output falls in proportion. Placement and the building sheet show how many it has. Fishing water stays unlimited.
 

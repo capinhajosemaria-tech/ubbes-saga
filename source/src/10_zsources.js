@@ -3,9 +3,9 @@
    Everything refills at the start of summer (spring), so winter draws on what is left.
    A building works the sources within its radius; buildings of the same kind sharing a source split it. */
 /* 0.15.4 (José): sources never run out, but each one belongs to a single building.
-   Full output needs SRC_NEED sources of its own in range (fewer = less output); fishing water is unlimited and shared. */
+   Full output needs SRC_NEED sources of its own in range (fewer = less output). 0.15.5: lodges need 45 trees, fisher's huts 5 water tiles. */
 const SRC_ENDLESS=true;
-const SRC_NEED={wood:90,mine:5,berry:6};
+const SRC_NEED={wood:45,mine:5,berry:6,fish:5};
 let CLAIM_KEY='',CLAIM=new Map();
 /* every extractor claims the nearest free sources in its range, oldest building first */
 function srcClaims(){const gone=trees.reduce((a,t)=>a+(t.gone?1:0),0)+bushes.reduce((a,t)=>a+(t.gone?1:0),0);

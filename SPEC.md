@@ -1,4 +1,4 @@
-# Ubbe's Saga — specification (Beta 0.15.4)
+# Ubbe's Saga — specification (Beta 0.15.5)
 
 How the game works **today**. Numbers are in `docs/NUMBERS.md` (generated). The long-term vision for Town Hall 6–10 is in `docs/DESIGN.md`.
 
@@ -22,7 +22,7 @@ A cozy-but-harsh Viking village builder for the browser. Year 865, the village o
 - Raiders land only on sea joined to the map edge (never on the lake).
 - Land is bought in 6 × 6 zones with **fame**; the saga starts with 21 zones (a 5 × 5 block minus its four corners, 30 × 30 tiles); the corners and everything further are bought; cost grows with distance (`30·d − 10`).
 - Edges fade into sea-mist; unbought land is slightly darker with a faint tile grid, and each 6 × 6 block is outlined (brighter for blocks next to owned land).
-- **Resource sources never run out, but each belongs to one building** (since 0.15.4): trees, berry bushes and iron outcrop tiles stay on the map. Every woodcutter, berry gatherer and mine claims the nearest free sources within its radius (6, 5, 4 tiles), oldest building first, up to what it needs: **90 trees, 6 bushes, 5 iron outcrops** for full output; with fewer, output falls in proportion (45 trees = 50%). A source claimed by one building cannot serve another. Fishing water is unlimited and shared. Placement and the building sheet show "N of 90 trees its own · X% output" and how many in range belong to other buildings; per–Town Hall building limits stay as they are.
+- **Resource sources never run out, but each belongs to one building** (since 0.15.4): trees, berry bushes, iron outcrop tiles and fishing water stay on the map. Every woodcutter, berry gatherer, mine and fisher's hut claims the nearest free sources within its radius (6, 5, 4, 3 tiles), oldest building first, up to what it needs: **45 trees, 6 bushes, 5 iron outcrops, 5 water tiles** (fisher's hut, radius 3) for full output (since 0.15.5); with fewer, output falls in proportion (30 trees = 67%). A source claimed by one building cannot serve another. Placement and the building sheet show "N of 45 trees its own · X% output" and how many in range belong to other buildings; per–Town Hall building limits stay as they are.
 - Trees and bushes go for good only with the **Remove** tool or when a building is placed over them (the game asks first); each gives a quarter of a season's output (2 wood a tree, 3 berries a bush).
 
 ## 5. People
@@ -40,7 +40,7 @@ A cozy-but-harsh Viking village builder for the browser. Year 865, the village o
 - **Limits:** houses, granaries and warehouses have no limit; the 1st and 2nd granary or warehouse cost the base price, the 3rd–5th each +30% on the previous one, then +50% each. Other buildings keep per-level limits. Decor unchanged.
 - Storage caps: food (granaries), goods (warehouses), weapons (arsenal). There is no water resource: the village lives by the river.
 - **Firewood:** each house burns 0.35 wood a day in summer and 0.84 in winter (−30% since 0.15.3) (houses at level 3+ ×0.75; the Town Hall burns as two houses). When logs run out, fires burn planks (1 plank = 2 wood), never below the plank reserve.
-- Fisher's Hut: fishes the water within 3 tiles (never runs out); less in winter (more at sea than on the river).
+- Fisher's Hut: fishes the water within 3 tiles (5 tiles of its own for full output); less in winter (more at sea than on the river).
 - Food sources: berries, fishers, the **Pig Pen** (pigs: meat and hides) and, from TH3, **Grain Field → Water Mill** (on the river; flour never spoils) **→ Bakery** (bread all year). The **Fodder Field** feeds pigs and sheep in winter (not people). Preserver (dried fish, jam) and Smokehouse (smoked fish and meat) keep food. The **Sheep Pen** gives wool (sails, warm clothes).
 - Chains: wood → planks; iron → tools / weapons / armour; fish, berries → dried fish, jam; fish, meat → smoked; grain → flour → bread; grain → ale; honey → mead; wool / flax → cloth → clothes.
 - **Ale and mead are not meals.** The Brewery and Beehives open at TH3; ale and mead are drunk at banquets and in the **Tavern** (opens with a Brewery), which uses a little each day and raises morale while it has a keeper and drink (more with mead).

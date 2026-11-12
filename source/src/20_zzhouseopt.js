@@ -1430,8 +1430,8 @@ function pyreLight(){if(typeof S==='object'&&S)S.pyreT=S.gameT;}
 function pyFlames(p,w,h,win,seed){if(win)return;const tt=(typeof t==='number'?t:0)+(seed||0);ctx.fillStyle='rgba(255,160,60,0.16)';ctx.beginPath();ctx.ellipse(p[0],p[1]-h*0.3,w*2.2,h*0.9,0,0,6.3);ctx.fill();
   for(const [c,ww,hh,ph] of [['#B83A1C',1,1,0],['#E07A28',0.72,0.78,1.7],['#F6C452',0.42,0.5,3.1]]){for(let j=-1;j<=1;j++){const x=p[0]+j*w*0.45,fl=Math.sin(tt*7+ph+j*2)*w*0.12,H=h*hh*(j?0.7:1)*(1+Math.sin(tt*5+j+ph)*0.08),W=w*ww*0.55;
     ctx.fillStyle=c;ctx.beginPath();ctx.moveTo(x-W,p[1]);ctx.quadraticCurveTo(x-W*0.8,p[1]-H*0.55,x+fl,p[1]-H);ctx.quadraticCurveTo(x+W*0.8,p[1]-H*0.55,x+W,p[1]);ctx.closePath();ctx.fill();}}
-  for(let k=0;k<5;k++){const q=(tt*0.5+k/5)%1;ctx.fillStyle='rgba(255,200,90,'+(0.85*(1-q)).toFixed(2)+')';ctx.fillRect(p[0]+Math.sin(tt*2.6+k*2.1)*w*0.6,p[1]-h*0.8-q*h*1.3,0.8,0.8);}
-  for(let k=0;k<4;k++){const q=((tt*0.18+k/4)%1);ctx.fillStyle='rgba(120,116,110,'+(0.32*(1-q)).toFixed(2)+')';ctx.beginPath();ctx.arc(p[0]+q*10+Math.sin(tt+k)*2,p[1]-h-q*26,2.4+q*5,0,6.3);ctx.fill();}}
+  for(let k=0;k<5;k++){const q=(((tt*0.5+k/5)%1)+1)%1;ctx.fillStyle='rgba(255,200,90,'+(0.85*(1-q)).toFixed(2)+')';ctx.fillRect(p[0]+Math.sin(tt*2.6+k*2.1)*w*0.6,p[1]-h*0.8-q*h*1.3,0.8,0.8);}
+  for(let k=0;k<4;k++){const q=(((tt*0.18+k/4)%1)+1)%1;ctx.fillStyle='rgba(120,116,110,'+(0.32*(1-q)).toFixed(2)+')';ctx.beginPath();ctx.arc(p[0]+q*10+Math.sin(tt+k)*2,p[1]-h-q*26,2.4+q*5,0,6.3);ctx.fill();}}
 function pyCrib(f,a,c,s,layers,r,win,burn){/* square crib of logs, layers crossing, the top layer charred with embers */const fs=(x,y,h)=>f(y,x,h);let h=r;
   for(let k=0;k<layers;k++){const along=k%2===0;for(const o of [-s,0,s]){if(along)hoLog(f,a-s-0.06,a+s+0.06,c+o,h,r,win);else hoLog(fs,c-s-0.06,c+s+0.06,a+o,h,r,win);}h+=r*1.75;}
   if(!win&&burn){const top=[f(a-s,c-s,h-r),f(a+s,c-s,h-r),f(a+s,c+s,h-r),f(a-s,c+s,h-r)];hoQ(top,'rgba(30,18,10,0.75)');for(let k=0;k<10;k++){const p=f(a+(h2(k,3,7)-0.5)*s*1.6,c+(h2(k,5,7)-0.5)*s*1.6,h-r);ctx.fillStyle=k%2?'#E8602A':'#F6A640';ctx.fillRect(p[0]-0.6,p[1]-0.4,1.2,0.8);}}
@@ -1954,3 +1954,81 @@ function drawThrallOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,r
   fence(false);}
 {const _shR=shShape;shShape=function(b){if(b.t==='thrall'&&THR_OPT){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),box=(a,c,sa,sc,h)=>({pts:[f(a-sa,c-sc,0),f(a+sa,c-sc,0),f(a+sa,c+sc,0),f(a-sa,c+sc,0)],h});
   if(THR_OPT===4)return [box(-0.58,-0.25,0.36,0.52,0.3),box(0.42,-0.25,0.36,0.52,0.3)];return [box(-0.1,-0.3,1.0,0.5,0.55)];}return _shR(b);};}
+
+/* =================== Ragnar's Ship-Tomb options (prototype) — window.__setTomb(n), window.__TOMBSTAGE = 0 waiting / 1 half built / 2 finished ===================
+   4×4 wonder. While it is built: a ship lies in a dug trench with a gabled timber burial chamber on its deck, spoil heaps and a ramp; the mound rises over it.
+   Finished: 1 great mound inside a ship-setting of standing stones, a carved runestone · 2 mound with a ring of kerbstones, a dragon post and two bauta stones
+   3 low mound inside a huge stone ship of tall stones (Ale's Stones) · 4 mound with Ragnar's carved prow breaking out at the front, shields along its flank, two braziers */
+let TOMB_OPT=0;window.__setTomb=n=>{TOMB_OPT=n|0;};
+{const _dsT2=drawShaped;drawShaped=function(b,win,c0,ax){if(TOMB_OPT&&b.t==='tomb'){drawTombOpt(b,win,TOMB_OPT);return true;}return _dsT2(b,win,c0,ax);};}
+{const _gsT=groundShape;groundShape=function(b,win){if(TOMB_OPT&&b.t==='tomb')return true;return _gsT(b,win);};}
+function tmMound(f,ra,rc,H,frac,win,sd,col){/* a grass barrow built from rings; frac (0..1) = how far it has risen; lit from the left */const n=48,steps=26,top=H*frac;if(frac<=0.02)return;
+  const ring=(k)=>{const u=k/steps,r=Math.sqrt(Math.max(0,1-u*u)),h=top*u,pts=[];for(let i=0;i<n;i++){const t2=i/n*6.283,j=1+(h2(sd,i,k)-0.5)*0.03;pts.push(f(Math.cos(t2)*ra*r*j,Math.sin(t2)*rc*r*j,h));}return pts;};
+  const G=win?['#E8ECEA','#DDE2E0']:col||['#7E9A54','#6E8A48'];
+  /* each band in segments, shaded by which way the slope faces (light from the upper left) */
+  for(let k=0;k<steps;k++){const lo=ring(k),hi=ring(k+1),u=(k+0.5)/steps,slope=Math.max(0.15,1-u*u);
+    for(let i=0;i<n;i++){const tm=(i+0.5)/n*6.283;if(Math.cos(tm)+Math.sin(tm)<-0.9&&k<steps-1)continue;const face=-(Math.cos(tm)-Math.sin(tm))/1.414,toward=(Math.cos(tm)+Math.sin(tm))/1.414;
+      const lit=0.9+0.22*face*slope+0.08*u-0.06*Math.max(0,toward)*slope;const col=shade(G[0],lit),q=[lo[i],lo[(i+1)%n],hi[(i+1)%n],hi[i]];hoQ(q,col);ctx.strokeStyle=col;ctx.lineWidth=0.7;ctx.stroke();}}
+  /* a darker foot where the turf meets the ground */{const b0=ring(0);ctx.strokeStyle=win?'rgba(150,150,140,0.5)':'rgba(40,52,24,0.45)';ctx.lineWidth=1.2;ctx.beginPath();for(let i=0;i<=n/2;i++){const p=b0[(i+n*7/8|0)%n];i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]);}ctx.stroke();}
+  hoQ(ring(steps),shade(G[0],1.0));
+  if(!win){/* light on the left flank, shade on the right */const L=ring(Math.round(steps*0.5));ctx.fillStyle='rgba(255,250,220,0.10)';ctx.beginPath();const c0=f(-ra*0.35,0,top*0.6);ctx.ellipse(c0[0],c0[1],ra*12,rc*9,0,0,6.3);ctx.fill();
+    ctx.strokeStyle='rgba(60,80,36,0.55)';ctx.lineWidth=0.5;ctx.beginPath();for(let i=0;i<140;i++){const t2=h2(sd,i,51)*6.283,u=h2(sd,i,52),r=Math.sqrt(1-u*u),p=f(Math.cos(t2)*ra*r,Math.sin(t2)*rc*r,top*u);if(Math.cos(t2)+Math.sin(t2)<-0.6&&u<0.5)continue;ctx.moveTo(p[0],p[1]);ctx.lineTo(p[0]+0.5,p[1]-1.8);}ctx.stroke();
+    for(let i=0;i<26;i++){const t2=h2(sd,i,53)*6.283,u=h2(sd,i,54)*0.9,r=Math.sqrt(1-u*u),p=f(Math.cos(t2)*ra*r,Math.sin(t2)*rc*r,top*u);if(Math.cos(t2)+Math.sin(t2)<-0.4)continue;ctx.fillStyle=i%3===0?'#E8E0F0':i%3===1?'#E8C84A':'#B86A8A';ctx.beginPath();ctx.arc(p[0],p[1]-0.6,0.7,0,6.3);ctx.fill();}}}
+function tmShip(f,L,W,win,pr,sd){/* clinker longship along a: far gunwale and inside, ribs, strakes on the near side, curled stem and stern with a dragon head at the bow (+a) */
+  const n=24,wid=u=>W*Math.pow(Math.max(0,1-u*u),0.7),sheer=u=>8+5*Math.pow(Math.abs(u),3),keel=u=>1.5+1.5*u*u,P=(u,side,h)=>f(u*L,side*wid(u),h);
+  const wood=win?'#C8C0B0':'#6E543D',woodL=win?'#D8D0C0':'#8A6A48',woodD=win?'#B0A898':'#4E3A28';
+  /* inside (far side planking and floor) */{const pts=[];for(let i=0;i<=n;i++){const u=-1+2*i/n;pts.push(P(u,-1,sheer(u)));}for(let i=n;i>=0;i--){const u=-1+2*i/n;pts.push(P(u,0,keel(u)+2));}hoQ(pts,woodD);}
+  if(!win){/* ribs */ctx.strokeStyle=shade(woodD,0.75);ctx.lineWidth=0.8;ctx.beginPath();for(let i=2;i<n-1;i+=2){const u=-1+2*i/n,p=P(u,-1,sheer(u)),q=P(u,0,keel(u)+2),r=P(u,1,sheer(u)-1);ctx.moveTo(p[0],p[1]);ctx.quadraticCurveTo(q[0],q[1]+1,r[0],r[1]);}ctx.stroke();}
+  if(pr<0.35){/* only keel, ribs and the first strakes so far */hoLine(P(-1,0,keel(-1)),P(1,0,keel(1)),woodD,1.6);for(let i=1;i<n;i+=2){const u=-1+2*i/n;hoLine(P(u,1,sheer(u)*0.9),P(u,0,keel(u)),wood,0.9);}return;}
+  /* near side: strakes as stacked bands from keel to sheer */const S=5;for(let k=0;k<S;k++){const pts=[],v0=k/S,v1=(k+1)/S;for(let i=0;i<=n;i++){const u=-1+2*i/n;pts.push(P(u,Math.sqrt(v1),keel(u)+(sheer(u)-keel(u))*v1));}for(let i=n;i>=0;i--){const u=-1+2*i/n;pts.push(P(u,Math.sqrt(v0),keel(u)+(sheer(u)-keel(u))*v0));}
+    hoQ(pts,k%2?wood:woodL);}
+  if(!win){ctx.fillStyle='rgba(30,22,14,0.8)';for(let k=1;k<S;k++)for(let i=1;i<n;i+=1){const u=-1+2*i/n,p=P(u,Math.sqrt(k/S),keel(u)+(sheer(u)-keel(u))*k/S);ctx.fillRect(p[0]-0.3,p[1]-0.3,0.6,0.6);}}
+  hoLine(P(-1,1,sheer(-1)),P(1,1,sheer(1)),woodD,0.9);{const pts=[];for(let i=0;i<=n;i++){const u=-1+2*i/n;pts.push(P(u,1,sheer(u)));}ctx.strokeStyle=woodL;ctx.lineWidth=1.2;ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.stroke();}
+  /* stem and stern posts curling up; dragon head at the bow */for(const e of [-1,1]){const b0=P(e,0,sheer(e)),b1=f(e*(L+0.12),0,sheer(e)+10),b2=f(e*(L+0.02),0,sheer(e)+17);ctx.strokeStyle=woodD;ctx.lineWidth=2.4;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(b0[0],b0[1]);ctx.quadraticCurveTo(b1[0],b1[1],b2[0],b2[1]);ctx.stroke();ctx.lineCap='butt';
+    if(e>0){/* dragon head */ctx.fillStyle=woodD;ctx.beginPath();ctx.moveTo(b2[0]-1,b2[1]+1);ctx.lineTo(b2[0]+5,b2[1]-1);ctx.lineTo(b2[0]+6.5,b2[1]+1.4);ctx.lineTo(b2[0]+2,b2[1]+2);ctx.lineTo(b2[0]+5,b2[1]+3.4);ctx.lineTo(b2[0],b2[1]+3);ctx.closePath();ctx.fill();ctx.beginPath();ctx.moveTo(b2[0]-1,b2[1]);ctx.lineTo(b2[0]-2.5,b2[1]-4);ctx.lineTo(b2[0]+1.5,b2[1]-1);ctx.fill();if(!win){ctx.fillStyle='#C9A042';ctx.fillRect(b2[0]+2.4,b2[1]-0.2,0.9,0.9);ctx.strokeStyle='#C9A042';ctx.lineWidth=0.4;ctx.beginPath();ctx.moveTo(b0[0],b0[1]-1);ctx.quadraticCurveTo(b1[0],b1[1]-1,b2[0],b2[1]+1);ctx.stroke();}}
+    else{ctx.strokeStyle=woodD;ctx.lineWidth=1.6;ctx.beginPath();const c=[b2[0]-2,b2[1]-2];ctx.arc(c[0],c[1],2.2,0.3,4.2);ctx.stroke();}}
+  /* round shields along the near gunwale */if(pr>0.7&&!win)for(let i=0;i<9;i++){const u=-0.72+i*0.18,p=P(u,1,sheer(u)-1.2);arShield(p,1.9,i,win);}}
+function tmChamber(f,a,win,sd){/* the gabled timber burial chamber on deck, black boards, a door board */const J=WOOD_SET[2],g={sd,hl:0.32,hw:0.24,fh:5,wh:11,rh:9,ov:0.03,th:1,wt:'planks',wall:'#4A3A2C',wallD:'#38291E',roof:J.roof,roofD:J.roofD,roofE:J.roofD,rt:'boards',frame:false,k:1,v:1};
+  const fc=(x,y,h)=>f(x+a,y,h),r=hoRoof(fc,g,win);r.back();hoWalls(fc,g,win);r.end();hoRect(fc,g,'G',-0.06,0.06,g.fh,g.fh+5,'#2A1F16');r.front();r.ridge();hoBarge(fc,g,'#3A2A1C',0.25,true);}
+function tmRunestone(p,win,H,sd){/* tall runestone: rounded top, a red serpent band with runes, lichen */const w=6,hh=H||26;ctx.fillStyle=win?'#D4D6D2':'#8E877B';ctx.beginPath();ctx.moveTo(p[0]-w,p[1]);ctx.lineTo(p[0]-w*0.9,p[1]-hh*0.8);ctx.quadraticCurveTo(p[0]-w*0.5,p[1]-hh*1.05,p[0]+w*0.2,p[1]-hh);ctx.quadraticCurveTo(p[0]+w,p[1]-hh*0.85,p[0]+w*0.9,p[1]-hh*0.5);ctx.lineTo(p[0]+w,p[1]);ctx.closePath();ctx.fill();
+  ctx.fillStyle='rgba(30,26,20,0.25)';ctx.beginPath();ctx.moveTo(p[0]+w*0.35,p[1]);ctx.lineTo(p[0]+w*0.4,p[1]-hh*0.95);ctx.quadraticCurveTo(p[0]+w,p[1]-hh*0.85,p[0]+w*0.9,p[1]-hh*0.5);ctx.lineTo(p[0]+w,p[1]);ctx.closePath();ctx.fill();if(win)return;
+  ctx.strokeStyle='#A33A2E';ctx.lineWidth=1.3;ctx.beginPath();ctx.moveTo(p[0]-w*0.55,p[1]-1);ctx.bezierCurveTo(p[0]-w*0.75,p[1]-hh*0.6,p[0]-w*0.3,p[1]-hh*0.95,p[0]+w*0.1,p[1]-hh*0.88);ctx.bezierCurveTo(p[0]+w*0.5,p[1]-hh*0.8,p[0]+w*0.55,p[1]-hh*0.4,p[0]+w*0.35,p[1]-1);ctx.stroke();
+  ctx.fillStyle='#A33A2E';ctx.beginPath();ctx.ellipse(p[0]+w*0.35,p[1]-1.5,1.4,1,0,0,6.3);ctx.fill();ctx.strokeStyle='rgba(40,30,22,0.65)';ctx.lineWidth=0.45;ctx.beginPath();for(let k=0;k<7;k++){const y=p[1]-4-k*hh*0.1;ctx.moveTo(p[0]-w*0.2,y);ctx.lineTo(p[0]-w*0.05,y-1.2);ctx.moveTo(p[0]+w*0.02,y);ctx.lineTo(p[0]+w*0.02,y-1.4);}ctx.stroke();
+  ctx.strokeStyle='#C9A042';ctx.lineWidth=0.6;ctx.beginPath();ctx.moveTo(p[0]-2,p[1]-hh*0.45);ctx.lineTo(p[0]+1.5,p[1]-hh*0.45);ctx.moveTo(p[0]-0.2,p[1]-hh*0.55);ctx.lineTo(p[0]-0.2,p[1]-hh*0.35);ctx.stroke();
+  ctx.fillStyle='rgba(150,170,90,0.6)';ctx.beginPath();ctx.ellipse(p[0]-w*0.5,p[1]-hh*0.25,1.6,1,0.4,0,6.3);ctx.fill();ctx.fillStyle='rgba(210,200,120,0.55)';ctx.beginPath();ctx.ellipse(p[0]+w*0.4,p[1]-hh*0.7,1.2,0.8,0,0,6.3);ctx.fill();}
+function tmStones(f,L,W,tall,win,sd,front){/* ship-setting of standing stones round an ellipse-ish ship outline; back or front half */const N=14,st=[];for(const side of [-1,1])for(let i=0;i<=N;i++){const u=-1+2*i/N;if(side===1&&(i===0||i===N))continue;const w=W*Math.pow(Math.max(0,1-u*u),0.62);st.push({a:u*L,c:side*w,end:i===0||i===N,k:i+(side>0?40:0)});}
+  st.forEach(s=>s.d=s.a+s.c);st.sort((x,y)=>x.d-y.d);for(const s of st){if((s.d>=0)!==front)continue;const h=(s.end?tall*1.6:tall*(0.8+0.25*Math.abs(s.a/L)))+h2(sd,s.k,9)*3;alStone(f(s.a,s.c,0),tall>12?3.6:2.6,h,sd,s.k,win);}}
+function tmBrazier(p,win){hoLine([p[0]-2,p[1]],[p[0],p[1]-9],'#2E2C2A',0.8);hoLine([p[0]+2,p[1]],[p[0],p[1]-9],'#2E2C2A',0.8);hoLine([p[0],p[1]+1],[p[0],p[1]-9],'#2E2C2A',0.8);ctx.fillStyle='#2E2C2A';ctx.beginPath();ctx.ellipse(p[0],p[1]-10,3.2,1.4,0,0,3.14);ctx.fill();if(!win)pyFlames([p[0],p[1]-10],3.4,7,win,p[0]);}
+function drawTombOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),sd=(b.id||0)*83+opt;
+  const st=window.__TOMBSTAGE!=null?window.__TOMBSTAGE:(S.tombDone?2:b.proj?1:0),pr=st===2?1:st===1?(b.proj&&b.proj.done?Math.min(0.95,b.proj.done/TOMB_WORK):0.55):0;
+  const ra=opt===3?1.25:1.55,rc=opt===3?0.8:1.0,H=opt===3?16:opt===4?36:42;
+  /* ground: trodden earth while building, grass ring when done */{const ring=(r1,r2,n)=>{const o=[];for(let i=0;i<n;i++){const t2=i/n*6.283,j=1+(h2(sd,i,77)-0.5)*0.06;o.push(f(Math.cos(t2)*r1*j,Math.sin(t2)*r2*j,0));}return o;};
+    hoQ(ring(1.95,1.4,40),win?'rgba(225,228,224,0.5)':st===2?'rgba(110,130,80,0.25)':'rgba(130,112,84,0.45)');if(st<2)hoQ(ring(1.75,1.2,40),win?'rgba(232,230,222,0.8)':'rgba(120,100,72,0.5)');}
+  if(st===0){/* waiting: the ship's outline staked out with a rope, the first stones, a pile of timber */const pts=[];for(let i=0;i<=24;i++){const u=-1+2*i/24;pts.push([u*1.35,0.55*Math.pow(Math.max(0,1-u*u),0.62)]);}
+    const stake=(a,c)=>{const p=f(a,c,0);hoLine(p,[p[0],p[1]-6],win?'#B8B0A0':'#5A4230',1);};for(const s of [-1,1])for(let i=0;i<=24;i+=3)stake(pts[i][0],s*pts[i][1]);
+    if(!win){ctx.strokeStyle='rgba(220,200,150,0.9)';ctx.lineWidth=0.5;for(const s of [-1,1]){ctx.beginPath();pts.forEach((q,i)=>{const p=f(q[0],s*q[1],5);i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]);});ctx.stroke();}}
+    hoLogPile(f,0.9,1.7,1.45,[4,3,2],1.6,win);if(opt===1||opt===3)tmStones(f,1.65,0.95,opt===3?16:9,win,sd,false);return;}
+  /* building or finished */
+  const shipL=1.25,shipW=0.42;
+  if(st===1){/* trench, spoil heaps behind, the ship in the trench with its chamber, a ramp, the mound rising over the back */
+    {const pts=[];for(let i=0;i<32;i++){const t2=i/32*6.283;pts.push(f(Math.cos(t2)*(shipL+0.18),Math.sin(t2)*(shipW+0.14),0));}hoQ(pts,win?'#D8D8D2':'#5A4632');}
+    for(const [a,c,r] of [[-1.2,-1.05,0.36],[0.2,-1.15,0.42],[1.3,-0.85,0.3]]){const pts=[];for(let i=0;i<20;i++){const t2=i/20*6.283;pts.push(f(a+Math.cos(t2)*r,c+Math.sin(t2)*r*0.7,0));}hoQ(pts,win?'#E2E2DC':'#7A6448');const tp=f(a,c,r*14);ctx.fillStyle=win?'#EAEAE4':'#8C7454';ctx.beginPath();const b0=f(a-r,c,0),b1=f(a+r,c,0);ctx.moveTo(b0[0],b0[1]);ctx.quadraticCurveTo(tp[0],tp[1]-4,b1[0],b1[1]);ctx.fill();}
+    if(opt===1||opt===3)tmStones(f,1.75,1.05,opt===3?16:9,win,sd,false);
+    tmShip(f,shipL,shipW,win,Math.max(0.4,pr),sd);if(pr>0.45)tmChamber(f,-0.1,win,sd);
+    /* the mound creeping over the ship from behind: a partial barrow */if(pr>0.6){const fb=(a,c,h)=>f(a,c-0.55,h);tmMound(fb,ra*0.9,rc*0.55,H*0.6,(pr-0.6)*2.2,win,sd);}
+    if(opt===1||opt===3)tmStones(f,1.75,1.05,opt===3?16:9,win,sd,true);return;}
+  /* finished */
+  if(opt===1){tmStones(f,1.85,1.2,10,win,sd,false);tmMound(f,ra,rc,H,1,win,sd);tmStones(f,1.85,1.2,10,win,sd,true);tmRunestone(f(1.75,0.85,0),win,28,sd);}
+  else if(opt===2){/* kerbstones round the foot, a carved dragon post at the front, two bauta stones */const N=30;const ks=[];for(let i=0;i<N;i++){const t2=i/N*6.283;ks.push({d:Math.cos(t2)*ra+Math.sin(t2)*rc,p:f(Math.cos(t2)*(ra+0.06),Math.sin(t2)*(rc+0.06),0),k:i});}
+    ks.sort((x,y)=>x.d-y.d);for(const s of ks.filter(s=>s.d<0))alCobble([s.p[0],s.p[1]-1.4],3,2,win?'#D4D6D2':h2(sd,s.k,4)>0.5?'#8E877B':'#7A746A',win);tmMound(f,ra,rc,H,1,win,sd);for(const s of ks.filter(s=>s.d>=0))alCobble([s.p[0],s.p[1]-1.4],3,2,win?'#D4D6D2':h2(sd,s.k,4)>0.5?'#8E877B':'#7A746A',win);
+    alStone(f(-1.6,1.2,0),3.4,22,sd,1,win);alStone(f(1.25,-1.45,0),3.4,20,sd,2,win);
+    {const p=f(1.75,0.95,0),q=[p[0],p[1]-34];hoLine(p,q,win?'#B8B0A0':'#4A3424',2.2);if(!win){for(let k=0;k<4;k++)hoLine([p[0]-1.1,p[1]-8-k*6],[p[0]+1.1,p[1]-10-k*6],'#C9A042',0.6);ctx.fillStyle='#4A3424';ctx.beginPath();ctx.moveTo(q[0]-1,q[1]+2);ctx.quadraticCurveTo(q[0]-1,q[1]-5,q[0]+4,q[1]-7);ctx.lineTo(q[0]+8,q[1]-5.5);ctx.lineTo(q[0]+4.5,q[1]-4.5);ctx.lineTo(q[0]+7,q[1]-3);ctx.lineTo(q[0]+2,q[1]-3);ctx.quadraticCurveTo(q[0]+1,q[1],q[0]+1,q[1]+2);ctx.closePath();ctx.fill();ctx.fillStyle='#C9A042';ctx.fillRect(q[0]+4,q[1]-6,0.9,0.9);}}}
+  else if(opt===3){tmStones(f,1.9,1.15,17,win,sd,false);tmMound(f,ra,rc,H,1,win,sd);tmStones(f,1.9,1.15,17,win,sd,true);}
+  else{/* the prow breaks out of the mound at the front; shields along its flank; two braziers */tmMound(f,ra,rc,H,1,win,sd);
+    {const P=(a,c,h)=>f(a,c,h),b0=P(ra*0.92,0.05,6),b1=P(ra+0.35,0.05,22),b2=P(ra+0.2,0.05,32);ctx.strokeStyle=win?'#B8B0A0':'#4E3A28';ctx.lineWidth=4.4;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(b0[0],b0[1]);ctx.quadraticCurveTo(b1[0],b1[1],b2[0],b2[1]);ctx.stroke();ctx.lineCap='butt';
+      if(!win){ctx.strokeStyle='#C9A042';ctx.lineWidth=0.6;ctx.beginPath();ctx.moveTo(b0[0]-1,b0[1]);ctx.quadraticCurveTo(b1[0]-1,b1[1],b2[0]-1,b2[1]+1);ctx.stroke();ctx.fillStyle='#4E3A28';ctx.beginPath();ctx.moveTo(b2[0]-2,b2[1]+1);ctx.lineTo(b2[0]+7,b2[1]-2);ctx.lineTo(b2[0]+9,b2[1]+1.6);ctx.lineTo(b2[0]+3,b2[1]+2.4);ctx.lineTo(b2[0]+7,b2[1]+4.6);ctx.lineTo(b2[0],b2[1]+4);ctx.closePath();ctx.fill();ctx.beginPath();ctx.moveTo(b2[0]-1.5,b2[1]);ctx.lineTo(b2[0]-3.5,b2[1]-6);ctx.lineTo(b2[0]+2,b2[1]-1.5);ctx.fill();ctx.fillStyle='#E8C84A';ctx.fillRect(b2[0]+3.4,b2[1]-0.6,1,1);}
+      /* the strakes showing where the turf parts */const sp=[P(ra*0.8,-0.22,4),P(ra*0.98,0.05,8),P(ra*0.8,0.32,4)];hoQ(sp,win?'#C8C0B0':'#6E543D');}
+    if(!win)for(let i=0;i<8;i++){const t2=Math.PI*0.15+i*0.14,p=f(Math.cos(t2)*ra*0.92,Math.sin(t2)*rc*0.92,H*0.12);arShield(p,2.6,i,win);}
+    tmBrazier(f(1.95,0.6,0),win);tmBrazier(f(1.3,1.35,0),win);}}
+{const _shT2=shShape;shShape=function(b){if(b.t==='tomb'&&TOMB_OPT){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),st=window.__TOMBSTAGE!=null?window.__TOMBSTAGE:(S.tombDone?2:b.proj?1:0);const n=24,ell=(ra,rc)=>{const o=[];for(let i=0;i<n;i++){const t2=i/n*6.283;o.push(f(Math.cos(t2)*ra,Math.sin(t2)*rc,0));}return o;};
+  if(st===2){const H=TOMB_OPT===3?12:TOMB_OPT===4?26:30;return [{pts:ell(TOMB_OPT===3?1.25:1.55,TOMB_OPT===3?0.8:1.0),h:H/40},{pts:ell(0.9,0.55),h:H/30}];}if(st===1)return [{pts:ell(1.3,0.45),h:0.35}];return [];}return _shT2(b);};}

@@ -1925,3 +1925,32 @@ function drawYardOpt(b,win,opt){const {F,s,A,C,flip}=ydFrame(b),sd=(b.id||0)*73+
   /* the ship is built inside the hall and slid out through the gate onto the quay */
   if(s>0){hall();quay();pier();moored();}else{moored();pier();quay();hall();}}
 {const _shY2=shShape;shShape=function(b){if(b.t==='shipyard'&&YARD_OPT){const {F,s,A,C}=ydFrame(b),hc=YARD_OPT===3?s*(C-0.97):-s*(C-0.55),box=(a,c,sa,sc,h)=>({pts:[F(a-sa,c-sc,0),F(a+sa,c-sc,0),F(a+sa,c+sc,0),F(a-sa,c+sc,0)],h});return [box(0,hc,A-0.2,0.55,YARD_OPT===2?0.2:0.9),box(0,hc,A-0.2,0.06,YARD_OPT===2?1.6:1.4)];}return _shY2(b);};}
+
+/* =================== Thrall Pen options (prototype) — window.__setThrall(n) ===================
+   3×2, houses thralls (8, +4 per level); they may try to flee, so the yard is fenced. Humble, undecorated buildings.
+   1 Low thatched longhouse + woven wattle fence with a plank gate · 2 Low log house, black scales + a fence of sharpened stakes, barred gate
+   3 Wattle-and-daub longhouse with thatch, open yard with a water trough · 4 Two small sunken huts (roofs to the ground) inside a wattle fence */
+let THR_OPT=0;window.__setThrall=n=>{THR_OPT=n|0;};
+{const _dsR=drawShaped;drawShaped=function(b,win,c0,ax){if(THR_OPT&&b.t==='thrall'){drawThrallOpt(b,win,THR_OPT);return true;}return _dsR(b,win,c0,ax);};}
+function thStakes(f,p0,p1,h,win){/* low fence of sharpened stakes with a rail */const n=Math.max(2,Math.round(Math.hypot(p1[0]-p0[0],p1[1]-p0[1])/0.11)),pts=[];for(let k=0;k<=n;k++){const u=k/n;pts.push(f(p0[0]+(p1[0]-p0[0])*u,p0[1]+(p1[1]-p0[1])*u,0));}
+  pts.sort((p,q)=>p[1]-q[1]);for(const p of pts)twLog(p,h,1.25,win);hoLine(f(p0[0],p0[1],h*0.55),f(p1[0],p1[1],h*0.55),win?'#B8B0A0':'#4A3424',0.8);}
+function thGate(f,a0,a1,c,h,win,bar){const G=(a,hh)=>f(a,c,hh);hoQ([G(a0+0.02,0.5),G(a1-0.02,0.5),G(a1-0.02,h-0.5),G(a0+0.02,h-0.5)],win?'#D8D2C6':'#7A5E42');if(!win){ctx.strokeStyle='rgba(30,20,12,0.5)';ctx.lineWidth=0.45;ctx.beginPath();for(let a=a0+0.08;a<a1-0.04;a+=0.07){const p=G(a,0.5),q=G(a,h-0.5);ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);}ctx.stroke();}
+  hoLine(G(a0+0.03,1.5),G(a1-0.03,h-1.2),'#5A4230',1.1);for(const a of [a0,a1])hoLine(G(a,0),G(a,h+1.5),'#3A2A1C',1.6);if(bar)hoLine(G(a0-0.05,h*0.55),G(a1+0.05,h*0.55),'#2E2C2A',1.4);}
+function drawThrallOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),L=Math.min(5,b.lvl||1),sd=(b.id||0)*79+opt,Ea=1.42,Ec=0.92;
+  const hl=L>=5?1.05:L>=3?0.95:0.85,hc=-0.3,fw=(a,c,h)=>f(a-0.1,c+hc,h);
+  const fenceRuns=(back)=>back?[[[-Ea,-Ec],[Ea,-Ec]],[[-Ea,-Ec],[-Ea,Ec]]]:[[[Ea,-Ec],[Ea,Ec]],[[-Ea,Ec],[0.55,Ec]],[[1.05,Ec],[Ea,Ec]]];
+  const fence=(back)=>{if(opt===3)return;fenceRuns(back).forEach((r,i)=>{if(opt===2)thStakes(f,r[0],r[1],10,win);else hoWattle(f,r[0],r[1],7,win,sd+i+(back?0:5));});if(!back)thGate(f,0.55,1.05,Ec,opt===2?10:7.5,win,opt===2);};
+  const J=opt===2?WOOD_SET[2]:WOOD_SET[1];
+  const g={sd,hl,hw:0.42,fh:1.6,wh:opt===3?10:9,rh:opt===2?11:14,ov:0.08,th:J.rt==='thatch'?4.5:1.6,wt:opt===2?'logs':'planks',wall:opt===3?'#B49C78':opt===2?'#6E5440':'#7A6650',wallD:opt===3?'#94805E':opt===2?'#56402F':'#5E4E3C',
+    roof:J.roof,roofD:J.roofD,roofE:shade(J.roofD,0.7),rt:J.rt,frame:opt===3,frameCol:'#4A3424',k:1,v:1};
+  fence(true);
+  if(opt===4){/* two small sunken huts */for(const [a,c] of [[-0.6,-0.35],[0.35,-0.3]]){const fh=(x,y,h)=>f(x+a,y+c,h),gh={sd:sd+a*10|0,hl:0.38,hw:0.34,fh:0.8,wh:2.4,rh:15,ov:0.05,th:4,wt:'planks',wall:'#6E5A44',wallD:'#56442F',roof:J.roof,roofD:J.roofD,roofE:shade(J.roofD,0.7),rt:J.rt,frame:false,k:1,v:1};
+      const r=hoRoof(fh,gh,win);r.back();hoWalls(fh,gh,win);r.end();{const P=(cc,h)=>fh(gh.hl+0.004,cc,h);hoQ([P(-0.07,0.8),P(0.07,0.8),P(0.07,8),P(0,10),P(-0.07,8)],'#2A1F16');}r.front();r.ridge();}}
+  else{const r=hoRoof(fw,g,win);r.back();hoFooting(fw,g,win);hoWalls(fw,g,win);
+    if(opt===3&&!win){/* daub: wattle showing where the clay has fallen away */ctx.strokeStyle='rgba(90,70,40,0.45)';ctx.lineWidth=0.5;for(const [a,h] of [[-0.5,4],[0.4,6]]){const p=fw(a,g.hw+0.004,h);ctx.beginPath();for(let k=0;k<4;k++){ctx.moveTo(p[0]-3,p[1]+k*1.2);ctx.quadraticCurveTo(p[0],p[1]+k*1.2+(k%2?0.8:-0.8),p[0]+3,p[1]+k*1.2);}ctx.stroke();}}
+    r.end();hoDoor(fw,g,'L',0.15,0.16,7,{col:'#5A4230'});if(L>=3)hoWindow(fw,g,'L',-0.45,0.07,g.fh+4,g.fh+6,{lit:true});r.front();r.ridge();if(opt===3)hoBarge(fw,g,'#5A4230',0.18,false);
+    if(opt!==2){/* smoke hole on the ridge */const top=g.wh+g.rh,p=fw(-0.2,0,top+0.5);ctx.fillStyle='#2A1F16';ctx.beginPath();ctx.ellipse(p[0],p[1],2.4,1.1,0,0,6.3);ctx.fill();if(!win)hoSmoke([p[0],p[1]-1]);}}
+  if(opt===3){/* water trough hollowed from a log */const p=f(0.9,0.55,0);hoLog(f,0.7,1.15,0.55,1.8,1.8,win);if(!win){const a=f(0.74,0.55,3.4),e=f(1.11,0.55,3.4);ctx.strokeStyle='#4E6A7A';ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(e[0],e[1]);ctx.stroke();}}
+  fence(false);}
+{const _shR=shShape;shShape=function(b){if(b.t==='thrall'&&THR_OPT){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),box=(a,c,sa,sc,h)=>({pts:[f(a-sa,c-sc,0),f(a+sa,c-sc,0),f(a+sa,c+sc,0),f(a-sa,c+sc,0)],h});
+  if(THR_OPT===4)return [box(-0.6,-0.35,0.4,0.36,0.3),box(0.35,-0.3,0.4,0.36,0.3)];return [box(-0.1,-0.3,1.0,0.5,0.55)];}return _shR(b);};}

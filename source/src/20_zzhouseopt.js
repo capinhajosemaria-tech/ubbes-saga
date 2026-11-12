@@ -1374,15 +1374,27 @@ function alShrine(f,win,sd){/* a small vé house at the back: ridge runs toward 
   if(!win)hoRoofSurface((u,v)=>lerp(lerp(R[3],R[2],u),lerp(R[0],R[1],u),v),{sd:sd+4,rt:'scale',rh:12,roofD:J.roofD},win);hoQ([R[3],R[2],[R[2][0],R[2][1]+1.2],[R[3][0],R[3][1]+1.2]],'#1E1C1A');
   /* left slope edge seen at the gable */hoQ([f(am,c1+e,rh),f(a0-e-0.03,c1+e,wh-1.2),f(a0-e-0.03,c1+e,wh-2.6),f(am,c1+e,rh-1.6)],win?'#E2E4E2':'#211F1D');
   /* crossed barge boards, natural wood, ends past the ridge */{const g1=f(a1+e,c1+e,wh-1.2),g0=f(a0-e,c1+e,wh-1.2),ap=f(am,c1+e,rh),ext=(p,q,k)=>[q[0]+(q[0]-p[0])*k,q[1]+(q[1]-p[1])*k],bc=win?'#B8B0A0':'#8A6A4A';hoLine(g1,ext(g1,ap,0.25),bc,1.3);hoLine(g0,ext(g0,ap,0.25),bc,1.3);}}
+function alCobbleDisc(f,R,win,sd){/* dark cobbles laid in rings, flush with the ground, a kerb of dressed stones round the edge */const circ=(r,n)=>{const o=[];for(let k=0;k<n;k++){const t2=k/n*6.283;o.push(f(Math.cos(t2)*r,Math.sin(t2)*r,0));}return o;};
+  hoQ(circ(R+0.06,40),win?'#BFC1BD':'#56504A');hoQ(circ(R,40),win?'#C9CBC7':'#3A3632');
+  if(zoom>0.9){const step=0.075;for(let r0=0.05;r0<R-0.02;r0+=step){const r1=Math.min(R-0.01,r0+step),rm=(r0+r1)/2,n=Math.max(5,Math.round(6.283*rm/0.085)),off=h2(sd,r0*100|0,13);
+    for(let k=0;k<n;k++){const t0=(k+off+0.06)/n*6.283,t1=(k+off+0.94)/n*6.283,tn=h2(sd,(r0*1000|0)+k,14),col=win?(tn>0.5?'#E2E4E0':'#D4D6D2'):(tn>0.8?'#6E685F':tn>0.55?'#605A52':tn>0.25?'#534E47':'#5A544B');
+      const q=(r,t2)=>f(Math.cos(t2)*r,Math.sin(t2)*r,0);hoQ([q(r0+0.008,t0),q(r1-0.008,t0),q(r1-0.008,t1),q(r0+0.008,t1)],col);if(!win)hoLine(q(r1-0.01,t0),q(r1-0.01,t1),'rgba(255,250,235,0.09)',0.5);}}}
+  const n=28;for(let k=0;k<n;k++){const t0=(k+0.05)/n*6.283,t1=(k+0.95)/n*6.283,q=(r,t2)=>f(Math.cos(t2)*r,Math.sin(t2)*r,0);hoQ([q(R,t0),q(R+0.06,t0),q(R+0.06,t1),q(R,t1)],win?(k%2?'#D4D6D2':'#C4C6C2'):(k%2?'#7E776C':'#8E877B'));}
+  if(!win){ctx.fillStyle='rgba(96,120,70,0.4)';for(let k=0;k<7;k++){const t2=h2(sd,k,15)*6.283,p=f(Math.cos(t2)*(R+0.03),Math.sin(t2)*(R+0.03),0);ctx.beginPath();ctx.ellipse(p[0],p[1],2.2,0.8,0,0,6.3);ctx.fill();}}}
+function alTorch(p,win){/* small torch on a stake: wrapped head, a little flame and glow */hoLine(p,[p[0],p[1]-11],win?'#C8C2B4':'#4A3424',1.1);ctx.fillStyle=win?'#B8B0A0':'#5A4A3A';ctx.fillRect(p[0]-1.1,p[1]-13,2.2,2.4);if(win)return;
+  const tt=typeof t==='number'?t:0,fl=Math.sin(tt*9+p[0])*0.6;ctx.fillStyle='rgba(255,180,80,0.22)';ctx.beginPath();ctx.arc(p[0],p[1]-14,6,0,6.3);ctx.fill();
+  ctx.fillStyle='#E8862A';ctx.beginPath();ctx.moveTo(p[0]-1.3,p[1]-13);ctx.quadraticCurveTo(p[0]-1,p[1]-16,p[0]+fl,p[1]-18);ctx.quadraticCurveTo(p[0]+1,p[1]-16,p[0]+1.3,p[1]-13);ctx.fill();ctx.fillStyle='#F8D25A';ctx.beginPath();ctx.ellipse(p[0],p[1]-14.4,0.6,1.3,0,0,6.3);ctx.fill();
+  ctx.fillStyle='rgba(255,170,70,0.12)';ctx.beginPath();ctx.ellipse(p[0],p[1],7,3.2,0,0,6.3);ctx.fill();}
 function drawAltarOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),sd=(b.id||0)*7+opt;
   if(opt===1){/* kerb ring of low stones round the cairn, a fire on a hearthstone in front */const R=0.86,N=16,ks=[];for(let k=0;k<N;k++){const t2=(k+0.5)/N*6.283;if(Math.abs(t2-Math.PI/4)<0.22)continue;ks.push({d:Math.cos(t2)+Math.sin(t2),p:f(Math.cos(t2)*R,Math.sin(t2)*R,0),k});}
     ks.sort((x,y)=>x.d-y.d);const back=ks.filter(s=>s.d<0),frontK=ks.filter(s=>s.d>=0);for(const s of back)alStone(s.p,2.6,3.6+h2(sd,s.k,9)*2,sd,s.k,win);
     const bowl=alCairn(f,-0.12,-0.12,win,sd);alBowl(bowl,win);if(!win)hoSmoke([bowl[0],bowl[1]-2]);
     alFire(f(0.45,0.38,0),0.9,win);for(const s of frontK)alStone(s.p,2.6,3.6+h2(sd,s.k,9)*2,sd,s.k,win);}
-  else if(opt===2){/* five god-posts in an arc at the back, Odin in the middle, a stone altar in front of them */hoFlag0(f,0.86,win,sd);
-    const angs=[150,190,225,260,300],H=[30,34,42,36,32];for(let i=0;i<5;i++){const an=angs[i]*Math.PI/180;alGodPost(f,Math.cos(an)*0.68,Math.sin(an)*0.68,H[i],AL_GODS[i],win,sd);}
-    const top=alSlabAltar(f,0.08,0.08,0.3,0.2,5,win,sd);alBowl([top[0]-4,top[1]],win);{const p=[top[0]+4,top[1]];ctx.fillStyle=win?'#E0D8C8':'#C9A042';ctx.beginPath();ctx.ellipse(p[0],p[1]-1,1.6,0.8,0,0,6.3);ctx.fill();ctx.fillRect(p[0]-0.5,p[1]-3,1,2);}
-    alFire(f(0.55,0.55,0),0.8,win);}
+  else if(opt===2){/* round dark cobbled floor at ground level, five god-posts round its edge (Odin at the back), the altar in the middle, a few small torches */alCobbleDisc(f,0.9,win,sd);
+    const R=0.7,items=[];const G=[[9,'Freyja',32],[81,'Loki',31],[153,'Njord',34],[225,'Odin',42],[297,'Thor',35]];for(const [deg,g,H] of G){const an=deg*Math.PI/180,a=Math.cos(an)*R,c=Math.sin(an)*R;items.push({d:a+c,draw:()=>alGodPost(f,a,c,H,AL_GODS.find(x=>x.g===g),win,sd)});}
+    for(const deg of [189,261,27,63]){const an=deg*Math.PI/180,a=Math.cos(an)*0.9,c=Math.sin(an)*0.9;items.push({d:a+c,draw:()=>alTorch(f(a,c,0),win)});}
+    items.push({d:0,draw:()=>{const top=alSlabAltar(f,0,0,0.24,0.24,5,win,sd);alBowl([top[0]-3,top[1]],win);const p=[top[0]+4,top[1]+0.5];ctx.fillStyle=win?'#E0D8C8':'#C9A042';ctx.beginPath();ctx.ellipse(p[0],p[1]-1,1.6,0.8,0,0,6.3);ctx.fill();ctx.fillRect(p[0]-0.5,p[1]-3,1,2);}});
+    items.sort((x,y)=>x.d-y.d);for(const it of items)it.draw();}
   else if(opt===3){/* vé: hazel-stave ring with ropes, the shrine at the back, an altar and fire in front of it */alVebond(f,0.92,false,win,0);alShrine(f,win,sd);
     const top=alSlabAltar(f,-0.42,0.3,0.16,0.12,4,win,sd);alBowl(top,win);alFire(f(0.4,0.15,0),0.75,win);alVebond(f,0.92,true,win,0.24);
     for(const an of [Math.PI/4-0.24,Math.PI/4+0.24]){const p=f(Math.cos(an)*0.92,Math.sin(an)*0.92,0),u=f(Math.cos(an)*0.92,Math.sin(an)*0.92,12);hoQ([[p[0]-1,p[1]],[p[0]+1,p[1]],[u[0]+1,u[1]],[u[0]-1,u[1]]],win?'#C8C2B4':'#4A3424');}}
@@ -1399,7 +1411,7 @@ function drawAltarOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,ro
 {const _shA=shShape;shShape=function(b){if(b.t==='altar'&&ALTAR_OPT){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),box=(a,c,s,h)=>({pts:[f(a-s,c-s,0),f(a+s,c-s,0),f(a+s,c+s,0),f(a-s,c+s,0)],h}),V=[];const o=ALTAR_OPT;
   const ringBoxes=(R,n,s,h)=>{for(let k=0;k<n;k++){const t2=o===4?Math.PI/4+0.45+k/(n-1)*(6.283-0.9):(k+0.5)/n*6.283;V.push(box(Math.cos(t2)*R,Math.sin(t2)*R,s,h));}};
   if(o===1){ringBoxes(0.86,16,0.06,0.15);V.push(box(-0.12,-0.12,0.42,0.38));}
-  else if(o===2){for(const an of [150,190,225,260,300]){const r=an*Math.PI/180;V.push(box(Math.cos(r)*0.68,Math.sin(r)*0.68,0.06,1.2));}V.push(box(0.08,0.08,0.25,0.22));}
+  else if(o===2){for(const an of [9,81,153,225,297]){const r=an*Math.PI/180;V.push(box(Math.cos(r)*0.7,Math.sin(r)*0.7,0.06,1.15));}V.push(box(0,0,0.26,0.22));}
   else if(o===3){V.push({pts:[f(-0.42,-0.75,0),f(0.42,-0.75,0),f(0.42,-0.25,0),f(-0.42,-0.25,0)],h:0.7});V.push(box(-0.42,0.3,0.16,0.18));}
   else{ringBoxes(0.86,9,0.09,0.55);V.push(box(-0.12,-0.12,0.32,0.28));}return V;}return _shA(b);};}
 {const _gsA=groundShape;groundShape=function(b,win){if(b.t==='altar'&&ALTAR_OPT){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),sd=(b.id||0)*5,ring=(r,n,j)=>{const o=[];for(let k=0;k<n;k++){const t2=k/n*6.283,rr=r*(1+(h2(sd,k,j)-0.5)*0.05);o.push(f(Math.cos(t2)*rr,Math.sin(t2)*rr,0));}return o;};

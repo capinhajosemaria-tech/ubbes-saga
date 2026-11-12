@@ -164,7 +164,7 @@ function removePerson(p,cause){S.people=S.people.filter(o=>o!==p);if(p.sp){const
   for(const r of S.raids)r.crew=r.crew.filter(i=>i!==p.id);
   if(S.heir===p.id)S.heir=0;
   if(cause!=='left'){S.yr.deaths++;
-    if(S.pol.rite==='cremation'&&has('pyre')&&S.res.wood>=8)S.res.wood-=8;else S.contam=Math.max(S.contam,12);
+    if(S.pol.rite==='cremation'&&has('pyre')&&S.res.wood>=8){S.res.wood-=8;S.pyreT=S.gameT;}else S.contam=Math.max(S.contam,12);
     if(cause==='battle'){if(S.gods.freyja>=70&&Math.random()<0.5)addFavor('freyja',2);else addFavor('odin',2);}
     if(p.sp||p.pa[0]||p.pa[1])addMod('grief'+S.day,'Mourning the dead',-2,15);}
   else S.yr.left++;

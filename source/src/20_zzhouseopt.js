@@ -1423,27 +1423,30 @@ function drawAltarOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,ro
    2×2, no levels; the fire burns low with smoke (the old pyre glows at night too).
    1 Stone ship setting with a log crib · 2 Log crib on a round stone hearth · 3 Burial mound with a cremation pit and woodpile · 4 Pyre boat on rollers */
 let PYRE_OPT=0;window.__setPyre=n=>{PYRE_OPT=n|0;};
+/* the pyre only burns while someone is being cremated: S.pyreT is set at each cremation, the fire lasts a day and a half (window.__PYREFIRE forces it for screenshots) */
+const PYRE_BURN=DAY*1.5;function pyreBurning(){return !!window.__PYREFIRE||(typeof S==='object'&&S&&S.pyreT!=null&&S.gameT-S.pyreT>=0&&S.gameT-S.pyreT<PYRE_BURN);}
+function pyreLight(){if(typeof S==='object'&&S)S.pyreT=S.gameT;}
 {const _dsY=drawShaped;drawShaped=function(b,win,c0,ax){if(PYRE_OPT&&b.t==='pyre'){drawPyreOpt(b,win,PYRE_OPT);return true;}return _dsY(b,win,c0,ax);};}
 function pyFlames(p,w,h,win,seed){if(win)return;const tt=(typeof t==='number'?t:0)+(seed||0);ctx.fillStyle='rgba(255,160,60,0.16)';ctx.beginPath();ctx.ellipse(p[0],p[1]-h*0.3,w*2.2,h*0.9,0,0,6.3);ctx.fill();
   for(const [c,ww,hh,ph] of [['#B83A1C',1,1,0],['#E07A28',0.72,0.78,1.7],['#F6C452',0.42,0.5,3.1]]){for(let j=-1;j<=1;j++){const x=p[0]+j*w*0.45,fl=Math.sin(tt*7+ph+j*2)*w*0.12,H=h*hh*(j?0.7:1)*(1+Math.sin(tt*5+j+ph)*0.08),W=w*ww*0.55;
     ctx.fillStyle=c;ctx.beginPath();ctx.moveTo(x-W,p[1]);ctx.quadraticCurveTo(x-W*0.8,p[1]-H*0.55,x+fl,p[1]-H);ctx.quadraticCurveTo(x+W*0.8,p[1]-H*0.55,x+W,p[1]);ctx.closePath();ctx.fill();}}
   for(let k=0;k<5;k++){const q=(tt*0.5+k/5)%1;ctx.fillStyle='rgba(255,200,90,'+(0.85*(1-q)).toFixed(2)+')';ctx.fillRect(p[0]+Math.sin(tt*2.6+k*2.1)*w*0.6,p[1]-h*0.8-q*h*1.3,0.8,0.8);}
   for(let k=0;k<4;k++){const q=((tt*0.18+k/4)%1);ctx.fillStyle='rgba(120,116,110,'+(0.32*(1-q)).toFixed(2)+')';ctx.beginPath();ctx.arc(p[0]+q*10+Math.sin(tt+k)*2,p[1]-h-q*26,2.4+q*5,0,6.3);ctx.fill();}}
-function pyCrib(f,a,c,s,layers,r,win){/* square crib of logs, layers crossing, the top layer charred with embers */const fs=(x,y,h)=>f(y,x,h);let h=r;
+function pyCrib(f,a,c,s,layers,r,win,burn){/* square crib of logs, layers crossing, the top layer charred with embers */const fs=(x,y,h)=>f(y,x,h);let h=r;
   for(let k=0;k<layers;k++){const along=k%2===0;for(const o of [-s,0,s]){if(along)hoLog(f,a-s-0.06,a+s+0.06,c+o,h,r,win);else hoLog(fs,c-s-0.06,c+s+0.06,a+o,h,r,win);}h+=r*1.75;}
-  if(!win){const top=[f(a-s,c-s,h-r),f(a+s,c-s,h-r),f(a+s,c+s,h-r),f(a-s,c+s,h-r)];hoQ(top,'rgba(30,18,10,0.75)');for(let k=0;k<10;k++){const p=f(a+(h2(k,3,7)-0.5)*s*1.6,c+(h2(k,5,7)-0.5)*s*1.6,h-r);ctx.fillStyle=k%2?'#E8602A':'#F6A640';ctx.fillRect(p[0]-0.6,p[1]-0.4,1.2,0.8);}}
+  if(!win&&burn){const top=[f(a-s,c-s,h-r),f(a+s,c-s,h-r),f(a+s,c+s,h-r),f(a-s,c+s,h-r)];hoQ(top,'rgba(30,18,10,0.75)');for(let k=0;k<10;k++){const p=f(a+(h2(k,3,7)-0.5)*s*1.6,c+(h2(k,5,7)-0.5)*s*1.6,h-r);ctx.fillStyle=k%2?'#E8602A':'#F6A640';ctx.fillRect(p[0]-0.6,p[1]-0.4,1.2,0.8);}}
   return f(a,c,h-r);}
 function pyStoneRingFlat(f,a,c,R,n,win,sd){for(let k=0;k<n;k++){const t2=k/n*6.283,p=f(a+Math.cos(t2)*R,c+Math.sin(t2)*R,0),tn=h2(sd,k,31);alCobble([p[0],p[1]-0.8],2.4+tn,1.5+tn*0.4,win?'#D4D6D2':tn>0.5?'#8E877B':'#7A746A',win);}}
 function drawPyreOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),sd=(b.id||0)*9+opt;
   if(opt===1){/* skibssætning: standing stones in a ship outline, taller at stem and stern, the pyre in the middle */const bl=0.92,bw=0.42,W=u=>bw*Math.pow(Math.max(0,1-u*u),0.62),N=11,st=[];
     for(const side of [-1,1])for(let i=0;i<=N;i++){const u=-1+2*i/N;if(side===1&&(i===0||i===N))continue;st.push({a:u*bl,c:side*W(u),h:(Math.abs(u)>0.95?16:6+Math.abs(u)*5)+h2(sd,i+side*20,9)*2,k:i+side*30});}
     st.forEach(s=>s.d=s.a+s.c);st.sort((x,y)=>x.d-y.d);const back=st.filter(s=>s.c<0||s.d<0.0&&s.c===0),frontS=st.filter(s=>!back.includes(s));
-    for(const s of back)alStone(f(s.a,s.c,0),2.3,s.h,sd,s.k,win);const top=pyCrib(f,0,0,0.17,5,1.5,win);pyFlames(top,6,13,win,sd);for(const s of frontS)alStone(f(s.a,s.c,0),2.3,s.h,sd,s.k,win);}
+    for(const s of back)alStone(f(s.a,s.c,0),2.3,s.h,sd,s.k,win);const burn=pyreBurning(),top=pyCrib(f,0,0,0.17,5,1.5,win,burn);if(burn)pyFlames(top,6,13,win,sd);for(const s of frontS)alStone(f(s.a,s.c,0),2.3,s.h,sd,s.k,win);}
   else if(opt===2){/* low round hearth of dressed stone, ash on top, the crib on it */const R=0.62,hh=4,circ=(r,h2_,n)=>{const o=[];for(let k=0;k<n;k++){const t2=k/n*6.283;o.push(f(Math.cos(t2)*r,Math.sin(t2)*r,h2_));}return o;};
     {const lo=circ(R,0,32),hi=circ(R,hh,32),pts=[];for(let k=0;k<=16;k++)pts.push(lo[(k+28)%32]);for(let k=16;k>=0;k--)pts.push(hi[(k+28)%32]);hoQ(pts,win?'#C4C6C2':'#837D72');
       ctx.strokeStyle='rgba(40,36,30,0.5)';ctx.lineWidth=0.5;ctx.beginPath();for(let k=0;k<16;k++){const t2=(k+0.5)/16*6.283;if(Math.cos(t2)+Math.sin(t2)<-0.3)continue;const p=f(Math.cos(t2)*R,Math.sin(t2)*R,0),q=f(Math.cos(t2)*R,Math.sin(t2)*R,hh);ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);}ctx.stroke();
       hoQ(hi,win?'#E8EAE6':'#9C968B');hoQ(circ(R-0.07,hh,32),win?'#D8DAD6':'#5A5550');if(!win){ctx.fillStyle='rgba(110,130,70,0.5)';const m=f(R*0.7,R*0.7,1);ctx.beginPath();ctx.ellipse(m[0],m[1],2.6,1,0,0,6.3);ctx.fill();}}
-    const fh=(a,c,h)=>f(a,c,h+hh);const top=pyCrib(fh,0,0,0.24,6,1.6,win);pyFlames(top,8,15,win,sd);}
+    const fh=(a,c,h)=>f(a,c,h+hh);const top=pyCrib(fh,0,0,0.24,6,1.6,win,true);pyFlames(top,8,15,win,sd);}
   else if(opt===3){/* a low turf barrow at the back with a runestone, a cremation pit in front, firewood stacked beside */
     {const m=(r,h,n)=>{const o=[];for(let k=0;k<n;k++){const t2=k/n*6.283;o.push(f(-0.35+Math.cos(t2)*r*1.15,-0.4+Math.sin(t2)*r*0.95,h));}return o;};for(let j=0;j<6;j++){const r=0.55*(1-j/6),h=j*2.4;hoQ(m(r,h,30),win?shade('#E2E6E0',1-j*0.02):shade('#6E8A48',0.86+j*0.04));}
       if(!win){ctx.strokeStyle='rgba(60,80,40,0.5)';ctx.lineWidth=0.5;ctx.beginPath();for(let k=0;k<26;k++){const t2=h2(sd,k,41)*6.283,r=h2(sd,k,42)*0.5,p=f(-0.35+Math.cos(t2)*r,-0.4+Math.sin(t2)*r*0.8,(1-r/0.55)*12);ctx.moveTo(p[0],p[1]);ctx.lineTo(p[0]+0.6,p[1]-1.8);}ctx.stroke();}}
@@ -1451,7 +1454,7 @@ function drawPyreOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot
       if(!win){ctx.strokeStyle='#A34A3A';ctx.lineWidth=0.8;ctx.beginPath();ctx.moveTo(p[0]-2,p[1]-1);ctx.quadraticCurveTo(p[0]-2.6,p[1]-12,p[0],p[1]-14.5);ctx.quadraticCurveTo(p[0]+2.6,p[1]-12,p[0]+2,p[1]-1);ctx.stroke();ctx.strokeStyle='rgba(40,30,22,0.6)';ctx.lineWidth=0.4;ctx.beginPath();for(let k=0;k<5;k++){ctx.moveTo(p[0]-0.8,p[1]-3-k*2.2);ctx.lineTo(p[0]+0.8,p[1]-3.6-k*2.2);}ctx.stroke();}}
     {/* woodpile beside the pit */const fs=(x,y,h)=>f(y,x,h);hoLogPile(fs,0.12,0.62,-0.72,[4,3,2],1.5,win);}
     {/* the pit: a ring of stones, charred ground, a low crib burning */const pa=0.25,pc=0.3;const sh=(r,n)=>{const o=[];for(let k=0;k<n;k++){const t2=k/n*6.283;o.push(f(pa+Math.cos(t2)*r,pc+Math.sin(t2)*r,0));}return o;};hoQ(sh(0.42,24),win?'#D8DAD6':'#3A322C');hoQ(sh(0.3,24),win?'#CCCCC8':'#241A14');
-      const top=pyCrib(f,pa,pc,0.15,3,1.4,win);pyFlames(top,6,11,win,sd);pyStoneRingFlat(f,pa,pc,0.44,16,win,sd);}}
+      const top=pyCrib(f,pa,pc,0.15,3,1.4,win,true);pyFlames(top,6,11,win,sd);pyStoneRingFlat(f,pa,pc,0.44,16,win,sd);}}
   else{/* pyre boat: a færing filled with split wood, on two log rollers, flames from the hull */const fs=(x,y,h)=>f(y,x,h);for(const u of [-0.45,0.45])hoLog(fs,-0.38,0.38,u,1.6,1.6,win);
     const ff=(a,c,h)=>f(a,c,h+2.4);hoFaering(ff,0,0,0.9,0.26,win,sd);
     for(let i=0;i<9;i++){const u=-0.55+i*0.135,w=0.17*Math.pow(Math.max(0,1-(u/0.9)**2),0.62)/0.26*0.26;hoLog(fs,-w,w,u,10+Math.sin(i)*0.6,1.3,win);}

@@ -493,10 +493,7 @@ function drawHofOpt(b,win,opt){const J=HOF_SET[opt]||HOF_SET[1],f0=hoFrame({fx:b
   hoQ([fP(-hl-gw,hw,gt),fP(hl+gw,hw,gt),fP(hl+gw,hw+gw+0.05,gl+1),fP(-hl-gw,hw+gw+0.05,gl+1)],win?'#EEF1F0':galRoof);
   if(!win)hoRoofSurface((u,v)=>lerp(fP(-hl-gw+(2*hl+2*gw)*u,hw+gw+0.05,gl+1),fP(-hl-gw+(2*hl+2*gw)*u,hw,gt),v),{sd:sd+1,rt:J.turfGal?'turf':J.rt,rh:9,roofD:galRoofD},win);
   hoLine(fP(-hl-gw,hw+gw+0.05,gl+1),fP(hl+gw,hw+gw+0.05,gl+1),'rgba(10,8,6,0.5)',0.7);
-  arches('G');
-  for(const side of [-1,1]){const s1=side<0?-hw-gw:0.32,s2=side<0?-0.32:hw+gw;hoQ([fP(hl,s1,gt),fP(hl,s2,gt),fP(hl+gw+0.05,s2,gl+1),fP(hl+gw+0.05,s1,gl+1)],win?'#DCE2E1':galRoofD);}
   hoDoor(fP,g,'G',0,0.26,13,{arch:true,portal:'#C9A64A',col:'#5E3E26',frame:'#24180F',steps:0});
-  /* the portal stays open and visible: gold arch over the gap */{const p1=fP(hl+gw,-0.3,gl+0.5),p2=fP(hl+gw,0.3,gl+0.5),pc=fP(hl+gw,0,gl+4);ctx.strokeStyle='#C9A64A';ctx.lineWidth=1.1;ctx.beginPath();ctx.moveTo(p1[0],p1[1]);ctx.quadraticCurveTo(pc[0],pc[1]-3,p2[0],p2[1]);ctx.stroke();}
   if(J.chain){hoChain([fP(-hl-gw,hw+gw+0.05,gl+0.5),fP(-0.6,hw+gw+0.05,gl+0.5),fP(0.2,hw+gw+0.05,gl+0.5),fP(hl+gw,hw+gw+0.05,gl+0.5)],'#D9B356');}
   /* main roof front */R.front();
   /* tower standing on the ridge: walls follow the roof slopes; flashing at the foot */

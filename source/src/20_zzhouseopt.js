@@ -1318,13 +1318,13 @@ function alFire(p,s,win){/* small fire: embers, crossed sticks, layered flames *
   ctx.fillStyle='#2A1A10';ctx.beginPath();ctx.ellipse(p[0],p[1],3*s,1.4*s,0,0,6.3);ctx.fill();hoLine([p[0]-3*s,p[1]+0.6],[p[0]+2.6*s,p[1]-1.4*s],'#4A3020',1.1*s);hoLine([p[0]+3*s,p[1]+0.6],[p[0]-2.6*s,p[1]-1.4*s],'#5A3A24',1.1*s);
   if(win)return;const tt=typeof t==='number'?t:0;for(const [c,w,hh,ph] of [['#C2401E',2.6,7,0],['#E8862A',1.8,5.4,1.7],['#F8D25A',1,3.4,3.1]]){const fl=Math.sin(tt*8+ph)*0.7;ctx.fillStyle=c;ctx.beginPath();ctx.moveTo(p[0]-w*s,p[1]-0.6);ctx.quadraticCurveTo(p[0]-w*s*0.7,p[1]-hh*s*0.6,p[0]+fl,p[1]-hh*s);ctx.quadraticCurveTo(p[0]+w*s*0.7,p[1]-hh*s*0.6,p[0]+w*s,p[1]-0.6);ctx.closePath();ctx.fill();}
   for(let k=0;k<3;k++){const q=(tt*0.6+k/3)%1;ctx.fillStyle='rgba(255,200,90,'+(0.8*(1-q)).toFixed(2)+')';ctx.fillRect(p[0]+Math.sin(tt*3+k*2)*2*s,p[1]-6*s-q*10*s,0.7,0.7);}}
-function alSlabAltar(f,a,c,s1,s2,h,win,sd){/* a raised altar of stacked stones with a thick flat top slab */const S=win?['#C9CBC7','#B2B4B0','#E8EAE6']:['#8E8980','#76726A','#ABA69B'];
+function alSlabAltar(f,a,c,s1,s2,h,win,sd,clean){/* a raised altar of stacked stones with a thick flat top slab */const S=win?['#C9CBC7','#B2B4B0','#E8EAE6']:['#8E8980','#76726A','#ABA69B'];
   hoQ([f(a-s1,c+s2,0),f(a+s1,c+s2,0),f(a+s1,c+s2,h),f(a-s1,c+s2,h)],S[0]);hoQ([f(a+s1,c-s2,0),f(a+s1,c+s2,0),f(a+s1,c+s2,h),f(a+s1,c-s2,h)],S[1]);
   ctx.strokeStyle='rgba(40,36,30,0.5)';ctx.lineWidth=0.5;ctx.beginPath();for(let r=1;r<3;r++){const hh=h*r/3,p0=f(a-s1,c+s2,hh),p1=f(a+s1,c+s2,hh),p2=f(a+s1,c-s2,hh);ctx.moveTo(p0[0],p0[1]);ctx.lineTo(p1[0],p1[1]);ctx.lineTo(p2[0],p2[1]);}
   for(let r=0;r<3;r++)for(let k=0;k<4;k++){const u=(k+(r%2?0.5:0.2)+h2(sd,r*7+k,41)*0.2)/4;if(u>0.95)continue;const p=f(a-s1+2*s1*u,c+s2,h*r/3),q=f(a-s1+2*s1*u,c+s2,h*(r+1)/3);ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);const u2=f(a+s1,c-s2+2*s2*u,h*r/3),q2=f(a+s1,c-s2+2*s2*u,h*(r+1)/3);ctx.moveTo(u2[0],u2[1]);ctx.lineTo(q2[0],q2[1]);}ctx.stroke();
   const e=0.05,T=2.2;hoQ([f(a-s1-e,c+s2+e,h),f(a+s1+e,c+s2+e,h),f(a+s1+e,c+s2+e,h+T),f(a-s1-e,c+s2+e,h+T)],shade(S[0],1.08));hoQ([f(a+s1+e,c-s2-e,h),f(a+s1+e,c+s2+e,h),f(a+s1+e,c+s2+e,h+T),f(a+s1+e,c-s2-e,h+T)],shade(S[1],1.05));
   hoQ([f(a-s1-e,c-s2-e,h+T),f(a+s1+e,c-s2-e,h+T),f(a+s1+e,c+s2+e,h+T),f(a-s1-e,c+s2+e,h+T)],S[2]);
-  if(!win){ctx.fillStyle='rgba(110,130,70,0.5)';const m=f(a-s1*0.6,c+s2,1);ctx.beginPath();ctx.ellipse(m[0],m[1],2.4,0.9,0,0,6.3);ctx.fill();const st=f(a+s1*0.2,c+s2*0.3,h+T);ctx.fillStyle='rgba(110,30,20,0.35)';ctx.beginPath();ctx.ellipse(st[0]+3,st[1]+0.5,2.4,0.8,0.2,0,6.3);ctx.fill();}
+  if(!win){ctx.fillStyle='rgba(110,130,70,0.5)';const m=f(a-s1*0.6,c+s2,1);ctx.beginPath();ctx.ellipse(m[0],m[1],2.4,0.9,0,0,6.3);ctx.fill();const st=f(a+s1*0.2,c+s2*0.3,h+T);ctx.fillStyle=clean?'rgba(0,0,0,0)':'rgba(110,30,20,0.35)';ctx.beginPath();ctx.ellipse(st[0]+3,st[1]+0.5,2.4,0.8,0.2,0,6.3);ctx.fill();}
   return f(a,c,h+T);}
 /* god-posts: square post, painted bands, a carved top for each god */
 const AL_GODS=[{g:'Loki',b:['#3E5A3A','#1E1C1A']},{g:'Njord',b:['#2E4A5E','#E2D8C0']},{g:'Odin',b:['#A34A3A','#C9A042']},{g:'Thor',b:['#A34A3A','#5A5C5E']},{g:'Freyja',b:['#C9A042','#4E6A44']}];
@@ -1393,7 +1393,7 @@ function drawAltarOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,ro
   else if(opt===2){/* round dark cobbled floor at ground level, five god-posts round its edge (Odin at the back), the altar in the middle, a few small torches */alCobbleDisc(f,0.9,win,sd);
     const R=0.7,items=[];const G=[[9,'Freyja',32],[81,'Loki',31],[153,'Njord',34],[225,'Odin',42],[297,'Thor',35]];for(const [deg,g,H] of G){const an=deg*Math.PI/180,a=Math.cos(an)*R,c=Math.sin(an)*R;items.push({d:a+c,draw:()=>alGodPost(f,a,c,H,AL_GODS.find(x=>x.g===g),win,sd)});}
     for(const deg of [189,261,27,63]){const an=deg*Math.PI/180,a=Math.cos(an)*0.9,c=Math.sin(an)*0.9;items.push({d:a+c,draw:()=>alTorch(f(a,c,0),win)});}
-    items.push({d:0,draw:()=>{const top=alSlabAltar(f,0,0,0.24,0.24,5,win,sd);alBowl([top[0]-3,top[1]],win);const p=[top[0]+4,top[1]+0.5];ctx.fillStyle=win?'#E0D8C8':'#C9A042';ctx.beginPath();ctx.ellipse(p[0],p[1]-1,1.6,0.8,0,0,6.3);ctx.fill();ctx.fillRect(p[0]-0.5,p[1]-3,1,2);}});
+    items.push({d:0,draw:()=>alSlabAltar(f,0,0,0.24,0.24,5,win,sd,true)});
     items.sort((x,y)=>x.d-y.d);for(const it of items)it.draw();}
   else if(opt===3){/* vé: hazel-stave ring with ropes, the shrine at the back, an altar and fire in front of it */alVebond(f,0.92,false,win,0);alShrine(f,win,sd);
     const top=alSlabAltar(f,-0.42,0.3,0.16,0.12,4,win,sd);alBowl(top,win);alFire(f(0.4,0.15,0),0.75,win);alVebond(f,0.92,true,win,0.24);

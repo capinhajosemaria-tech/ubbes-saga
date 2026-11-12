@@ -1,6 +1,7 @@
 # Building style — decided with José (2026-11-12)
 
-Prototype code: branch `house-options`, `source/src/20_zzhouseopt.js` (switch `window.__setHouse(n)` in the test page). Screenshot scripts: `tools/ui/tmp_houseopt.py`, `tools/ui/tmp_housesch.py`.
+Prototype code: branch `house-options`, `source/src/20_zzhouseopt.js` (switch `window.__setHouse(n)` in the test page). Screenshot scripts: `tools/ui/tmp_houseopt.py`, `tools/ui/tmp_housesch.py`, `tools/ui/tmp_optgrid.py TYPE SETTER "opts" "levels" ZOOM OUT`, `tools/ui/tmp_millriver.py "opts" ZOOM OUT` (mills on real river banks), `tools/ui/tmp_tower.py "opts" ZOOM OUT` (1-tile tower set into a palisade).
+This file is mirrored in the claude.ai project as `claude/Estilo dos edificios.md`.
 
 ## Shared rules (every building)
 - Lines fine: seams 0.4–0.6 px, edges ~0.8 px, posts as thin filled strips (no thick strokes).
@@ -9,9 +10,11 @@ Prototype code: branch `house-options`, `source/src/20_zzhouseopt.js` (switch `w
 - Timber frame visible: corner posts, gable cross-beam.
 - Small lattice windows that glow warm; optional coloured shutters.
 - Thin crossed barge boards at the front gable (natural wood), ends past the ridge.
-- No chimneys on wooden houses (smoke hole / louvre where a fire is needed).
+- No chimneys on wooden houses (smoke hole / louvre where a fire is needed) — except the **small stone chimney astride the ridge** (`bkChimney`) that José chose for the Bakery and the Brewery: one per building, walls starting on the roof, lead flashing, cap slab, smoke.
 - Fine detail (grain, stones, shingle joints) only when zoomed in (> 1.2).
 - Roof textures available: straw thatch (strands + thick ridge cap), blue slate (irregular slabs), black tarred shingles (rounded scales), brick-red boards (boards with battens), turf.
+- José keeps the yard clean: when in doubt, fewer props outside (he removed sacks, millstones, tubs, loose logs, foam).
+- Things under a lean-to roof are mostly hidden from the game's top-down view: prefer what can be seen (things on walls, in front, on frames).
 
 ## House (chosen: option 1 "cottage", without turf)
 - Gable house, plank walls on a visible frame, door centred under the front gable, **one shield above the door** (level 3+), window left of the door (level 2+), second window on the long wall (level 4+).
@@ -150,6 +153,80 @@ Prototype code: branch `house-options`, `source/src/20_zzhouseopt.js` (switch `w
 - Straw **dummies** with painted round shields (1 at L1, 2 at L3, 3 at L5); a **rack** of spears and painted shields at the back. No chopping-block target in this option.
 - Own shadow (thin ring). Prototype: `window.__setTrain(2)` (options 1 wattle, 3 palisade, 4 standing stones kept).
 
+## Altar (chosen: option 2 "Five god-posts", round, 2026-11-12)
+- No levels (one look).
+- **Round floor of dark cobbles at ground level** (laid in rings, kerb of dressed stones, a little moss), centred on the plot; round trodden ground around it with a worn path out the front.
+- **Five carved god-posts round the edge of the circle**, evenly spaced, Odin (tallest) at the back, the front left open: each on a small stone base, painted bands, a carved face (Odin one-eyed, Thor bearded), a symbol on top — Loki serpent, Njord ship, Odin gold valknut, Thor hammer, Freyja gold ring with spiral.
+- **Stone altar in the centre**: stacked stones, thick top slab — **nothing on top of the slab** (José).
+- **Lighting: a few small torches on stakes** (4: two at the back, two flanking the entrance) — not too many. No campfire.
+- Own shadow (posts + altar). Prototype: `window.__setAltar(2)` (options 1 cairn, 3 vé shrine, 4 blót stone ring kept).
+
+## Funeral Pyre (chosen: option 1 "Stone ship setting", 2026-11-12)
+- No levels (one look). **Skibssætning**: standing stones in a ship outline along the plot, taller at stem and stern; back side drawn before the pyre, front side after.
+- **Log crib** in the middle (layers of round logs crossing, cut ends with rings).
+- **Fire only while someone is cremated** (José): each cremation sets `S.pyreT`; the pyre burns for a day and a half (charred top, embers, flames, sparks, smoke) and glows at night only then. Otherwise the crib stands unlit and there is no night glow. `window.__PYREFIRE=1` forces the fire for screenshots.
+- Ash-grey trodden ground in an oval following the ship. Own shadow. Prototype: `window.__setPyre(1)` (2 round stone hearth, 3 burial mound + pit, 4 pyre boat kept).
+
+## Fields — Grain, Flax, Fodder (chosen: option 1 "Wattle fence", 2026-11-12)
+- **Low woven wattle fence** round the 3×3 plot (as the Pig Pen), an opening with two posts at the front; back runs before the crop, front runs after.
+- Tilled soil with **raised ridges** in rows (fodder: green sward, no ridges). **Crops drawn as plants in rows**, back to front, growing with the summer (`summerProgress`; `window.__SP` forces it for screenshots):
+  - **Grain (barley)**: green → yellowing → gold; ears with awns that nod over when ripe.
+  - **Flax**: slender stalks, **blue flowers** mid-summer, then brown seed bolls, straw colour at the end.
+  - **Fodder**: grass tufts, oat panicles, a few meadow flowers (white, yellow, pink).
+- **After the harvest: only low, even stubble** (José) — no stooks, haycocks or drying racks. Winter: snow over the stubble.
+- **Same look at every level for now** (José). No shadow volumes (flat). Prototype: `window.__setField(1)` (options 2 skigard + hesje, 3 cleared-stone banks + cairn, 4 open strips with balks kept).
+
+## Water Mill (chosen: option 4 "Stone mill", 2026-11-12)
+- On the bank: the **mill house on the land half**, the **wheel in the river** beside its long wall. The wheel goes on the side where the river water actually is (`mlSide(b)`: centroid of river tiles in and around the plot); drawn before the house when the river is behind it.
+- **Stone lower storey** (dressed blocks), timber above, **blue slate roof**, crossed barge boards (carved ends at L5), door on the front gable with a step; window with red shutters from L3; longer house at L5.
+- **Big undershot wheel** (two rims, paddles between them, spokes, hub) turning with the current, a timber axle into the wall; a low **stone wheel-pit wall** along the bank.
+- **Nothing at the door and no foam** (José): no flour sacks, no spare millstone, no foam at the wheel.
+- Own shadow (house + wheel). Prototype: `window.__setMill(4)` (1 log mill undershot, 2 plank mill with flume and overshot wheel, 3 Norse kvern on stilts kept).
+
+## Bakery (chosen: option 2 "Stone bakehouse", 2026-11-12)
+- **Stone bakehouse** at the back of the plot: dressed-stone walls on a footing, timber gable, **blue slate roof**, crossed barge boards (carved ends at L5), door on the front gable with a step, window with red shutters from L3; longer at L5.
+- **The oven is inside** (José): no clay oven outside, no loose logs. A **small stone chimney** astride the ridge, mid-roof (`bkChimney`), with smoke.
+- Own shadow. Prototype: `window.__setBake(2)` (1 oven in the yard, 3 griddle shed, 4 two ovens under a canopy kept).
+
+## Brewery (chosen: José's own "big A-frame", option 5, 2026-11-12)
+- Makes the drinks (ale from grain, mead from honey); the Tavern is where they are drunk.
+- José rejected the four drafts (plank + kettle porch, stone + chimney + barrel lean-to, log + vats shed, malt kiln) and asked for **a big building whose roof comes down to the ground**.
+- **Big A-frame** filling most of the 2×2 plot: **brick-red board roof** (to tell it apart from the black-scale Smokehouse) down to a low stone footing; plank gable with a **tall pointed door** (planks, straps, ring), a slatted vent near the apex, a flat stone step; crossed barge boards (carved ends at L5); longer and taller at L5.
+- **One small stone chimney** astride the ridge (José: one chimney is better integrated than louvres), with smoke.
+- **Two barrels standing against the gable**, one each side of the door. Nothing else outside.
+- Own shadow. Prototype: `window.__setBrew(5)` (drafts 1–4 kept).
+
+## Weaver (chosen: option 3 "Sail drying frame", 2026-11-12)
+- Makes ship goods: wool → **sailcloth**, flax → **rope**.
+- Plank house at the back (honey-brown planks, visible frame), **brick-red board roof**, crossed barge boards (carved ends at L5), door on the front gable with a step, window with red shutters from L3; longer at L5.
+- **Red-and-white striped sail stretched on a tall drying frame** in front: two posts, a yard on top, the sail laced to it with a slight belly, guy ropes to the ground. Two wool baskets beside it.
+- Own shadow. Prototype: `window.__setWeave(3)` (1 thatched house + warp-weighted loom porch, 2 rope walk with twisting wheel, 4 sunken A-frame with the loom in the open gable kept).
+
+## Tailor (chosen: option 4 "Hide frames", 2026-11-12)
+- Makes **warm clothing** (wool cloaks, fur-lined boots) from wool + hide.
+- **Stone house** (stone lower walls, timber gable), **blue slate roof**, crossed barge boards (carved ends at L5), door on the front gable with a step, window with blue shutters from L3; longer at L5.
+- **Two round hide-stretching frames** of bent wood on legs in front, each with a laced pelt (fur texture, legs spread). **No tub** (José).
+- Own shadow. Prototype: `window.__setTailor(4)` (1 thatched house + clothes line with cloaks, 2 shop counter + cloak stand, 3 cutting-table lean-to kept).
+
+## Tavern (chosen: option 2 "Red-board hall with porch", 2026-11-12)
+- 3×2, no levels. Where folk drink ale and mead in the evenings.
+- **Long hall**, plank walls on a dark frame, **brick-red board roof**, carved barge ends, **open lit door** in the middle of the long wall (warm light inside and a pool of light on the ground), lit windows with blue shutters on the long wall and one on the gable.
+- **Covered porch along the whole front** (posts, a beam, red-board lean-to) with **two long tables with tankards and benches** under it.
+- **Two barrels against the gable** (as on the slate draft, José) and a **sign post** with a hanging board and a gold drinking horn.
+- Own shadow. Prototype: `window.__setTavern(2)` (1 black-scale hall with torches, 3 thatched hall + fire-pit yard, 4 stone-footed slate hall kept).
+
+## Watchtower (chosen: option 3 "Stone foot", black roof, 2026-11-12)
+- José: **slim, on ONE tile, standing in the palisade line**; the wall tiles beside it join it. Game change in BACKLOG (today it is 2×2 and stands apart). In the prototype the tower's tile is marked `walls[i]=3`: neighbours link their logs up to it, `drawWallTile` skips that tile and the tower draws short palisade runs (with the earth bank) from its base to each joining side — back runs before the tower, front runs after. Works in a straight run and at a corner.
+- **Stone foot** (dressed blocks, ~14 px), **log shaft** above with a door at the foot on the +a face, an **overhanging plank gallery** on brackets with arrow slits, **black tarred scale-shingle pyramid roof** (José: black instead of slate).
+- Own shadow. Prototype: `window.__setTower(3)` (1 open post tower with log parapet, 2 log shaft + red roof, 4 palisade-log tower kept).
+
+## Arsenal (chosen: option 2 "Stone strong-house", 2026-11-12)
+- 3×2, stores weapons.
+- **Long stone house** (dressed stone walls on a footing, timber gable), **blue slate roof**, crossed barge boards (carved ends at L5); longer at L5.
+- **Iron-bound double door** with an arched top in the middle of the long wall (iron bands, rings, a stone threshold), **small barred windows** either side.
+- **A row of painted round shields** hung under the eave along the long wall (red/white, blue/gold, white/black, green/white, gold/red).
+- Own shadow. Prototype: `window.__setArsenal(2)` (1 black hall with open weapon bay, 3 red hall with shield-wall lean-to, 4 raised armoury on posts kept).
+
 ## Shadows (shared rule, 2026-11-12)
 - José: the dark box shadow (and the ground patch) does not match the buildings' shapes.
 - Each redrawn building gives its own **shadow volumes** (`shShape(b)` in `20_zzhouseopt.js`: ground outline + height); the cast shadow is the union of those, swept along the sun. The old box shadow stays only for buildings not yet redrawn. Done for the Iron Mine; to do for every building when the styles are rolled out.
@@ -158,4 +235,4 @@ Prototype code: branch `house-options`, `source/src/20_zzhouseopt.js` (switch `w
 ## Next buildings
 One at a time. José (2026-11-12): **send 4 drawn options straight away** (no separate "current look" step) → José's choice and notes → recorded here.
 When José asks for a fix, change only that (no extra changes without asking).
-Order still to do: Fields / Water Mill / Bakery → Brewery, Weaver, Tailor, Tavern → Arsenal, Watchtower → Shipyard / Harbour → Funeral Pyre, Altar, Ship-Tomb → Decor.
+Order still to do: Shipyard / Harbour → Ship-Tomb → Decor. (Everything else is decided.)

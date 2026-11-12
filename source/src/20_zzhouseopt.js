@@ -1153,3 +1153,44 @@ function drawSmokeOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,ro
 {const _shS=shShape;shShape=function(b){if(b.t==='smoke'&&SMOKE_OPT){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),D=smokeDims(b,SMOKE_OPT),box=(a0,a1,c0,c1)=>[f(a0,c0,0),f(a1,c0,0),f(a1,c1,0),f(a0,c1,0)],V=[];
   if(SMOKE_OPT===1){V.push({pts:box(D.ha-D.s,D.ha+D.s,D.hc-D.s,D.hc+D.s),h:D.wh/26},{pts:box(D.ha-0.08,D.ha+0.08,D.hc-0.08,D.hc+0.08),h:(D.wh+28)/26});V.push({pts:box(0.06,0.92,-0.62,0.12),h:0.42});}
   else{V.push({pts:box(D.ha-D.hl,D.ha+D.hl,D.hc-D.hw,D.hc+D.hw),h:0.15},{pts:box(D.ha-D.hl,D.ha+D.hl,D.hc-0.04,D.hc+0.04),h:(D.rh+3)/26});V.push({pts:box(-0.92,-0.08,-0.62,0.12),h:0.42});}return V;}return _shS(b);};}
+
+/* =================== Pig Pen options (prototype) — window.__setPig(n) ===================
+   1: woven wattle fence, dark bristly Norse pigs, a low plank sty with black scales, a natural mud wallow; nothing else */
+let PIG_OPT=0;window.__setPig=n=>{PIG_OPT=n|0;};
+{const _dsG=drawShaped;drawShaped=function(b,win,c0,ax){if(PIG_OPT&&b.t==='pigpen'){drawPigOpt(b,win,PIG_OPT);return true;}return _dsG(b,win,c0,ax);};}
+function hoPig(p,d,coat,bob,win,sd){const x=p[0],y=p[1]-bob;ctx.fillStyle='rgba(30,24,18,0.25)';ctx.beginPath();ctx.ellipse(p[0],p[1]+0.6,6.5,2.2,0,0,6.3);ctx.fill();
+  const dk=shade(coat,0.7);for(const lx of [-3.6,-1.6,2.2,4]){ctx.fillStyle=lx*d>0?dk:shade(coat,0.55);ctx.fillRect(x+lx*d-0.6,y-2.6,1.2,2.8);}
+  /* body, darker belly, bristly ridge along the back */ctx.fillStyle=coat;ctx.beginPath();ctx.ellipse(x,y-4.6,6,3.1,0,0,6.3);ctx.fill();ctx.fillStyle=dk;ctx.beginPath();ctx.ellipse(x,y-3.4,5.2,1.6,0,0,3.14);ctx.fill();
+  ctx.fillStyle=shade(coat,1.25);ctx.beginPath();ctx.ellipse(x-d*0.5,y-6.2,3.5,0.9,0,0,6.3);ctx.fill();
+  ctx.strokeStyle=shade(coat,0.45);ctx.lineWidth=0.5;ctx.beginPath();for(let k=0;k<7;k++){const xx=x-d*4+d*k*1.3,yy=y-7.5+Math.abs(k-3)*0.25;ctx.moveTo(xx,yy+0.6);ctx.lineTo(xx+d*0.4,yy-0.7);}ctx.stroke();
+  /* head with a long snout, pointed ear, eye; curled tail */const hx=x+d*6.2,hy=y-5;ctx.fillStyle=coat;ctx.beginPath();ctx.ellipse(hx,hy,2.6,2.2,0,0,6.3);ctx.fill();ctx.beginPath();ctx.moveTo(hx+d*1.5,hy-1.2);ctx.lineTo(hx+d*4.4,hy+0.2);ctx.lineTo(hx+d*4.4,hy+1.6);ctx.lineTo(hx+d*1.2,hy+1.8);ctx.closePath();ctx.fill();
+  ctx.fillStyle=win?'#C9A898':'#9A6A5A';ctx.fillRect(hx+d*4.1-(d>0?0:0.8),hy+0.1,0.8,1.6);ctx.fillStyle=shade(coat,0.55);ctx.beginPath();ctx.moveTo(hx-d*0.6,hy-1.4);ctx.lineTo(hx+d*0.2,hy-4);ctx.lineTo(hx+d*1.2,hy-1.6);ctx.closePath();ctx.fill();
+  ctx.fillStyle='#120E0A';ctx.fillRect(hx+d*1.2-0.4,hy-0.8,0.8,0.7);ctx.strokeStyle=dk;ctx.lineWidth=0.6;ctx.beginPath();ctx.arc(x-d*6.3,y-5.6,0.9,0,5);ctx.stroke();}
+function hoWattle(f,p0,p1,h,win,sd,gate){/* a run of woven wattle fence between two ground points (frame coords) */const A=f(p0[0],p0[1],0),B=f(p1[0],p1[1],0),At=f(p0[0],p0[1],h),Bt=f(p1[0],p1[1],h);
+  hoQ([p0.concat(0),p1.concat(0),p1.concat(h),p0.concat(h)].map(q=>f(q[0],q[1],q[2])),win?'#C9C3B8':'#6E5236');
+  const len=Math.hypot(p1[0]-p0[0],p1[1]-p0[1]),n=Math.max(2,Math.round(len/0.22));
+  /* rods woven in and out of the stakes: each rod shows as a bulge between two stakes, alternating row by row */
+  for(let r=0;r<Math.round(h/1.15);r++){const hh=0.6+r*1.15;for(let k=0;k<n;k++){if((k+r)%2)continue;const u0=k/n,u1=(k+1)/n,p=lerp(f(p0[0],p0[1],hh),f(p1[0],p1[1],hh),u0),q=lerp(f(p0[0],p0[1],hh),f(p1[0],p1[1],hh),u1),m=[(p[0]+q[0])/2,(p[1]+q[1])/2+0.5];
+    ctx.strokeStyle=win?'rgba(255,255,255,0.5)':'rgba(220,190,140,0.75)';ctx.lineWidth=0.9;ctx.beginPath();ctx.moveTo(p[0],p[1]-0.3);ctx.quadraticCurveTo(m[0],m[1]-1.1,q[0],q[1]-0.3);ctx.stroke();
+    ctx.strokeStyle='rgba(50,32,18,0.6)';ctx.lineWidth=0.5;ctx.beginPath();ctx.moveTo(p[0],p[1]+0.4);ctx.quadraticCurveTo(m[0],m[1]-0.3,q[0],q[1]+0.4);ctx.stroke();}}
+  for(let k=0;k<=n;k++){const u=k/n,p=lerp(A,B,u),q=lerp(At,Bt,u);hoLine(p,[q[0],q[1]-1.6],'#4A3424',1);}
+  hoLine(At,Bt,'rgba(70,50,30,0.8)',0.8);}
+function drawPigOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),sd=(b.id||0)*11+opt,L=Math.min(5,b.lvl||1),E=1.42,FH=7,J=WOOD_SET[2];
+  /* back fence runs first */hoWattle(f,[-E,-E],[E,-E],FH,win,sd);hoWattle(f,[-E,-E],[-E,E],FH,win,sd+1);
+  /* mud wallow: an irregular puddle, wet sheen */if(!win){const C=[0.35,0.3],pts=[];for(let k=0;k<16;k++){const th=k/16*6.283,r=0.55*(1+(h2(sd,k,95)-0.5)*0.35);pts.push(f(C[0]+Math.cos(th)*r,C[1]+Math.sin(th)*r*0.8,0));}hoQ(pts,'rgba(78,58,38,0.75)');
+    const in2=[];for(let k=0;k<16;k++){const th=k/16*6.283,r=0.36*(1+(h2(sd,k,96)-0.5)*0.3);in2.push(f(C[0]+Math.cos(th)*r,C[1]+Math.sin(th)*r*0.8,0));}hoQ(in2,'rgba(60,44,30,0.85)');
+    const m=f(C[0]-0.1,C[1]-0.1,0);ctx.fillStyle='rgba(200,210,215,0.25)';ctx.beginPath();ctx.ellipse(m[0],m[1],7,2,0,0,6.3);ctx.fill();}
+  /* the sty: low plank hut, black scales, an open doorway with straw */const hl=L>=5?0.55:0.45,hw=0.34,fw=(a,c,h)=>f(a-0.85,c-0.95,h),g={sd,hl,hw,fh:1.6,wh:8+(L>=3?1:0),rh:8,ov:0.05,th:1.6,wt:'planks',wall:'#7A6450',wallD:'#62503F',roof:J.roof,roofD:J.roofD,roofE:shade(J.roofD,0.7),rt:'scale',frame:true,frameCol:'#3A2A1C',k:1,v:1};
+  const r=hoRoof(fw,g,win);r.back();hoFooting(fw,g,win);hoWalls(fw,g,win);r.end();
+  {const P=(s,h)=>fw(s,hw+0.004,h),dw=0.12;hoQ([P(-dw,g.fh),P(dw,g.fh),P(dw,g.fh+5.5),P(-dw,g.fh+5.5)],'#1A140F');hoQ([P(-dw,g.fh),P(dw,g.fh),P(dw,g.fh+1.6),P(-dw,g.fh+1.6)],'#B8984E');for(const s of [-dw-0.015,dw+0.015])hoLine(P(s,g.fh),P(s,g.fh+5.8),'#3A2A1C',1.1);hoLine(P(-dw-0.02,g.fh+5.8),P(dw+0.02,g.fh+5.8),'#3A2A1C',1.2);}
+  if(L>=3){const P=(s,h)=>fw(hl+0.004,s,h);hoQ([P(-0.05,g.fh+3.5),P(0.05,g.fh+3.5),P(0.05,g.fh+5.5),P(-0.05,g.fh+5.5)],'#2A2018');}
+  r.front();r.ridge();hoBarge(fw,g,'#4A3424',0.22,L>=5);
+  /* pigs: dark, bristly, sorted back to front */const tot=(typeof S!=='undefined'&&S.herd)?S.herd.pigs:6,pens=Math.max(1,B.filter(q=>q.t===b.t).length),n=Math.max(3,Math.min(10,Math.ceil(tot/pens)||0)),tt=typeof t==='number'?t:0,coats=['#5A3A28','#3A2E28','#7A4A2E','#4A3426'],P=[];
+  for(let k=0;k<n;k++){const a=-1.15+h2(b.id||0,k,61)*2.4+Math.sin(tt*0.25+k*1.7)*0.12,c=-0.35+h2(b.id||0,k,62)*1.55+Math.cos(tt*0.2+k)*0.08;P.push({a,c,k});}
+  P.sort((x,y)=>(x.a+x.c)-(y.a+y.c));for(const q of P){const p=f(q.a,q.c,0),d=Math.sin(tt*0.25+q.k*1.7+1.3)>0?1:-1;hoPig(p,d,coats[q.k%4],Math.abs(Math.sin(tt*2+q.k))*0.5,win,sd);}
+  /* front fence runs, with a plank gate */hoWattle(f,[E,-E],[E,E],FH,win,sd+2);
+  hoWattle(f,[-E,E],[0.15,E],FH,win,sd+3);hoWattle(f,[0.75,E],[E,E],FH,win,sd+4);
+  {const G=(a,h)=>f(a,E,h);hoQ([G(0.17,0.5),G(0.73,0.5),G(0.73,FH-0.5),G(0.17,FH-0.5)],win?'#D8D2C6':'#8A6E4E');ctx.strokeStyle='rgba(30,20,12,0.5)';ctx.lineWidth=0.45;ctx.beginPath();for(let a=0.25;a<0.73;a+=0.08){const p=G(a,0.5),q=G(a,FH-0.5);ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);}ctx.stroke();
+    hoLine(G(0.18,1.5),G(0.72,FH-1.2),'#5A4230',1.2);for(const a of [0.15,0.75]){const p=G(a,0),q=G(a,FH+1.5);hoLine(p,q,'#3A2A1C',1.6);}}}
+{const _shG=shShape;shShape=function(b){if(b.t==='pigpen'&&PIG_OPT){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),L=Math.min(5,b.lvl||1),hl=L>=5?0.55:0.45,box=(a0,a1,c0,c1)=>[f(a0,c0,0),f(a1,c0,0),f(a1,c1,0),f(a0,c1,0)];
+  return [{pts:box(-0.85-hl,-0.85+hl,-0.95-0.34,-0.95+0.34),h:0.4},{pts:box(-0.85-hl,-0.85+hl,-1,-0.9),h:0.68}];}return _shG(b);};}

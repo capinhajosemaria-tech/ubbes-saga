@@ -2153,7 +2153,8 @@ function drawTradeL(b,win,f,sd){/* José: option 1 as ONE continuous L-shaped bu
   {const gw={hl:A1,hw:cF,fh,wh:wh+4,k:1,v:1},fs=(x,y,h)=>f(y,x,h);/* door in the front gable: use hoDoor on a frame whose 'L' face is the gable */hoDoor((x,y,h)=>f(x+wa,y,h),{hl:hw,hw:cF,fh,wh:wh+4,k:1,v:1},'L',0,0.18,9,{col:'#4A3424',steps:1});
     hoWindow((x,y,h)=>f(A1,x,h),{hl:hw,hw:0,fh,wh,k:1,v:1},'G',0,0.1,fh+5,fh+8.4,{shutters:'#7A2E24'});hoWindow((x,y,h)=>f(x,y,h),{hl:A1,hw:0,fh,wh,k:1,v:1},'G',0.45,0.1,fh+5,fh+8.4,{shutters:'#7A2E24'});}
   /* main front slope, ending at the valley */const mF=(u,v)=>{const aR=lerp([wa-hw-ov,0],[wa,0],v)[0];return f(A0-ov+(aR-(A0-ov))*u,(mc+hw+ov)+(mc-(mc+hw+ov))*v,eH+(top-eH)*v);};
-  hoQ([f(A0-ov,mc+hw+ov,eH-1.6),f(wa-hw-ov,mc+hw+ov,eH-1.6),f(wa-hw-ov,mc+hw+ov,eH),f(A0-ov,mc+hw+ov,eH)],E);hoQ([mF(0,0),mF(1,0),mF(1,1),mF(0,1)],R);if(!win)hoRoofSurface(mF,gR,win);
+  hoQ([f(A0-ov,mc+hw+ov,eH-1.6),f(wa-hw-ov,mc+hw+ov,eH-1.6),f(wa-hw-ov,mc+hw+ov,eH),f(A0-ov,mc+hw+ov,eH)],E);hoQ([mF(0,0),mF(1,0),mF(1,1),mF(0,1)],R);if(!win){/* boards stay square to the eave: texture the full rectangle, clipped to the slope (it ends at the valley) */const mRect=(u,v)=>f(A0-ov+((wa)-(A0-ov))*u,(mc+hw+ov)+(mc-(mc+hw+ov))*v,eH+(top-eH)*v);
+    ctx.save();ctx.beginPath();for(const [k,q] of [mF(0,0),mF(1,0),mF(1,1),mF(0,1)].entries())k?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]);ctx.closePath();ctx.clip();hoRoofSurface(mRect,gR,win);ctx.restore();}
   /* awning */const A0w=-1.18,A1w=wa-hw-0.02,c0=mc+hw,c1=c0+0.5,hB=eH-0.5,hF=7.4,cc=c0+0.34;
   hoQ([f(A0w,c0+0.02,0),f(A1w,c0+0.02,0),f(A1w,c1,0),f(A0w,c1,0)],'rgba(60,50,40,0.25)');
   hoQ([f(A0w+0.1,cc+0.08,0),f(A1w-0.06,cc+0.08,0),f(A1w-0.06,cc+0.08,4.6),f(A0w+0.1,cc+0.08,4.6)],win?'#C8C0B0':'#6E5038');hoQ([f(A0w+0.1,cc-0.08,4.6),f(A1w-0.06,cc-0.08,4.6),f(A1w-0.06,cc+0.08,4.6),f(A0w+0.1,cc+0.08,4.6)],win?'#E0D8C8':'#9A7A52');
@@ -2165,7 +2166,8 @@ function drawTradeL(b,win,f,sd){/* José: option 1 as ONE continuous L-shaped bu
   hoQ([f(wa,mc,top),f(wa,cF+ov,top),f(wa-hw-ov,cF+ov,eH),f(wa-hw-ov,mc+hw+ov,eH)],RD);hoQ([f(wa-hw-ov,mc+hw+ov,eH),f(wa-hw-ov,cF+ov,eH),f(wa-hw-ov,cF+ov,eH-1.6),f(wa-hw-ov,mc+hw+ov,eH-1.6)],shade(E,0.9));
   const wR=(u,v)=>f((A1+ov)+(wa-(A1+ov))*v,(cF+ov)+(((mc-hw-ov)+(mc-(mc-hw-ov))*v)-(cF+ov))*u,eH+(top-eH)*v);
   hoQ([f(A1+ov,mc-hw-ov,eH),f(A1+ov,cF+ov,eH),f(A1+ov,cF+ov,eH-1.6),f(A1+ov,mc-hw-ov,eH-1.6)],E);hoQ([f(wa,cF+ov,top),f(A1+ov,cF+ov,eH),f(wa-hw-ov,cF+ov,eH)],'rgba(0,0,0,0)');
-  hoQ([wR(0,0),wR(1,0),wR(1,1),wR(0,1)],R);if(!win)hoRoofSurface(wR,gR,win);
+  hoQ([wR(0,0),wR(1,0),wR(1,1),wR(0,1)],R);if(!win){const wRect=(u,v)=>f((A1+ov)+(wa-(A1+ov))*v,(cF+ov)+((mc-hw-ov)-(cF+ov))*u,eH+(top-eH)*v);
+    ctx.save();ctx.beginPath();for(const [k,q] of [wR(0,0),wR(1,0),wR(1,1),wR(0,1)].entries())k?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]);ctx.closePath();ctx.clip();hoRoofSurface(wRect,gR,win);ctx.restore();}
   /* front gable edge of the roof: thickness under both slopes */hoQ([f(wa,cF+ov,top),f(A1+ov,cF+ov,eH),f(A1+ov,cF+ov,eH-1.6),f(wa,cF+ov,top-1.6)],E);
   /* ridges and the hip line, the valley line */hoLine(f(A0-ov,mc,top+0.4),f(wa,mc,top+0.4),win?'#DCE1E2':shade(RD,0.7),1.5);hoLine(f(wa,mc,top+0.4),f(wa,cF+ov,top+0.4),win?'#DCE1E2':shade(RD,0.7),1.5);hoLine(f(wa,mc,top+0.3),f(A1+ov,mc-hw-ov,eH+0.3),win?'#DCE1E2':shade(RD,0.7),1.1);
   if(!win)hoLine(f(wa,mc,top),f(wa-hw-ov,mc+hw+ov,eH),'rgba(20,12,8,0.5)',0.9);

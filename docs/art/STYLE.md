@@ -255,6 +255,13 @@ This file is mirrored in the claude.ai project as `claude/Estilo dos edificios.m
 - **Ground**: an oval of trodden earth under the ring only; **the rest of the plot keeps its grass** (José: no square patch). Done by drawing the plot's tiles as grass for shaped buildings (`GRASSY_PLOT`); use it for every redrawn building with its own ground shape.
 - Prototype: `window.__setTomb(8)` (5 stone plinth, 6 upturned-hull mausoleum, 7 open stone-lined grave, 1–4 mounds kept).
 
+## Trading House (chosen: option 1 as an L, option 5 in the prototype, 2026-11-12)
+- 3×2, same footprint. **One continuous L-shaped building** (José: not two buildings stuck together): a main range along the back and a wing coming forward at the right end, **same wall and ridge height**; the wing's ridge meets the main ridge, a **valley** on the inner corner and a **hip** on the outer corner; one long right wall from back to front.
+- Plank walls on a dark frame, stone footing, **brick-red board roof**; boards always run square to their own eave (texture drawn on the full rectangle and clipped to each slope).
+- **Shop door in the wing's front gable**, crossed barge boards with carved ends above it; windows with red shutters.
+- **Striped red-and-white awning** coming out from **under the main eave** in the inner corner of the L, ending against the wing, on three posts with a scalloped hem; under it a counter with furs, silver bars, amber, a balance and a bale.
+- Own shadow. Prototype: `window.__setTrade(5)` (drafts 1–4 kept).
+
 ## Shadows (shared rule, 2026-11-12)
 - José: the dark box shadow (and the ground patch) does not match the buildings' shapes.
 - Each redrawn building gives its own **shadow volumes** (`shShape(b)` in `20_zzhouseopt.js`: ground outline + height); the cast shadow is the union of those, swept along the sun. The old box shadow stays only for buildings not yet redrawn. Done for the Iron Mine; to do for every building when the styles are rolled out.
@@ -263,4 +270,4 @@ This file is mirrored in the claude.ai project as `claude/Estilo dos edificios.m
 ## Next buildings
 One at a time. José (2026-11-12): **send 4 drawn options straight away** (no separate "current look" step) → José's choice and notes → recorded here.
 When José asks for a fix, change only that (no extra changes without asking).
-Order still to do: Trading House, Beehives → Decor (Community Fire, Wooden Benches, Wattle Fence, Rune Post, Herb Garden, Carved Prow, Drying Nets). Maybe later: palisade and gate in the new style.
+Order still to do: Beehives → Decor (Community Fire, Wooden Benches, Wattle Fence, Rune Post, Herb Garden, Carved Prow, Drying Nets). Maybe later: palisade and gate in the new style.

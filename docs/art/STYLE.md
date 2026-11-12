@@ -65,10 +65,10 @@ Prototype code: branch `house-options`, `source/src/20_zzhouseopt.js` (switch `w
 
 ## Woodcutter's Lodge (chosen: option 2, 2026-11-12)
 - Log hut at the back (door, shuttered window, crossed boards at both gables), **black tarred scale-shingle roof**.
-- Open woodshed (posts, lean-to roof, same shingles at the **same density as the houses**) with split firewood in straight rows (4 rows from L3).
+- Open woodshed (posts, lean-to roof, same shingles at the **same density as the houses**) **full of split firewood**: a solid stack from the floor up (taller from L3), split ends showing on the open front.
 - **Round logs as real cylinders**: bark body, rounded far end, cut front end with rings; ~3 px thick; pile in nested rows drawn back-to-front and bottom-up (3 rows L1, 4 L3, 5 L5).
 - Sawhorse with a log and a bow saw; chopping block with axe; log sled from L3.
-- Shared rules from here on (all buildings, also earlier ones): **no pennants/flags**; **no log-end circles at the corners** of log walls; scale shingles keep one size and density on any roof.
+- Shared rules from here on (all buildings, also earlier ones): **no pennants/flags**; **no log-end circles at the corners** of log walls; scale shingles keep the original house look; small roofs only get extra rows/columns so there are no empty bands.
 - Prototype: `window.__setWood(2)`.
 
 ## Next buildings

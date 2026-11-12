@@ -627,7 +627,11 @@ function drawWoodOpt(b,win,opt){const J=WOOD_SET[opt]||WOOD_SET[1],L=Math.min(5,
   /* open woodshed (front right): posts, lean-to roof, split firewood stacked square */
   const sh=(a,c,h)=>f(a+0.45,c-0.42,h),sl=0.4,sw=0.3,sH=10;hoQ([sh(-sl,-sw,0),sh(sl,-sw,0),sh(sl,sw,0),sh(-sl,sw,0)],'rgba(70,58,44,0.3)');
   hoQ([sh(-sl,-sw,0),sh(sl,-sw,0),sh(sl,-sw,sH+3),sh(-sl,-sw,sH+3)],'#3A2A1C');
-  {const rows=L>=3?4:3;for(let rr=0;rr<rows;rr++)for(let i=0;i<8;i++){const a=-sl+0.06+i*0.093,h=1.4+rr*2.5;const e=sh(a,sw-0.04,h);ctx.fillStyle=win?'#DCD6CA':((i+rr)%3?'#C59A64':'#B8895A');ctx.beginPath();ctx.moveTo(e[0]-1.4,e[1]+1.1);ctx.lineTo(e[0]+1.4,e[1]+0.3);ctx.lineTo(e[0]+0.6,e[1]-1.3);ctx.closePath();ctx.fill();ctx.strokeStyle='rgba(90,60,34,0.6)';ctx.lineWidth=0.35;ctx.stroke();}}
+  {/* the shed is full: a block of split firewood (top, side, and the split ends on the open front) */const hh=L>=3?8.5:6.5,c1=-sw+0.06,c2=sw-0.04,a1=-sl+0.05,a2=sl-0.05;
+    hoQ([sh(a1,c1,hh),sh(a2,c1,hh),sh(a2,c2,hh),sh(a1,c2,hh)],win?'#E2DED4':'#9A7650');hoQ([sh(a2,c1,0),sh(a2,c2,0),sh(a2,c2,hh),sh(a2,c1,hh)],win?'#CFCAC0':'#7E5E3E');
+    hoQ([sh(a1,c2,0),sh(a2,c2,0),sh(a2,c2,hh),sh(a1,c2,hh)],win?'#D8D2C6':'#8A6A48');
+    const rows=Math.round(hh/2.2);for(let rr=0;rr<rows;rr++)for(let i=0;i<9;i++){const a=a1+0.04+i*((a2-a1-0.06)/8)+(rr%2?0.02:0),h=1.1+rr*2.2;const e=sh(a,c2+0.005,h);ctx.fillStyle=win?'#DCD6CA':((i+rr)%3?'#C59A64':'#B8895A');ctx.beginPath();ctx.moveTo(e[0]-1.4,e[1]+1.1);ctx.lineTo(e[0]+1.4,e[1]+0.3);ctx.lineTo(e[0]+0.6,e[1]-1.3);ctx.closePath();ctx.fill();ctx.strokeStyle='rgba(90,60,34,0.6)';ctx.lineWidth=0.35;ctx.stroke();}
+    for(let rr=1;rr<rows;rr++){hoLine(sh(a2,c1,rr*2.2),sh(a2,c2,rr*2.2),'rgba(40,26,14,0.35)',0.4);}}
   for(const q of [[-sl,sw],[sl,sw],[sl,-sw]])hoQ([sh(q[0]-0.03,q[1],0),sh(q[0]+0.03,q[1],0),sh(q[0]+0.03,q[1],sH),sh(q[0]-0.03,q[1],sH)],'#4A3424');
   hoQ([sh(-sl-0.05,-sw-0.05,sH+4),sh(sl+0.05,-sw-0.05,sH+4),sh(sl+0.05,sw+0.07,sH-1),sh(-sl-0.05,sw+0.07,sH-1)],win?'#EEF1F0':J.roof);
   if(!win)hoRoofSurface((u,v)=>lerp(sh(-sl-0.05+(2*sl+0.1)*u,sw+0.07,sH-1),sh(-sl-0.05+(2*sl+0.1)*u,-sw-0.05,sH+4),v),{sd:sd+3,rt:J.rt,rh:8,roofD:J.roofD,blue:J.blue},win);
@@ -640,7 +644,37 @@ function drawWoodOpt(b,win,opt){const J=WOOD_SET[opt]||WOOD_SET[1],L=Math.min(5,
 pennant=function(){};
 /* scale shingles keep the same size and density on every roof, whatever its size: rows and columns follow the slope's real length */
 {const _rs=hoRoofSurface;hoRoofSurface=function(at,g,win){if(win||g.rt!=='scale')return _rs(at,g,win);const det=zoom>1.2,sd=g.sd||1,d=(p,q)=>Math.hypot(p[0]-q[0],p[1]-q[1]);
-  const lenV=d(at(0.5,0),at(0.5,1)),lenU=d(at(0,0.5),at(1,0.5)),rows=Math.max(2,Math.round(lenV/2.3)),n=Math.max(3,Math.round(lenU/(det?4.2:6.4)));ctx.save();ctx.beginPath();const pts=[at(0,0),at(1,0),at(1,1),at(0,1)];ctx.moveTo(pts[0][0],pts[0][1]);for(const q of pts)ctx.lineTo(q[0],q[1]);ctx.closePath();ctx.clip();
+  const lenV=d(at(0.5,0),at(0.5,1)),lenU=d(at(0,0.5),at(1,0.5)),rows=Math.max(Math.round(10*(g.rh||16)/16),Math.round(lenV/2.6)),n=Math.max(det?22:12,Math.round(lenU/(det?4.2:6.4)));/* original look; only fill in where it would leave gaps */ctx.save();ctx.beginPath();const pts=[at(0,0),at(1,0),at(1,1),at(0,1)];ctx.moveTo(pts[0][0],pts[0][1]);for(const q of pts)ctx.lineTo(q[0],q[1]);ctx.closePath();ctx.clip();
   for(let r=0;r<rows;r++){const v=(r+0.5)/rows;for(let k=-1;k<=n;k++){const u=(k+(r%2?0.5:0)+0.5)/n;const p=at(u,v-0.5/rows);ctx.fillStyle=((k*7+r*3+sd)%5===0)?'rgba(90,80,70,0.35)':'rgba(255,240,220,0.06)';ctx.beginPath();ctx.ellipse(p[0],p[1]+0.6,det?2.2:3.4,1.3,0,0,3.14);ctx.fill();
       if(det){ctx.strokeStyle='rgba(0,0,0,0.5)';ctx.lineWidth=0.45;ctx.beginPath();ctx.ellipse(p[0],p[1]+0.6,2.2,1.3,0,0,3.14);ctx.stroke();}}}
   ctx.restore();hoLine(at(0,0.985),at(1,0.985),'rgba(160,150,140,0.25)',0.6);};}
+
+/* =================== Carpenter options (prototype) — window.__setCarp(n) =================== */
+let CARP_OPT=0;window.__setCarp=n=>{CARP_OPT=n|0;};
+{const _ds4=drawShaped;drawShaped=function(b,win,c0,ax){if(CARP_OPT&&b.t==='carp'){drawCarpOpt(b,win,CARP_OPT);return true;}return _ds4(b,win,c0,ax);};}
+/* stack of sawn boards drying: layers of boards with thin stickers between, boards run along a */
+function hoPlankStack(f,a,c,len,wid,layers,win){const bh=1.1,sh=0.6;for(let k=0;k<layers;k++){const h=k*(bh+sh);
+    for(const s of [-0.38,0,0.38]){const aa=a+s*len;hoQ([f(aa-0.02,c-wid,h),f(aa+0.02,c-wid,h),f(aa+0.02,c+wid,h),f(aa-0.02,c+wid,h)],'#5A4230');}
+    const h1=h+sh,h2b=h1+bh;hoQ([f(a-len/2,c+wid,h1),f(a+len/2,c+wid,h1),f(a+len/2,c+wid,h2b),f(a-len/2,c+wid,h2b)],win?'#D8D2C6':'#C9A776');
+    hoQ([f(a+len/2,c-wid,h1),f(a+len/2,c+wid,h1),f(a+len/2,c+wid,h2b),f(a+len/2,c-wid,h2b)],win?'#C6C0B4':'#B08C5C');
+    hoQ([f(a-len/2,c-wid,h2b),f(a+len/2,c-wid,h2b),f(a+len/2,c+wid,h2b),f(a-len/2,c+wid,h2b)],win?'#EEF1F0':'#DDBE8A');
+    ctx.strokeStyle='rgba(90,60,30,0.45)';ctx.lineWidth=0.35;ctx.beginPath();for(let i=1;i<5;i++){const cc=c-wid+2*wid*i/5,p=f(a-len/2,cc,h2b),q=f(a+len/2,cc,h2b),e1=f(a+len/2,cc,h1),e2=f(a+len/2,cc,h2b);ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);ctx.moveTo(e1[0],e1[1]);ctx.lineTo(e2[0],e2[1]);}ctx.stroke();}}
+/* saw pit: a dark pit in the ground, a log on two trestles across it, a two-man pit saw standing in the cut */
+function hoSawPit(f,a,c,win){const pl=0.34,pw=0.12;hoQ([f(a-pl,c-pw,0),f(a+pl,c-pw,0),f(a+pl,c+pw,0),f(a-pl,c+pw,0)],'#2A1F16');hoQ([f(a-pl,c+pw,0),f(a+pl,c+pw,0),f(a+pl,c+pw,-2),f(a-pl,c+pw,-2)],'#1A130E');
+  for(const q of [[-pl,-pw],[pl,-pw],[pl,pw],[-pl,pw]]){const p=f(a+q[0],c+q[1],0);ctx.fillStyle='#6E5038';ctx.fillRect(p[0]-1.2,p[1]-0.6,2.4,1.2);}
+  for(const da of [-0.22,0.22]){for(const dc of [-0.09,0.09]){hoLine(f(a+da,c+dc*1.6,0),f(a+da,c,5),'#4A3424',0.9);}}hoLog(f,a-0.4,a+0.36,c,6.2,1.9,win);
+  /* half-sawn: a plank already cut off lying on top, the saw blade standing in the kerf with its two handles */
+  const s0=f(a+0.1,c,13),s1=f(a+0.1,c,-1);hoLine(s0,s1,'#9AA0A6',0.7);hoLine([s0[0]-2,s0[1]],[s0[0]+2,s0[1]],'#5A4230',1);hoLine([s1[0]-2,s1[1]],[s1[0]+2,s1[1]],'#5A4230',1);
+  hoQ([f(a-0.36,c-0.03,8.3),f(a+0.08,c-0.03,8.3),f(a+0.08,c+0.03,8.3),f(a-0.36,c+0.03,8.3)],win?'#EEF1F0':'#DDBE8A');}
+function drawCarpOpt(b,win,opt){const J=WOOD_SET[opt]||WOOD_SET[1],L=Math.min(5,b.lvl||1),f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),sd=(b.id||0)*31+opt;
+  /* workshop at the back (bigger at L5, two doors) */const big=L>=5,fw=(a,c,h)=>f(a-0.36,c-0.4,h);
+  const g={sd,hl:big?0.6:0.48,hw:0.38,fh:2.6,wh:12,rh:12,ov:0.06,th:J.rt==='thatch'?4:1.6,wt:'planks',wall:'#9A7A56',wallD:'#7E6244',roof:J.roof,roofD:J.roofD,roofE:shade(J.roofD,0.7),rt:J.rt,blue:J.blue,frame:true,frameCol:'#4A3424',k:1,v:1};
+  hoQ([fw(-g.hl,-g.hw,0),fw(g.hl+0.15,-g.hw,0),fw(g.hl+0.15,g.hw+0.2,0),fw(-g.hl,g.hw+0.2,0)],'rgba(30,38,42,0.15)');
+  const r=hoRoof(fw,g,win);r.back();hoFooting(fw,g,win);hoWalls(fw,g,win);r.end();hoDoor(fw,g,'G',0,0.17,8.5,{col:'#6E5038',steps:1});
+  if(big)hoGate(fw,g,-0.1,0.3,8.5);else hoWindow(fw,g,'L',0,0.1,g.fh+4,g.fh+7.5,{shutters:'#4E3A2C'});
+  r.front();r.ridge();hoBarge(fw,g,'#5A4230',0.25,false);
+  /* open work shed in front with the saw pit under it */const sh=(a,c,h)=>f(a+0.42,c+0.1,h),sl=0.5,sw=0.36,sH=11;
+  hoQ([sh(-sl,-sw,0),sh(sl,-sw,0),sh(sl,sw,0),sh(-sl,sw,0)],'rgba(80,66,48,0.3)');hoSawPit(sh,0,0,win);
+  for(const q of [[-sl,sw],[sl,sw],[sl,-sw],[-sl,-sw]])hoQ([sh(q[0]-0.03,q[1],0),sh(q[0]+0.03,q[1],0),sh(q[0]+0.03,q[1],sH),sh(q[0]-0.03,q[1],sH)],'#4A3424');
+  const gs={sd:sd+4,hl:sl,hw:sw,fh:0,wh:sH,rh:7,ov:0.05,th:J.rt==='thatch'?3.5:1.5,roof:J.roof,roofD:J.roofD,roofE:shade(J.roofD,0.7),rt:J.rt,blue:J.blue};const rs=hoRoof(sh,gs,win);rs.back();rs.end();rs.front();rs.ridge();hoBarge(sh,gs,'#5A4230',0.2,false);
+  /* board stacks drying beside it */hoPlankStack(f,-0.55,0.62,0.6,0.13,L>=3?5:3,win);if(L>=3)hoPlankStack(f,0.2,0.8,0.5,0.11,L>=5?5:3,win);if(L>=3)hoSawhorse(f,0.75,-0.75,win);}

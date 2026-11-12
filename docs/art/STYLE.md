@@ -143,6 +143,13 @@ Prototype code: branch `house-options`, `source/src/20_zzhouseopt.js` (switch `w
 - **Ground follows the pen's shape** (José): round trodden earth inside the wall instead of the square yard patch, a worn path out of the gate (`groundShape(b)` in `20_zzhouseopt.js`).
 - Own shadow. Prototype: `window.__setSheep(4)` (options 1–3 kept: wattle, dry-stone square, skigard).
 
+## Training Ground (chosen: option 2 "Hazel staves and ropes", 2026-11-12)
+- **Round** (José liked the circular look of the Sheep Pen): **sand floor following the circle** (`groundShape`), a worn path out of the entrance.
+- Ring of **hazel staves** with leafy tops and **ropes** sagging between them (the vébönd of a duel/court ring), an opening with two posts facing the viewer.
+- **Holmgang cloak** pegged flat in the middle (red-brown with a border, four pegs).
+- Straw **dummies** with painted round shields (1 at L1, 2 at L3, 3 at L5); a **rack** of spears and painted shields at the back. No chopping-block target in this option.
+- Own shadow (thin ring). Prototype: `window.__setTrain(2)` (options 1 wattle, 3 palisade, 4 standing stones kept).
+
 ## Shadows (shared rule, 2026-11-12)
 - José: the dark box shadow (and the ground patch) does not match the buildings' shapes.
 - Each redrawn building gives its own **shadow volumes** (`shShape(b)` in `20_zzhouseopt.js`: ground outline + height); the cast shadow is the union of those, swept along the sun. The old box shadow stays only for buildings not yet redrawn. Done for the Iron Mine; to do for every building when the styles are rolled out.
@@ -151,4 +158,4 @@ Prototype code: branch `house-options`, `source/src/20_zzhouseopt.js` (switch `w
 ## Next buildings
 One at a time. José (2026-11-12): **send 4 drawn options straight away** (no separate "current look" step) → José's choice and notes → recorded here.
 When José asks for a fix, change only that (no extra changes without asking).
-Order still to do: Fields / Water Mill / Bakery → Brewery, Weaver, Tailor, Tavern → Training Ground, Arsenal, Watchtower → Shipyard / Harbour → Funeral Pyre, Altar, Ship-Tomb → Decor.
+Order still to do: Fields / Water Mill / Bakery → Brewery, Weaver, Tailor, Tavern → Arsenal, Watchtower → Shipyard / Harbour → Funeral Pyre, Altar, Ship-Tomb → Decor.

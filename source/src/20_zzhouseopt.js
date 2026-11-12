@@ -1603,14 +1603,22 @@ function bkLeanTo(f,a0,a1,c0,c1,hB,hF,win,J,sd,posts){/* lean-to rising toward t
   const e=0.05,R=[f(a0-e,c0-e,hB+0.5),f(a1+e,c0-e,hB+0.5),f(a1+e,c1+e,hF+1),f(a0-e,c1+e,hF+1)];hoQ(R,win?'#EEF1F0':J.roof);
   if(!win)hoRoofSurface((u,v)=>lerp(lerp(R[0],R[1],u),lerp(R[3],R[2],u),v),{sd:sd+4,rt:J.rt,rh:8,roofD:J.roofD,blue:J.blue},win);hoQ([R[1],R[2],[R[2][0],R[2][1]+1.6],[R[1][0],R[1][1]+1.6]],shade(J.roofD,0.6));}
 function bkFlatbread(p,r,win){ctx.fillStyle=win?'#E8E2D4':'#D8B878';ctx.beginPath();ctx.ellipse(p[0],p[1],r,r*0.45,0,0,6.3);ctx.fill();if(!win){ctx.fillStyle='rgba(140,90,40,0.5)';for(let k=0;k<4;k++){ctx.beginPath();ctx.arc(p[0]+Math.cos(k*1.7)*r*0.5,p[1]+Math.sin(k*1.7)*r*0.2,0.5,0,6.3);ctx.fill();}}}
+function bkChimney(f,g,ca,win,sd){/* small stone chimney astride the ridge: its walls start on the roof surface, lead flashing at the joint, a cap slab, smoke */
+  const cs=0.075,top=g.wh+g.rh,roofH=c=>top-Math.abs(c)/g.hw*g.rh+0.6,cT=top+7,S1=win?'#C9CBC7':'#8E8980',S2=win?'#B2B4B0':'#76726A',P=(a,c,h)=>f(ca+a,c,h);
+  hoQ([P(-cs,cs,roofH(cs)),P(cs,cs,roofH(cs)),P(cs,cs,cT),P(-cs,cs,cT)],S1);
+  hoQ([P(cs,-cs,roofH(-cs)),P(cs,0,roofH(0)),P(cs,cs,roofH(cs)),P(cs,cs,cT),P(cs,-cs,cT)],S2);
+  if(!win){ctx.strokeStyle='rgba(40,36,30,0.5)';ctx.lineWidth=0.45;ctx.beginPath();for(let h=cT-2;h>roofH(cs)+0.5;h-=2.2){const p=P(-cs,cs,h),q=P(cs,cs,h),r=P(cs,-cs,h);ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);if(h>roofH(0))ctx.lineTo(r[0],r[1]);}
+    for(let k=0;k*2.2<cT-roofH(cs);k++){const h1=cT-k*2.2,h0=h1-2.2;const u=k%2?0.3:-0.2,p=P(u*cs,cs,h1),q=P(u*cs,cs,Math.max(h0,roofH(cs)));ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);}ctx.stroke();
+    hoLine(P(-cs-0.01,cs+0.01,roofH(cs)+0.2),P(cs+0.01,cs+0.01,roofH(cs)+0.2),'#5E646A',1);}
+  const e=0.02;hoQ([P(-cs-e,cs+e,cT),P(cs+e,cs+e,cT),P(cs+e,cs+e,cT+1.4),P(-cs-e,cs+e,cT+1.4)],win?'#D4D6D2':'#9C978D');hoQ([P(cs+e,-cs-e,cT),P(cs+e,cs+e,cT),P(cs+e,cs+e,cT+1.4),P(cs+e,-cs-e,cT+1.4)],win?'#C0C2BE':'#827D74');
+  hoQ([P(-cs-e,-cs-e,cT+1.4),P(cs+e,-cs-e,cT+1.4),P(cs+e,cs+e,cT+1.4),P(-cs-e,cs+e,cT+1.4)],win?'#E8EAE6':'#ABA69B');{const m=P(0,0,cT+1.4);ctx.fillStyle='#2A2624';ctx.beginPath();ctx.ellipse(m[0],m[1],2,1,0,0,6.3);ctx.fill();if(!win)hoSmoke([m[0],m[1]-1]);}}
 function drawBakeOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),L=Math.min(5,b.lvl||1),sd=(b.id||0)*43+opt,lit=!win&&(b.workers>0||b.gallery||true),J=WOOD_SET[opt===2?3:2];
   const big=L>=5,fw=(a,c,h)=>f(a-0.38,c-0.42,h);
   const g={sd,hl:big?0.56:0.46,hw:0.36,fh:2.4,wh:12,rh:12,ov:0.06,th:1.6,wt:'planks',wall:opt===2?'#8A7A64':'#9A7A52',wallD:opt===2?'#6E604E':'#7A5E3E',roof:J.roof,roofD:J.roofD,roofE:shade(J.roofD,0.7),rt:J.rt,blue:J.blue,frame:true,frameCol:'#3A2A1C',k:1,v:1};
   const house=(extra)=>{const r=hoRoof(fw,g,win);r.back();hoFooting(fw,g,win);hoWalls(fw,g,win);if(opt===2)hoStoneBox(fw,0,0,g.hl,g.hw,g.fh,g.wh,win,sd);r.end();
     hoDoor(fw,g,'G',0,0.16,8.5,{col:'#4A3424',steps:1});if(L>=3)hoWindow(fw,g,'L',-0.18,0.1,g.fh+5,g.fh+8,{shutters:'#7A2E24'});if(extra)extra();r.front();r.ridge();hoBarge(fw,g,'#4A3424',0.25,L>=5);};
   if(opt===1){house();hoLogPile(f,0.35,0.85,-0.75,[3,2],1.4,win);bkOven(f,0.42,0.3,0.26,win,sd,lit);bkPeel(f(0.1,0.62,0),win);if(L>=3){const p=f(0.82,-0.2,0);/* bread on a little bench */hoBox(f,0.8,-0.25,0.09,0,4,win?'#D0C8B8':'#8A6A48',win?'#B8B0A0':'#6E5038',win);bkFlatbread(f(0.8,-0.25,4.3),2.6,win);}}
-  else if(opt===2){/* the oven bulges out of the long wall, under its own little roof */house(()=>{const oc=g.hw+0.2,oa=0.05;const of=(a,c,h)=>fw(a,c,h);bkOven(of,oa,oc,0.2,win,sd,lit,true);
-});hoLogPile(f,0.25,0.85,0.75,[3,2],1.4,win);}
+  else if(opt===2){/* stone bakehouse, the oven inside: a small stone chimney through the ridge (José) */house();bkChimney(fw,g,0.06,win,sd);}
   else if(opt===3){house();/* open shed in front with a long hearth and a griddle, flatbread on a rack */const sh=(a,c,h)=>f(a+0.42,c+0.2,h),sl=0.5,sw=0.34,hB=12,hF=20;
     hoQ([sh(-sl,-sw,0),sh(sl,-sw,0),sh(sl,sw,0),sh(-sl,sw,0)],'rgba(70,60,50,0.35)');hoQ([sh(-sl,-sw,0),sh(sl,-sw,0),sh(sl,-sw,hB),sh(-sl,-sw,hB)],win?'#C8C2B4':'#4A3424');
     if(!win)for(let k=0;k<5;k++){const p=sh(-0.35+k*0.17,-sw+0.01,7);ctx.fillStyle='#D8B878';ctx.beginPath();ctx.ellipse(p[0],p[1],2.6,2.6,0,0,6.3);ctx.fill();ctx.strokeStyle='rgba(140,90,40,0.5)';ctx.lineWidth=0.4;ctx.stroke();}

@@ -1687,3 +1687,46 @@ function drawBrewOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot
   else{house();brKiln(f,0.48,0.42,win,sd,J);for(let i=0;i<3;i++)brBarrel(f(0.82-i*0.0,-0.25+i*0.18,0),1,win);brBarrel(f(-0.1,0.8,0),1,win);brBarrel(f(0.08,0.86,0),1,win);}}
 {const _shW=shShape;shShape=function(b){if(b.t==='brewery'&&BREW_OPT){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),box=(a,c,sa,sc,h)=>({pts:[f(a-sa,c-sc,0),f(a+sa,c-sc,0),f(a+sa,c+sc,0),f(a-sa,c+sc,0)],h});
   if(BREW_OPT===5)return [box(-0.08,0,0.82,0.75,0.15),box(-0.08,0,0.82,0.05,1.6)];const V=[box(-0.38,-0.42,0.5,0.4,0.75)];if(BREW_OPT===1||BREW_OPT===3)V.push(box(0.42,0.2,0.5,0.34,0.5));else if(BREW_OPT===2)V.push(box(0.5,0.45,0.4,0.3,0.45));else V.push(box(0.48,0.42,0.24,0.24,0.8));return V;}return _shW(b);};}
+
+/* =================== Weaver options (prototype) — window.__setWeave(n) ===================
+   2×2, wool → sailcloth, flax → rope. 1 Plank weaving house + porch with a warp-weighted loom · 2 House + rope walk with a twisting wheel
+   3 House + a striped sail stretched on a drying frame · 4 Sunken weaving hut (roof to the ground) with an open gable showing the loom */
+let WEAVE_OPT=0;window.__setWeave=n=>{WEAVE_OPT=n|0;};
+{const _dsV=drawShaped;drawShaped=function(b,win,c0,ax){if(WEAVE_OPT&&b.t==='weaver'){drawWeaveOpt(b,win,WEAVE_OPT);return true;}return _dsV(b,win,c0,ax);};}
+function wvLoom(f,a0,a1,c,H,win,sd){/* warp-weighted loom in the (a,h) plane at c: two uprights leaning back, a cloth beam on top, warp threads, a heddle rod, a row of loom weights, woven cloth with bands at the top */
+  const lean=-0.06,P=(a,h)=>f(a,c+lean*h/H,h),wood=win?'#B8B0A0':'#6E5038';
+  hoLine(P(a0,0),P(a0,H+2),wood,1.4);hoLine(P(a1,0),P(a1,H+2),wood,1.4);hoLine(P(a0-0.04,H),P(a1+0.04,H),wood,1.8);
+  /* cloth already woven, rolled down from the beam */const ch=H*0.32;hoQ([P(a0+0.03,H-0.5),P(a1-0.03,H-0.5),P(a1-0.03,H-ch),P(a0+0.03,H-ch)],win?'#E8E4DC':'#D8CDB4');
+  if(!win){for(const [u,col] of [[0.25,'#A34A3A'],[0.55,'#2E4A5E'],[0.8,'#A34A3A']])hoQ([P(a0+0.03,H-ch*u),P(a1-0.03,H-ch*u),P(a1-0.03,H-ch*u-1.2),P(a0+0.03,H-ch*u-1.2)],col);
+    ctx.strokeStyle='rgba(240,232,214,0.7)';ctx.lineWidth=0.3;ctx.beginPath();const n=Math.round((a1-a0)*80);for(let i=0;i<=n;i++){const a=a0+0.03+(a1-a0-0.06)*i/n,p=P(a,H-ch),q=P(a+(i%2?0.004:-0.004),3.4);ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);}ctx.stroke();
+    hoLine(P(a0-0.02,H*0.45),P(a1+0.02,H*0.45),wood,0.9);/* weights */for(let i=0;i<Math.round((a1-a0)*28);i++){const a=a0+0.05+(a1-a0-0.1)*i/Math.max(1,Math.round((a1-a0)*28)-1),p=P(a,2.6+(i%2)*1.2);ctx.fillStyle='#8E877B';ctx.beginPath();ctx.arc(p[0],p[1],1.1,0,6.3);ctx.fill();ctx.fillStyle='#4E4A44';ctx.beginPath();ctx.arc(p[0],p[1],0.35,0,6.3);ctx.fill();}}}
+function wvBasket(p,win,col){ctx.fillStyle=win?'#D0C8B8':'#9A7A4A';ctx.beginPath();ctx.moveTo(p[0]-3.4,p[1]-4);ctx.lineTo(p[0]-2.8,p[1]);ctx.lineTo(p[0]+2.8,p[1]);ctx.lineTo(p[0]+3.4,p[1]-4);ctx.closePath();ctx.fill();if(!win){ctx.strokeStyle='rgba(60,40,20,0.5)';ctx.lineWidth=0.4;ctx.beginPath();for(let k=1;k<4;k++){ctx.moveTo(p[0]-3.3+k*0.15,p[1]-k);ctx.lineTo(p[0]+3.3-k*0.15,p[1]-k);}ctx.stroke();}
+  ctx.fillStyle=win?'#EEEAE2':col||'#E8E2D4';ctx.beginPath();ctx.ellipse(p[0],p[1]-4.4,3.4,1.6,0,0,6.3);ctx.fill();ctx.beginPath();ctx.arc(p[0]-1,p[1]-5.2,1.4,0,6.3);ctx.arc(p[0]+1.2,p[1]-5,1.3,0,6.3);ctx.fill();}
+function wvCoil(p,win){ctx.strokeStyle=win?'#C8C0B0':'#B89A62';ctx.lineWidth=1;for(let k=0;k<3;k++){ctx.beginPath();ctx.ellipse(p[0],p[1]-1-k*1.1,4-k*0.4,1.8-k*0.15,0,0,6.3);ctx.stroke();}}
+function drawWeaveOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),L=Math.min(5,b.lvl||1),sd=(b.id||0)*53+opt,J=WOOD_SET[opt===1?1:opt===3?4:2],fw=(a,c,h)=>f(a-0.38,c-0.42,h);
+  const g={sd,hl:L>=5?0.56:0.46,hw:0.36,fh:2.4,wh:12,rh:12,ov:0.06,th:J.rt==='thatch'?4:1.6,wt:'planks',wall:'#9A7A52',wallD:'#7A5E3E',roof:J.roof,roofD:J.roofD,roofE:shade(J.roofD,0.7),rt:J.rt,blue:J.blue,frame:true,frameCol:'#3A2A1C',k:1,v:1};
+  const house=()=>{const r=hoRoof(fw,g,win);r.back();hoFooting(fw,g,win);hoWalls(fw,g,win);r.end();hoDoor(fw,g,'G',0,0.16,8.5,{col:'#4A3424',steps:1});if(L>=3)hoWindow(fw,g,'L',-0.18,0.1,g.fh+5,g.fh+8,{shutters:'#A34A3A'});r.front();r.ridge();hoBarge(fw,g,'#4A3424',0.25,L>=5);};
+  if(opt===1){house();const sh=(a,c,h)=>f(a+0.42,c+0.2,h),sl=0.5,sw=0.34;hoQ([sh(-sl,-sw,0),sh(sl,-sw,0),sh(sl,sw,0),sh(-sl,sw,0)],'rgba(70,60,50,0.3)');
+    wvLoom(sh,-0.36,0.2,0.0,17,win,sd);wvBasket(sh(0.34,0.16,0),win);wvBasket(sh(0.36,-0.12,0),win,'#8A7E70');bkLeanTo(sh,-sl,sl,-sw,sw,14,22,win,J,sd);}
+  else if(opt===2){house();/* rope walk along the front edge: posts with pegs, ropes being laid, a twisting wheel at one end, coils */const rc=0.62,a0=-0.9,a1=0.85;
+    for(let i=0;i<5;i++){const a=a0+0.25+i*(a1-a0-0.3)/4;hoLine(f(a,rc,0),f(a,rc,8),win?'#B8B0A0':'#5A4230',1.1);hoLine(f(a,rc-0.05,7),f(a,rc+0.05,7),win?'#B8B0A0':'#5A4230',1);}
+    for(const [dc,col] of [[-0.03,'#C8AA6E'],[0.03,'#B89A5E']]){ctx.strokeStyle=win?'#D0C8B8':col;ctx.lineWidth=1;ctx.beginPath();const p0=f(a0+0.15,rc+dc,7.5),p1=f(a1,rc+dc,6.5);ctx.moveTo(p0[0],p0[1]);ctx.quadraticCurveTo((p0[0]+p1[0])/2,(p0[1]+p1[1])/2+3,p1[0],p1[1]);ctx.stroke();}
+    {/* twisting wheel on a frame at the near end */const w=f(a1+0.02,rc,8);hoLine(f(a1+0.02,rc,0),w,win?'#B8B0A0':'#4A3424',1.6);ctx.strokeStyle=win?'#B8B0A0':'#6E5038';ctx.lineWidth=1.1;ctx.beginPath();ctx.ellipse(w[0],w[1],3.6,4.6,0.5,0,6.3);ctx.stroke();ctx.beginPath();for(let k=0;k<4;k++){const an=(typeof t==='number'&&!win?t*2:0)+k*1.57;ctx.moveTo(w[0],w[1]);ctx.lineTo(w[0]+Math.cos(an)*3.4,w[1]+Math.sin(an)*4.4);}ctx.stroke();}
+    wvCoil(f(0.6,0.18,0),win);wvCoil(f(0.75,0.3,0),win);wvBasket(f(0.35,-0.05,0),win);}
+  else if(opt===3){house();/* sail stretched on a frame to dry: two tall posts, a yard on top, the striped sail laced to it, ropes to pegs */const sc=0.3,a0=0.05,a1=0.85,H=22,P=(a,h)=>f(a,sc,h);
+    hoLine(P(a0,0),P(a0,H+2),win?'#B8B0A0':'#4A3424',1.4);hoLine(P(a1,0),P(a1,H+2),win?'#B8B0A0':'#4A3424',1.4);hoLine(P(a0-0.05,H),P(a1+0.05,H),win?'#B8B0A0':'#5A4230',1.6);
+    const n=6;for(let i=0;i<n;i++){const u0=i/n,u1=(i+1)/n,q=(u,h)=>{const a=a0+0.03+(a1-a0-0.06)*u,bil=Math.sin(u*Math.PI)*0.06*(1-Math.abs(h-H*0.55)/(H*0.6));return f(a,sc+bil,h);};
+      const pts=[];for(let k=0;k<=4;k++)pts.push(q(u0,H-0.5-k*(H-6)/4));for(let k=4;k>=0;k--)pts.push(q(u1,H-0.5-k*(H-6)/4));hoQ(pts,win?'#EEEAE2':(i%2?'#A33A2E':'#E8DFC8'));}
+    if(!win){ctx.strokeStyle='rgba(60,40,20,0.35)';ctx.lineWidth=0.4;ctx.beginPath();for(let k=1;k<6;k++){const p=P(a0+0.03,H-0.5-k*(H-6)/6),q=P(a1-0.03,H-0.5-k*(H-6)/6);ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);}ctx.stroke();}
+    for(const a of [a0,a1]){hoLine(P(a,H+1),f(a+(a===a0?-0.2:0.15),sc+0.25,0),'rgba(200,180,140,0.8)',0.5);}
+    wvBasket(f(-0.2,0.7,0),win);wvBasket(f(0.0,0.82,0),win,'#8A7E70');}
+  else{/* sunken weaving hut: low plank walls, roof almost to the ground, the front gable open on the loom */const fwa=(a,c,h)=>f(a-0.05,c-0.05,h),R=WOOD_SET[1],ga={sd,hl:L>=5?0.8:0.72,hw:0.66,fh:1.4,wh:4,rh:30,ov:0.05,th:4,wt:'planks',wall:'#7E6248',wallD:'#5F4936',roof:R.roof,roofD:R.roofD,roofE:shade(R.roofD,0.7),rt:R.rt,frame:true,frameCol:'#3A2A1C',k:1,v:1};
+    const r=hoRoof(fwa,ga,win);r.back();hoFooting(fwa,ga,win);hoWalls(fwa,ga,win);r.end();
+    {/* open gable: dark inside, the loom standing just inside, a lintel */const P=(c,h)=>fwa(ga.hl+0.004,c,h),ow=0.32,oh=18;hoQ([P(-ow,ga.fh),P(ow,ga.fh),P(ow,ga.fh+oh*0.55),P(0,ga.fh+oh),P(-ow,ga.fh+oh*0.55)],win?'#C8C2B8':'#22180F');
+      const lf=(a,c,h)=>fwa(a,c,h);if(!win){const sw=(c,h)=>lf(ga.hl-0.12,c,h);hoLine(sw(-0.24,ga.fh),sw(-0.24,ga.fh+13),'#6E5038',1.2);hoLine(sw(0.24,ga.fh),sw(0.24,ga.fh+13),'#6E5038',1.2);hoLine(sw(-0.27,ga.fh+12),sw(0.27,ga.fh+12),'#6E5038',1.4);
+        hoQ([sw(-0.22,ga.fh+11.5),sw(0.22,ga.fh+11.5),sw(0.22,ga.fh+8),sw(-0.22,ga.fh+8)],'#D8CDB4');hoQ([sw(-0.22,ga.fh+10),sw(0.22,ga.fh+10),sw(0.22,ga.fh+9.2),sw(-0.22,ga.fh+9.2)],'#A34A3A');
+        ctx.strokeStyle='rgba(240,232,214,0.6)';ctx.lineWidth=0.3;ctx.beginPath();for(let i=0;i<=16;i++){const c=-0.21+0.42*i/16,p=sw(c,ga.fh+8),q=sw(c,ga.fh+2);ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);}ctx.stroke();for(let i=0;i<10;i++){const p=sw(-0.2+0.4*i/9,ga.fh+1.6+(i%2)*0.9);ctx.fillStyle='#8E877B';ctx.beginPath();ctx.arc(p[0],p[1],0.9,0,6.3);ctx.fill();}}
+      for(const c of [-ow-0.02,ow+0.02])hoLine(P(c,ga.fh),P(c,ga.fh+oh*0.55),'#3A2A1C',1.3);hoLine(P(-ow-0.02,ga.fh+oh*0.55),P(0,ga.fh+oh+0.5),'#3A2A1C',1.3);hoLine(P(ow+0.02,ga.fh+oh*0.55),P(0,ga.fh+oh+0.5),'#3A2A1C',1.3);}
+    r.front();r.ridge();hoBarge(fwa,ga,'#4A3424',0.22,L>=5);wvBasket(fwa(ga.hl+0.14,0.42,0),win);}}
+{const _shV=shShape;shShape=function(b){if(b.t==='weaver'&&WEAVE_OPT){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),box=(a,c,sa,sc,h)=>({pts:[f(a-sa,c-sc,0),f(a+sa,c-sc,0),f(a+sa,c+sc,0),f(a-sa,c+sc,0)],h});
+  if(WEAVE_OPT===4)return [box(-0.05,-0.05,0.75,0.68,0.15),box(-0.05,-0.05,0.75,0.05,1.3)];const V=[box(-0.38,-0.42,0.5,0.4,0.75)];if(WEAVE_OPT===1)V.push(box(0.42,0.2,0.5,0.34,0.6));else if(WEAVE_OPT===3)V.push(box(0.45,0.3,0.42,0.04,0.85));else V.push(box(0,0.62,0.85,0.04,0.3));return V;}return _shV(b);};}

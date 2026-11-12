@@ -153,13 +153,12 @@ function drawHouseOpt(b,win,opt){const L=Math.min(5,b.lvl||1),f=hoFrame(b),sd=(b
       for(const a of [-s.hl,0,s.hl-0.04])hoQ([fs(a,s.hw,0),fs(a+0.045,s.hw,0),fs(a+0.045,s.hw,s.wh),fs(a,s.hw,s.wh)],'#5C3F2A');
       rs.front();}
     const r=hoRoof(f,g,win);r.back();hoFooting(f,g,win);hoWalls(f,g,win);r.end();
-    hoDoor(f,g,'G',g.hw*0.3,0.17,Math.min(10.5,g.wh-2),{steps:L>=2?2:1});
-    if(L>=2)hoWindow(f,g,'G',-g.hw*0.45,0.1,g.fh+3.5,g.fh+7.5);
+    hoDoor(f,g,'G',0,0.17,Math.min(10.5,g.wh-2),{steps:L>=2?2:1});
+    if(L>=2)hoWindow(f,g,'G',-g.hw*0.55,0.1,g.fh+3.5,g.fh+7.5);
     if(L>=4)hoWindow(f,g,'L',g.hl*0.35,0.1,g.fh+3.5,g.fh+7.5);
-    if(L>=3)hoShield(f(g.hl,-g.hw*0.05,g.wh+g.rh*0.42),'#3E6A8A','#A34A3A',3.2);
+    if(L>=3)hoShield(f(g.hl,0,g.wh+g.rh*0.3),'#3E6A8A','#A34A3A',3.2);
     r.front();r.ridge();hoBarge(f,g,'#6E4E34',0.32,L>=5);
     if(L>=2){const p=f(g.hl+0.32,g.hw+0.2,0);hoChop(p);}
-    if(L>=3){const p=f(g.hl*0.1,g.hw+0.05,0);hoShield([p[0],p[1]-5],'#3E6A8A','#A34A3A',3.4);}
     if(L>=5){const p=f(-g.hl*0.4,g.hw+0.04,0);ctx.fillStyle='#8A6E52';ctx.fillRect(p[0]-4,p[1]-3,8,3);}
     return;}
   if(opt===2){/* STAVE HOUSE — tall tarred staves, steep shingle roof, carved portal, dragon ends, smoke louvre */

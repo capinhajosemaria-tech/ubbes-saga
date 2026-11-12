@@ -71,5 +71,12 @@ Prototype code: branch `house-options`, `source/src/20_zzhouseopt.js` (switch `w
 - Shared rules from here on (all buildings, also earlier ones): **no pennants/flags**; **no log-end circles at the corners** of log walls; scale shingles keep the original house look; small roofs only get extra rows/columns so there are no empty bands.
 - Prototype: `window.__setWood(2)`.
 
+## Carpenter (chosen: option 2, 2026-11-12)
+- Plank workshop at the back (door, shuttered window; larger with a gate at L5), **black tarred scale-shingle roof**.
+- **Open drying shed**: lean-to rising toward the viewer so the inside shows; **stacks of sawn boards with stickers** between layers (second stack from L3).
+- **Saw pit in the open** beside it: pit, log on trestles, a cut board on top, two-man pit saw standing in the kerf.
+- Sawhorse with bow saw from L3.
+- Prototype: `window.__setCarp(2)`.
+
 ## Next buildings
 One at a time: show the current look close up → José's notes → 2–4 options → choice, recorded here.

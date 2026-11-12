@@ -81,7 +81,7 @@ let HOVER_B=null;
 function buildingAt(px,py){const w=s2w(px,py),tt=w2t(w[0],w[1]);for(let k=0;k<4;k++){const x=tt[0]+k,y=tt[1]+k;if(!inMap(x,y))continue;const id=occ[y*N+x];if(id){const b=B.find(o=>o.id===id);if(b)return b;}}return null;}
 function hoverAt(px,py){if(mode!=='view'||titleOn||modalOpen){setHover(null);return;}setHover(buildingAt(px,py),px,py);}
 function setHover(b,px,py){HOVER_B=b;const tip=$('htip');cv.style.cursor=b?'pointer':'';if(!tip)return;if(!b){tip.hidden=true;return;}
-  const D=DEF[b.t];tip.innerHTML='<b>'+esc(b.t==='th'?'Town Hall':D.name)+'</b>'+(D.up||b.t==='th'?' <span>level '+(b.t==='th'?thLevel():b.lvl)+'</span>':'')+(slotsOf(b)?'<em>'+b.workers+'/'+slotsOf(b)+' workers'+(b.status&&b.status!=='Working'?' · '+esc(b.status):'')+'</em>':'');
+  const D=DEF[b.t];tip.innerHTML='<b>'+esc(b.t==='th'?'Town Hall':D.name)+'</b>'+(D.up||b.t==='th'?' <span>level '+(b.t==='th'?thLevel():b.lvl)+'</span>':'')+(slotsOf(b)?'<em>'+b.workers+' of '+slotsOf(b)+' working'+(slotsOf(b)?' · '+(winterStopped(b)?'winter stop':PRIO[prioOf(b)].toLowerCase()):'')+(b.status&&b.status!=='Working'?' · '+esc(b.status):'')+'</em>':'');
   tip.hidden=false;tip.style.left=Math.min(innerWidth-260,px+16)+'px';tip.style.top=(py+18)+'px';}
 function drawHover(){const b=HOVER_B;if(!b||mode!=='view')return;const c=fp(b),e=elev[b.fy*N+b.fx]||2;
   ctx.save();ctx.translate(0,-e);ctx.strokeStyle='rgba(255,236,170,0.95)';ctx.lineWidth=2.4/zoom+0.6;ctx.setLineDash([]);ctx.beginPath();ctx.moveTo(c.T[0],c.T[1]);ctx.lineTo(c.R[0],c.R[1]);ctx.lineTo(c.Bt[0],c.Bt[1]);ctx.lineTo(c.L[0],c.L[1]);ctx.closePath();ctx.stroke();

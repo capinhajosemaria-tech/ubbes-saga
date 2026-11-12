@@ -8,7 +8,7 @@ function dayTick(){
     if(!slotsOf(b)){b.status=b.cons?consStatus(b):'ok';continue;}
     if(D.seasonal&&win){b.status='Resting for winter: workers free for other jobs';continue;}
     if(!b.conn&&D.road!==false){b.status='No road to the Town Hall';continue;}
-    if(b.workers===0){b.status='No workers: tap + to assign';continue;}
+    if(b.workers===0){b.status=prioOf(b)===0?'Stopped':'No workers: raise its priority';continue;}
     const n=b.workers;let tf=1;const f0=flowSnap();
     if(D.tools){if(r.tools<=0)tf=D.farm?0.15:0.6;else r.tools=Math.max(0,r.tools-n/60);}
     const E=tf*(b.lvl>=5?1.55:b.lvl>=4?1.4:FIELDS.has(b.t)&&b.lvl>=3?1.3:b.lvl>=2?1.2:1)*prodMult(b);

@@ -1,6 +1,6 @@
 /* =================== save / load =================== */
 function snapshot(){const s=Object.assign({},S);delete s.bal;delete s.tc;s.meta={name:pname(jarlP())||'Kaldstrand',year:yearNow(),pop:S.pop,th:thLevel(),mode:S.mode};
-  return {v:4,n:N,S:s,meta:s.meta,b:B.map(b=>[b.t,b.fx,b.fy,b.rot,b.desired,b.lvl,Math.round(b.anvil),b.mode,b.proj,b.sch===undefined?null:b.sch,b.cons||null]),roads:Array.from(roads.reduce((a,v,i)=>{if(v)a.push(i);return a;},[])),walls:Array.from(walls.reduce((a,v,i)=>{if(v)a.push(i*4+v);return a;},[])),
+  return {v:4,n:N,S:s,meta:s.meta,b:B.map(b=>[b.t,b.fx,b.fy,b.rot,b.desired,b.lvl,Math.round(b.anvil),b.mode,b.proj,b.sch===undefined?null:b.sch,b.cons||null,prioOf(b)]),roads:Array.from(roads.reduce((a,v,i)=>{if(v)a.push(i);return a;},[])),walls:Array.from(walls.reduce((a,v,i)=>{if(v)a.push(i*4+v);return a;},[])),
   zones:Array.from(unlocked),src:srcSave()};}
 function apply(d){
   if(!d||d.v!==4||d.n!==N||!d.S||!Array.isArray(d.b))return false;
@@ -12,7 +12,7 @@ function apply(d){
   S.reserve=S.reserve||{};S.flow=S.flow||{};S.tg=S.tg||{};S.blessCd=S.blessCd||{};S.blessOn=S.blessOn||{};S.fx=S.fx||{};S.mods=S.mods||[];S.evtSeen=S.evtSeen||{};S.yr=S.yr||{births:0,deaths:0,arrived:0,left:0,raids:0,silver:0,fame:0};S.winter=S.winter||{hard:false,said:false,told:false};
   B=[];nextId=1;for(const a of d.b){if(!DEF[a[0]])continue;const b=addBuilding(a[0],a[1]|0,a[2]|0,(a[3]|0)&3,true);
     b.lvl=Math.min(5,Math.max(1,a[5]|0||1));b.anvil=num(a[6],100);b.mode=SMITH[a[7]]?a[7]:'tools';b.proj=a[8]&&SHIPS[a[8].type]?{type:a[8].type,done:num(a[8].done,0)}:(a[8]&&b.t==='tomb'?{done:num(a[8].done,0)}:null);if(a[9]!==null&&a[9]!==undefined&&HOUSE_SCH[a[9]])b.sch=a[9]|0;if(a[10]&&typeof a[10]==='object')b.cons={k:a[10].k,days:num(a[10].days,1),w:num(a[10].w,1),done:num(a[10].done,0),lv:num(a[10].lv,b.lvl),builders:0};
-    b.desired=Math.min(slotsOf(b),Math.max(0,a[4]|0));}
+    b.desired=Math.min(slotsOf(b),Math.max(0,a[4]|0));b.prio=(a[11]>=0&&a[11]<=3)?a[11]|0:PRIO_DEF;}
   /* Beta 0.17: the shipyard became 3×3 (boathouse on the shore + quay and slipway over the sea); move old ones to the nearest spot that fits */
   rebuildOcc();for(const b of B){if(b.t!=='shipyard'||canPlace('shipyard',b.fx,b.fy,b.rot,b.id).ok)continue;let best=null;for(let dy=-1;dy<=2&&!best;dy++)for(let dx=-1;dx<=2&&!best;dx++)if(canPlace('shipyard',b.fx+dx,b.fy+dy,b.rot,b.id).ok)best=[b.fx+dx,b.fy+dy];if(best){b.fx=best[0];b.fy=best[1];rebuildOcc();}}
   roads=new Uint8Array(N*N);(d.roads||[]).forEach(i=>{if(i>=0&&i<N*N)roads[i]=1;});

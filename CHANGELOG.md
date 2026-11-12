@@ -2,6 +2,13 @@
 
 Versions are `Beta 0.MINOR.PATCH` until Town Hall 10 (`1.0.0`).
 
+## Beta 0.17.1
+- Workers: instead of choosing a number per building, each workplace now has a priority: Stopped, Low, High or Urgent. Urgent jobs are filled completely first, then High, then Low share the rest. New buildings start at High.
+- Berry gatherers stop by themselves in winter and go back to their own priority in summer.
+- Builders now work from the Town Hall: 3 builder posts at Town Hall 1, one more per level, with their own priority on the Town Hall sheet. They only take people while something is being built.
+- Every building sheet shows how many people work there; the hover tip and the People → Workplaces table show the number and the priority. An open building sheet updates every day.
+- Fixed: free workers were not given back when you took people off a building, and the numbers on an open sheet did not update.
+
 ## Beta 0.17.0
 - Music: 20 minutes of new pieces played with real recorded instruments: 4 summer pieces (harp, flute, fiddle, hand-drum grooves) and 4 winter pieces (low strings, horn, frame drum, wind), following the seasons.
 - Special music when the fleet sails, when the ships come home, for a feast, a new Town Hall level and the death of a jarl.

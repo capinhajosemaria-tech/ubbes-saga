@@ -39,7 +39,7 @@ function build(t){if(LAZY())return false;if(window.__SAVING&&['jarl','camp','ben
     if(G.DEF[t].road===false||setRoadPath(b))break;G.B.splice(G.B.indexOf(b),1);G.rebuildOcc();G.recomputeConn();BAD.add(t+':'+s2.x+','+s2.y);b=null;}
   if(!b){events.push('day '+G.S.day+': no road for '+t);return false;}G.pay(cst,1);b.paid=cst;G.startCons(b,'build');
   G.assignWorkers();events.push('day '+G.S.day+': built '+t);if(O.planner)FAIL[t+':fallback-ok']=(FAIL[t+':fallback-ok']||0)+1;G.checkMilestones();return true;}
-function staff(){const S=G.S,r=S.res,win=G.isWinter();const list=G.B.filter(b=>G.slotsOf(b)>0);list.forEach(b=>b.desired=0);let free=G.workforce();
+function staff(){G.S.manualStaff=1;const S=G.S,r=S.res,win=G.isWinter();const list=G.B.filter(b=>G.slotsOf(b)>0);list.forEach(b=>b.desired=0);let free=G.workforce();
   const give=(t,n)=>{const f0=free;for(const b of list.filter(b=>b.t===t)){if(G.DEF[b.t].seasonal&&win)continue;if(b.t==='wood'&&/No trees/.test(b.status||''))continue;const k=Math.max(0,Math.min(n,G.slotsOf(b)-b.desired,free));b.desired+=k;free-=k;n-=k;if(n<=0)break;}return f0-free;};
   const pop=S.pop;if(r.iron<30)give('mine',2);
   const need=G.eatNeed()*(G.foodUnits()<G.eatNeed()*10?1.5:1.1);let f=need;

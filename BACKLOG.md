@@ -24,6 +24,7 @@ Order: Round 1 (done, 0.14.0) → 1C (done, 0.15.0) → **1H** → 1D → 1I →
 - (none — next is 1H. Firewood option A was assumed in 0.14.0; tune after José plays.)
 
 ## Bugs and small fixes
+- [ ] **More newcomers when morale is good** (José, 2026-11-12): if there are free beds and morale is above 55, some people move in; above 70, many more. Today arrivals follow attractiveness only (`14_people_lineage_morale_gods_r.js`). Tune with José after he plays the new priorities.
 - [ ] **Gold has no counter in the top bar** (José, 2026-11-12): `CHIPS` in `26_hud.js` has silver but no gold, so the player can't see how much gold he has (it only shows in the trader sheet). Also, **silver only appears from Town Hall 3** (`chip-silver` hidden below TH3). Show silver from the start, or as soon as there is any, and add a gold chip that appears once there is gold.
 
 ## Next rounds (in this order)

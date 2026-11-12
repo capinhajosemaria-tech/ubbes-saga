@@ -68,4 +68,6 @@ function renderUpl(force){let el=$('upl');if(!uplOpen||titleOn||!isWide()||($('t
 const upReady=()=>upgradeItems().filter(o=>o.ok).length;
 setInterval(()=>{try{renderUpl();
   const bd=$('dk-upl')&&$('dk-upl').querySelector('.bdg');if(bd){const n=upReady();bd.textContent=n||'';bd.hidden=!n;}
-  if(!$('sheet').hidden&&sheetKind==='prod'&&prodPanel.day!==S.day)prodPanel();}catch(e){}},700);
+  if(!$('sheet').hidden&&sheetKind==='prod'&&prodPanel.day!==S.day)prodPanel();
+  /* keep an open building sheet's worker numbers current (sickness, deaths, winter, finished sites) */
+  if(!$('sheet').hidden&&sheetKind==='building'&&sel&&sel.b&&B.includes(sel.b)&&buildingSheet.day!==S.day&&!(document.activeElement&&document.activeElement.tagName==='INPUT')){buildingSheet.day=S.day;const y=$('sheet-card').scrollTop;buildingSheet(sel.b);$('sheet-card').scrollTop=y;}}catch(e){}},700);

@@ -466,7 +466,7 @@ h3 svg{vertical-align:-3px}
 <script>
 (function(){
 'use strict';
-const GAME_VERSION="Beta 0.17.0";
+const GAME_VERSION="Beta 0.17.1";
 /* =================== constants =================== */
 const N=132,OX=30,OY=24,SX=12,SY=6,HW=32,HH=16,TW=64;
 const HOME_X=63,HOME_Y=60;  /* the village centre in tile coords */
@@ -1006,14 +1006,44 @@ const costHave=c=>Object.keys(c).length?Object.keys(c).map(k=>{const lack=(S.res
 const costStr=c=>Object.keys(c).length?Object.keys(c).map(k=>c[k]+' '+(RNAME[k]||k).toLowerCase()).join(', '):'free';
 
 /* =================== workers =================== */
-let freeWorkers=0;
+/* Beta 0.x: every workplace has a priority instead of a chosen head count.
+   0 Stopped · 1 Low · 2 High · 3 Urgent. Urgent places are filled to the last post first (oldest first),
+   then High places share what is left one worker at a time, then Low places do the same.
+   Seasonal places (berry gatherers) stop in winter and go back to their own priority in summer.
+   Construction is done by the builders of the Town Hall: 2 + Town Hall level posts, with their own priority;
+   builders only take people while something is being built. */
+let freeWorkers=0,buildersWorking=0;
 const isWinter=()=>(S.gameT%YEAR)>=SUMMER;
+const PRIO=['Stopped','Low','High','Urgent'];
+const PRIO_DEF=2;
+const builderSlots=()=>2+(typeof thLevel==='function'?thLevel():1);
+const prioOf=b=>(b.prio===undefined||b.prio===null)?PRIO_DEF:b.prio;
+const builderPrio=()=>(S.bPrio===undefined||S.bPrio===null)?PRIO_DEF:S.bPrio;
+const winterStopped=b=>!!(DEF[b.t].seasonal&&isWinter());
+/* how many builders the sites could use right now */
+const builderDemand=()=>Math.min(builderSlots(),B.filter(q=>q.cons).reduce((s,q)=>s+q.cons.w,0));
 function assignWorkers(){
-  let free=workforce();const win=isWinter();
+  let free=workforce();
   const list=B.filter(b=>slotsOf(b)>0).sort((a,b)=>a.id-b.id);
-  for(const b of list){const D=DEF[b.t];const idle=D.seasonal&&win;if(b.desired>slotsOf(b))b.desired=slotsOf(b);if(!idle&&b.desired>free)b.desired=Math.max(0,free);b.workers=idle?0:b.desired;free-=b.workers;}
-  freeWorkers=typeof assignBuilders==='function'?assignBuilders(free):free;
+  /* balance bots still pick head counts themselves (b.desired) */
+  if(S.manualStaff){for(const b of list){const idle=winterStopped(b);if(b.desired>slotsOf(b))b.desired=slotsOf(b);if(!idle&&b.desired>free)b.desired=Math.max(0,free);b.workers=idle?0:b.desired;free-=b.workers;}
+    const nb=Math.min(free,B.filter(q=>q.cons).reduce((s,q)=>s+q.cons.w,0));buildersWorking=nb;spreadBuilders(nb);freeWorkers=free-nb;return;}
+  const E=list.map(b=>({b:b,p:prioOf(b),cap:winterStopped(b)?0:slotsOf(b),n:0}));
+  E.unshift({b:null,p:builderPrio(),cap:builderDemand(),n:0});
+  for(const e of E)if(e.p<=0)e.cap=0;
+  for(const e of E)if(e.p===3){const k=Math.min(e.cap,free);e.n=k;free-=k;}
+  for(const p of [2,1]){const T=E.filter(e=>e.p===p&&e.cap>0);let go=true;
+    while(free>0&&go){go=false;for(const e of T){if(free<=0)break;if(e.n<e.cap){e.n++;free--;go=true;}}}}
+  for(const e of E){if(e.b){e.b.workers=e.n;e.b.desired=e.n;}else buildersWorking=e.n;}
+  spreadBuilders(buildersWorking);
+  freeWorkers=free;
 }
+/* builders go to the oldest site first */
+function spreadBuilders(n){for(const b of B.filter(q=>q.cons).sort((a,c)=>a.id-c.id)){const k=Math.max(0,Math.min(b.cons.w,n));b.cons.builders=k;n-=k;}}
+/* people who could be taken off work for training: the free ones plus everyone not on an Urgent job */
+function spareWorkers(){if(S.manualStaff)return freeWorkers;let s=freeWorkers;for(const b of B)if(slotsOf(b)>0&&prioOf(b)<3)s+=b.workers||0;if(builderPrio()<3)s+=buildersWorking;return s;}
+/* the priority buttons used on building sheets and the Town Hall */
+function prioHtml(id,p){return '<div class="prio" role="group" aria-label="Work priority">'+PRIO.map((n,i)=>'<button type="button" data-'+id+'="'+i+'" aria-pressed="'+(i===p)+'">'+n+'</button>').join('')+'</div>';}
 
 /* =================== construction: every building takes time and builders =================== */
 /* b.cons = {k:'build'|'up'|'th', days, w (builders wanted), done (days of full crew), lv (target level), builders}
@@ -1028,22 +1058,21 @@ const NO_CONS=new Set(['tomb']);   /* Ragnar's Ship-Tomb is raised by its own bu
 const underCons=b=>!!(b.cons&&b.cons.k==='build');
 const isBuilt=b=>!underCons(b);
 function startCons(b,k,lv){if(NO_CONS.has(b.t)&&k==='build')return;const c=consSpec(b.t);b.cons={k:k,days:c.days,w:c.w,done:0,lv:lv||b.lvl,builders:0};}
-/* builders come from the free workers, oldest site first */
-function assignBuilders(free){for(const b of B.filter(q=>q.cons).sort((a,c)=>a.id-c.id)){const n=Math.max(0,Math.min(b.cons.w,free));b.cons.builders=n;free-=n;}return free;}
+/* builders are the Town Hall's builder posts (see 12_workers.js) */
 function consTick(gdt){if(!B.some(b=>b.cons))return;
   for(const b of B){const c=b.cons;if(!c)continue;if(c.builders>0)c.done+=gdt/DAY*c.builders/c.w;if(c.done>=c.days)finishCons(b);}}
 function finishCons(b){const c=b.cons,D=DEF[b.t];b.cons=null;
-  if(c.k==='build'){toast(D.name+' is finished.');assignWorkers();b.desired=Math.min(slotsOf(b),freeWorkers);}
+  if(c.k==='build'){toast(D.name+' is finished.');}
   else if(c.k==='up'){b.lvl=c.lv;toast(D.name+' reached level '+b.lvl+'.');}
   else if(c.k==='th')finishTH(c.lv);
   assignWorkers();if(typeof checkMilestones==='function')checkMilestones();if(typeof save==='function')save();}
 function consStatus(b){const c=b.cons;if(!c)return '';const pc=Math.min(99,Math.floor(100*c.done/c.days));
   const what=c.k==='build'?'Being built':c.k==='th'?'Raising the hall to level '+c.lv:'Upgrading to level '+c.lv;
-  return what+': '+pc+'%'+(c.builders?' · '+c.builders+' of '+c.w+' builders':' · waiting for a free worker to build');}
+  return what+': '+pc+'%'+(c.builders?' · '+c.builders+' of '+c.w+' builders':' · waiting for builders');}
 function consHtml(b){const c=b.cons;if(!c)return '';const pc=Math.min(99,Math.floor(100*c.done/c.days));
   const left=c.builders?Math.max(0.1,(c.days-c.done)*c.w/c.builders):0;
   return '<div class="outpct"><span class="meta">'+esc(c.k==='build'?'Construction':c.k==='th'?'Raising the hall':'Upgrade')+'</span><span class="bar"><i style="width:'+pc+'%"></i></span><strong>'+pc+'%</strong><span class="meta">'+
-    (c.builders?c.builders+' of '+c.w+' builders · about '+(left<1?'less than a day':Math.ceil(left)+' day'+(Math.ceil(left)>1?'s':''))+' left':'No free workers: take someone off a job so the builders can start')+'</span></div>';}
+    (c.builders?c.builders+' of '+c.w+' builders · about '+(left<1?'less than a day':Math.ceil(left)+' day'+(Math.ceil(left)>1?'s':''))+' left':(builderPrio()<=0?'Builders are stopped: set their priority at the Town Hall':'All builders are busy or needed elsewhere: raise the builders\' priority at the Town Hall'))+'</span></div>';}
 
 /* =================== daily economy =================== */
 function dayTick(){
@@ -1055,7 +1084,7 @@ function dayTick(){
     if(!slotsOf(b)){b.status=b.cons?consStatus(b):'ok';continue;}
     if(D.seasonal&&win){b.status='Resting for winter: workers free for other jobs';continue;}
     if(!b.conn&&D.road!==false){b.status='No road to the Town Hall';continue;}
-    if(b.workers===0){b.status='No workers: tap + to assign';continue;}
+    if(b.workers===0){b.status=prioOf(b)===0?'Stopped':'No workers: raise its priority';continue;}
     const n=b.workers;let tf=1;const f0=flowSnap();
     if(D.tools){if(r.tools<=0)tf=D.farm?0.15:0.6;else r.tools=Math.max(0,r.tools-n/60);}
     const E=tf*(b.lvl>=5?1.55:b.lvl>=4?1.4:FIELDS.has(b.t)&&b.lvl>=3?1.3:b.lvl>=2?1.2:1)*prodMult(b);
@@ -1529,7 +1558,7 @@ function trainPool(){return S.people.filter(p=>p.id!==S.jarl&&!p.w&&p.a>=16&&p.a
 /* most recruits possible now, and what limits it */
 function trainRoom(type,lvl){const T=TROOPS[type]||TROOPS.skirm;assignWorkers();const pool=trainPool();let n=trainMax(lvl),why='a batch holds '+n;
   if(pool.length<n){n=pool.length;why=n+' fit adults aged 16–44 without a weapon';}
-  if(freeWorkers<n){n=Math.max(0,freeWorkers);why=n+' free workers';}
+  {const sp=spareWorkers();if(sp<n){n=Math.max(0,sp);why=n+' workers not on Urgent jobs';}}
   for(const k in T.eq){const g=Math.floor((S.res[k]||0)/T.eq[k]);if(g<n){n=g;why='gear for '+g+' ('+RNAME[k].toLowerCase()+')';}}
   return {n:Math.max(0,n),why:why};}
 /* weaker troops at home that could retrain as this type */
@@ -6139,13 +6168,13 @@ function buildingSheet(b){
   const on=[];
   if(b.t!=='th'){h+='<p class="role"><strong>'+esc(roleOf(b.t))+'.</strong> '+esc(D.desc||'')+'</p>';const nd=needsOf(b.t);if(nd.length)h+='<div class="meta needs">Needs: '+esc(nd.join(' · '))+'</div>';}
   if(sl){h+='<span class="status '+statusClass(b.status)+'">'+esc(b.status||'Starting')+'</span>';
-    assignWorkers();h+='<div class="wk"><button type="button" class="btn small" id="w-minus" aria-label="Fewer workers" '+(b.desired<=0?'disabled':'')+'>−</button><span class="num">'+b.desired+' / '+sl+' <span class="meta">workers</span></span><button type="button" class="btn small" id="w-plus" aria-label="More workers" '+(b.desired>=sl||freeWorkers<=0?'disabled':'')+'>+</button><span class="meta">'+freeWorkers+' free in the village</span></div>';
+    assignWorkers();const pr=prioOf(b),ws=winterStopped(b);h+='<div class="wk"><span class="meta">Priority</span>'+prioHtml('wp',pr)+'</div><p class="workers"><strong>'+(b.workers||0)+' of '+sl+' working here</strong>'+(ws?' · stopped for winter, back to '+PRIO[pr]+' in summer':pr===0?' · stopped':(b.workers||0)<sl?' · not enough people for every post':'')+' <span class="meta">· '+freeWorkers+' free in the village</span></p>';
     if(D.out){const pc=Math.round(100*(b.workers||0)/sl);h+='<div class="outpct"><span class="meta">Output from workers</span><span class="bar"><i style="width:'+pc+'%"></i></span><strong>'+pc+'%</strong><span class="meta">'+(b.workers||0)+' of '+sl+' working · each worker adds '+Math.round(100/sl)+'%</span></div>';}
     h+='<p>'+esc(D.out||'')+(b.made?' · <strong>Yesterday: '+esc(b.made)+'</strong>':'')+'</p>';
     if(SRC_OF[b.t]&&(!SRC_ENDLESS||SRC_NEED[b.t])){const I=srcInfo(b,false),pc=Math.round(I.pct*100);h+='<div class="outpct"><span class="meta">'+(SRC_ENDLESS?'Own '+SRC_WORD[SRC_OF[b.t]][1]+': '+I.n+' of '+I.need:'Sources in range')+'</span><span class="bar"><i style="width:'+pc+'%"></i></span><strong>'+pc+'%</strong><span class="meta">'+(SRC_ENDLESS?'of full output, with all workers':'of maximum yearly output, with all workers')+'</span></div>';}
     if(D.need){const nc=needCount(b,D.need);h+='<div class="meta">'+esc(nc.label)+'</div>';}
     if(!b.conn&&D.road!==false)h+='<p style="color:#8E3B2F">Connect this building to the Town Hall with a road.</p>';
-    on.push(()=>{$('w-minus').onclick=()=>{b.desired=Math.max(0,b.desired-1);assignWorkers();buildingSheet(b);save();};$('w-plus').onclick=()=>{assignWorkers();if(freeWorkers<=0){toast('No free workers. Take someone off another building first.');return;}b.desired=Math.min(sl,b.desired+1);assignWorkers();buildingSheet(b);save();};});
+    on.push(()=>{$('sheet-card').querySelectorAll('[data-wp]').forEach(x=>x.onclick=()=>{b.prio=+x.dataset.wp;assignWorkers();buildingSheet(b);save();});});
   }
   if(b.t==='smith')h+=smithHtml(b,on);
   if(b.t==='carp'){h+='<div class="wk"><span class="meta">Wood reserve</span><button type="button" class="btn small" id="rv-minus" aria-label="Lower the wood reserve">−10</button><span class="num">'+S.woodReserve+'</span><button type="button" class="btn small" id="rv-plus" aria-label="Raise the wood reserve">+10</button><span class="meta">never sawn</span></div>';
@@ -6165,7 +6194,10 @@ function buildingSheet(b){
   if(b.t==='trade')h+=tradeHtml(b,on);
   if(b.t==='tomb')h+=tombHtml(b,on);
   if(b.t==='tower')h+='<p>Archers at home: '+S.people.filter(p=>p.w==='archer'&&!p.away).length+'. Each tower needs 2 to count.</p>';
-  if(b.t==='th'){const q=thReq();h+='<p>'+esc(D.desc)+'</p>'+thExtraHtml(on);
+  if(b.t==='th'){const q=thReq();h+='<p>'+esc(D.desc)+'</p>';
+    {assignWorkers();const bs=builderSlots(),bd=builderDemand();h+='<h3>Builders</h3><div class="wk"><span class="meta">Priority</span>'+prioHtml('bp',builderPrio())+'</div><p class="workers"><strong>'+buildersWorking+' of '+bs+' builders working</strong> · '+(bd?bd+' wanted on '+B.filter(q=>q.cons).length+' site'+(B.filter(q=>q.cons).length>1?'s':''):'nothing to build, so they do other work')+'</p><p class="meta">Builders raise every new building and upgrade. One more builder post with each Town Hall level.</p>';
+      on.push(()=>{$('sheet-card').querySelectorAll('[data-bp]').forEach(x=>x.onclick=()=>{S.bPrio=+x.dataset.bp;assignWorkers();buildingSheet(b);save();});});}
+    h+=thExtraHtml(on);
     if(q){h+='<h3>Raise to level '+q.lv+'</h3>'+q.items.map(i=>'<div class="ms'+(i.ok?' done':'')+'"><i aria-hidden="true"></i><div>'+esc(i.t)+'</div></div>').join('')+'<div class="acts">'+btn('th-up','Raise the hall to level '+q.lv,{cls:'primary',dis:!q.ok})+'</div>';
       on.push(()=>{$('th-up').onclick=()=>{if(upgradeTH()){closeSheet();save();}};});}
     else h+='<p>The hall stands at its highest level for this update.</p>';
@@ -6243,7 +6275,7 @@ function confirmPlace(){if(!place||!place.chk||!place.chk.ok)return;const D=DEF[
   if(cl.length&&!place.moving){const gv=clearTiles(cl);toast(clearTxt(gv));}
   if(place.moving){const b=place.moving;const d=dims(b.t,place.rot);b.fx=place.fx;b.fy=place.fy;b.rot=place.rot;b.w=d.w;b.h=d.h;rebuildOcc();recomputeConn();assignWorkers();toast(D.name+' moved.');endMode();save();return;}
   const cst=costOf(place.t);if(!afford(cst)){toast('Not enough materials.');endMode();return;}
-  pay(cst,1);const b=addBuilding(place.t,place.fx,place.fy,place.rot,false);b.paid=cst;startCons(b,'build');assignWorkers();if(!b.cons){b.desired=Math.min(slotsOf(b),freeWorkers);assignWorkers();}checkMilestones();
+  pay(cst,1);const b=addBuilding(place.t,place.fx,place.fy,place.rot,false);b.paid=cst;startCons(b,'build');assignWorkers();checkMilestones();
   toast(b.cons?D.name+': construction started ('+(b.cons.days<1?'half a day':b.cons.days+' day'+(b.cons.days>1?'s':''))+', '+b.cons.w+' builder'+(b.cons.w>1?'s':'')+').'+(b.cons.builders?'':' It waits for a free worker.'):D.name+' built.');save();
   if(count(place.t)>=limitOf(place.t)||!afford(costOf(place.t)))endMode();else lastPlaceKey='';}
 let roadErase=false;
@@ -6447,7 +6479,7 @@ let HOVER_B=null;
 function buildingAt(px,py){const w=s2w(px,py),tt=w2t(w[0],w[1]);for(let k=0;k<4;k++){const x=tt[0]+k,y=tt[1]+k;if(!inMap(x,y))continue;const id=occ[y*N+x];if(id){const b=B.find(o=>o.id===id);if(b)return b;}}return null;}
 function hoverAt(px,py){if(mode!=='view'||titleOn||modalOpen){setHover(null);return;}setHover(buildingAt(px,py),px,py);}
 function setHover(b,px,py){HOVER_B=b;const tip=$('htip');cv.style.cursor=b?'pointer':'';if(!tip)return;if(!b){tip.hidden=true;return;}
-  const D=DEF[b.t];tip.innerHTML='<b>'+esc(b.t==='th'?'Town Hall':D.name)+'</b>'+(D.up||b.t==='th'?' <span>level '+(b.t==='th'?thLevel():b.lvl)+'</span>':'')+(slotsOf(b)?'<em>'+b.workers+'/'+slotsOf(b)+' workers'+(b.status&&b.status!=='Working'?' · '+esc(b.status):'')+'</em>':'');
+  const D=DEF[b.t];tip.innerHTML='<b>'+esc(b.t==='th'?'Town Hall':D.name)+'</b>'+(D.up||b.t==='th'?' <span>level '+(b.t==='th'?thLevel():b.lvl)+'</span>':'')+(slotsOf(b)?'<em>'+b.workers+' of '+slotsOf(b)+' working'+(slotsOf(b)?' · '+(winterStopped(b)?'winter stop':PRIO[prioOf(b)].toLowerCase()):'')+(b.status&&b.status!=='Working'?' · '+esc(b.status):'')+'</em>':'');
   tip.hidden=false;tip.style.left=Math.min(innerWidth-260,px+16)+'px';tip.style.top=(py+18)+'px';}
 function drawHover(){const b=HOVER_B;if(!b||mode!=='view')return;const c=fp(b),e=elev[b.fy*N+b.fx]||2;
   ctx.save();ctx.translate(0,-e);ctx.strokeStyle='rgba(255,236,170,0.95)';ctx.lineWidth=2.4/zoom+0.6;ctx.setLineDash([]);ctx.beginPath();ctx.moveTo(c.T[0],c.T[1]);ctx.lineTo(c.R[0],c.R[1]);ctx.lineTo(c.Bt[0],c.Bt[1]);ctx.lineTo(c.L[0],c.L[1]);ctx.closePath();ctx.stroke();
@@ -6706,7 +6738,7 @@ function peoplePanel(){assignWorkers();
     h+='<table class="t"><tr><td>Adults · children · elders</td><td>'+ad+' · '+ch+' · '+el+'</td></tr><tr><td>Housing</td><td>'+S.pop+' / '+housing()+'</td></tr>'+(thLevel()>=2?'<tr><td>Warriors</td><td>'+S.warriors+(S.train?' (+'+S.train.n+' training)':'')+'</td></tr>':'')+(S.thralls||thLevel()>=3?'<tr><td>Thralls</td><td>'+S.thralls+' / '+thrallCap()+'</td></tr>':'')+'<tr><td>Sick or wounded</td><td>'+sk+'</td></tr><tr><td>Able to work · free now</td><td>'+workforce()+' · '+freeWorkers+'</td></tr><tr><td>This year</td><td>'+S.yr.births+' born · '+S.yr.deaths+' died · '+S.yr.arrived+' came</td></tr></table>';
     h+='<h3>Morale · '+Math.round(S.morale)+' / 100</h3>'+bar(S.morale,S.morale<40?'#A34A3A':S.morale>=70?'#5E7A4E':'#C9A64A')+'<p class="meta">Above 70: +10% work and more births. Below 40: −15% work. Below 20 the people may rise. Heading to '+Math.round(S.moraleTarget||S.morale)+'.</p>'+factors(S.mf);
     h+='<h3>Attractiveness · '+Math.round(S.attr)+' / 100</h3>'+bar(S.attr,'#5E7F8C')+'<p class="meta">Draws newcomers when there is room and food.</p>'+factors(S.af);
-    h+='<h3>Workplaces</h3><table class="t">'+B.filter(b=>slotsOf(b)).map(b=>'<tr><td>'+esc(DEF[b.t].name)+(b.lvl>1?' <span class="meta">lv '+b.lvl+'</span>':'')+'</td><td>'+b.workers+' / '+slotsOf(b)+'</td></tr>').join('')+'</table>';}
+    h+='<h3>Workplaces</h3><table class="t"><tr><td>Builders <span class="meta">Town Hall</span></td><td>'+buildersWorking+' / '+builderSlots()+' <span class="meta">'+PRIO[builderPrio()]+'</span></td></tr>'+B.filter(b=>slotsOf(b)).map(b=>'<tr><td>'+esc(DEF[b.t].name)+(b.lvl>1?' <span class="meta">lv '+b.lvl+'</span>':'')+'</td><td>'+b.workers+' / '+slotsOf(b)+' <span class="meta">'+(winterStopped(b)?'Winter stop':PRIO[prioOf(b)])+'</span></td></tr>').join('')+'</table>';}
   if(tabP==='Lineage'){const j=jarlP();
     if(j){h+='<div class="pcard">'+portrait(j,110)+'<div><h2>'+esc(pname(j))+'</h2><p class="meta">Jarl of Kaldstrand · '+Math.floor(j.a)+' years · generation '+S.gen+'</p>'+(j.jt||[]).map(k=>'<p><strong>'+esc(JTRAITS[k].n)+'</strong> · '+esc(JTRAITS[k].d)+'</p>').join('')+'</div></div>';
       const sp=j.sp?PB(j.sp):null;if(sp)h+='<h3>Spouse</h3>'+personRow(sp);
@@ -6792,7 +6824,7 @@ function trainHtml(b,on){const avT=Object.keys(TROOPS).filter(k=>TROOPS[k].lv<=t
   h+='<h3>Train as</h3><div class="prio" role="group">'+avT.map(k=>'<button type="button" data-tt="'+k+'" aria-pressed="'+(S.trainType===k)+'">'+TROOPS[k].n+'</button>').join('')+'</div>';
   const T=TROOPS[S.trainType],room=trainRoom(S.trainType,b.lvl);if(S.trainN===undefined)S.trainN=room.n;S.trainN=Math.max(0,Math.min(S.trainN,room.n));
   h+='<p>'+esc(T.d)+' Strength '+T.str+'. Each recruit takes '+esc(costStr(T.eq))+'.</p><p class="meta">A batch trains for 10 days. Recruits leave their work. Warriors eat 1½ meals but help with chores in winter. There is no limit on warriors: free workers and gear decide.</p>';
-  if(!S.train){h+='<div class="wk"><button type="button" class="btn small" id="tr-minus" aria-label="Fewer recruits" '+(S.trainN<=0?'disabled':'')+'>−</button><span class="num">'+S.trainN+' <span class="meta">recruits</span></span><button type="button" class="btn small" id="tr-plus" aria-label="More recruits" '+(S.trainN>=room.n?'disabled':'')+'>+</button><span class="meta">'+freeWorkers+' free in the village · at most '+esc(room.why)+'</span></div>';
+  if(!S.train){h+='<div class="wk"><button type="button" class="btn small" id="tr-minus" aria-label="Fewer recruits" '+(S.trainN<=0?'disabled':'')+'>−</button><span class="num">'+S.trainN+' <span class="meta">recruits</span></span><button type="button" class="btn small" id="tr-plus" aria-label="More recruits" '+(S.trainN>=room.n?'disabled':'')+'>+</button><span class="meta">'+spareWorkers()+' can leave their work · at most '+esc(room.why)+'</span></div>';
     if(S.trainN>0)h+='<div class="acts">'+btn('tr-go','Train '+S.trainN+' '+T.n.toLowerCase()+(S.trainN>1?'s':''),{cls:'primary'})+'</div>';
     const up=retrainList(S.trainType);if(up.length){const n=Math.min(up.length,trainMax(b.lvl));h+='<div class="acts">'+btn('tr-up','Retrain '+n+' weaker troop'+(n>1?'s':'')+' as '+T.n.toLowerCase()+'s')+'</div>';}}
   on.push(()=>{$('sheet-card').querySelectorAll('[data-tt]').forEach(x=>x.onclick=()=>{S.trainType=x.dataset.tt;S.trainN=undefined;buildingSheet(b);});
@@ -6877,7 +6909,9 @@ function renderUpl(force){let el=$('upl');if(!uplOpen||titleOn||!isWide()||($('t
 const upReady=()=>upgradeItems().filter(o=>o.ok).length;
 setInterval(()=>{try{renderUpl();
   const bd=$('dk-upl')&&$('dk-upl').querySelector('.bdg');if(bd){const n=upReady();bd.textContent=n||'';bd.hidden=!n;}
-  if(!$('sheet').hidden&&sheetKind==='prod'&&prodPanel.day!==S.day)prodPanel();}catch(e){}},700);
+  if(!$('sheet').hidden&&sheetKind==='prod'&&prodPanel.day!==S.day)prodPanel();
+  /* keep an open building sheet's worker numbers current (sickness, deaths, winter, finished sites) */
+  if(!$('sheet').hidden&&sheetKind==='building'&&sel&&sel.b&&B.includes(sel.b)&&buildingSheet.day!==S.day&&!(document.activeElement&&document.activeElement.tagName==='INPUT')){buildingSheet.day=S.day;const y=$('sheet-card').scrollTop;buildingSheet(sel.b);$('sheet-card').scrollTop=y;}}catch(e){}},700);
 
 /* =================== world map (Bad North style), trade market, level 4–5 sheets =================== */
 /* World chart: 1000 × 800 units, north up. Drag or swipe to move, wheel or pinch to zoom. */
@@ -7125,7 +7159,7 @@ function buildGallery(){
 
 /* =================== save / load =================== */
 function snapshot(){const s=Object.assign({},S);delete s.bal;delete s.tc;s.meta={name:pname(jarlP())||'Kaldstrand',year:yearNow(),pop:S.pop,th:thLevel(),mode:S.mode};
-  return {v:4,n:N,S:s,meta:s.meta,b:B.map(b=>[b.t,b.fx,b.fy,b.rot,b.desired,b.lvl,Math.round(b.anvil),b.mode,b.proj,b.sch===undefined?null:b.sch,b.cons||null]),roads:Array.from(roads.reduce((a,v,i)=>{if(v)a.push(i);return a;},[])),walls:Array.from(walls.reduce((a,v,i)=>{if(v)a.push(i*4+v);return a;},[])),
+  return {v:4,n:N,S:s,meta:s.meta,b:B.map(b=>[b.t,b.fx,b.fy,b.rot,b.desired,b.lvl,Math.round(b.anvil),b.mode,b.proj,b.sch===undefined?null:b.sch,b.cons||null,prioOf(b)]),roads:Array.from(roads.reduce((a,v,i)=>{if(v)a.push(i);return a;},[])),walls:Array.from(walls.reduce((a,v,i)=>{if(v)a.push(i*4+v);return a;},[])),
   zones:Array.from(unlocked),src:srcSave()};}
 function apply(d){
   if(!d||d.v!==4||d.n!==N||!d.S||!Array.isArray(d.b))return false;
@@ -7137,7 +7171,7 @@ function apply(d){
   S.reserve=S.reserve||{};S.flow=S.flow||{};S.tg=S.tg||{};S.blessCd=S.blessCd||{};S.blessOn=S.blessOn||{};S.fx=S.fx||{};S.mods=S.mods||[];S.evtSeen=S.evtSeen||{};S.yr=S.yr||{births:0,deaths:0,arrived:0,left:0,raids:0,silver:0,fame:0};S.winter=S.winter||{hard:false,said:false,told:false};
   B=[];nextId=1;for(const a of d.b){if(!DEF[a[0]])continue;const b=addBuilding(a[0],a[1]|0,a[2]|0,(a[3]|0)&3,true);
     b.lvl=Math.min(5,Math.max(1,a[5]|0||1));b.anvil=num(a[6],100);b.mode=SMITH[a[7]]?a[7]:'tools';b.proj=a[8]&&SHIPS[a[8].type]?{type:a[8].type,done:num(a[8].done,0)}:(a[8]&&b.t==='tomb'?{done:num(a[8].done,0)}:null);if(a[9]!==null&&a[9]!==undefined&&HOUSE_SCH[a[9]])b.sch=a[9]|0;if(a[10]&&typeof a[10]==='object')b.cons={k:a[10].k,days:num(a[10].days,1),w:num(a[10].w,1),done:num(a[10].done,0),lv:num(a[10].lv,b.lvl),builders:0};
-    b.desired=Math.min(slotsOf(b),Math.max(0,a[4]|0));}
+    b.desired=Math.min(slotsOf(b),Math.max(0,a[4]|0));b.prio=(a[11]>=0&&a[11]<=3)?a[11]|0:PRIO_DEF;}
   /* Beta 0.17: the shipyard became 3×3 (boathouse on the shore + quay and slipway over the sea); move old ones to the nearest spot that fits */
   rebuildOcc();for(const b of B){if(b.t!=='shipyard'||canPlace('shipyard',b.fx,b.fy,b.rot,b.id).ok)continue;let best=null;for(let dy=-1;dy<=2&&!best;dy++)for(let dx=-1;dx<=2&&!best;dx++)if(canPlace('shipyard',b.fx+dx,b.fy+dy,b.rot,b.id).ok)best=[b.fx+dx,b.fy+dy];if(best){b.fx=best[0];b.fy=best[1];rebuildOcc();}}
   roads=new Uint8Array(N*N);(d.roads||[]).forEach(i=>{if(i>=0&&i<N*N)roads[i]=1;});

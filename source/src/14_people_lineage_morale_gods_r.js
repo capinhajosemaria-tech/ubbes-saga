@@ -278,7 +278,7 @@ function trainPool(){return S.people.filter(p=>p.id!==S.jarl&&!p.w&&p.a>=16&&p.a
 /* most recruits possible now, and what limits it */
 function trainRoom(type,lvl){const T=TROOPS[type]||TROOPS.skirm;assignWorkers();const pool=trainPool();let n=trainMax(lvl),why='a batch holds '+n;
   if(pool.length<n){n=pool.length;why=n+' fit adults aged 16–44 without a weapon';}
-  if(freeWorkers<n){n=Math.max(0,freeWorkers);why=n+' free workers';}
+  {const sp=spareWorkers();if(sp<n){n=Math.max(0,sp);why=n+' workers not on Urgent jobs';}}
   for(const k in T.eq){const g=Math.floor((S.res[k]||0)/T.eq[k]);if(g<n){n=g;why='gear for '+g+' ('+RNAME[k].toLowerCase()+')';}}
   return {n:Math.max(0,n),why:why};}
 /* weaker troops at home that could retrain as this type */

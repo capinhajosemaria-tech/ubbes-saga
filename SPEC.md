@@ -1,4 +1,4 @@
-# Ubbe's Saga — specification (Beta 0.17.0)
+# Ubbe's Saga — specification (Beta 0.17.1)
 
 How the game works **today**. Numbers are in `docs/NUMBERS.md` (generated). The long-term vision for Town Hall 6–10 is in `docs/DESIGN.md`.
 
@@ -34,9 +34,9 @@ A cozy-but-harsh Viking village builder for the browser. Year 865, the village o
 - Thralls (from raids) work; soft or harsh policy.
 
 ## 6. Economy
-- Buildings have worker slots; people are assigned automatically, the player sets how many per building (− / +).
+- Buildings have worker slots; people are assigned automatically by **priority**, set per building: Stopped · Low · High (default) · Urgent. Urgent places are filled to the last post first (oldest first); then High places share the rest one worker at a time, then Low places. Berry gatherers stop in winter by themselves and go back to their own priority in summer. Every building sheet shows how many work there (e.g. "3 of 4 working here"); the hover tip and the People → Workplaces table show it too. Recruits for training may be taken from anyone not on an Urgent job. (Balance bots still set head counts themselves with `S.manualStaff`.)
 - Output per worker × building level bonus: level 2–3 ×1.2 (fields ×1.3 at level 3), level 4 ×1.4, level 5 ×1.55. Non-field buildings get +1 worker slot at level 3.
-- **Construction takes time:** a new building (and each upgrade) takes ½ day (1×1 decor), 1 day (up to 2×2), 2 days (3×2, 3×3) or 3 days (4×3 and larger, the Town Hall) and needs 1–3 builders taken from the free workers, oldest site first. The plot shows scaffolding and a progress bar; with no free workers the site waits. Ragnar's Ship-Tomb is raised by its own builders as before.
+- **Construction takes time:** a new building (and each upgrade) takes ½ day (1×1 decor), 1 day (up to 2×2), 2 days (3×2, 3×3) or 3 days (4×3 and larger, the Town Hall) and needs 1–3 builders, oldest site first. Builders are the **Town Hall's builder posts**: 2 + Town Hall level (3 at TH1, +1 per level), with their own priority on the Town Hall sheet; they only take people while something is being built. The plot shows scaffolding and a progress bar; with no builders the site waits. Ragnar's Ship-Tomb is raised by its own builders as before.
 - **Limits:** houses, granaries and warehouses have no limit; the 1st and 2nd granary or warehouse cost the base price, the 3rd–5th each +30% on the previous one, then +50% each. Other buildings keep per-level limits. Decor unchanged.
 - Storage caps: food (granaries), goods (warehouses), weapons (arsenal). There is no water resource: the village lives by the river.
 - **Firewood:** each house burns 0.35 wood a day in summer and 0.84 in winter (−30% since 0.15.3) (houses at level 3+ ×0.75; the Town Hall burns as two houses). When logs run out, fires burn planks (1 plank = 2 wood), never below the plank reserve.

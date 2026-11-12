@@ -68,13 +68,13 @@ function buildingSheet(b){
   const on=[];
   if(b.t!=='th'){h+='<p class="role"><strong>'+esc(roleOf(b.t))+'.</strong> '+esc(D.desc||'')+'</p>';const nd=needsOf(b.t);if(nd.length)h+='<div class="meta needs">Needs: '+esc(nd.join(' · '))+'</div>';}
   if(sl){h+='<span class="status '+statusClass(b.status)+'">'+esc(b.status||'Starting')+'</span>';
-    assignWorkers();h+='<div class="wk"><button type="button" class="btn small" id="w-minus" aria-label="Fewer workers" '+(b.desired<=0?'disabled':'')+'>−</button><span class="num">'+b.desired+' / '+sl+' <span class="meta">workers</span></span><button type="button" class="btn small" id="w-plus" aria-label="More workers" '+(b.desired>=sl||freeWorkers<=0?'disabled':'')+'>+</button><span class="meta">'+freeWorkers+' free in the village</span></div>';
+    assignWorkers();const pr=prioOf(b),ws=winterStopped(b);h+='<div class="wk"><span class="meta">Priority</span>'+prioHtml('wp',pr)+'</div><p class="workers"><strong>'+(b.workers||0)+' of '+sl+' working here</strong>'+(ws?' · stopped for winter, back to '+PRIO[pr]+' in summer':pr===0?' · stopped':(b.workers||0)<sl?' · not enough people for every post':'')+' <span class="meta">· '+freeWorkers+' free in the village</span></p>';
     if(D.out){const pc=Math.round(100*(b.workers||0)/sl);h+='<div class="outpct"><span class="meta">Output from workers</span><span class="bar"><i style="width:'+pc+'%"></i></span><strong>'+pc+'%</strong><span class="meta">'+(b.workers||0)+' of '+sl+' working · each worker adds '+Math.round(100/sl)+'%</span></div>';}
     h+='<p>'+esc(D.out||'')+(b.made?' · <strong>Yesterday: '+esc(b.made)+'</strong>':'')+'</p>';
     if(SRC_OF[b.t]&&(!SRC_ENDLESS||SRC_NEED[b.t])){const I=srcInfo(b,false),pc=Math.round(I.pct*100);h+='<div class="outpct"><span class="meta">'+(SRC_ENDLESS?'Own '+SRC_WORD[SRC_OF[b.t]][1]+': '+I.n+' of '+I.need:'Sources in range')+'</span><span class="bar"><i style="width:'+pc+'%"></i></span><strong>'+pc+'%</strong><span class="meta">'+(SRC_ENDLESS?'of full output, with all workers':'of maximum yearly output, with all workers')+'</span></div>';}
     if(D.need){const nc=needCount(b,D.need);h+='<div class="meta">'+esc(nc.label)+'</div>';}
     if(!b.conn&&D.road!==false)h+='<p style="color:#8E3B2F">Connect this building to the Town Hall with a road.</p>';
-    on.push(()=>{$('w-minus').onclick=()=>{b.desired=Math.max(0,b.desired-1);assignWorkers();buildingSheet(b);save();};$('w-plus').onclick=()=>{assignWorkers();if(freeWorkers<=0){toast('No free workers. Take someone off another building first.');return;}b.desired=Math.min(sl,b.desired+1);assignWorkers();buildingSheet(b);save();};});
+    on.push(()=>{$('sheet-card').querySelectorAll('[data-wp]').forEach(x=>x.onclick=()=>{b.prio=+x.dataset.wp;assignWorkers();buildingSheet(b);save();});});
   }
   if(b.t==='smith')h+=smithHtml(b,on);
   if(b.t==='carp'){h+='<div class="wk"><span class="meta">Wood reserve</span><button type="button" class="btn small" id="rv-minus" aria-label="Lower the wood reserve">−10</button><span class="num">'+S.woodReserve+'</span><button type="button" class="btn small" id="rv-plus" aria-label="Raise the wood reserve">+10</button><span class="meta">never sawn</span></div>';
@@ -94,7 +94,10 @@ function buildingSheet(b){
   if(b.t==='trade')h+=tradeHtml(b,on);
   if(b.t==='tomb')h+=tombHtml(b,on);
   if(b.t==='tower')h+='<p>Archers at home: '+S.people.filter(p=>p.w==='archer'&&!p.away).length+'. Each tower needs 2 to count.</p>';
-  if(b.t==='th'){const q=thReq();h+='<p>'+esc(D.desc)+'</p>'+thExtraHtml(on);
+  if(b.t==='th'){const q=thReq();h+='<p>'+esc(D.desc)+'</p>';
+    {assignWorkers();const bs=builderSlots(),bd=builderDemand();h+='<h3>Builders</h3><div class="wk"><span class="meta">Priority</span>'+prioHtml('bp',builderPrio())+'</div><p class="workers"><strong>'+buildersWorking+' of '+bs+' builders working</strong> · '+(bd?bd+' wanted on '+B.filter(q=>q.cons).length+' site'+(B.filter(q=>q.cons).length>1?'s':''):'nothing to build, so they do other work')+'</p><p class="meta">Builders raise every new building and upgrade. One more builder post with each Town Hall level.</p>';
+      on.push(()=>{$('sheet-card').querySelectorAll('[data-bp]').forEach(x=>x.onclick=()=>{S.bPrio=+x.dataset.bp;assignWorkers();buildingSheet(b);save();});});}
+    h+=thExtraHtml(on);
     if(q){h+='<h3>Raise to level '+q.lv+'</h3>'+q.items.map(i=>'<div class="ms'+(i.ok?' done':'')+'"><i aria-hidden="true"></i><div>'+esc(i.t)+'</div></div>').join('')+'<div class="acts">'+btn('th-up','Raise the hall to level '+q.lv,{cls:'primary',dis:!q.ok})+'</div>';
       on.push(()=>{$('th-up').onclick=()=>{if(upgradeTH()){closeSheet();save();}};});}
     else h+='<p>The hall stands at its highest level for this update.</p>';
@@ -172,7 +175,7 @@ function confirmPlace(){if(!place||!place.chk||!place.chk.ok)return;const D=DEF[
   if(cl.length&&!place.moving){const gv=clearTiles(cl);toast(clearTxt(gv));}
   if(place.moving){const b=place.moving;const d=dims(b.t,place.rot);b.fx=place.fx;b.fy=place.fy;b.rot=place.rot;b.w=d.w;b.h=d.h;rebuildOcc();recomputeConn();assignWorkers();toast(D.name+' moved.');endMode();save();return;}
   const cst=costOf(place.t);if(!afford(cst)){toast('Not enough materials.');endMode();return;}
-  pay(cst,1);const b=addBuilding(place.t,place.fx,place.fy,place.rot,false);b.paid=cst;startCons(b,'build');assignWorkers();if(!b.cons){b.desired=Math.min(slotsOf(b),freeWorkers);assignWorkers();}checkMilestones();
+  pay(cst,1);const b=addBuilding(place.t,place.fx,place.fy,place.rot,false);b.paid=cst;startCons(b,'build');assignWorkers();checkMilestones();
   toast(b.cons?D.name+': construction started ('+(b.cons.days<1?'half a day':b.cons.days+' day'+(b.cons.days>1?'s':''))+', '+b.cons.w+' builder'+(b.cons.w>1?'s':'')+').'+(b.cons.builders?'':' It waits for a free worker.'):D.name+' built.');save();
   if(count(place.t)>=limitOf(place.t)||!afford(costOf(place.t)))endMode();else lastPlaceKey='';}
 let roadErase=false;

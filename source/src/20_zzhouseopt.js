@@ -2135,7 +2135,25 @@ function trBale(p,s,win,col){/* cloth-wrapped bale with rope ties */const w=4*s,
 function trFurs(p,win){for(let k=0;k<3;k++){ctx.fillStyle=win?'#E2DCD0':['#6E5038','#8A6A48','#3E3430'][k];ctx.beginPath();ctx.ellipse(p[0]+(k-1)*1.2,p[1]-1-k*1.3,4.4-k*0.6,1.5,0.05,0,6.3);ctx.fill();}}
 function trScale(p,win){/* balance: post, beam, two pans */hoLine(p,[p[0],p[1]-9],win?'#B8B0A0':'#5A4A3A',0.9);hoLine([p[0]-4.4,p[1]-9],[p[0]+4.4,p[1]-8.4],win?'#C8C0B0':'#B8863E',0.8);for(const [dx,dy] of [[-4.4,-9],[4.4,-8.4]]){hoLine([p[0]+dx,p[1]+dy],[p[0]+dx,p[1]+dy+3.4],'rgba(200,180,140,0.9)',0.4);ctx.fillStyle=win?'#D8D2C4':'#B8863E';ctx.beginPath();ctx.ellipse(p[0]+dx,p[1]+dy+3.6,1.8,0.6,0,0,6.3);ctx.fill();}}
 function trSilver(p,win){if(win)return;for(let k=0;k<3;k++){ctx.fillStyle=k%2?'#C8CCD0':'#AEB4BA';ctx.fillRect(p[0]-2+k*0.6,p[1]-1.2-k*0.9,3.4,0.9);}ctx.fillStyle='#E8A040';for(let k=0;k<5;k++){ctx.beginPath();ctx.arc(p[0]+4+k*0.9,p[1]-0.6-(k%2)*0.6,0.55,0,6.3);ctx.fill();}}
-function drawTradeOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),sd=(b.id||0)*89+opt,J=WOOD_SET[opt===2?3:opt===4?2:4];
+function drawTradeL(b,win,f,sd){/* José: option 1 as an L — a main hall along the back, a wing coming forward at the right end with the shop door in its gable;
+   the striped awning comes out from under the main hall's eave, between its wall and the wing, over a counter of goods */
+  const J=WOOD_SET[4],base={sd,fh:2.4,wh:13,rh:13,ov:0.07,th:1.6,wt:'planks',wall:'#9A7A52',wallD:'#7A5E3E',roof:J.roof,roofD:J.roofD,roofE:shade(J.roofD,0.7),rt:J.rt,frame:true,frameCol:'#2A1F18',k:1,v:1};
+  const mc=-0.52,mg=Object.assign({},base,{hl:1.2,hw:0.4}),fm=(a,c,h)=>f(a-0.05,c+mc,h);
+  const wa=0.82,wc=0.12,wg=Object.assign({},base,{hl:0.62,hw:0.33,rh:11}),fwg=(x,y,h)=>f(y+wa,x+wc,h);/* swapped: the wing's ridge runs toward the viewer, its gable faces the front */
+  {const r=hoRoof(fm,mg,win);r.back();hoFooting(fm,mg,win);hoWalls(fm,mg,win);r.end();for(const a of [-0.85,-0.3])hoWindow(fm,mg,'L',a,0.1,mg.fh+5,mg.fh+8.4,{shutters:'#7A2E24'});r.front();r.ridge();hoBarge(fm,mg,'#4A3424',0.25,true);}
+  /* awning: from just under the main eave, sloping out over the counter, ending against the wing's wall */const A0=-1.18,A1=wa-wg.hw-0.02,c0=mc+mg.hw,c1=c0+0.5,hB=10.6,hF=7.4;
+  hoQ([f(A0,c0+0.02,0),f(A1,c0+0.02,0),f(A1,c1,0),f(A0,c1,0)],'rgba(60,50,40,0.25)');
+  /* counter of goods along the front of the awning */const cc=c0+0.34;hoQ([f(A0+0.1,cc-0.08,0),f(A1-0.06,cc-0.08,0),f(A1-0.06,cc+0.08,0),f(A0+0.1,cc+0.08,0)],'rgba(0,0,0,0)');
+  hoQ([f(A0+0.1,cc+0.08,0),f(A1-0.06,cc+0.08,0),f(A1-0.06,cc+0.08,4.6),f(A0+0.1,cc+0.08,4.6)],win?'#C8C0B0':'#6E5038');hoQ([f(A1-0.06,cc-0.08,0),f(A1-0.06,cc+0.08,0),f(A1-0.06,cc+0.08,4.6),f(A1-0.06,cc-0.08,4.6)],win?'#B8B0A0':'#56402C');
+  hoQ([f(A0+0.1,cc-0.08,4.6),f(A1-0.06,cc-0.08,4.6),f(A1-0.06,cc+0.08,4.6),f(A0+0.1,cc+0.08,4.6)],win?'#E0D8C8':'#9A7A52');
+  if(!win){ctx.strokeStyle='rgba(30,20,12,0.4)';ctx.lineWidth=0.4;ctx.beginPath();for(let k=1;k<12;k++){const a=A0+0.1+(A1-A0-0.16)*k/12,p=f(a,cc+0.08,0),q=f(a,cc+0.08,4.6);ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);}ctx.stroke();}
+  trFurs(f(-0.95,cc,4.6),win);trSilver(f(-0.55,cc,4.6),win);trScale(f(-0.15,cc,4.6),win);trBale(f(0.25,cc,4.6),0.7,win);
+  /* posts at the outer edge, a beam, then the striped cloth with a scalloped hem; the inner edge tucked under the eave */for(const a of [A0+0.04,(A0+A1)/2,A1-0.04])hoQ([f(a-0.018,c1,0),f(a+0.018,c1,0),f(a+0.018,c1,hF),f(a-0.018,c1,hF)],win?'#C8C2B4':'#3A2A1C');hoLine(f(A0,c1,hF),f(A1,c1,hF),win?'#C8C2B4':'#3A2A1C',1.1);
+  const n=10;for(let i=0;i<n;i++){const a0=A0+(A1-A0)*i/n,a1=A0+(A1-A0)*(i+1)/n,sag=1.2;hoQ([f(a0,c0-0.02,hB),f(a1,c0-0.02,hB),f(a1,c1+0.02,hF+0.4),f((a0+a1)/2,c1+0.02,hF+0.4-sag*0.3),f(a0,c1+0.02,hF+0.4)],win?'#EEEAE2':(i%2?'#A33A2E':'#E8DFC8'));}
+  if(!win){for(let i=0;i<n;i++){const a=A0+(A1-A0)*(i+0.5)/n,p=f(a,c1+0.02,hF+0.4);ctx.fillStyle=i%2?'#A33A2E':'#E8DFC8';ctx.beginPath();ctx.moveTo(p[0]-2.4,p[1]);ctx.quadraticCurveTo(p[0],p[1]+2.4,p[0]+2.4,p[1]);ctx.fill();}
+    hoLine(f(A0,c0-0.01,hB+0.2),f(A1,c0-0.01,hB+0.2),'rgba(20,14,8,0.45)',1);/* shadow line under the eave where the cloth tucks in */}
+  /* the wing in front on the right: shop door in its front gable, a window on its side */{const r=hoRoof(fwg,wg,win);r.back();hoFooting(fwg,wg,win);hoWalls(fwg,wg,win);r.end();hoDoor(fwg,wg,'G',0,0.17,8.5,{col:'#4A3424',steps:1});hoWindow(fwg,wg,'L',0.05,0.1,wg.fh+5,wg.fh+8.4,{shutters:'#7A2E24'});r.front();r.ridge();hoBarge(fwg,wg,'#4A3424',0.25,true);}}
+function drawTradeOpt(b,win,opt){if(opt===5){return drawTradeL(b,win,hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),(b.id||0)*89+5);}const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),sd=(b.id||0)*89+opt,J=WOOD_SET[opt===2?3:opt===4?2:4];
   const hc=opt===1||opt===4?-0.35:-0.2,fw=(a,c,h)=>f(a+(opt===4?-0.4:0),c+hc,h);
   const g={sd,hl:opt===4?0.85:1.15,hw:0.5,fh:2.4,wh:opt===3?20:13,rh:14,ov:0.07,th:1.7,wt:'planks',wall:opt===2?'#8A7A64':opt===3?'#8A6A48':opt===4?'#4E3C2E':'#9A7A52',wallD:opt===2?'#6E604E':opt===3?'#6E5038':opt===4?'#3A2C22':'#7A5E3E',
     roof:J.roof,roofD:J.roofD,roofE:shade(J.roofD,0.7),rt:J.rt,blue:J.blue,frame:true,frameCol:'#2A1F18',k:1,v:1};
@@ -2159,4 +2177,5 @@ function drawTradeOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,ro
       for(const q of [l,rr]){hoLine(q,[q[0],q[1]+6],'rgba(200,180,140,0.9)',0.5);ctx.fillStyle=win?'#D8D2C4':'#6E5038';ctx.beginPath();ctx.ellipse(q[0],q[1]+6.4,3,1,0,0,6.3);ctx.fill();}trBale([rr[0],rr[1]+6],0.6,win);}
     trFurs(P(0.45,0.55,0),win);trBale(P(1.15,0.5,0),1,win);trBale(P(1.2,0.3,0),1,win,'#B8A47A');brBarrel(P(0.4,-0.5,0),1,win);brBarrel(P(0.55,-0.6,0),1,win);}}
 {const _shX=shShape;shShape=function(b){if(b.t==='trade'&&TRADE_OPT){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),box=(a,c,sa,sc,h)=>({pts:[f(a-sa,c-sc,0),f(a+sa,c-sc,0),f(a+sa,c+sc,0),f(a-sa,c+sc,0)],h});
+  if(TRADE_OPT===5)return [box(-0.05,-0.52,1.27,0.47,0.6),box(-0.05,-0.52,1.27,0.06,1.0),box(0.82,0.12,0.4,0.69,0.55),box(-0.2,0.13,0.95,0.25,0.35)];
   const o=TRADE_OPT,hc=o===1||o===4?-0.35:-0.2,ha=o===4?-0.4:0,hl=o===4?0.85:1.15;const V=[box(ha,hc,hl+0.07,0.57,o===3?0.8:0.6),box(ha,hc,hl+0.07,0.06,o===3?1.3:1.1)];if(o===1)V.push(box(0,0.45,0.85,0.27,0.4));return V;}return _shX(b);};}

@@ -55,9 +55,12 @@ Order: Round 1 (done, 0.14.0) → 1C (done, 0.15.0) → **1H** → 1D → 1I →
 ## 2. Art redesign (José, 2026-11-11)
 Prototypes are on branch `art-prototypes` (code, switches and option sheets: `docs/art/README.md` on that branch). Nothing is released.
 José's problems with buildings close up: many have **no door**, **chimneys badly seated on roofs**, **details sparse** and **lines too thick**.
-Decided: roads B, grass B, market M1 (now in Round 1). **Houses** (2026-11-12): style, 4 roofs and 8 colour schemes in `docs/art/STYLE.md` (prototype on branch `house-options`). Next: the other buildings one at a time, recorded in the same file.
+Decided: roads B, grass B (now in Round 1).
+**Building style work (2026-11-12, continue in a new conversation):** every decision is in `docs/art/STYLE.md` on branch `house-options` (prototype code `source/src/20_zzhouseopt.js`, switches `window.__setHouse/__setJarl/__setTH/__setHof/__setGran/__setWare/__setWood/__setCarp/__setSmith/__setMarket` in the test page; screenshot scripts `tools/ui/tmp_optgrid.py`, `tmp_bshot.py`, `tmp_thopt.py`). Nothing is released.
+- Approved: Houses (cottage, 4 roofs, 8 colour schemes), Jarl's House, Town Hall (red boards), Hof, Granary, Warehouse, Woodcutter, Carpenter, Smithy.
+- [ ] **Next: finish the Market Square** (draft 5: booths and well liked; floor still to choose), then the rest of the list in STYLE.md, one building at a time.
+- [ ] After all buildings are approved: a round to build them properly into the game (shared parts kit, performance check, phone check), replacing the prototype file.
 To decide:
-- [ ] **Town Hall entrance**: 6 options (1 Urnes portal, 2 carved porch, 3 iron gate, 4 dragon pillars, 5 painted hall, 6 vestibule with antlers) or a mix. Claude's view: 1 most beautiful close up, 6 reads best from afar, 2 needs geometry work. The door must be big and ornamented.
 - [ ] **Building grime** (contact shadow, damp walls, moss on footings, rain streaks) from option B — ask José.
 Plan (agreed in principle):
 1. **Style rules** (short doc): line widths (fine, ~0.5–1 px), door size/position on every building, chimney seating (on ridge or slope, with flashing and base), windows/shutters, boards, eaves. Derived from the chosen Town Hall entrance.

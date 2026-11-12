@@ -809,7 +809,7 @@ function hoBooth(f,a0,c0,face,o,win){const fl=face.endsWith('-'),fc=face[0];cons
     for(const q of [A[3],A[2]]){const pg=[q[0]+(q[0]-P(0,0,hF)[0])*0.15,q[1]+9];hoLine(q,pg,'rgba(200,180,140,0.75)',0.4);ctx.fillStyle='#4A3424';ctx.fillRect(pg[0]-0.6,pg[1]-1.4,1.2,1.4);}}
   else{hoQ(A,win?'#EEF1F0':o.roof);if(!win)hoRoofSurface((u,v)=>lerp(lerp(A[3],A[2],u),lerp(A[0],A[1],u),v),{sd:o.sd||3,rt:o.rt,rh:6,roofD:shade(o.roof,0.75)},win);hoLine(A[3],A[2],'rgba(10,8,6,0.5)',0.7);}
   hoQ([A[1],A[2],[A[2][0],A[2][1]+1.4],[A[1][0],A[1][1]+1.4]],'#3A2A1C');}
-function hoFlagstones(f,hs,win,sd){if(window.__FLAG)return hoFlag0(f,hs,win,sd);
+function hoFlagstones(f,hs,win,sd){if(window.__FLAG)return hoFlag0(f,hs,win,sd);if(!window.__FANS)return hoSetts(f,hs,win,sd);
   hoQ([f(-hs-0.07,-hs-0.07,0),f(hs+0.07,-hs-0.07,0),f(hs+0.07,hs+0.07,0),f(-hs-0.07,hs+0.07,0)],win?'#BFC1BD':'#5E5850');hoQ([f(-hs,-hs,0),f(hs,-hs,0),f(hs,hs,0),f(-hs,hs,0)],win?'#D8DAD6':'#4E4A44');
   /* kerb of long dressed stones */for(let k=0;k<18;k++){const u=-hs+2*hs*(k+0.5)/18;for(const q of [[u,hs+0.035],[hs+0.035,u]]){const p=f(q[0],q[1],0);ctx.fillStyle=k%2?'#7E776C':'#8E877B';ctx.beginPath();ctx.ellipse(p[0],p[1],3.4,1.6,0,0,6.3);ctx.fill();}}
   /* cobbles laid in fans (arcs), each a small rounded stone in a slightly different tone */const fan=0.42;ctx.save();ctx.beginPath();{const q=[f(-hs,-hs,0),f(hs,-hs,0),f(hs,hs,0),f(-hs,hs,0)];ctx.moveTo(q[0][0],q[0][1]);for(const z of q)ctx.lineTo(z[0],z[1]);ctx.closePath();}ctx.clip();
@@ -839,5 +839,15 @@ function hoWell2(f,a,c,win){const P=(da,dc,h)=>f(a+da,c+dc,h),C=P(0,0,0),R=9,Ry=
   const r0=P(-0.15,0,hp-5),r1=P(0.15,0,hp-5);hoLine(r0,r1,'#6E5038',2.4);for(let k=1;k<5;k++){const p=lerp(r0,r1,k/5);hoLine([p[0]-0.6,p[1]-1],[p[0]+0.6,p[1]+1],'rgba(200,180,140,0.7)',0.4);}
   const ck=P(0.2,0,hp-5);hoLine(r1,ck,'#2A2622',0.8);hoLine(ck,[ck[0],ck[1]+3],'#2A2622',0.8);hoLine([ck[0],ck[1]+3],[ck[0]+1.6,ck[1]+3],'#5A4230',1);
   const rp=lerp(r0,r1,0.45);hoLine(rp,[rp[0],rp[1]+6],'#C9B38A',0.5);ctx.fillStyle='#6E5038';ctx.beginPath();ctx.moveTo(rp[0]-1.8,rp[1]+6);ctx.lineTo(rp[0]+1.8,rp[1]+6);ctx.lineTo(rp[0]+1.4,rp[1]+9);ctx.lineTo(rp[0]-1.4,rp[1]+9);ctx.fill();hoLine([rp[0]-1.8,rp[1]+7.2],[rp[0]+1.8,rp[1]+7.2],'#2A2622',0.4);
-  /* little shingled gable roof on the posts */const g={sd:7,hl:0.24,hw:0.16,fh:0,wh:hp,rh:6,ov:0.03,th:1.4,roof:'#2F2C2A',roofD:'#211F1D',roofE:'#171514',rt:'scale'};const fr=(a2,c2,hh)=>f(a+a2,c+c2,hh),rr=hoRoof(fr,g,win);rr.back();rr.end();rr.front();rr.ridge();hoBarge(fr,g,'#4A3424',0.25,false);
+  /* little shingled gable roof on the posts */const g={sd:7,hl:0.24,hw:0.16,fh:0,wh:hp,rh:6,ov:0.03,th:1.4,roof:'#2F2C2A',roofD:'#211F1D',roofE:'#171514',rt:'scale'};const fr=(a2,c2,hh)=>f(a+a2,c+c2,hh),rr=hoRoof(fr,g,win);rr.back();rr.end();rr.front();rr.ridge();
+  /* thin crossed boards on both gables */for(const ae of [g.hl+g.ov+0.01,-g.hl-g.ov-0.01])for(const sg of [1,-1]){const e=fr(ae,sg*(g.hw+g.ov),g.wh-g.ov/g.hw*g.rh),r2=fr(ae,0,g.wh+g.rh),x=[r2[0]+(r2[0]-e[0])*0.25,r2[1]+(r2[1]-e[1])*0.25];hoLine(ae>0||sg>0?e:r2,x,'#4A3424',0.8);}
   /* stone trough beside it */const tq=(da,dc,h)=>P(0.3+da,0.12+dc,h);hoQ([tq(-0.12,0.06,0),tq(0.12,0.06,0),tq(0.12,0.06,3),tq(-0.12,0.06,3)],'#857E72');hoQ([tq(0.12,-0.06,0),tq(0.12,0.06,0),tq(0.12,0.06,3),tq(0.12,-0.06,3)],'#726B60');hoQ([tq(-0.1,-0.04,3),tq(0.1,-0.04,3),tq(0.1,0.04,3),tq(-0.1,0.04,3)],'#3E5560');}
+
+function hoSetts(f,hs,win,sd){hoQ([f(-hs-0.07,-hs-0.07,0),f(hs+0.07,-hs-0.07,0),f(hs+0.07,hs+0.07,0),f(-hs-0.07,hs+0.07,0)],win?'#BFC1BD':'#5A544C');hoQ([f(-hs,-hs,0),f(hs,-hs,0),f(hs,hs,0),f(-hs,hs,0)],win?'#C9CBC7':'#3E3A35');
+  /* dark granite setts in running bond: rows across, each stone a slightly different length and tone, a soft highlight on its top edge */
+  const rows=Math.round(2*hs/0.085);for(let r=0;r<rows;r++){const c1=-hs+2*hs*r/rows+0.006,c2=-hs+2*hs*(r+1)/rows-0.006;let a=-hs+(r%2?0.06:0);
+    while(a<hs){const len=0.1+0.05*h2(sd,r*131+(a*100|0),11),a2=Math.min(hs,a+len),aa=Math.max(-hs,a)+0.006;if(a2-aa>0.02){const t2=h2(sd,r*97+(a*100|0),12),col=win?(t2>0.5?'#E2E4E0':'#D4D6D2'):(t2>0.8?'#7A736A':t2>0.55?'#6A645B':t2>0.25?'#5C574F':'#655E52');
+      hoQ([f(aa,c1,0),f(a2-0.006,c1,0),f(a2-0.006,c2,0),f(aa,c2,0)],col);hoLine(f(aa,c2,0),f(a2-0.006,c2,0),'rgba(255,250,235,0.10)',0.5);}a=a2;}}
+  /* worn path from the corners to the well, a little moss in the joints near the edges */ctx.fillStyle='rgba(150,140,120,0.10)';const C=f(0,0,0);ctx.beginPath();ctx.ellipse(C[0],C[1],26,13,0,0,6.3);ctx.fill();
+  ctx.fillStyle='rgba(90,110,60,0.35)';for(let k=0;k<22;k++){const e=h2(sd,k,13)>0.5?1:-1,p=f(e*(hs-0.05-h2(sd,k,14)*0.15),(h2(sd,k,15)-0.5)*2*hs,0);ctx.fillRect(p[0]-1.2,p[1]-0.3,2.4,0.6);}
+  for(let k=0;k<20;k++){const u=-hs+2*hs*(k+0.5)/20;for(const q of [[u,hs+0.035],[hs+0.035,u]]){const p=f(q[0],q[1],0);ctx.fillStyle=k%2?'#7E776C':'#8E877B';ctx.beginPath();ctx.ellipse(p[0],p[1],3,1.4,0,0,6.3);ctx.fill();}}}

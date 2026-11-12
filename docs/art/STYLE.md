@@ -21,5 +21,13 @@ Prototype code: branch `house-options`, `source/src/20_zzhouseopt.js` (switch `w
 - **8 colour schemes** (all kept, one at random per house): 1 Pine and straw · 2 Tar and slate · 3 Falu red · 4 Silver grey · 5 Oak and red boards · 6 Birch and black · 7 Ochre and slate · 8 Black and red (7 and 8 rarer).
 - To polish when implementing: shutters cover the window a little; house fills a bit more of its plot.
 
+## Jarl's House (chosen: option 2, 2026-11-12)
+- Same bowed hip-roof longhouse as before, taller (walls 24 px), on an **imposing cut-stone plinth** (staggered blocks, cap slab, moss) with a wide 3-step stair to the door. No banner.
+- **Black tarred shingles** (rounded scales) on the long slope, courses on the hip end.
+- Dark staves on a visible frame; **carved double door** in an arch, gold interlace portal, iron straps, two torches.
+- **4 windows with red shutters** on the long side, red/white shields between them.
+- **Ridge beam and dragons are one carved piece**: one ribbon of dark wood from snout to snout, single outline, tapering up into the necks, one gold groove the whole length; flat carved heads (long snout, open jaw, swept crest, eye slit, cheek spiral) — not cartoon-like.
+- Prototype: `window.__setJarl(2)`.
+
 ## Next buildings
 One at a time: show the current look close up → José's notes → 2–4 options → choice, recorded here.

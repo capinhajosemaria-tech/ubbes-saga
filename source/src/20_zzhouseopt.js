@@ -1063,3 +1063,44 @@ function drawFishOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot
   hoFaering(f,ba,bc,bl,bw,win,sd);}
 {const _shF=shShape;shShape=function(b){if(b.t==='fish'&&FISH_OPT){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),{hl,hw,ha,hc,ST}=fishDims(b),box=(a0,a1,c0,c1)=>[f(a0,c0,0),f(a1,c0,0),f(a1,c1,0),f(a0,c1,0)];
   return [{pts:box(ha-hl,ha+hl,hc-hw,hc+hw),h:(ST+17)/26},{pts:box(ha-hl*0.6,ha+hl*0.6,hc-0.05,hc+0.05),h:(ST+23)/26},{pts:box(0.12,0.88,-0.32,-0.28),h:0.45},{pts:box(-0.28,0.52,0.22,0.38),h:0.22}];}return _shF(b);};}
+
+/* =================== Preserver options (prototype) — window.__setPres(n) ===================
+   3: jam workshop — plank house with an open porch in front: shelves of sealed clay crocks, a copper kettle on a stone hearth, a work table */
+let PRES_OPT=0;window.__setPres=n=>{PRES_OPT=n|0;};
+{const _dsP=drawShaped;drawShaped=function(b,win,c0,ax){if(PRES_OPT&&b.t==='pres'){drawPresOpt(b,win,PRES_OPT);return true;}return _dsP(b,win,c0,ax);};}
+function presDims(b){const L=Math.min(5,b.lvl||1);return {L,hl:L>=5?0.66:0.56,hw:0.3,ha:-0.08,hc:-0.4,pd:0.5};}
+function hoCrock(p,s,cap,win){/* clay crock with a cloth cover tied with string */s=s||1;const w=2.1*s,h=3.6*s;ctx.fillStyle=win?'#D8D2C6':'#9A6A40';ctx.beginPath();ctx.moveTo(p[0]-w*0.8,p[1]);ctx.quadraticCurveTo(p[0]-w*1.15,p[1]-h*0.55,p[0]-w*0.75,p[1]-h);ctx.lineTo(p[0]+w*0.75,p[1]-h);ctx.quadraticCurveTo(p[0]+w*1.15,p[1]-h*0.55,p[0]+w*0.8,p[1]);ctx.closePath();ctx.fill();
+  ctx.fillStyle='rgba(255,230,190,0.22)';ctx.fillRect(p[0]-w*0.6,p[1]-h*0.85,w*0.35,h*0.6);ctx.fillStyle=cap||'#C9B49A';ctx.beginPath();ctx.ellipse(p[0],p[1]-h,w*0.85,w*0.38,0,0,6.3);ctx.fill();ctx.fillRect(p[0]-w*0.85,p[1]-h,w*1.7,0.9*s);hoLine([p[0]-w*0.8,p[1]-h+1*s],[p[0]+w*0.8,p[1]-h+1*s],'#6E5038',0.4);}
+function drawPresOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),sd=(b.id||0)*17+opt,{L,hl,hw,ha,hc,pd}=presDims(b),J=WOOD_SET[4];
+  const fw=(a,c,h)=>f(a+ha,c+hc,h),g={sd,hl,hw,fh:2.2,wh:13,rh:11,ov:0.06,th:1.6,wt:'planks',wall:'#8A6A48',wallD:'#6E5438',roof:J.roof,roofD:J.roofD,roofE:shade(J.roofD,0.7),rt:J.rt,frame:true,frameCol:'#3A2A1C',k:1,v:1};
+  const r=hoRoof(fw,g,win);r.back();hoFooting(fw,g,win);hoWalls(fw,g,win);r.end();
+  hoDoor(fw,g,'L',-hl+0.16,0.15,8.5,{col:'#4A3424'});hoWindow(fw,g,'G',0,0.09,g.fh+5,g.fh+8,{shutters:'#7A3A2C'});
+  r.front();r.ridge();hoBarge(fw,g,'#4A3424',0.25,L>=5);
+  /* porch floor of planks */const pc0=hw,pc1=hw+pd;for(let a=-hl;a<hl;a+=0.06){hoQ([fw(a+0.003,pc0,0.6),fw(a+0.057,pc0,0.6),fw(a+0.057,pc1,0.6),fw(a+0.003,pc1,0.6)],win?'#E4E6E2':h2(sd,a*100|0,92)>0.5?'#8A7258':'#7E674E');}
+  hoQ([fw(-hl,pc1,0),fw(hl,pc1,0),fw(hl,pc1,0.6),fw(-hl,pc1,0.6)],'#5E4A38');hoQ([fw(hl,pc0,0),fw(hl,pc1,0),fw(hl,pc1,0.6),fw(hl,pc0,0.6)],'#4A3A2C');
+  /* stone hearth with a copper kettle of jam, a little steam (not smoke) */const ka=-hl+0.2,kc=hw+0.3;{const P=(da,dc,h)=>fw(ka+da,kc+dc,h);hoStoneBox((a,c,h)=>fw(a,c,h),ka,kc,0.11,0.1,0.6,4.2,win,sd);hoQ([P(-0.11,-0.1,4.2),P(0.11,-0.1,4.2),P(0.11,0.1,4.2),P(-0.11,0.1,4.2)],win?'#D8DAD6':'#9C978D');
+    const m=P(0,0,4.2);ctx.fillStyle='rgba(255,140,60,0.75)';ctx.beginPath();ctx.ellipse(m[0],m[1]+0.5,3.6,1.6,0,0,6.3);ctx.fill();
+    const k0=P(0,0,5);ctx.fillStyle='#8A4A28';ctx.beginPath();ctx.ellipse(k0[0],k0[1],4.4,2.1,0,0,3.14);ctx.lineTo(k0[0]-4.4,k0[1]-3.6);ctx.ellipse(k0[0],k0[1]-3.6,4.4,2.1,0,3.14,0,true);ctx.closePath();ctx.fill();ctx.fillStyle='rgba(255,200,150,0.3)';ctx.fillRect(k0[0]-3.4,k0[1]-3.2,1.2,3.4);
+    ctx.fillStyle='#B8703A';ctx.beginPath();ctx.ellipse(k0[0],k0[1]-3.6,4.4,2.1,0,0,6.3);ctx.fill();ctx.fillStyle='#5A1E2A';ctx.beginPath();ctx.ellipse(k0[0],k0[1]-3.6,3.5,1.6,0,0,6.3);ctx.fill();ctx.fillStyle='rgba(200,80,100,0.5)';ctx.beginPath();ctx.ellipse(k0[0]-0.8,k0[1]-3.9,1.2,0.5,0,0,6.3);ctx.fill();
+    hoLine([k0[0]+1,k0[1]-4],[k0[0]+4.5,k0[1]-9],'#6E5038',0.7);
+    if(typeof t==='number'&&!win){for(let k=0;k<2;k++){const q=((t*0.3+k/2)%1);ctx.fillStyle=`rgba(240,240,235,${0.35*(1-q)})`;ctx.beginPath();ctx.ellipse(k0[0]+Math.sin(q*6+k)*1.5,k0[1]-6-q*10,1.6+q*2.5,1.1+q*1.5,0,0,6.3);ctx.fill();}}}
+  /* work table with a crock being filled, a ladle */{const ta=L>=5?0.15:0.05,tc=hw+0.14,P=(da,dc,h)=>fw(ta+da,tc+dc,h);for(const q of [[-0.15,-0.07],[0.15,-0.07],[-0.15,0.07],[0.15,0.07]]){const p=P(q[0],q[1],0.6),u=P(q[0],q[1],5);hoQ([[p[0]-0.6,p[1]],[p[0]+0.6,p[1]],[u[0]+0.6,u[1]],[u[0]-0.6,u[1]]],q[1]>0?'#5A4230':'#4A3424');}
+    hoQ([P(-0.17,-0.09,5),P(0.17,-0.09,5),P(0.17,0.09,5),P(-0.17,0.09,5)],'#A88A62');hoQ([P(-0.17,0.09,4.2),P(0.17,0.09,4.2),P(0.17,0.09,5),P(-0.17,0.09,5)],'#7A5A3C');hoQ([P(0.17,-0.09,4.2),P(0.17,0.09,4.2),P(0.17,0.09,5),P(0.17,-0.09,5)],'#5E4430');
+    hoCrock(P(-0.07,0,5),0.8,'#5A1E2A',win);hoCrock(P(0.05,-0.02,5),0.7,'#C9B49A',win);hoCrock(P(0.11,0.03,5),0.7,'#8E3B3B',win);}
+  if(L>=5){/* second kettle */const P=(da,dc,h)=>fw(hl-0.18+da,hw+0.3+dc,h);hoStoneBox((a,c,h)=>fw(a,c,h),hl-0.18,hw+0.3,0.09,0.09,0.6,3.6,win,sd+1);const k0=P(0,0,4.2);ctx.fillStyle='#8A4A28';ctx.beginPath();ctx.ellipse(k0[0],k0[1]-1.5,3.4,1.6,0,0,6.3);ctx.fill();ctx.fillStyle='#5A1E2A';ctx.beginPath();ctx.ellipse(k0[0],k0[1]-2,2.6,1.2,0,0,6.3);ctx.fill();}
+  /* freestanding shelf rack at the front of the porch, facing the viewer, full of sealed crocks */
+  {const caps=['#C9B49A','#8E3B3B','#B8A27E','#6E3A5A'],s0=-hl+0.42,s1=L>=3?hl-0.08:0.25,rc=pc1-0.1;
+    hoQ([fw(s0,rc-0.05,0.6),fw(s1,rc-0.05,0.6),fw(s1,rc-0.05,8.6),fw(s0,rc-0.05,8.6)],'#5E4632');
+    ctx.strokeStyle='rgba(20,14,8,0.4)';ctx.lineWidth=0.4;ctx.beginPath();for(let a2=s0+0.06;a2<s1;a2+=0.06){const p=fw(a2,rc-0.05,0.6),q=fw(a2,rc-0.05,8.6);ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);}ctx.stroke();
+    for(const hs of [1.0,4.0,7.0]){hoQ([fw(s0,rc-0.05,hs),fw(s1,rc-0.05,hs),fw(s1,rc+0.03,hs),fw(s0,rc+0.03,hs)],'#A88A62');hoQ([fw(s0,rc+0.03,hs-0.8),fw(s1,rc+0.03,hs-0.8),fw(s1,rc+0.03,hs),fw(s0,rc+0.03,hs)],'#6E5038');
+      const n=Math.max(3,Math.round((s1-s0)/0.09));for(let i=0;i<n;i++){const a2=s0+0.04+i*(s1-s0-0.08)/(n-1);hoCrock(fw(a2,rc-0.01,hs),0.78+0.1*h2(sd,i+hs*10,91),caps[(i+(hs|0))%4],win);}}
+    for(const a2 of [s0,s1])hoQ([fw(a2-0.014,rc+0.03,0.6),fw(a2+0.014,rc+0.03,0.6),fw(a2+0.014,rc+0.03,8.6),fw(a2-0.014,rc+0.03,8.6)],'#4A3424');
+    hoQ([fw(s1,rc-0.05,0.6),fw(s1,rc+0.03,0.6),fw(s1,rc+0.03,8.6),fw(s1,rc-0.05,8.6)],'#4A3828');}
+  /* porch posts and the lean-to roof rising toward the viewer so the shelves show */const hB=11,hF=15.5;
+  for(const a of [-hl,0,hl]){const p=fw(a,pc1,0.6),u=fw(a,pc1,hF);hoQ([[p[0]-0.9,p[1]],[p[0]+0.9,p[1]],[u[0]+0.9,u[1]],[u[0]-0.9,u[1]]],'#4A3424');}hoLine(fw(-hl,pc1,hF),fw(hl,pc1,hF),'#3A2A1C',1.4);
+  if(false){/* bundles of herbs hanging under the front beam */for(let i=0;i<6;i++){const p=fw(-hl+0.15+i*(2*hl-0.3)/5,pc1,hF-0.5);hoLine(p,[p[0],p[1]+2.5],'#6E5038',0.4);ctx.fillStyle=i%2?'#6E7A44':'#8A7A4A';ctx.beginPath();ctx.moveTo(p[0]-1.2,p[1]+2.5);ctx.lineTo(p[0]+1.2,p[1]+2.5);ctx.lineTo(p[0],p[1]+6.5);ctx.closePath();ctx.fill();}}
+  const R=[fw(-hl-0.05,pc0-0.02,hB),fw(hl+0.05,pc0-0.02,hB),fw(hl+0.05,pc1+0.06,hF+0.8),fw(-hl-0.05,pc1+0.06,hF+0.8)];hoQ(R,win?'#EEF1F0':J.roof);
+  if(!win)hoRoofSurface((u,v)=>lerp(lerp(R[3],R[2],u),lerp(R[0],R[1],u),v),{sd:sd+4,rt:J.rt,rh:9,roofD:J.roofD},win);hoQ([R[1],R[2],[R[2][0],R[2][1]+1.3],[R[1][0],R[1][1]+1.3]],shade(J.roofD,0.6));hoLine(R[3],R[2],'rgba(10,8,6,0.5)',0.7);
+}
+{const _shP=shShape;shShape=function(b){if(b.t==='pres'&&PRES_OPT){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),{hl,hw,ha,hc,pd}=presDims(b),box=(a0,a1,c0,c1)=>[f(a0+ha,c0+hc,0),f(a1+ha,c0+hc,0),f(a1+ha,c1+hc,0),f(a0+ha,c1+hc,0)];
+  return [{pts:box(-hl,hl,-hw,hw),h:0.55},{pts:box(-hl*0.8,hl*0.8,-0.05,0.05),h:0.95},{pts:box(-hl,hl,hw,hw+pd),h:0.55}];}return _shP(b);};}

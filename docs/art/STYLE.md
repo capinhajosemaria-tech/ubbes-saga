@@ -227,6 +227,19 @@ This file is mirrored in the claude.ai project as `claude/Estilo dos edificios.m
 - **A row of painted round shields** hung under the eave along the long wall (red/white, blue/gold, white/black, green/white, gold/red).
 - Own shadow. Prototype: `window.__setArsenal(2)` (1 black hall with open weapon bay, 3 red hall with shield-wall lean-to, 4 raised armoury on posts kept).
 
+## Harbour (improved, 2026-11-12)
+- Same shape as before (José: the form is good): shore platform on piles, a long pier with mooring posts and a lantern at its head.
+- **Boathouse redrawn with the style kit**: plank walls on a frame, black scale shingles, crossed barge boards with carved ends, door on the gable, window with blue shutters.
+- **No crane, no nets, few props** (one crate, two barrels).
+- **Two berths only, one each side of the pier** (gameplay change in BACKLOG: more ships need another Harbour).
+- Prototype: `window.__setHarb(1)`; screenshots on a real coast: `tools/ui/tmp_sea.py`.
+
+## Shipyard (chosen: option 3 hall + José's quay, 2026-11-12)
+- **Big hall of stone and timber** with a **blue slate roof**, crossed barge boards with carved ends, a wide plank gate on the long wall facing the water, door on the gable, windows with blue shutters. Ships are built inside and slid out through the gate (no ship on stocks outside).
+- **A narrow timber quay along the whole water side** of the plot, the hall standing against it.
+- **A pier like the Harbour's, shorter** (about 2 tiles), out from the quay: piles, plank deck, mooring posts, a lantern at its head; **one berth** with the finished ship (BACKLOG: a new ship goes to a Harbour with a free berth, else waits here; while one waits, no new ship can be started).
+- The sea side is found from the sea tiles around the plot (`ydFrame`). Own shadow. Prototype: `window.__setYard(3)` (1 log hall, 2 big A-frame, 4 plank hall with open bay kept, with a ship on stocks in the yard).
+
 ## Shadows (shared rule, 2026-11-12)
 - José: the dark box shadow (and the ground patch) does not match the buildings' shapes.
 - Each redrawn building gives its own **shadow volumes** (`shShape(b)` in `20_zzhouseopt.js`: ground outline + height); the cast shadow is the union of those, swept along the sun. The old box shadow stays only for buildings not yet redrawn. Done for the Iron Mine; to do for every building when the styles are rolled out.
@@ -235,4 +248,4 @@ This file is mirrored in the claude.ai project as `claude/Estilo dos edificios.m
 ## Next buildings
 One at a time. José (2026-11-12): **send 4 drawn options straight away** (no separate "current look" step) → José's choice and notes → recorded here.
 When José asks for a fix, change only that (no extra changes without asking).
-Order still to do: Shipyard / Harbour → Ship-Tomb → Decor. (Everything else is decided.)
+Order still to do: Ship-Tomb → Decor. (Everything else is decided.)

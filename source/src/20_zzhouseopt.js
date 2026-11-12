@@ -475,6 +475,13 @@ function drawHofOpt(b,win,opt){const J=HOF_SET[opt]||HOF_SET[1],f0=hoFrame({fx:b
   const hl=1.32,hw=0.6,gw=0.2,pad=0.1,ph=5,wh=19,rh=22,ov=0.06,fP=(a,c,h)=>f0(a,c,(h||0)+ph);
   hoQ([f0(-hl-gw-pad+0.2,-hw-gw-pad+0.2,0),f0(hl+gw+pad+0.3,-hw-gw-pad+0.2,0),f0(hl+gw+pad+0.3,hw+gw+pad+0.3,0),f0(-hl-gw-pad+0.2,hw+gw+pad+0.3,0)],'rgba(30,38,42,0.2)');
   hoPlinth(f0,hl+gw+pad,hw+gw+pad,ph,win,sd);hoStair(f0,hl+gw+pad,0,0.26,ph,2,win);
+  /* back gallery (behind the hall): drawn first, only its ends and roof edge show past the hall */
+  {const gt0=wh*0.62,gl0=6.5,gR=J.turfGal?'#62773F':J.roofD,cB=-hw-gw;
+    hoQ([fP(-hl-gw,cB,0),fP(hl+gw,cB,0),fP(hl+gw,cB,3),fP(-hl-gw,cB,3)],shade(J.wall,0.7));
+    for(let k=0;k<=7;k++){const a2=-hl-gw+(2*hl+2*gw)*k/7;hoQ([fP(a2,cB,0),fP(a2+0.035,cB,0),fP(a2+0.035,cB,gl0+1),fP(a2,cB,gl0+1)],'#2A1F18');}
+    hoQ([fP(-hl-gw,-hw,gt0),fP(hl+gw,-hw,gt0),fP(hl+gw,cB-0.05,gl0+1),fP(-hl-gw,cB-0.05,gl0+1)],win?'#DCE2E1':gR);
+    /* its end at the front gable: rail, corner post, roof edge */hoQ([fP(hl+gw,cB,0),fP(hl+gw,-hw,0),fP(hl+gw,-hw,3),fP(hl+gw,cB,3)],shade(J.wall,0.8));
+    hoQ([fP(hl+gw,cB-0.05,gl0+1),fP(hl+gw,-hw,gt0),fP(hl+gw,-hw,gt0-1.6),fP(hl+gw,cB-0.05,gl0-0.6)],shade(J.roofD,0.6));}
   /* hall */const g={sd,hl,hw,fh:1.4,wh,rh,ov,th:1.8,wt:'staves',wall:J.wall,wallD:J.wallD,roof:J.roof,roofD:J.roofD,roofE:shade(J.roofD,0.7),rt:J.rt,frame:true,frameCol:'#2A1F18',k:1,v:1};
   const R=hoRoof(fP,g,win);R.back();hoWalls(fP,g,win);R.end();
   hoDoor(fP,g,'G',0,0.26,13,{arch:true,portal:'#C9A64A',col:'#5E3E26',frame:'#24180F',steps:0});
@@ -493,6 +500,7 @@ function drawHofOpt(b,win,opt){const J=HOF_SET[opt]||HOF_SET[1],f0=hoFrame({fx:b
   hoQ([fP(-hl-gw,hw,gt),fP(hl+gw,hw,gt),fP(hl+gw,hw+gw+0.05,gl+1),fP(-hl-gw,hw+gw+0.05,gl+1)],win?'#EEF1F0':galRoof);
   if(!win)hoRoofSurface((u,v)=>lerp(fP(-hl-gw+(2*hl+2*gw)*u,hw+gw+0.05,gl+1),fP(-hl-gw+(2*hl+2*gw)*u,hw,gt),v),{sd:sd+1,rt:J.turfGal?'turf':J.rt,rh:9,roofD:galRoofD},win);
   hoLine(fP(-hl-gw,hw+gw+0.05,gl+1),fP(hl+gw,hw+gw+0.05,gl+1),'rgba(10,8,6,0.5)',0.7);
+  hoQ([fP(hl+gw,hw,gt),fP(hl+gw,hw+gw+0.05,gl+1),fP(hl+gw,hw+gw+0.05,gl-0.6),fP(hl+gw,hw,gt-1.6)],shade(J.roofD,0.6));hoQ([fP(hl+gw,hw,0),fP(hl+gw,hw+gw,0),fP(hl+gw,hw+gw,3),fP(hl+gw,hw,3)],shade(J.wall,0.8));
   hoDoor(fP,g,'G',0,0.26,13,{arch:true,portal:'#C9A64A',col:'#5E3E26',frame:'#24180F',steps:0});
   if(J.chain){hoChain([fP(-hl-gw,hw+gw+0.05,gl+0.5),fP(-0.6,hw+gw+0.05,gl+0.5),fP(0.2,hw+gw+0.05,gl+0.5),fP(hl+gw,hw+gw+0.05,gl+0.5)],'#D9B356');}
   /* main roof front */R.front();
@@ -516,3 +524,7 @@ function drawHofOpt(b,win,opt){const J=HOF_SET[opt]||HOF_SET[1],f0=hoFrame({fx:b
   /* weathervane */{const p=P2.A;hoLine(p,[p[0],p[1]-7],'#2A2622',0.7);ctx.fillStyle='#C9A042';ctx.beginPath();ctx.moveTo(p[0],p[1]-7);ctx.lineTo(p[0]+5,p[1]-6);ctx.quadraticCurveTo(p[0]+3,p[1]-4.5,p[0]+4.5,p[1]-3);ctx.lineTo(p[0],p[1]-4);ctx.fill();}
   /* sacred pole and altar beside the door, never in front of it */
   hoSacredPole(f0,hl+gw+pad+0.32,-hw-gw+0.05,win);hoAltar(f0,hl+gw+pad+0.28,-hw-gw-0.42,win);}
+/* every roof texture is clipped to its own surface (turf may hang just past the eave) */
+const _roofSurfClip=hoRoofSurface;hoRoofSurface=function(at,g,win){const v0=g.rt==='turf'?-0.08:0;ctx.save();ctx.beginPath();
+  const pts=[];for(let k=0;k<=12;k++)pts.push(at(k/12,v0));for(let k=12;k>=0;k--)pts.push(at(k/12,1));ctx.moveTo(pts[0][0],pts[0][1]);for(const q of pts)ctx.lineTo(q[0],q[1]);ctx.closePath();ctx.clip();
+  try{_roofSurfClip(at,g,win);}finally{ctx.restore();}};

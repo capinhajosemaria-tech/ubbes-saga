@@ -793,11 +793,11 @@ function drawMarketOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,r
       hoStall(f,s[0],s[1],{kind:s[2],roof:s[3],roofD:shade(s[3],0.75),rt:s[3]==='#7A3428'?'boards':'scale',sd:sd+s[0]*10|0,sl:0.26,sw:0.2},win);}return;}}
 /* Market option 5: a realistic take on option 1 — sturdy timber booths along the back edges facing the square, plank walls,
    muted natural-dyed wool or shingle roofs, goods and barrels at the booths, irregular flagstones, a framed well */
-function hoBooth(f,a0,c0,face,o,win){const fs=face==='c'?(la,lc,h)=>f(a0+la,c0+lc,h):(la,lc,h)=>f(a0+lc,c0+la,h);const sl=0.34,sw=0.24,hB=13,hF=11,P=fs;
+function hoBooth(f,a0,c0,face,o,win){const fl=face.endsWith('-'),fc=face[0];const fs=fc==='c'?(fl?(la,lc,h)=>f(a0-la,c0-lc,h):(la,lc,h)=>f(a0+la,c0+lc,h)):(fl?(la,lc,h)=>f(a0-lc,c0-la,h):(la,lc,h)=>f(a0+lc,c0+la,h));const sl=0.34,sw=0.24,hB=13,hF=11,P=fs,bw=fl?6:hB;
   hoQ([P(-sl,-sw,0),P(sl,-sw,0),P(sl,sw,0),P(-sl,sw,0)],'rgba(60,50,38,0.25)');
-  /* plank back wall and a half side wall */hoQ([P(-sl,-sw,0),P(sl,-sw,0),P(sl,-sw,hB),P(-sl,-sw,hB)],'#6E5440');ctx.strokeStyle='rgba(30,20,12,0.4)';ctx.lineWidth=0.45;ctx.beginPath();for(let k=1;k<8;k++){const p=P(-sl+2*sl*k/8,-sw,0),q=P(-sl+2*sl*k/8,-sw,hB);ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);}ctx.stroke();
-  hoQ([P(sl,-sw,0),P(sl,sw-0.1,0),P(sl,sw-0.1,6),P(sl,-sw,hB-1)],'#58422F');
-  /* goods hanging on the back wall */if(o.hang){for(let i=0;i<4;i++){const p=P(-0.22+i*0.14,-sw+0.01,hB-3);hoLine(p,[p[0],p[1]+2],'#2A2622',0.4);ctx.fillStyle=o.hang[i%o.hang.length];ctx.fillRect(p[0]-1.4,p[1]+2,2.8,3.4);}}
+  /* plank back wall and a half side wall */hoQ([P(-sl,-sw,0),P(sl,-sw,0),P(sl,-sw,bw),P(-sl,-sw,bw)],'#6E5440');ctx.strokeStyle='rgba(30,20,12,0.4)';ctx.lineWidth=0.45;ctx.beginPath();for(let k=1;k<8;k++){const p=P(-sl+2*sl*k/8,-sw,0),q=P(-sl+2*sl*k/8,-sw,bw);ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);}ctx.stroke();
+  hoQ([P(sl,-sw,0),P(sl,sw-0.1,0),P(sl,sw-0.1,6),P(sl,-sw,bw-1)],'#58422F');for(const q of [[-sl,-sw],[sl,-sw]])hoQ([P(q[0]-0.025,q[1],0),P(q[0]+0.025,q[1],0),P(q[0]+0.025,q[1],hB),P(q[0]-0.025,q[1],hB)],'#4A3424');
+  /* goods hanging on the back wall */if(o.hang&&!fl){for(let i=0;i<4;i++){const p=P(-0.22+i*0.14,-sw+0.01,hB-3);hoLine(p,[p[0],p[1]+2],'#2A2622',0.4);ctx.fillStyle=o.hang[i%o.hang.length];ctx.fillRect(p[0]-1.4,p[1]+2,2.8,3.4);}}
   /* barrels/baskets inside, by the side wall */hoBasket(P(sl-0.1,-0.02,0));
   /* counter */hoQ([P(-sl+0.03,sw-0.12,0),P(sl-0.03,sw-0.12,0),P(sl-0.03,sw-0.12,5.5),P(-sl+0.03,sw-0.12,5.5)],'#7A5A3C');ctx.strokeStyle='rgba(30,20,12,0.35)';ctx.lineWidth=0.4;ctx.beginPath();for(const hh of [1.8,3.6]){const p=P(-sl+0.03,sw-0.12,hh),q=P(sl-0.03,sw-0.12,hh);ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);}ctx.stroke();
   hoQ([P(-sl+0.01,sw-0.24,5.5),P(sl-0.01,sw-0.24,5.5),P(sl-0.01,sw-0.08,5.5),P(-sl+0.01,sw-0.08,5.5)],'#A88A62');hoGoods(P,0,sw-0.16,2*sl-0.12,5.5,o.kind,win);
@@ -805,17 +805,39 @@ function hoBooth(f,a0,c0,face,o,win){const fs=face==='c'?(la,lc,h)=>f(a0+la,c0+l
   const A=[P(-sl-0.05,-sw-0.05,hB+0.5),P(sl+0.05,-sw-0.05,hB+0.5),P(sl+0.05,sw+0.07,hF),P(-sl-0.05,sw+0.07,hF)];
   if(o.cloth&&!win){/* muted wool awning: a main colour with one narrow stripe, slight sag, hem */hoQ(A,o.cloth[0]);const s1=lerp(lerp(A[0],A[3],0.62),lerp(A[1],A[2],0.62),0),s2=lerp(A[1],A[2],0.62);hoQ([lerp(A[0],A[3],0.6),lerp(A[1],A[2],0.6),lerp(A[1],A[2],0.72),lerp(A[0],A[3],0.72)],o.cloth[1]);
     ctx.strokeStyle='rgba(0,0,0,0.12)';ctx.lineWidth=0.5;ctx.beginPath();for(let k=1;k<5;k++){const p=lerp(A[0],A[1],k/5),q=lerp(A[3],A[2],k/5);ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);}ctx.stroke();hoLine(A[3],A[2],shade(o.cloth[0],0.7),1);}
+  if(o.cloth){/* awning frame: a ridge rod and a front rod on the poles, a middle pole, guy ropes to pegs */hoLine(A[0],A[1],'#4A3424',0.9);hoLine(A[3],A[2],'#4A3424',0.9);const mp=P(0,sw+0.07,0),mt=P(0,sw+0.07,hF);hoLine(mp,mt,'#4A3424',1);
+    for(const q of [A[3],A[2]]){const pg=[q[0]+(q[0]-P(0,0,hF)[0])*0.15,q[1]+9];hoLine(q,pg,'rgba(200,180,140,0.75)',0.4);ctx.fillStyle='#4A3424';ctx.fillRect(pg[0]-0.6,pg[1]-1.4,1.2,1.4);}}
   else{hoQ(A,win?'#EEF1F0':o.roof);if(!win)hoRoofSurface((u,v)=>lerp(lerp(A[3],A[2],u),lerp(A[0],A[1],u),v),{sd:o.sd||3,rt:o.rt,rh:6,roofD:shade(o.roof,0.75)},win);hoLine(A[3],A[2],'rgba(10,8,6,0.5)',0.7);}
   hoQ([A[1],A[2],[A[2][0],A[2][1]+1.4],[A[1][0],A[1][1]+1.4]],'#3A2A1C');}
-function hoFlagstones(f,hs,win,sd){const base=win?'#E4E6E2':'#B4AC9C';hoQ([f(-hs-0.06,-hs-0.06,0),f(hs+0.06,-hs-0.06,0),f(hs+0.06,hs+0.06,0),f(-hs-0.06,hs+0.06,0)],win?'#C9CBC7':'#857E72');hoQ([f(-hs,-hs,0),f(hs,-hs,0),f(hs,hs,0),f(-hs,hs,0)],base);
+function hoFlagstones(f,hs,win,sd){if(window.__FLAG)return hoFlag0(f,hs,win,sd);
+  hoQ([f(-hs-0.07,-hs-0.07,0),f(hs+0.07,-hs-0.07,0),f(hs+0.07,hs+0.07,0),f(-hs-0.07,hs+0.07,0)],win?'#BFC1BD':'#5E5850');hoQ([f(-hs,-hs,0),f(hs,-hs,0),f(hs,hs,0),f(-hs,hs,0)],win?'#D8DAD6':'#4E4A44');
+  /* kerb of long dressed stones */for(let k=0;k<18;k++){const u=-hs+2*hs*(k+0.5)/18;for(const q of [[u,hs+0.035],[hs+0.035,u]]){const p=f(q[0],q[1],0);ctx.fillStyle=k%2?'#7E776C':'#8E877B';ctx.beginPath();ctx.ellipse(p[0],p[1],3.4,1.6,0,0,6.3);ctx.fill();}}
+  /* cobbles laid in fans (arcs), each a small rounded stone in a slightly different tone */const fan=0.42;ctx.save();ctx.beginPath();{const q=[f(-hs,-hs,0),f(hs,-hs,0),f(hs,hs,0),f(-hs,hs,0)];ctx.moveTo(q[0][0],q[0][1]);for(const z of q)ctx.lineTo(z[0],z[1]);ctx.closePath();}ctx.clip();
+  for(let i=-1;i<=Math.ceil(2*hs/fan)+1;i++)for(let j=-1;j<=Math.ceil(4*hs/fan)+2;j++){const ca=-hs+i*fan+(j%2?fan/2:0),cc=-hs+j*fan*0.5;for(let r=1;r<=4;r++){const R=fan*0.62*r/4,n=3+r*3;for(let k=0;k<=n;k++){const an=Math.PI*(0.15+0.7*k/n),a=ca+Math.cos(an)*R,c=cc+Math.sin(an)*R*0.9-fan*0.1;const p=f(a,c,0),t2=h2(sd,i*977+j*131+r*17+k,7);ctx.fillStyle=win?(t2>0.5?'#E6E8E4':'#D2D4D0'):(t2>0.75?'#837B70':t2>0.4?'#6E675D':t2>0.15?'#5E5850':'#77705F');ctx.beginPath();ctx.ellipse(p[0],p[1],1.9,1.05,0,0,6.3);ctx.fill();}}}
+  ctx.restore();ctx.fillStyle='rgba(90,110,60,0.3)';for(let k=0;k<16;k++){const p=f((h2(sd,k,4)-0.5)*2*hs,(h2(sd,k,5)-0.5)*2*hs,0);ctx.fillRect(p[0]-1.2,p[1]-0.3,2.4,0.6);}}
+function hoFlag0(f,hs,win,sd){const base=win?'#E4E6E2':'#B4AC9C';hoQ([f(-hs-0.06,-hs-0.06,0),f(hs+0.06,-hs-0.06,0),f(hs+0.06,hs+0.06,0),f(-hs-0.06,hs+0.06,0)],win?'#C9CBC7':'#857E72');hoQ([f(-hs,-hs,0),f(hs,-hs,0),f(hs,hs,0),f(-hs,hs,0)],base);
   const n=14;for(let i=0;i<n;i++)for(let k=0;k<n;k++){const ja=(h2(sd,i*31+k,1)-0.5)*0.06,jc=(h2(sd,i*31+k,2)-0.5)*0.06,a=-hs+2*hs*(i+0.5)/n+ja,c=-hs+2*hs*(k+0.5)/n+jc,s=hs/n*0.86;
     const tone=h2(sd,i*17+k,3),col=win?'#DDE0DC':tone>0.66?'#C2BAA9':tone<0.33?'#A69E8E':'#B8B09F';hoQ([f(a-s*(0.9+0.1*tone),c-s,0),f(a+s,c-s*(0.85+0.15*tone),0),f(a+s*(0.9+0.1*(1-tone)),c+s,0),f(a-s,c+s*0.92,0)],col);}
   ctx.fillStyle='rgba(90,110,60,0.35)';for(let k=0;k<20;k++){const p=f((h2(sd,k,4)-0.5)*2*hs,(h2(sd,k,5)-0.5)*2*hs,0);ctx.fillRect(p[0]-1.5,p[1]-0.4,3,0.8);}}
 {const _mo=drawMarketOpt;drawMarketOpt=function(b,win,opt){if(opt!==5)return _mo(b,win,opt);const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),sd=(b.id||0)*43+5,hs=1.75;hoFlagstones(f,hs,win,sd);
   /* back row facing the square, then the left row; front stays open toward the viewer */
-  hoBooth(f,-1.0,-1.38,'c',{kind:'furs',roof:'#2F2C2A',rt:'scale',hang:['#8A6A4A','#C9B49A','#5A4636']},win);
-  hoBooth(f,-1.38,-0.15,'a',{kind:'pots',cloth:['#8E5A44','#CDBFA2']},win);
-  hoBooth(f,0.0,-1.38,'c',{kind:'cloth',cloth:['#CDBFA2','#4E6478'],hang:['#8E4A3A','#4E6478','#B89A5A']},win);
-  hoBooth(f,-1.38,0.95,'a',{kind:'fish',roof:'#7A3428',rt:'boards'},win);
-  hoBooth(f,1.0,-1.38,'c',{kind:'amber',roof:'#7A3428',rt:'boards',hang:['#B88A4A','#8E949A']},win);
-  hoWell(f,0.35,0.35,win,{rt:'scale',roof:'#2F2C2A',roofD:'#211F1D'});};}
+  hoBooth(f,-1.38,-1.0,'a',{kind:'pots',cloth:['#8E5A44','#CDBFA2']},win);
+  hoBooth(f,-0.25,-1.38,'c',{kind:'furs',roof:'#2F2C2A',rt:'scale',hang:['#8A6A4A','#C9B49A','#5A4636']},win);
+  hoBooth(f,1.0,-1.38,'c',{kind:'cloth',cloth:['#CDBFA2','#4E6478'],hang:['#8E4A3A','#4E6478','#B89A5A']},win);
+  hoBooth(f,-1.38,0.35,'a',{kind:'fish',roof:'#7A3428',rt:'boards'},win);
+  hoWell2(f,0,0,win);
+  hoBooth(f,1.38,0.0,'a-',{kind:'amber',roof:'#7A3428',rt:'boards'},win);
+  hoBooth(f,0.0,1.38,'c-',{kind:'apples',cloth:['#6E7A4E','#CDBFA2']},win);
+  hoBooth(f,1.25,1.38,'c-',{kind:'pots',roof:'#2F2C2A',rt:'scale'},win);};}
+
+function hoWell2(f,a,c,win){const P=(da,dc,h)=>f(a+da,c+dc,h),C=P(0,0,0),R=9,Ry=4.5,H=7;
+  ctx.fillStyle='rgba(30,26,20,0.25)';ctx.beginPath();ctx.ellipse(C[0]+2,C[1]+1,R+2,Ry+1,0,0,6.3);ctx.fill();
+  /* round stone shaft: body, staggered blocks on the front half */ctx.fillStyle=win?'#C9CBC7':'#7E776C';ctx.beginPath();ctx.ellipse(C[0],C[1],R,Ry,0,0,3.14);ctx.lineTo(C[0]-R,C[1]-H);ctx.ellipse(C[0],C[1]-H,R,Ry,0,3.14,0,true);ctx.closePath();ctx.fill();
+  for(let r=0;r<3;r++){const y=C[1]-r*H/3;for(let k=0;k<7;k++){const t0=(k+(r%2?0.5:0))/7*Math.PI,t1=t0+Math.PI/7;if(t0>Math.PI)continue;const x0=C[0]+Math.cos(t0)*R,y0=y+Math.sin(t0)*Ry,x1=C[0]+Math.cos(Math.min(t1,Math.PI))*R,y1=y+Math.sin(Math.min(t1,Math.PI))*Ry;const tn=h2(a*99|0,r*13+k,9);ctx.fillStyle=tn>0.6?'#8E877B':tn>0.3?'#857E72':'#726B60';ctx.beginPath();ctx.moveTo(x0,y0);ctx.lineTo(x1,y1);ctx.lineTo(x1,y1-H/3+0.5);ctx.lineTo(x0,y0-H/3+0.5);ctx.closePath();ctx.fill();}}
+  /* coping ring and dark water */ctx.fillStyle=win?'#E2E4E0':'#A39D92';ctx.beginPath();ctx.ellipse(C[0],C[1]-H,R+0.8,Ry+0.5,0,0,6.3);ctx.fill();ctx.fillStyle='#1A2428';ctx.beginPath();ctx.ellipse(C[0],C[1]-H,R-2.4,Ry-1.3,0,0,6.3);ctx.fill();ctx.fillStyle='rgba(140,170,180,0.25)';ctx.beginPath();ctx.ellipse(C[0]-1.5,C[1]-H-0.5,2.5,0.8,0,0,6.3);ctx.fill();
+  /* two posts, windlass roller with crank, rope and bucket */const hp=20;for(const s of [-1,1]){const b0=P(s*0.15,0,H),t0=P(s*0.15,0,hp);hoQ([[b0[0]-0.9,b0[1]],[b0[0]+0.9,b0[1]],[t0[0]+0.9,t0[1]],[t0[0]-0.9,t0[1]]],s<0?'#5A4230':'#4A3424');}
+  const r0=P(-0.15,0,hp-5),r1=P(0.15,0,hp-5);hoLine(r0,r1,'#6E5038',2.4);for(let k=1;k<5;k++){const p=lerp(r0,r1,k/5);hoLine([p[0]-0.6,p[1]-1],[p[0]+0.6,p[1]+1],'rgba(200,180,140,0.7)',0.4);}
+  const ck=P(0.2,0,hp-5);hoLine(r1,ck,'#2A2622',0.8);hoLine(ck,[ck[0],ck[1]+3],'#2A2622',0.8);hoLine([ck[0],ck[1]+3],[ck[0]+1.6,ck[1]+3],'#5A4230',1);
+  const rp=lerp(r0,r1,0.45);hoLine(rp,[rp[0],rp[1]+6],'#C9B38A',0.5);ctx.fillStyle='#6E5038';ctx.beginPath();ctx.moveTo(rp[0]-1.8,rp[1]+6);ctx.lineTo(rp[0]+1.8,rp[1]+6);ctx.lineTo(rp[0]+1.4,rp[1]+9);ctx.lineTo(rp[0]-1.4,rp[1]+9);ctx.fill();hoLine([rp[0]-1.8,rp[1]+7.2],[rp[0]+1.8,rp[1]+7.2],'#2A2622',0.4);
+  /* little shingled gable roof on the posts */const g={sd:7,hl:0.24,hw:0.16,fh:0,wh:hp,rh:6,ov:0.03,th:1.4,roof:'#2F2C2A',roofD:'#211F1D',roofE:'#171514',rt:'scale'};const fr=(a2,c2,hh)=>f(a+a2,c+c2,hh),rr=hoRoof(fr,g,win);rr.back();rr.end();rr.front();rr.ridge();hoBarge(fr,g,'#4A3424',0.25,false);
+  /* stone trough beside it */const tq=(da,dc,h)=>P(0.3+da,0.12+dc,h);hoQ([tq(-0.12,0.06,0),tq(0.12,0.06,0),tq(0.12,0.06,3),tq(-0.12,0.06,3)],'#857E72');hoQ([tq(0.12,-0.06,0),tq(0.12,0.06,0),tq(0.12,0.06,3),tq(0.12,-0.06,3)],'#726B60');hoQ([tq(-0.1,-0.04,3),tq(0.1,-0.04,3),tq(0.1,0.04,3),tq(-0.1,0.04,3)],'#3E5560');}

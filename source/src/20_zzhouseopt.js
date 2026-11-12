@@ -2252,7 +2252,9 @@ const DECOR_T=new Set(['camp','bench','wattle','rune','herbs','prow','nets']);
 {const _dsD=drawShaped;drawShaped=function(b,win,c0,ax){if(DECOR_OPT&&DECOR_T.has(b.t)){drawDecorOpt(b,win,DECOR_OPT);return true;}return _dsD(b,win,c0,ax);};}
 {const _gsD=groundShape;groundShape=function(b,win){if(DECOR_OPT&&DECOR_T.has(b.t))return true;return _gsD(b,win);};}
 function dcNeighbours(b){const out=[];for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){const x=b.fx+dx,y=b.fy+dy;if(!inMap(x,y))continue;const id=occ[y*N+x];if(!id)continue;const o=B.find(q=>q.id===id);if(o&&o.t===b.t)out.push([dx,dy]);}return out;}
-function drawDecorOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:1,h:1,rot:0}),sd=(b.id||0)*101+opt,t0=b.t,tt=typeof t==='number'?t:0;
+/* José's picks (2026-11-12); window.__setDecor(3) shows the picks, 1/2 force a variant everywhere */
+const DECOR_PICK={camp:2,bench:2,herbs:2,prow:2,nets:2,wattle:1,rune:1};
+function drawDecorOpt(b,win,opt){if(opt===3)opt=DECOR_PICK[b.t]||1;const f=hoFrame({fx:b.fx,fy:b.fy,w:1,h:1,rot:0}),sd=(b.id||0)*101+opt,t0=b.t,tt=typeof t==='number'?t:0;
   const pad=(r,col)=>{const o=[];for(let i=0;i<20;i++){const t2=i/20*6.283;o.push(f(Math.cos(t2)*r,Math.sin(t2)*r,0));}hoQ(o,col);};
   if(t0==='camp'){pad(0.42,win?'rgba(225,228,224,0.5)':'rgba(130,112,84,0.45)');
     if(opt===1){hoLog(f,-0.3,0.18,-0.32,1.6,1.6,win);hoLog((x,y,h)=>f(y,x,h),-0.25,0.2,-0.34,1.6,1.6,win);alFire(f(0,0,0),1.05,win);hoLog((x,y,h)=>f(y,x,h),-0.2,0.25,0.34,1.6,1.6,win);}

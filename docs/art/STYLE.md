@@ -269,6 +269,15 @@ This file is mirrored in the claude.ai project as `claude/Estilo dos edificios.m
 - A flowering meadow (white, yellow, pink, blue); the rest of the plot keeps its grass (`GRASSY_PLOT`).
 - Own shadow. Prototype: `window.__setBees(4)` (1 covered bench, 2 stone bee wall with niches, 3 log hives in heather kept).
 
+## Decor (2026-11-12) — all 1×1; `window.__setDecor(3)` shows the picks (1/2 force a variant)
+- **Community Fire: 2** — a stone-lined pit, fire, a tripod with a steaming pot.
+- **Wooden Benches: 2** — two half-log benches facing each other and a stump table with a mug.
+- **Herb Garden: 2** — four little beds with plank edges and a cross path; angelica (white umbels), chives (purple), thyme (low, pink).
+- **Carved Prow: 2** — a dragon neck and head (gold groove, eye, teeth) on log trestles, two painted shields leaning.
+- **Drying Nets: 2** — a three-pole rack, two nets with gold floats and stone weights, a fish hanging at the end.
+- **Wattle Fence** and **Rune Post**: not chosen yet (1 woven hazel / 2 skigard — both join their neighbours; 1 red carved post / 2 runestone).
+- The plot keeps its grass round every decor piece.
+
 ## Shadows (shared rule, 2026-11-12)
 - José: the dark box shadow (and the ground patch) does not match the buildings' shapes.
 - Each redrawn building gives its own **shadow volumes** (`shShape(b)` in `20_zzhouseopt.js`: ground outline + height); the cast shadow is the union of those, swept along the sun. The old box shadow stays only for buildings not yet redrawn. Done for the Iron Mine; to do for every building when the styles are rolled out.
@@ -277,4 +286,4 @@ This file is mirrored in the claude.ai project as `claude/Estilo dos edificios.m
 ## Next buildings
 One at a time. José (2026-11-12): **send 4 drawn options straight away** (no separate "current look" step) → José's choice and notes → recorded here.
 When José asks for a fix, change only that (no extra changes without asking).
-Order still to do: Decor (Community Fire, Wooden Benches, Wattle Fence, Rune Post, Herb Garden, Carved Prow, Drying Nets). Maybe later: palisade and gate in the new style.
+Order still to do: Wattle Fence and Rune Post variants. Maybe later: palisade and gate in the new style.

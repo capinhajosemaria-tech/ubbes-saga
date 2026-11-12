@@ -1,4 +1,4 @@
-# Ubbe's Saga: numbers (Beta 0.16.1)
+# Ubbe's Saga: numbers (Beta 0.17.1)
 
 Generated from the game by `tools/gen_numbers.py`. Do not edit by hand.
 
@@ -21,7 +21,7 @@ Limits are per Town Hall level 1 / 2 / 3 / 4 / 5. Workers: +1 at building level 
 | house | House | Homes | 1 | 2×2 | 20 wood | 0 |  | no limit |
 | jarl | Jarl’s House | Homes | 1 | 3×3 | 60 wood, 30 planks | 0 |  | 1 / 1 / 1 / 1 / 1 |
 | pyre | Funeral Pyre | Community | 1 | 2×2 | 10 wood | 0 |  | 1 / 1 / 2 / 2 / 2 |
-| wood | Woodcutter’s Lodge | Materials | 1 | 2×2 | 15 wood | 3 | 3 wood per worker a day | 2 / 3 / 4 / 4 / 5 |
+| wood | Woodcutter’s Lodge | Materials | 1 | 2×2 | 15 wood | 3 | 5 wood per worker a day | 2 / 3 / 4 / 4 / 5 |
 | carp | Carpenter | Materials | 1 | 2×2 | 25 wood | 2 | 4 wood → 2 planks per worker a day | 1 / 2 / 2 / 2 / 2 |
 | mine | Iron Mine | Materials | 1 | 2×2 | 30 wood, 10 planks | 3 | 2 iron per worker a day | 1 / 1 / 2 / 2 / 2 |
 | smith | Smithy | Crafts | 1 | 2×2 | 15 wood, 20 planks, 10 iron | 2 | Tools, and later weapons | 1 / 1 / 1 / 2 / 2 |

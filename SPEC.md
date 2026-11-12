@@ -1,4 +1,4 @@
-# Ubbe's Saga — specification (Beta 0.17.1)
+# Ubbe's Saga — specification (Beta 0.18.0)
 
 How the game works **today**. Numbers are in `docs/NUMBERS.md` (generated). The long-term vision for Town Hall 6–10 is in `docs/DESIGN.md`.
 
@@ -22,7 +22,7 @@ A cozy-but-harsh Viking village builder for the browser. Year 865, the village o
 - Raiders land only on sea joined to the map edge (never on the lake).
 - Land is bought in 6 × 6 zones with **fame**; the saga starts with 21 zones (a 5 × 5 block minus its four corners, 30 × 30 tiles); the corners and everything further are bought; cost grows with distance (`30·d − 10`).
 - Edges fade into sea-mist; unbought land is slightly darker with a faint tile grid, and each 6 × 6 block is outlined (brighter for blocks next to owned land).
-- **Resource sources never run out, but each belongs to one building** (since 0.15.4): trees, berry bushes, iron outcrop tiles and fishing water stay on the map. Every woodcutter, berry gatherer, mine and fisher's hut claims the nearest free sources within its radius (6, 5, 4, 3 tiles), oldest building first, up to what it needs: **45 trees, 6 bushes, 5 iron outcrops, 5 water tiles** (fisher's hut, radius 3) for full output (since 0.15.5); with fewer, output falls in proportion (30 trees = 67%). A source claimed by one building cannot serve another. Placement and the building sheet show "N of 45 trees its own · X% output" and how many in range belong to other buildings; per–Town Hall building limits stay as they are.
+- **Resource sources belong to one building and run out** (claims since 0.15.4, depletion again since 0.18.0): trees, berry bushes, iron outcrop tiles and fishing water stay on the map. Every woodcutter, berry gatherer, mine and fisher's hut claims the nearest free sources within its radius (6, 5, 4, 3 tiles), oldest building first, up to what it needs: **20 trees, 6 bushes, 5 iron outcrops, 5 water tiles** for full output; with fewer, output falls in proportion. Each source holds a yearly amount that is used up: **tree 50 wood** (woodcutters make 5 wood per worker a day), **bush 45 berries**, **sea tile 100 fish, river tile 70**, **iron outcrop 80 iron**. Used-up trees are drawn as stumps and grow back **3 days after winter ends**; bushes and water refill when summer starts; iron refills **every two years, when winter starts** (even years). A building whose own sources are all used up stops taking workers until they come back. The building sheet shows own sources, output %, how much is left and when it comes back; the tile sheet shows what is left on that tile.
 - Trees and bushes go for good only with the **Remove** tool or when a building is placed over them (the game asks first); each gives a quarter of a season's output (2 wood a tree, 3 berries a bush).
 
 ## 5. People
@@ -66,7 +66,7 @@ Requirements per level: **population + materials + at least one house at the hig
 - **Palisade levels and repair:** Stakes 150 HP per segment, Double stakes 300 (3 planks a segment), Iron-bound stakes 500 (3 planks + 1 iron a segment); gates ×1.3. Upgrades apply to the whole palisade (War → Defence). Damaged stakes are patched for free (¼ of a segment a day); broken segments leave rubble and a gap until repaired (4 wood, + planks at higher levels, per segment).
 
 ## 9. Trade
-Market with dynamic prices: partners unlock gradually (Skiringssal TH3, Hedeby TH3 + ship, Birka TH4, Dublin TH5, London TH5 + map). Each partner wants and sells specific goods; selling a lot lowers the price (recovers slowly); iron and tools cost ×1.35 to buy, and buying them raises their price (2.5% per unit, up to ×2.5, easing 1% a day); special orders pay +50%.
+**Market panel** (Market button in the bottom bar once a Trading House exists, also from the Trading House sheet; needs a harbour): one tab per partner village that trades with you; every good has Sell and Buy at that village's own price, in amounts of 1, 10 or 50 (arrows in bundles of 10), at any time of year. Selling lowers that village's price for the good, buying raises it; prices drift back about 10% of the gap a day. A sell price is never above 85% of the cheapest buy price anywhere. Buying stops when the stores are full. Partners unlock gradually (Skiringssal TH3, Hedeby TH3 + ship, Birka TH4, Dublin TH5, London TH5 + map). Each partner wants and sells specific goods; selling a lot lowers the price (recovers slowly); iron and tools cost ×1.35 to buy, and buying them raises their price (2.5% per unit, up to ×2.5, easing 1% a day); special orders from a merchant in port (summer, every 12 days, 4 days) pay +50%.
 
 ## 10. Gods, advisors, banquets
 - Five gods with favour; blessings, blót, the Hof (TH5) raises favour gain.

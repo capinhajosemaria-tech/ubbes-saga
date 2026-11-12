@@ -13,6 +13,8 @@ const builderSlots=()=>2+(typeof thLevel==='function'?thLevel():1);
 const prioOf=b=>(b.prio===undefined||b.prio===null)?PRIO_DEF:b.prio;
 const builderPrio=()=>(S.bPrio===undefined||S.bPrio===null)?PRIO_DEF:S.bPrio;
 const winterStopped=b=>!!(DEF[b.t].seasonal&&isWinter());
+/* an extractor whose own sources are all used up sends its workers elsewhere until they come back */
+const srcEmpty=b=>{if(typeof SRC_NEED==='undefined'||!SRC_NEED[b.t]||typeof srcOwn!=='function')return false;const o=srcOwn(b);return o.length>0&&o.every(q=>q.amt<=0.01);};
 /* how many builders the sites could use right now */
 const builderDemand=()=>Math.min(builderSlots(),B.filter(q=>q.cons).reduce((s,q)=>s+q.cons.w,0));
 function assignWorkers(){
@@ -21,7 +23,7 @@ function assignWorkers(){
   /* balance bots still pick head counts themselves (b.desired) */
   if(S.manualStaff){for(const b of list){const idle=winterStopped(b);if(b.desired>slotsOf(b))b.desired=slotsOf(b);if(!idle&&b.desired>free)b.desired=Math.max(0,free);b.workers=idle?0:b.desired;free-=b.workers;}
     const nb=Math.min(free,B.filter(q=>q.cons).reduce((s,q)=>s+q.cons.w,0));buildersWorking=nb;spreadBuilders(nb);freeWorkers=free-nb;return;}
-  const E=list.map(b=>({b:b,p:prioOf(b),cap:winterStopped(b)?0:slotsOf(b),n:0}));
+  const E=list.map(b=>({b:b,p:prioOf(b),cap:(winterStopped(b)||srcEmpty(b))?0:slotsOf(b),n:0}));
   E.unshift({b:null,p:builderPrio(),cap:builderDemand(),n:0});
   for(const e of E)if(e.p<=0)e.cap=0;
   for(const e of E)if(e.p===3){const k=Math.min(e.cap,free);e.n=k;free-=k;}

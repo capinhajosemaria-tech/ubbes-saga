@@ -2,6 +2,14 @@
 
 Versions are `Beta 0.MINOR.PATCH` until Town Hall 10 (`1.0.0`).
 
+## Beta 0.18.0
+- Much more wood: woodcutters make 5 wood per worker a day (was 3), and a lodge needs only 20 trees of its own (was 45). Each tree gives 50 wood a year.
+- Sources run out again: trees 50 wood, berry bushes 45, sea 100 fish a tile (river 70), iron outcrops 80. Used-up trees stand as stumps and grow back 3 days after winter; bushes and fish come back when summer starts; iron every two years, when winter starts.
+- A building whose sources are all used up sends its workers to other jobs until they come back. Its sheet shows what is left and when it returns.
+- New Market button in the bottom bar: buy and sell every good with each village that trades with you, at any time, in 1, 10 or 50. Each village has its own prices, which move with your deals and settle again over the days.
+- The Trading House now opens the market and shows the visiting merchant's special orders (+50%).
+- The silver in the top bar updates right after each deal, also while the game is paused.
+
 ## Beta 0.17.1
 - Workers: instead of choosing a number per building, each workplace now has a priority: Stopped, Low, High or Urgent. Urgent jobs are filled completely first, then High, then Low share the rest. New buildings start at High.
 - Berry gatherers stop by themselves in winter and go back to their own priority in summer.

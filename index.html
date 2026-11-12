@@ -466,7 +466,7 @@ h3 svg{vertical-align:-3px}
 <script>
 (function(){
 'use strict';
-const GAME_VERSION="Beta 0.17.1";
+const GAME_VERSION="Beta 0.18.0";
 /* =================== constants =================== */
 const N=132,OX=30,OY=24,SX=12,SY=6,HW=32,HH=16,TW=64;
 const HOME_X=63,HOME_Y=60;  /* the village centre in tile coords */
@@ -683,12 +683,12 @@ const DEF={
   house:{name:'House',w:2,h:2,cost:{wood:20},slots:0,housing:4,road:false,cat:'Homes',lvl:1,up:true,desc:'Home for 4 people, 5 after the first upgrade; the second upgrade insulates it (−25% firewood). Burns ½ wood a day in summer and 1.2 in winter; when the logs run out, planks are burned (1 plank = 2 wood).'},
   jarl:{name:'Jarl’s House',w:3,h:3,cost:{wood:60,planks:30},slots:0,housing:4,road:false,cat:'Homes',lvl:1,desc:'Home of Ubbe and his heirs.'},
   pyre:{name:'Funeral Pyre',w:2,h:2,cost:{wood:10},slots:0,road:false,cat:'Community',lvl:1,desc:'The dead are burned here, so the river stays clean.'},
-  wood:{name:'Woodcutter’s Lodge',w:2,h:2,cost:{wood:15},slots:3,tools:true,need:{k:'tree',r:6},cat:'Materials',lvl:1,up:true,out:'3 wood per worker a day',desc:'Fells trees within 6 tiles. Full output needs 45 trees of its own; trees never run out, but each belongs to one lodge only. Works through winter.'},
+  wood:{name:'Woodcutter’s Lodge',w:2,h:2,cost:{wood:15},slots:3,tools:true,need:{k:'tree',r:6},cat:'Materials',lvl:1,up:true,out:'5 wood per worker a day',desc:'Fells trees within 6 tiles. Full output needs 20 trees of its own (each belongs to one lodge only) and each gives 50 wood a year. Used-up trees stand as stumps and grow back 3 days after winter. Works through winter.'},
   carp:{name:'Carpenter',w:2,h:2,cost:{wood:25},slots:2,tools:true,cat:'Materials',lvl:1,up:true,out:'4 wood → 2 planks per worker a day',desc:'Saws timber into planks. Never touches the wood reserve you set.'},
-  mine:{name:'Iron Mine',w:2,h:2,cost:{wood:30,planks:10},slots:3,tools:true,need:{k:'iron',r:4},cat:'Materials',lvl:1,up:true,out:'2 iron per worker a day',desc:'Digs ore within 4 tiles at the foot of the mountains. Full output needs 5 iron outcrops of its own; ore never runs out, but each outcrop belongs to one mine only.'},
+  mine:{name:'Iron Mine',w:2,h:2,cost:{wood:30,planks:10},slots:3,tools:true,need:{k:'iron',r:4},cat:'Materials',lvl:1,up:true,out:'2 iron per worker a day',desc:'Digs ore within 4 tiles at the foot of the mountains. Full output needs 5 iron outcrops of its own; each belongs to one mine only and holds 80 iron, refilled every two years when winter starts.'},
   smith:{name:'Smithy',w:2,h:2,cost:{wood:15,planks:20,iron:10},slots:2,cat:'Crafts',lvl:1,up:true,out:'Tools, and later weapons',desc:'Forges tools; from Town Hall 2 spears, from Town Hall 3 shields, bows, arrows and swords. Needs a working anvil; a new one costs 10 iron. +15% next to a mine.'},
-  fish:{name:'Fisher’s Hut',w:2,h:1,cost:{wood:15},slots:3,tools:true,need:{k:'water',r:3},cat:'Food',lvl:1,up:true,out:'4 fish per worker a day',desc:'A small hut with boats. Fishes the water within 3 tiles. Full output needs 5 water tiles of its own; the fish never run out, but each tile belongs to one hut only. Catches far less in winter, more at sea than on the river.'},
-  berry:{name:'Berry Gatherer',w:2,h:2,cost:{wood:10},slots:2,tools:true,need:{k:'bush',r:5},seasonal:true,cat:'Food',lvl:1,up:true,out:'4 berries per worker a day (summer)',desc:'Picks berries within 5 tiles. Full output needs 6 bushes of its own; bushes never run out, but each belongs to one gatherer only. Rests in winter; its workers are free for other jobs.'},
+  fish:{name:'Fisher’s Hut',w:2,h:1,cost:{wood:15},slots:3,tools:true,need:{k:'water',r:3},cat:'Food',lvl:1,up:true,out:'4 fish per worker a day',desc:'A small hut with boats. Fishes the water within 3 tiles. Full output needs 5 water tiles of its own; each belongs to one hut only and holds 100 fish a year (river 70), back when summer starts. Catches far less in winter, more at sea than on the river.'},
+  berry:{name:'Berry Gatherer',w:2,h:2,cost:{wood:10},slots:2,tools:true,need:{k:'bush',r:5},seasonal:true,cat:'Food',lvl:1,up:true,out:'4 berries per worker a day (summer)',desc:'Picks berries within 5 tiles. Full output needs 6 bushes of its own; each belongs to one gatherer only and gives 45 berries a year. Rests in winter; its workers are free for other jobs.'},
   pres:{name:'Preserver',w:2,h:2,cost:{wood:15,planks:20},slots:2,cat:'Food',lvl:1,up:true,out:'Dried fish and jam',desc:'Preserved food never spoils and feeds twice as much.'},
   gran:{name:'Granary',w:3,h:2,cost:{wood:30,planks:10},slots:0,road:false,store:{food:300},cat:'Storage',lvl:1,up:true,desc:'Raised storehouse. Holds 300 more food, +150 per upgrade.'},
   ware:{name:'Warehouse',w:3,h:2,cost:{wood:30,planks:10},slots:0,road:false,store:{mat:300},cat:'Storage',lvl:1,up:true,desc:'Holds 300 more goods, +150 per upgrade.'},
@@ -908,7 +908,11 @@ function canPlace(t,fx,fy,rot,ignoreId){
 /* 0.15.4 (José): sources never run out, but each one belongs to a single building.
    Full output needs SRC_NEED sources of its own in range (fewer = less output). 0.15.5: lodges need 45 trees, fisher's huts 5 water tiles. */
 const SRC_ENDLESS=true;
-const SRC_NEED={wood:45,mine:5,berry:6,fish:5};
+/* Beta 0.18 (José): sources run out again. Each source still belongs to one building, but holds a yearly amount that is used up.
+   Trees regrow 3 days after winter ends (a used-up tree is drawn as a stump); bushes and water refill when summer starts;
+   iron outcrops refill every two years, when winter starts. Lodges now need 20 trees (each gives far more wood). */
+const SRC_NEED={wood:20,mine:5,berry:6,fish:5};
+const SRC_RATE={wood:5,berry:4,mine:2,fish:4};
 let CLAIM_KEY='',CLAIM=new Map();
 /* every extractor claims the nearest free sources in its range, oldest building first */
 function srcClaims(){const gone=trees.reduce((a,t)=>a+(t.gone?1:0),0)+bushes.reduce((a,t)=>a+(t.gone?1:0),0);
@@ -920,7 +924,7 @@ function srcFree(b,taken){return srcList(b).filter(o=>!taken.has(o)).sort((p,q)=
 const srcOwn=b=>srcClaims().get(b.id)||[];
 /* share of full output the sources allow: 0..1 */
 function srcFactor(b){const need=SRC_NEED[b.t];if(!need)return srcList(b).length?1:0;return Math.min(1,srcOwn(b).length/need);}
-const SRC_Y={tree:8,bush:25,iron:60,sea:20,river:12};
+const SRC_Y={tree:50,bush:45,iron:80,sea:100,river:70};
 const SRC_OF={wood:'tree',berry:'bush',mine:'iron',fish:'water'};
 const SRC_R={wood:6,berry:5,mine:4,fish:3};
 const SRC_WORD={tree:['tree','trees'],bush:['berry bush','berry bushes'],iron:['iron outcrop','iron outcrops'],water:['water tile','water tiles']};
@@ -933,6 +937,10 @@ for(let i=0;i<N*N;i++){const t=ter[i],x=i%N,y=(i/N)|0;
 for(const t of trees){t.cap=SRC_Y.tree;t.amt=t.cap;t.regrow=0;}
 for(const b of bushes){b.cap=SRC_Y.bush;b.amt=b.cap;}
 function refillSources(){for(const a of [trees,bushes,ores,waters])for(const o of a)if(!o.gone)o.amt=o.cap;}
+function refillKind(a){for(const o of a)if(!o.gone)o.amt=o.cap;}
+/* called once at the start of each day: d = day of the year (0..44, winter from day 30) */
+const SRC_BACK={tree:'3 days after winter ends',bush:'when summer starts',water:'when summer starts',iron:'every two years, when winter starts'};
+function sourceSeasons(d,year){if(d===0){refillKind(bushes);refillKind(waters);}if(d===3)refillKind(trees);if(d===30&&year%2===0)refillKind(ores);}
 /* sources a building (or a planned building {t,fx,fy,w,h}) works */
 function srcList(b){const k=SRC_OF[b.t],r=SRC_R[b.t];if(!k)return [];
   if(k==='tree')return trees.filter(o=>!o.gone&&rectDist(b,o.x,o.y)<=r);
@@ -943,7 +951,7 @@ function srcList(b){const k=SRC_OF[b.t],r=SRC_R[b.t];if(!k)return [];
 function srcShare(o,t,self,extra){let n=0;for(const q of B)if(q.t===t&&q!==self&&rectDist(q,o.x,o.y)<=SRC_R[t])n++;if(extra)n++;return n||1;}
 /* most a building could make in a year: all slots filled, at its level, no morale or tools effects */
 function srcLvlMult(t,lvl){return lvl>=5?1.55:lvl>=4?1.4:lvl>=2?1.2:1;}
-function maxYear(t,lvl,slots){const per={wood:3,berry:4,mine:2,fish:4}[t]||0,m=srcLvlMult(t,lvl);
+function maxYear(t,lvl,slots){const per=SRC_RATE[t]||0,m=srcLvlMult(t,lvl);
   const days=t==='berry'?30:t==='fish'?30+15*0.4:45;return slots*per*m*days;}
 /* expected share of maximum output, 0..1, and the source count; planned=true when b is not placed yet */
 function srcInfo(b,planned){const t=b.t,list=srcList(b);let share=0,shared=0;
@@ -951,17 +959,21 @@ function srcInfo(b,planned){const t=b.t,list=srcList(b);let share=0,shared=0;
   const sl=planned?(DEF[t].slots||0):slotsOf(b),mx=maxYear(t,planned?1:b.lvl,Math.max(1,sl));
   let left=0;for(const o of list)left+=o.amt/srcShare(o,t,planned?null:b,planned);
   if(SRC_ENDLESS){const need=SRC_NEED[t];if(!need)return {n:list.length,need:0,inR:list.length,pct:list.length?1:0,left:Infinity,list:list};
-    const C=srcClaims(),own=planned?srcFree(b,C.taken):srcOwn(b);return {n:own.length,need:need,inR:list.length,pct:Math.min(1,own.length/need),left:Infinity,list:own};}
+    const C=srcClaims(),own=planned?srcFree(b,C.taken):srcOwn(b);let lf=0,cp=0;for(const o of own){lf+=o.amt;cp+=o.cap;}return {n:own.length,need:need,inR:list.length,pct:Math.min(1,own.length/need),left:lf,cap:cp,empty:own.filter(o=>o.amt<=0.01).length,list:own};}
   return {n:list.length,shared:shared,share:share,pct:mx>0?Math.min(1,share/mx):0,left:left,list:list};}
 function srcLabel(b,planned){const k=SRC_OF[b.t],w=SRC_WORD[k],I=srcInfo(b,planned);
   if(!I.n)return {n:0,label:'No '+w[1]+' in range'};
   if(SRC_ENDLESS){if(!I.need)return {n:I.n,label:I.n+' '+(I.n===1?w[0]:w[1])+' in range · full output',pct:1};
-    const other=I.inR-I.n;return {n:I.n,pct:I.pct,label:I.n+' of '+I.need+' '+w[1]+' its own · '+Math.round(I.pct*100)+'% output'+(other>0?' · '+other+' more in range belong to other buildings':'')};}
+    const other=I.inR-I.n;return {n:I.n,pct:I.pct,label:I.n+' of '+I.need+' '+w[1]+' its own · '+Math.round(I.pct*100)+'% output'+(planned?'':' · '+fmt(I.left)+' of '+fmt(I.cap)+' '+RNAME[SRC_RES[b.t]].toLowerCase()+' left'+(I.left<=0.01?', comes back '+SRC_BACK[k]:''))+(other>0?' · '+other+' more in range belong to other buildings':'')};}
   let s=I.n+' '+(I.n===1?w[0]:w[1])+' in range'+(I.shared?' ('+I.shared+' shared)':'')+' · '+Math.round(I.pct*100)+'% of full output';
   if(!planned)s+=' · '+fmt(I.left)+' '+RNAME[SRC_RES[b.t]].toLowerCase()+' left this year';
   return {n:I.n,label:s,pct:I.pct};}
 /* take up to `want` from the building's sources, each shared source split between the buildings using it */
-function harvest(b,want){if(want<=0)return 0;if(SRC_ENDLESS)return want*srcFactor(b);const list=srcList(b).filter(o=>o.amt>0.001);if(!list.length)return 0;
+function harvest(b,want){if(want<=0)return 0;if(SRC_ENDLESS){want*=srcFactor(b);const own=srcOwn(b).filter(o=>o.amt>0.001);if(!own.length)return 0;
+    /* take evenly from the building's own sources (the fullest first when some run dry) */
+    let got=0,rest=want;own.sort((p,q)=>q.amt-p.amt);for(let i=0;i<own.length&&rest>0.0001;i++){const o=own[i],take=Math.min(o.amt,rest/(own.length-i));o.amt-=take;got+=take;rest-=take;}
+    if(rest>0.0001)for(const o of own){const take=Math.min(o.amt,rest);o.amt-=take;got+=take;rest-=take;if(rest<=0.0001)break;}
+    return got;}const list=srcList(b).filter(o=>o.amt>0.001);if(!list.length)return 0;
   const w=list.map(o=>1/srcShare(o,b.t,b,false)),ws=w.reduce((a,c)=>a+c,0);let got=0;
   list.forEach((o,i)=>{const take=Math.min(o.amt,want*w[i]/ws);o.amt-=take;got+=take;});
   let rest=want-got;for(const o of list){if(rest<=0.001)break;const take=Math.min(o.amt,rest);o.amt-=take;got+=take;rest-=take;}
@@ -1020,6 +1032,8 @@ const builderSlots=()=>2+(typeof thLevel==='function'?thLevel():1);
 const prioOf=b=>(b.prio===undefined||b.prio===null)?PRIO_DEF:b.prio;
 const builderPrio=()=>(S.bPrio===undefined||S.bPrio===null)?PRIO_DEF:S.bPrio;
 const winterStopped=b=>!!(DEF[b.t].seasonal&&isWinter());
+/* an extractor whose own sources are all used up sends its workers elsewhere until they come back */
+const srcEmpty=b=>{if(typeof SRC_NEED==='undefined'||!SRC_NEED[b.t]||typeof srcOwn!=='function')return false;const o=srcOwn(b);return o.length>0&&o.every(q=>q.amt<=0.01);};
 /* how many builders the sites could use right now */
 const builderDemand=()=>Math.min(builderSlots(),B.filter(q=>q.cons).reduce((s,q)=>s+q.cons.w,0));
 function assignWorkers(){
@@ -1028,7 +1042,7 @@ function assignWorkers(){
   /* balance bots still pick head counts themselves (b.desired) */
   if(S.manualStaff){for(const b of list){const idle=winterStopped(b);if(b.desired>slotsOf(b))b.desired=slotsOf(b);if(!idle&&b.desired>free)b.desired=Math.max(0,free);b.workers=idle?0:b.desired;free-=b.workers;}
     const nb=Math.min(free,B.filter(q=>q.cons).reduce((s,q)=>s+q.cons.w,0));buildersWorking=nb;spreadBuilders(nb);freeWorkers=free-nb;return;}
-  const E=list.map(b=>({b:b,p:prioOf(b),cap:winterStopped(b)?0:slotsOf(b),n:0}));
+  const E=list.map(b=>({b:b,p:prioOf(b),cap:(winterStopped(b)||srcEmpty(b))?0:slotsOf(b),n:0}));
   E.unshift({b:null,p:builderPrio(),cap:builderDemand(),n:0});
   for(const e of E)if(e.p<=0)e.cap=0;
   for(const e of E)if(e.p===3){const k=Math.min(e.cap,free);e.n=k;free-=k;}
@@ -1091,16 +1105,16 @@ function dayTick(){
     b.status=tf<1?'Working slowly: no tools':'Working';
     const mk=(k,a)=>{const g=addRes(k,a);b.made=(b.made?b.made+', ':'')+'+'+g.toFixed(1)+' '+(RNAME[k]||k).toLowerCase();if(a>0.01&&g<a*0.5)b.status='Storage full';return g;};
     switch(b.t){
-      case 'wood':{const got=harvest(b,n*3*E);if(got<=0.001)b.status=srcList(b).length?'Every tree in range belongs to another lodge':'No trees in range';mk('wood',got);break;}
+      case 'wood':{const got=harvest(b,n*SRC_RATE.wood*E);if(got<=0.001)b.status=srcOwn(b).length?'Trees used up: they grow back 3 days after winter':srcList(b).length?'Every tree in range belongs to another lodge':'No trees in range';mk('wood',got);break;}
       case 'carp':{const av=Math.max(0,r.wood-S.woodReserve),p=Math.min(n*2*E,av/2);if(p<=0.05){b.status=holdMsg(['wood']);break;}r.wood-=p*2;mk('planks',p);break;}
-      case 'mine':{const got=harvest(b,n*2*E);if(got<=0.001)b.status=srcList(b).length?'Every outcrop in range belongs to another mine':'No iron in range';mk('iron',got);break;}
+      case 'mine':{const got=harvest(b,n*2*E);if(got<=0.001)b.status=srcOwn(b).length?'Ore used up: it comes back every two years, when winter starts':srcList(b).length?'Every outcrop in range belongs to another mine':'No iron in range';mk('iron',got);break;}
       case 'smith':{if(b.anvil<=0){if(r.iron>=10){r.iron-=10;b.anvil=100;toast('The smith forged a new anvil (10 iron).');}else{b.status='Anvil broken: needs 10 iron';break;}}
         let md=b.mode;if(!SMITH[md]||SMITH[md].lv>thLevel())md='tools';const sm=SMITH[md];let make=n*sm.per*E;
         for(const k in sm.c){make=Math.min(make,resv(k)/sm.c[k]);}
         if(make<=0.01){b.status=holdMsg(Object.keys(sm.c));break;}
         const g=mk(md,make);for(const k in sm.c)r[k]-=g*sm.c[k];b.anvil-=1;if(miscUse())addRes('misc',g*0.03*(md==='arrows'?0.1:1));break;}
-      case 'fish':{const sea=waterDist(b,t=>t===T.SEA)<=3?1:0,got=harvest(b,n*4*E*(win?(sea>0?0.4:0.25):1));if(got<=0.001)b.status=srcList(b).length?'Every water tile in range belongs to another hut':'No water in range';mk('fish',got);if(sea>0&&miscUse())addRes('misc',n*0.02);break;}
-      case 'berry':{const got=harvest(b,n*4*E);if(got<=0.001)b.status=srcList(b).length?'Every bush in range belongs to another gatherer':'No bushes in range';mk('berries',got);break;}
+      case 'fish':{const sea=waterDist(b,t=>t===T.SEA)<=3?1:0,got=harvest(b,n*4*E*(win?(sea>0?0.4:0.25):1));if(got<=0.001)b.status=srcOwn(b).length?'Fished out: the fish come back when summer starts':srcList(b).length?'Every water tile in range belongs to another hut':'No water in range';mk('fish',got);if(sea>0&&miscUse())addRes('misc',n*0.02);break;}
+      case 'berry':{const got=harvest(b,n*4*E);if(got<=0.001)b.status=srcOwn(b).length?'Bushes picked clean: they come back next summer':srcList(b).length?'Every bush in range belongs to another gatherer':'No bushes in range';mk('berries',got);break;}
       case 'pres':{let made=0;for(let k=0;k<Math.round(n*(E>1?1.25:1));k++){
           if(resv('fish')>=2&&resv('fish')>=resv('berries')){r.fish-=2;made+=addRes('dfish',1);}
           else if(resv('berries')>=2){r.berries-=2;made+=addRes('jam',1);}}
@@ -1170,7 +1184,7 @@ function dayTick(){
     else if(r.tools<2&&B.some(b=>DEF[b.t].tools&&b.workers>0))toast(has('smith')?'Tools are almost gone. Put workers in the smithy.':'Tools are almost gone. Work will slow down until a smithy forges more.',3600);}
   f0=flowSnap();p2Day(short);flowDiff(f0,'other');flowEnd(win);
   /* nature */
-  const yt=S.gameT%YEAR;if(yt<DAY*1.01&&S.day>1)refillSources();
+  const yt=S.gameT%YEAR;if(S.day>1)sourceSeasons(Math.floor((yt+DAY*0.01)/DAY)%45,yearNow());
   S.bal={food:foodUnits()-before.food,wood:r.wood-before.wood,planks:r.planks-before.planks,iron:r.iron-before.iron,tools:r.tools-before.tools,water:r.water-before.water,silver:r.silver-before.silver,fame:S.fame-before.fame};S.prodLog=PRODLOG;PRODLOG=null;PRODSRC='other';
   checkMilestones();
 }
@@ -1961,7 +1975,7 @@ function drawStump(sx,sy,win){ctx.fillStyle='rgba(38,48,53,0.15)';ctx.beginPath(
   ctx.fillStyle=win?'#E6EBEC':'#D2B98F';ctx.beginPath();ctx.ellipse(sx,sy-7,6,3,0,0,6.3);ctx.fill();}
 function drawTree(o,win,a){
   const sx=(o.x-o.y)*HW+o.ox,sy=(o.x+o.y)*HH-elev[o.y*N+o.x]+o.oy;
-  if(!o.gone){drawSprite(SP[o.sp][win?1:0],sx,sy,o.s,a,false);return;}
+  if(!o.gone&&!(o.amt<=0.01)){drawSprite(SP[o.sp][win?1:0],sx,sy,o.s,a,false);return;}
   drawStump(sx,sy,win);
 }
 /* isometric log pile on canvas: logs along +x axis */
@@ -6156,7 +6170,7 @@ $('goal').addEventListener('click',()=>openPanel('saga'));
 
 /* ---------- sheet ---------- */
 let sheetKind=null;
-function openSheet(html,kind){$('sheet-card').innerHTML=html;$('sheet').hidden=false;$('sheet').classList.toggle('wide',kind==='prod');sheetKind=kind||'info';const x=$('sheet-card').querySelector('[data-close]');if(x)x.addEventListener('click',closeSheet);}
+function openSheet(html,kind){$('sheet-card').innerHTML=html;$('sheet').hidden=false;$('sheet').classList.toggle('wide',kind==='prod'||kind==='market');sheetKind=kind||'info';const x=$('sheet-card').querySelector('[data-close]');if(x)x.addEventListener('click',closeSheet);}
 function closeSheet(){$('sheet').hidden=true;sheetKind=null;sel=null;}
 const head=(title,meta)=>'<div class="hd"><div><h2>'+esc(title)+'</h2>'+(meta?'<div class="meta">'+esc(meta)+'</div>':'')+'</div><button type="button" class="x" data-close aria-label="Close">×</button></div>';
 function statusClass(s){if(s==='Working'||s==='Drawing newcomers')return '';if(s.indexOf('Resting')===0||s.indexOf('Holding')===0||s.indexOf('Idle')===0||s==='Paused'||s==='')return 'idle';return 'bad';}
@@ -6168,10 +6182,10 @@ function buildingSheet(b){
   const on=[];
   if(b.t!=='th'){h+='<p class="role"><strong>'+esc(roleOf(b.t))+'.</strong> '+esc(D.desc||'')+'</p>';const nd=needsOf(b.t);if(nd.length)h+='<div class="meta needs">Needs: '+esc(nd.join(' · '))+'</div>';}
   if(sl){h+='<span class="status '+statusClass(b.status)+'">'+esc(b.status||'Starting')+'</span>';
-    assignWorkers();const pr=prioOf(b),ws=winterStopped(b);h+='<div class="wk"><span class="meta">Priority</span>'+prioHtml('wp',pr)+'</div><p class="workers"><strong>'+(b.workers||0)+' of '+sl+' working here</strong>'+(ws?' · stopped for winter, back to '+PRIO[pr]+' in summer':pr===0?' · stopped':(b.workers||0)<sl?' · not enough people for every post':'')+' <span class="meta">· '+freeWorkers+' free in the village</span></p>';
+    assignWorkers();const pr=prioOf(b),ws=winterStopped(b);h+='<div class="wk"><span class="meta">Priority</span>'+prioHtml('wp',pr)+'</div><p class="workers"><strong>'+(b.workers||0)+' of '+sl+' working here</strong>'+(ws?' · stopped for winter, back to '+PRIO[pr]+' in summer':srcEmpty(b)?' · its '+SRC_WORD[SRC_OF[b.t]][1]+' are used up, so its workers do other jobs until they come back ('+SRC_BACK[SRC_OF[b.t]]+')':pr===0?' · stopped':(b.workers||0)<sl?' · not enough people for every post':'')+' <span class="meta">· '+freeWorkers+' free in the village</span></p>';
     if(D.out){const pc=Math.round(100*(b.workers||0)/sl);h+='<div class="outpct"><span class="meta">Output from workers</span><span class="bar"><i style="width:'+pc+'%"></i></span><strong>'+pc+'%</strong><span class="meta">'+(b.workers||0)+' of '+sl+' working · each worker adds '+Math.round(100/sl)+'%</span></div>';}
     h+='<p>'+esc(D.out||'')+(b.made?' · <strong>Yesterday: '+esc(b.made)+'</strong>':'')+'</p>';
-    if(SRC_OF[b.t]&&(!SRC_ENDLESS||SRC_NEED[b.t])){const I=srcInfo(b,false),pc=Math.round(I.pct*100);h+='<div class="outpct"><span class="meta">'+(SRC_ENDLESS?'Own '+SRC_WORD[SRC_OF[b.t]][1]+': '+I.n+' of '+I.need:'Sources in range')+'</span><span class="bar"><i style="width:'+pc+'%"></i></span><strong>'+pc+'%</strong><span class="meta">'+(SRC_ENDLESS?'of full output, with all workers':'of maximum yearly output, with all workers')+'</span></div>';}
+    if(SRC_OF[b.t]&&(!SRC_ENDLESS||SRC_NEED[b.t])){const I=srcInfo(b,false),pc=Math.round(I.pct*100);h+='<div class="outpct"><span class="meta">'+(SRC_ENDLESS?'Own '+SRC_WORD[SRC_OF[b.t]][1]+': '+I.n+' of '+I.need:'Sources in range')+'</span><span class="bar"><i style="width:'+pc+'%"></i></span><strong>'+pc+'%</strong><span class="meta">'+(SRC_ENDLESS?'of full output · '+fmt(I.left)+' of '+fmt(I.cap)+' '+RNAME[SRC_RES[b.t]].toLowerCase()+' left · comes back '+SRC_BACK[SRC_OF[b.t]]:'of maximum yearly output, with all workers')+'</span></div>';}
     if(D.need){const nc=needCount(b,D.need);h+='<div class="meta">'+esc(nc.label)+'</div>';}
     if(!b.conn&&D.road!==false)h+='<p style="color:#8E3B2F">Connect this building to the Town Hall with a road.</p>';
     on.push(()=>{$('sheet-card').querySelectorAll('[data-wp]').forEach(x=>x.onclick=()=>{b.prio=+x.dataset.wp;assignWorkers();buildingSheet(b);save();});});
@@ -6221,7 +6235,7 @@ let clearArmed=-1;
 function tileSheet(x,y){
   sel={x:x,y:y};const tt=ter[y*N+x],zx=Math.floor(x/6),zy=Math.floor(y/6),un=isUnl(x,y),cost=zoneCost(zx,zy);
   const TN={0:'Sea',1:'Beach',2:'Meadow',3:'Forest',4:'Mountains',5:'Foothills',6:'River',7:'Berry bushes',8:'Iron outcrop'};
-  const TX={0:'Open water. Each tile within 3 of a fisher’s hut gives 20 fish a year (river 12).',1:'Sand and shingle. Good ground for fishers and the harbour.',2:'Open ground for houses, workshops, fields and roads.',3:'Woodcutters work these trees. Each tree gives 8 wood a year, refilled every spring.',4:'The mountains close the land off. Nothing can be built here.',5:'Rocky ground at the foot of the mountains. Mines go here.',6:'Fresh water. Fishers work from its banks; roads cross it as bridges.',7:'Gatherers pick berries here in summer: 25 a bush each year. Bushes rest in winter.',8:'Iron ore: 60 iron a year. Place an iron mine within 4 tiles.'};
+  const TX={0:'Open water. Each tile within 3 of a fisher’s hut holds 100 fish a year (river 70); fished-out water comes back when summer starts.',1:'Sand and shingle. Good ground for fishers and the harbour.',2:'Open ground for houses, workshops, fields and roads.',3:'Woodcutters work these trees. Each tree gives 50 wood a year; a used-up tree stands as a stump and grows back 3 days after winter.',4:'The mountains close the land off. Nothing can be built here.',5:'Rocky ground at the foot of the mountains. Mines go here.',6:'Fresh water. Fishers work from its banks; roads cross it as bridges.',7:'Gatherers pick berries here in summer: 45 a bush each year, back when summer starts. Bushes rest in winter.',8:'Iron ore: 80 iron, refilled every two years when winter starts. Place an iron mine within 4 tiles.'};
   let extra='';
   if(tt===T.FOREST){const ts=trees.filter(o=>o.x===x&&o.y===y&&!o.gone);if(ts.length)extra='Wood left here this year: '+fmt(ts.reduce((a,o)=>a+o.amt,0))+' of '+ts.reduce((a,o)=>a+o.cap,0);}
   if(tt===T.BERRY){const bs=bushes.find(o=>o.x===x&&o.y===y&&!o.gone);if(bs)extra='Berries left this year: '+fmt(bs.amt)+' of '+bs.cap;}
@@ -6449,12 +6463,14 @@ function renderDock(){let d=$('dock');if(!d){d=document.createElement('div');d.i
   const navs=[...document.querySelectorAll('.nav button')].map(b=>{const pi=PANEL_ICON[b.dataset.panel];return '<button type="button" class="dk'+(b.classList.contains('locked')?' locked':'')+'" data-dp="'+b.dataset.panel+'">'+(pi?'<svg width="22" height="22" viewBox="0 0 20 20" aria-hidden="true">'+pi+'</svg>'+esc(b.textContent.trim()):b.innerHTML)+'</button>';}).join('');
   const cats=CATS.map(c=>{const any=Object.keys(DEF).some(k=>DEF[k].cat===c&&DEF[k].lvl<=thLevel());return '<button type="button" class="dk cat'+(trayCat===c?' on':'')+(any?'':' locked')+'" data-dc="'+c+'">'+ico(c)+'<span>'+c+'</span></button>';}).join('');
   const prodB='<button type="button" class="dk'+(sheetKind==='prod'&&!$('sheet').hidden?' on':'')+'" id="dk-prod"><svg width="22" height="22" viewBox="0 0 20 20" aria-hidden="true">'+PANEL_ICON.prod+'</svg>Production</button>';
-  d.innerHTML='<div class="dgrp">'+navs+prodB+'</div><div class="dsep"></div><div class="dgrp">'+cats+'</div><div class="dsep"></div><div class="dgrp"><button type="button" class="dk'+(mode==='road'&&roadKind==='road'?' on':'')+'" id="dk-road">'+ico('Roads')+'<span>Roads</span></button><button type="button" class="dk'+(mode==='remove'?' on':'')+'" id="dk-rem">'+ico('Remove')+'<span>Remove</span></button><button type="button" class="dk'+(uplOpen?' on':'')+'" id="dk-upl">'+ico('Upgrades')+'<span>Upgrades</span><i class="bdg" hidden></i></button>'+(thLevel()>=5?'<button type="button" class="dk'+(mode==='road'&&roadKind==='wall'?' on':'')+'" id="dk-wall">'+ico('Palisade')+'<span>Palisade</span></button>':'')+'</div>';
+  const mktB=has('trade')?'<button type="button" class="dk'+(sheetKind==='market'&&!$('sheet').hidden?' on':'')+'" id="dk-mkt"><svg width="22" height="22" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3v13M4 16h12M3 7h14M10 3l-1 1M10 3l1 1" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M3 7l-2 5a2.5 1.4 0 0 0 4 0zM17 7l-2 5a2.5 1.4 0 0 0 4 0z" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linejoin="round"/></svg>Market</button>':'';
+  d.innerHTML='<div class="dgrp">'+navs+prodB+mktB+'</div><div class="dsep"></div><div class="dgrp">'+cats+'</div><div class="dsep"></div><div class="dgrp"><button type="button" class="dk'+(mode==='road'&&roadKind==='road'?' on':'')+'" id="dk-road">'+ico('Roads')+'<span>Roads</span></button><button type="button" class="dk'+(mode==='remove'?' on':'')+'" id="dk-rem">'+ico('Remove')+'<span>Remove</span></button><button type="button" class="dk'+(uplOpen?' on':'')+'" id="dk-upl">'+ico('Upgrades')+'<span>Upgrades</span><i class="bdg" hidden></i></button>'+(thLevel()>=5?'<button type="button" class="dk'+(mode==='road'&&roadKind==='wall'?' on':'')+'" id="dk-wall">'+ico('Palisade')+'<span>Palisade</span></button>':'')+'</div>';
   d.querySelectorAll('[data-dp]').forEach(b=>b.onclick=()=>{closeTray();const nb=document.querySelector('.nav button[data-panel="'+b.dataset.dp+'"]');if(nb)nb.click();});
   d.querySelectorAll('[data-dc]').forEach(b=>b.onclick=()=>{if(mode!=='view')endMode();closeSheet();if(trayCat===b.dataset.dc){closeTray();return;}openTray(b.dataset.dc);});
   $('dk-road').onclick=()=>{closeTray();closeSheet();if(mode==='road'&&roadKind==='road'){endMode();}else startRoad();renderDock();};
   $('dk-rem').onclick=()=>{closeTray();closeSheet();if(mode==='remove')endMode();else{if(mode!=='view')endMode();startRemove();}renderDock();};
   $('dk-prod').onclick=()=>{closeTray();if(mode!=='view')endMode();if(sheetKind==='prod'&&!$('sheet').hidden)closeSheet();else prodPanel();renderDock();};
+  if($('dk-mkt'))$('dk-mkt').onclick=()=>{closeTray();if(mode!=='view')endMode();if(sheetKind==='market'&&!$('sheet').hidden)closeSheet();else marketPanel();renderDock();};
   $('dk-upl').onclick=()=>{uplOpen=!uplOpen;uplKey='';renderUpl(true);renderDock();};
   if($('dk-wall'))$('dk-wall').onclick=()=>{closeTray();closeSheet();startWall();renderDock();};}
 function closeTray(){trayCat=null;const t=$('tray');if(t)t.hidden=true;if($('dock'))$('dock').querySelectorAll('.cat').forEach(b=>b.classList.remove('on'));}
@@ -7010,17 +7026,11 @@ function worldPanel(){closeSheet();let w=$('wfs');if(!w){w=document.createElemen
   w.querySelectorAll('[data-tg]').forEach(b=>b.onclick=()=>{worldSel=b.dataset.tg;targetSheet(b.dataset.tg);});
   if($('w-map'))$('w-map').onclick=()=>{if(S.res.gold<40)return;S.res.gold-=40;S.maps=S.maps||{};S.maps.england=1;checkMilestones();toast('England lies open on the map.');worldPanel();save();};}
 function tradeHtml(b,on){if(!has('harbour'))return '<p style="color:#8E3B2F">Merchants need a harbour to land.</p>';
-  if(!S.trader){return '<p>No merchant in port. In summer a ship calls every 12 days and stays 4 days.</p><h3>Trading partners</h3><table class="t">'+Object.keys(PARTNERS).map(id=>{const P=PARTNERS[id],ok=partnerOk(id),ban=((S.tg[id]||{}).ban||0)>S.day;return '<tr><td>'+esc(P.n)+'<br><span class="meta">Wants '+P.wants.map(k=>RNAME[k]?RNAME[k].toLowerCase():k).join(', ')+'</span></td><td>'+(ok?'Trades':ban?'Angry after your raid':'Not yet')+'</td></tr>';}).join('')+'</table>';}
+  if(!S.trader){on.push(()=>{$('t-mkt').onclick=()=>marketPanel();});return '<div class="acts"><button type="button" class="btn primary" id="t-mkt">Open the market</button></div><p>Trade with every partner village from the market at any time. In summer a merchant ship also calls every 12 days and stays 4 days, bringing special orders that pay 50% more.</p><h3>Trading partners</h3><table class="t">'+Object.keys(PARTNERS).map(id=>{const P=PARTNERS[id],ok=partnerOk(id),ban=((S.tg[id]||{}).ban||0)>S.day;return '<tr><td>'+esc(P.n)+'<br><span class="meta">Wants '+P.wants.map(k=>RNAME[k]?RNAME[k].toLowerCase():k).join(', ')+'</span></td><td>'+(ok?'Trades':ban?'Angry after your raid':'Not yet')+'</td></tr>';}).join('')+'</table>';}
   const P=PARTNERS[S.trader.from];let h='<p><strong>A merchant from '+esc(P.n)+' is in port</strong> for '+(S.trader.until-S.day)+' more days. Silver '+fmt(S.res.silver)+' · gold '+fmt(S.res.gold)+'</p>';
   const deals=(S.trader.deals||[]).filter(d=>d.left>0);if(deals.length)h+='<h3>Special orders</h3><table class="t">'+deals.map(d=>'<tr><td>Wants '+d.left+' '+esc((RNAME[d.k]||d.k).toLowerCase())+'</td><td>pays 50% more</td></tr>').join('')+'</table>';
-  const sellKeys=Object.keys(BASEP).filter(k=>k!=='silver'&&k!=='pig'&&k!=='sheep'&&(k==='thrall'?S.thralls>0:(S.res[k]||0)>=1));
-  h+='<h3>Sell</h3>'+(sellKeys.length?'<table class="t">'+sellKeys.map(k=>{const have=k==='thrall'?S.thralls:Math.floor(S.res[k]),p=priceSell(k);return '<tr><td>'+esc(k==='thrall'?'Thralls':RNAME[k])+' <span class="meta">'+have+' · '+p.toFixed(1)+' silver each'+(mktSat(k)<0.95?' (they have plenty)':'')+'</span></td><td><button type="button" class="btn small" data-sell="'+k+'" data-q="'+(k==='thrall'||k==='gold'?1:10)+'">Sell '+(k==='thrall'||k==='gold'?1:10)+'</button></td></tr>';}).join('')+'</table>':'<p>Nothing to sell.</p>');
-  h+='<h3>Buy</h3><table class="t">'+P.sells.map(k=>{const p=priceBuy(k),q=k==='arrows'?10:1;return '<tr><td>'+esc(k==='pig'?'A pig':k==='sheep'?'A sheep':k==='thrall'?'A thrall':q+' '+(RNAME[k]||k).toLowerCase())+(mktDem(k)>1.04?' <span class="meta">(price up: you bought a lot)</span>':'')+'</td><td><button type="button" class="btn small" data-buy="'+k+'" '+(S.res.silver<p*q?'disabled':'')+'>'+Math.ceil(p*q)+' silver</button></td></tr>';}).join('')+'</table>';
-  on.push(()=>{const card=$('sheet-card');
-    card.querySelectorAll('[data-sell]').forEach(x=>x.onclick=()=>{const k=x.dataset.sell;let q=+x.dataset.q;if(k==='thrall'){if(S.thralls<1)return;S.thralls--;}else{q=Math.min(q,Math.floor(S.res[k]));if(q<=0)return;S.res[k]-=q;}
-      const p=priceSell(k)*q;S.res.silver+=p;const d=(S.trader.deals||[]).find(z=>z.k===k&&z.left>0);if(d)d.left=Math.max(0,d.left-q);S.mkt[k]=Math.max(0.4,mktSat(k)*Math.pow(0.93,q/10*(k==='gold'?10:1)));S.trades=(S.trades||0)+1;checkMilestones();buildingSheet(b);save();});
-    card.querySelectorAll('[data-buy]').forEach(x=>x.onclick=()=>{const k=x.dataset.buy,q=k==='arrows'?10:1,p=Math.ceil(priceBuy(k)*q);if(S.res.silver<p)return;if((k==='pig'||k==='sheep')&&herdTotal()>=herdCap()){toast('No room in the pens.');return;}if(k==='thrall'&&S.thralls>=thrallCap()){toast('No room in the thrall pen.');return;}
-      S.res.silver-=p;if(k==='pig')S.herd.pigs++;else if(k==='sheep')S.herd.sheep++;else if(k==='thrall')S.thralls++;else S.res[k]=(S.res[k]||0)+q;bought(k,q);S.trades=(S.trades||0)+1;checkMilestones();buildingSheet(b);save();});});
+  h+='<div class="acts"><button type="button" class="btn primary" id="t-mkt">Open the market</button></div><p class="meta">Sell and buy every good with each village that trades with you, also from the Market button in the bottom bar.</p>';
+  on.push(()=>{$('t-mkt').onclick=()=>{mktPartner=S.trader.from;marketPanel();};});
   return h;}
 function thExtraHtml(on){let h='';if(thLevel()<4)return h;
   h+='<h3>Banquets</h3><p class="meta">Each banquet this season costs more than the last.</p>'+Object.keys(BANQ).map(k=>{const c=banqCost(k);return '<div class="wk"><button type="button" class="btn small'+(afford(c)?' primary':'')+'" data-bq="'+k+'" '+(afford(c)?'':'disabled')+'>'+esc(BANQ[k].n)+'</button><span class="meta">'+esc(BANQ[k].d)+' · '+esc(costStr(c))+'</span></div>';}).join('');
@@ -7041,6 +7051,68 @@ function advisorsHtml(on){S.advs=S.advs||(S.adv?[S.adv]:[]);let h='<h3>Council</
   if(S.advs.length<advSlots()){h+='<p>The hall has room for another voice. Choose one:</p><div class="advs">'+Object.keys(ADVISORS).filter(k=>!S.advs.includes(k)).map(k=>'<button type="button" class="adv" data-adv="'+k+'">'+portrait(ADV_P[k],44)+'<span><b>'+esc(ADVISORS[k].n)+'</b> · '+esc(ADVISORS[k].role)+'<br><span class="meta">'+esc(ADVISORS[k].b)+'</span></span></button>').join('')+'</div>';}
   else if(thLevel()<5)h+='<p class="meta">More advisors join at Town Hall '+(thLevel()<4?4:5)+'.</p>';
   on.push(()=>{$('sheet-card').querySelectorAll('[data-adv]').forEach(x=>x.onclick=()=>{S.advs.push(x.dataset.adv);S.saga.push({y:yearNow(),t:ADVISORS[x.dataset.adv].n+' joined the council of Kaldstrand.'});toast(ADVISORS[x.dataset.adv].n+' joins the council.');sagaPanel();save();});});return h;}
+
+/* =================== Market panel (dock button) =================== */
+/* José, 2026-11-12: one place to sell and buy every good, with each village that trades with Kaldstrand.
+   Prices move with each deal and drift back over the days. Each partner keeps its own prices:
+   selling lowers what that village pays, buying raises what it asks. A merchant in port still brings special orders (+50%). */
+let mktPartner=null,mktQ=10,mktTab='Sell';
+const MKT_Q=[1,10,50];
+const MKT_GOODS=()=>Object.keys(BASEP).filter(k=>k!=='silver');
+const mkS=(id,k)=>{S.mk2=S.mk2||{};const o=S.mk2[id]||{};return o[k]===undefined?1:o[k];};
+const mkB=(id,k)=>{S.mb2=S.mb2||{};const o=S.mb2[id]||{};return o[k]===undefined?1:o[k];};
+function mkSet(store,id,k,v){S[store]=S[store]||{};S[store][id]=S[store][id]||{};S[store][id][k]=v;}
+const mktUnit=k=>k==='arrows'?10:1;   /* arrows are traded in bundles of 10 */
+function buyAt(id,k){const P=PARTNERS[id];let p=BASEP[k]*1.45*(P.sells.includes(k)?0.85:1.2)*(BUYX[k]||1)*mkB(id,k);if(hasAdv('athelstan'))p*=0.85;return Math.max(0.5,p);}
+function mktDeal(id,k){return S.trader&&S.trader.from===id?(S.trader.deals||[]).find(x=>x.k===k&&x.left>0):null;}
+function sellAt(id,k){const P=PARTNERS[id];let p=BASEP[k]*(P.wants.includes(k)?1.35:1)*mkS(id,k);if(hasAdv('athelstan'))p*=1.2;if(jt('wise'))p*=1.1;if(mktDeal(id,k))p*=1.5;
+  /* never more than 85% of the cheapest asking price anywhere, so buying to sell again always loses */
+  let lo=Infinity;for(const q of mktPartners())lo=Math.min(lo,buyAt(q,k));if(lo<Infinity)p=Math.min(p,lo*0.85);return Math.max(0.05,p);}
+const mktPartners=()=>Object.keys(PARTNERS).filter(partnerOk);
+function mktHave(k){return k==='thrall'?S.thralls:k==='pig'?S.herd.pigs:k==='sheep'?S.herd.sheep:Math.floor(S.res[k]||0);}
+const mktName=k=>k==='thrall'?'Thralls':k==='pig'?'Pigs':k==='sheep'?'Sheep':(RNAME[k]||k);
+/* room left in the stores for n units of k */
+function mktRoom(k){if(k==='thrall')return Math.max(0,thrallCap()-S.thralls);if(k==='pig'||k==='sheep')return Math.max(0,herdCap()-herdTotal());
+  if(FOOD.includes(k))return Math.max(0,Math.floor(capFood()-foodItems()));if(MAT.includes(k)&&k!=='tools')return Math.max(0,Math.floor(capMat()-matItems()));
+  if(ARMS.includes(k))return Math.max(0,Math.floor((capArms()-armsItems())*(k==='arrows'?10:1)));return Infinity;}
+const canSell=k=>k!=='pig'&&k!=='sheep';
+/* sell n units (bundles for arrows); returns silver earned */
+function mktSell(id,k,n){const u=mktUnit(k);n=Math.min(n,Math.floor(mktHave(k)/u));if(n<=0||!canSell(k))return 0;let got=0;
+  for(let i=0;i<n;i++){got+=sellAt(id,k)*u;const d=mktDeal(id,k);if(d)d.left=Math.max(0,d.left-u);mkSet('mk2',id,k,Math.max(0.35,mkS(id,k)*(k==='gold'||k==='thrall'?0.94:Math.pow(0.993,u))));}
+  if(k==='thrall')S.thralls-=n;else S.res[k]-=n*u;
+  S.res.silver=(S.res.silver||0)+got;S.trades=(S.trades||0)+1;return got;}
+/* buy n units; returns silver spent (0 if not enough silver or room) */
+function mktBuy(id,k,n){const u=mktUnit(k);n=Math.min(n,Math.floor(mktRoom(k)/u));if(n<=0)return 0;let cost=0;const sv=S.mb2&&S.mb2[id]&&S.mb2[id][k];
+  let m=0;for(let i=0;i<n;i++){const c=buyAt(id,k)*u;if(cost+c>(S.res.silver||0)+1e-9)break;cost+=c;m++;mkSet('mb2',id,k,Math.min(2.5,mkB(id,k)*(k==='gold'||k==='thrall'||k==='pig'||k==='sheep'?1.05:Math.pow(1.006,u))));}
+  if(!m){mkSet('mb2',id,k,sv===undefined?1:sv);return 0;}
+  S.res.silver-=cost;if(k==='thrall')S.thralls+=m;else if(k==='pig')S.herd.pigs+=m;else if(k==='sheep')S.herd.sheep+=m;else S.res[k]=(S.res[k]||0)+m*u;
+  S.trades=(S.trades||0)+1;return cost;}
+/* prices drift back toward normal: about a tenth of the gap each day */
+function mktRecover(){for(const st of ['mk2','mb2']){const A=S[st];if(!A)continue;for(const id in A)for(const k in A[id]){const v=A[id][k];A[id][k]=1+(v-1)*0.9;if(Math.abs(A[id][k]-1)<0.005)delete A[id][k];}}}
+{const _md=marketDay;marketDay=function(){_md.apply(this,arguments);mktRecover();};}
+const pfmt=p=>p>=10?Math.round(p).toString():p.toFixed(1);
+function marketPanel(){const ids=mktPartners(),sc=$('sheet-card')?$('sheet-card').scrollTop:0;
+  let h=head('Market','Silver '+fmt(S.res.silver)+' · gold '+fmt(S.res.gold));
+  if(!tradeOpen()){h+='<p>Build a <strong>Harbour</strong> and a <strong>Trading House</strong> (Town Hall 3) to trade with other villages.</p>';}
+  else if(!ids.length){h+='<p>No village trades with you yet.</p>';}
+  if(!tradeOpen()||!ids.length){h+=mktPartnerList();openSheet(h,'market');renderDock();return;}
+  if(!ids.includes(mktPartner))mktPartner=ids[0];const id=mktPartner,P=PARTNERS[id];
+  h+='<div class="tabs mtabs">'+ids.map(q=>'<button type="button" data-mp="'+q+'" aria-pressed="'+(q===id)+'">'+esc(PARTNERS[q].n)+(S.trader&&S.trader.from===q?' ⚓':'')+'</button>').join('')+'</div>';
+  h+='<p class="meta">'+esc(P.n)+' pays more for '+P.wants.map(k=>mktName(k).toLowerCase()).join(', ')+' and sells '+P.sells.map(k=>mktName(k).toLowerCase()).join(', ')+' cheaper. Prices change with every deal and settle again over the days.'+(S.trader&&S.trader.from===id?' Its merchant is in port: special orders pay 50% more.':'')+'</p>';
+  h+='<div class="wk"><span class="meta">Amount</span><div class="prio" role="group" aria-label="Amount per deal">'+MKT_Q.map(q=>'<button type="button" data-mq="'+q+'" aria-pressed="'+(q===mktQ)+'">'+q+'</button>').join('')+'</div><span class="meta">arrows in bundles of 10</span></div>';
+  const rows=MKT_GOODS().sort((a,b)=>(P.wants.includes(b)-P.wants.includes(a))||(P.sells.includes(b)-P.sells.includes(a))||mktName(a).localeCompare(mktName(b)));
+  h+='<table class="t mkt"><tr><th>Good</th><th>You have</th><th>Sell (each)</th><th>Buy (each)</th></tr>'+rows.map(k=>{const u=mktUnit(k),have=mktHave(k),sp=sellAt(id,k)*u,bp=buyAt(id,k)*u,n=mktQ;
+    const sN=Math.min(n,Math.floor(have/u)),bN=Math.min(n,Math.floor(mktRoom(k)/u),Math.floor((S.res.silver||0)/bp));
+    const tag=(P.wants.includes(k)?' <span class="meta">wanted</span>':'')+(mktDeal(id,k)?' <span class="meta">order: '+mktDeal(id,k).left+'</span>':'');
+    const sDir=mkS(id,k)<0.97?' ▼':'',bDir=mkB(id,k)>1.03?' ▲':'';
+    return '<tr><td>'+esc(mktName(k))+(u>1?' <span class="meta">×'+u+'</span>':'')+tag+'</td><td>'+have+'</td><td>'+(canSell(k)?'<button type="button" class="btn small" data-ms="'+k+'" '+(sN>0?'':'disabled')+'>Sell '+(sN||n)+'</button> <span class="meta">'+pfmt(sp)+sDir+'</span>':'<span class="meta">—</span>')+'</td><td><button type="button" class="btn small" data-mb="'+k+'" '+(bN>0?'':'disabled')+'>Buy '+(bN||n)+'</button> <span class="meta">'+pfmt(bp)+bDir+'</span></td></tr>';}).join('')+'</table>';
+  h+=mktPartnerList();
+  openSheet(h,'market');const card=$('sheet-card');card.scrollTop=sc;renderDock();hud();
+  card.querySelectorAll('[data-mp]').forEach(x=>x.onclick=()=>{mktPartner=x.dataset.mp;marketPanel();});
+  card.querySelectorAll('[data-mq]').forEach(x=>x.onclick=()=>{mktQ=+x.dataset.mq;marketPanel();});
+  card.querySelectorAll('[data-ms]').forEach(x=>x.onclick=()=>{const k=x.dataset.ms,g=mktSell(id,k,mktQ);if(g>0){toast('Sold to '+P.n+' for '+pfmt(g)+' silver.');checkMilestones();save();}marketPanel();});
+  card.querySelectorAll('[data-mb]').forEach(x=>x.onclick=()=>{const k=x.dataset.mb,c=mktBuy(id,k,mktQ);if(c>0){toast('Bought from '+P.n+' for '+pfmt(c)+' silver.');checkMilestones();save();}else toast(mktRoom(k)<mktUnit(k)?'No room left in the stores.':'Not enough silver.');marketPanel();});}
+function mktPartnerList(){return '<h3>Villages</h3><table class="t">'+Object.keys(PARTNERS).map(q=>{const P=PARTNERS[q],ok=partnerOk(q),ban=((S.tg[q]||{}).ban||0)>S.day;return '<tr><td>'+esc(P.n)+'</td><td>'+(ok?'Trades with you':ban?'Angry after your raid':'Not yet')+'</td></tr>';}).join('')+'</table>';}
 
 /* =================== saves & title =================== */
 const SLOT_KEY=i=>'ubbesaga.b14.slot'+i,LAST_KEY='ubbesaga.b14.last';

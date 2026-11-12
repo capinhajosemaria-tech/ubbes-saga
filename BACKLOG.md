@@ -15,6 +15,8 @@ Finished items are removed from this file; what each version changed is in `CHAN
 - Round 1 — economy, resources and first art (Beta 0.14.0).
 - Round 1C — production panel, reserves, chains, upgrades list (Beta 0.15.0).
 - Music and placement — 20 min of season music + special pieces, building rotation, doors where they are drawn, 3×3 shipyard (Beta 0.17.0).
+- Work priorities and Town Hall builders (Beta 0.17.1).
+- Wood, sources that run out, market panel (Beta 0.18.0).
 
 ## 1. Core redesign (decided with José, 2026-11-11)
 Goal: fewer systems, each one counts more; decisions matter, but the player stays free to build his own way and can always progress (maybe more slowly). City building and resources first; the lineage matters later, when resources are less of a worry.
@@ -57,12 +59,8 @@ Order: Round 1 (done, 0.14.0) → 1C (done, 0.15.0) → **1H** → 1D → 1I →
 ### 1G. Worker priorities
 - [ ] Setting: keep today's per-building − / +, or **priorities by category** (food, materials, crafts, building: high / normal / low).
 
-### 1K. Sources run out again (José's play feedback, 2026-11-12)
-Wood is still the limit, and iron piles up far too fast. José wants each source to have a **yearly cap that gets used up**. This undoes 0.15.4's "sources never run out" (`SRC_ENDLESS`, `SRC_Y`, `refillSources()` in `10_zsources.js`).
-- [ ] **Trees**: high cap per tree. A tree that is used up is drawn as a **stump**: only the trunk is left and the rest of the tree is gone (`drawStump` exists in `16_drawing_helpers.js`). It **grows back 3 days after winter ends**.
-- [ ] **Fish**: high cap per water tile. **Berry bushes**: lower cap.
-- [ ] **Iron**: very high cap per outcrop, refilled **every two years, at the start of winter** (not every year).
-- [ ] Show in the building sheet and on hover how much each source has left, and when it comes back. Check that wood is not still the bottleneck afterwards, and that iron no longer piles up.
+### 1K. Sources run out again — done in Beta 0.18.0
+- [ ] José plays and says if wood is still the limit and if iron still piles up (numbers in `10_zsources.js`: `SRC_Y`, `SRC_NEED`, `SRC_RATE`).
 
 ### 1J. Tutorial
 - [ ] Rewrite the guide for the new game, with more explanations (seasons, source limits, firewood, construction, production panel, reserves, Town Hall requirements).

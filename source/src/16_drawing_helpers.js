@@ -96,7 +96,7 @@ function drawStump(sx,sy,win){ctx.fillStyle='rgba(38,48,53,0.15)';ctx.beginPath(
   ctx.fillStyle=win?'#E6EBEC':'#D2B98F';ctx.beginPath();ctx.ellipse(sx,sy-7,6,3,0,0,6.3);ctx.fill();}
 function drawTree(o,win,a){
   const sx=(o.x-o.y)*HW+o.ox,sy=(o.x+o.y)*HH-elev[o.y*N+o.x]+o.oy;
-  if(!o.gone){drawSprite(SP[o.sp][win?1:0],sx,sy,o.s,a,false);return;}
+  if(!o.gone&&!(o.amt<=0.01)){drawSprite(SP[o.sp][win?1:0],sx,sy,o.s,a,false);return;}
   drawStump(sx,sy,win);
 }
 /* isometric log pile on canvas: logs along +x axis */

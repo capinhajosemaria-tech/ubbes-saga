@@ -809,7 +809,7 @@ function hoBooth(f,a0,c0,face,o,win){const fl=face.endsWith('-'),fc=face[0];cons
     for(const q of [A[3],A[2]]){const pg=[q[0]+(q[0]-P(0,0,hF)[0])*0.15,q[1]+9];hoLine(q,pg,'rgba(200,180,140,0.75)',0.4);ctx.fillStyle='#4A3424';ctx.fillRect(pg[0]-0.6,pg[1]-1.4,1.2,1.4);}}
   else{hoQ(A,win?'#EEF1F0':o.roof);if(!win)hoRoofSurface((u,v)=>lerp(lerp(A[3],A[2],u),lerp(A[0],A[1],u),v),{sd:o.sd||3,rt:o.rt,rh:6,roofD:shade(o.roof,0.75)},win);hoLine(A[3],A[2],'rgba(10,8,6,0.5)',0.7);}
   hoQ([A[1],A[2],[A[2][0],A[2][1]+1.4],[A[1][0],A[1][1]+1.4]],'#3A2A1C');}
-function hoFlagstones(f,hs,win,sd){if(window.__FLAG)return hoFlag0(f,hs,win,sd);if(!window.__FANS)return hoSetts(f,hs,win,sd);
+function hoFlagstones(f,hs,win,sd){const FL=window.__FLOOR|0;if(FL===2)return hoFloorSlabs(f,hs,win,sd);if(FL===3)return hoFloorPlanks(f,hs,win,sd);if(FL===4||window.__FLAG)return hoFlag0(f,hs,win,sd);if(!window.__FANS)return hoSetts(f,hs,win,sd);
   hoQ([f(-hs-0.07,-hs-0.07,0),f(hs+0.07,-hs-0.07,0),f(hs+0.07,hs+0.07,0),f(-hs-0.07,hs+0.07,0)],win?'#BFC1BD':'#5E5850');hoQ([f(-hs,-hs,0),f(hs,-hs,0),f(hs,hs,0),f(-hs,hs,0)],win?'#D8DAD6':'#4E4A44');
   /* kerb of long dressed stones */for(let k=0;k<18;k++){const u=-hs+2*hs*(k+0.5)/18;for(const q of [[u,hs+0.035],[hs+0.035,u]]){const p=f(q[0],q[1],0);ctx.fillStyle=k%2?'#7E776C':'#8E877B';ctx.beginPath();ctx.ellipse(p[0],p[1],3.4,1.6,0,0,6.3);ctx.fill();}}
   /* cobbles laid in fans (arcs), each a small rounded stone in a slightly different tone */const fan=0.42;ctx.save();ctx.beginPath();{const q=[f(-hs,-hs,0),f(hs,-hs,0),f(hs,hs,0),f(-hs,hs,0)];ctx.moveTo(q[0][0],q[0][1]);for(const z of q)ctx.lineTo(z[0],z[1]);ctx.closePath();}ctx.clip();
@@ -851,3 +851,23 @@ function hoSetts(f,hs,win,sd){hoQ([f(-hs-0.07,-hs-0.07,0),f(hs+0.07,-hs-0.07,0),
   /* worn path from the corners to the well, a little moss in the joints near the edges */ctx.fillStyle='rgba(150,140,120,0.10)';const C=f(0,0,0);ctx.beginPath();ctx.ellipse(C[0],C[1],26,13,0,0,6.3);ctx.fill();
   ctx.fillStyle='rgba(90,110,60,0.35)';for(let k=0;k<22;k++){const e=h2(sd,k,13)>0.5?1:-1,p=f(e*(hs-0.05-h2(sd,k,14)*0.15),(h2(sd,k,15)-0.5)*2*hs,0);ctx.fillRect(p[0]-1.2,p[1]-0.3,2.4,0.6);}
   for(let k=0;k<20;k++){const u=-hs+2*hs*(k+0.5)/20;for(const q of [[u,hs+0.035],[hs+0.035,u]]){const p=f(q[0],q[1],0);ctx.fillStyle=k%2?'#7E776C':'#8E877B';ctx.beginPath();ctx.ellipse(p[0],p[1],3,1.4,0,0,6.3);ctx.fill();}}}
+
+/* floor option 2: big irregular granite slabs on a jittered grid (shared corners), dark joints with moss */
+function hoFloorSlabs(f,hs,win,sd){hoQ([f(-hs-0.07,-hs-0.07,0),f(hs+0.07,-hs-0.07,0),f(hs+0.07,hs+0.07,0),f(-hs-0.07,hs+0.07,0)],win?'#BFC1BD':'#5A544C');hoQ([f(-hs,-hs,0),f(hs,-hs,0),f(hs,hs,0),f(-hs,hs,0)],win?'#C9CBC7':'#3A3631');
+  const n=11,st=2*hs/n,V=(i,k)=>{const e=i===0||i===n,g=k===0||k===n;return [-hs+i*st+(e?0:(h2(sd,i*53+k,21)-0.5)*st*0.5),-hs+k*st+(g?0:(h2(sd,i*53+k,22)-0.5)*st*0.5)];};
+  for(let i=0;i<n;i++)for(let k=0;k<n;k++){const q=[V(i,k),V(i+1,k),V(i+1,k+1),V(i,k+1)],cx=(q[0][0]+q[2][0])/2,cy=(q[0][1]+q[2][1])/2,ins=0.012,pts=q.map(v=>{const dx=cx-v[0],dy=cy-v[1],d=Math.hypot(dx,dy)||1;return f(v[0]+dx/d*ins,v[1]+dy/d*ins,0);});
+    const t=h2(sd,i*71+k,23),col=win?(t>0.5?'#E2E4E0':'#D6D8D4'):(t>0.8?'#8A8378':t>0.55?'#7A746A':t>0.25?'#6E685E':'#757060');hoQ(pts,col);hoLine(pts[3],pts[2],'rgba(255,250,235,0.10)',0.5);
+    if(!win&&zoom>1.2){ctx.fillStyle='rgba(30,26,20,0.18)';const c=f(cx,cy,0);for(let m=0;m<3;m++)ctx.fillRect(c[0]+(h2(sd,i*7+k*13+m,24)-0.5)*8,c[1]+(h2(sd,i*11+k*5+m,25)-0.5)*4,0.8,0.5);}}
+  ctx.fillStyle='rgba(90,110,60,0.4)';for(let k=0;k<30;k++){const i=1+(h2(sd,k,26)*(n-1)|0),j=1+(h2(sd,k,27)*(n-1)|0),v=V(i,j),p=f(v[0],v[1],0);ctx.fillRect(p[0]-1.4,p[1]-0.35,2.8,0.7);}
+  for(let k=0;k<20;k++){const u=-hs+2*hs*(k+0.5)/20;for(const q of [[u,hs+0.035],[hs+0.035,u]]){const p=f(q[0],q[1],0);ctx.fillStyle=k%2?'#7E776C':'#8E877B';ctx.beginPath();ctx.ellipse(p[0],p[1],3,1.4,0,0,6.3);ctx.fill();}}}
+/* floor option 3: trodden earth with timber plank walks (Hedeby style): a ring in front of the booths and a cross to the well */
+function hoFloorPlanks(f,hs,win,sd){hoQ([f(-hs-0.05,-hs-0.05,0),f(hs+0.05,-hs-0.05,0),f(hs+0.05,hs+0.05,0),f(-hs-0.05,hs+0.05,0)],win?'#D0CEC8':'#6A5844');hoQ([f(-hs,-hs,0),f(hs,-hs,0),f(hs,hs,0),f(-hs,hs,0)],win?'#DAD8D2':'#8C7A60');
+  if(!win){for(let k=0;k<70;k++){const p=f((h2(sd,k,31)-0.5)*2*hs,(h2(sd,k,32)-0.5)*2*hs,0),t=h2(sd,k,33);ctx.fillStyle=t>0.6?'rgba(160,140,110,0.35)':t>0.3?'rgba(60,46,32,0.3)':'rgba(110,120,70,0.35)';ctx.fillRect(p[0]-1,p[1]-0.4,t>0.3?2:3,0.8);}
+    const C=f(0,0,0);ctx.fillStyle='rgba(50,38,26,0.10)';ctx.beginPath();ctx.ellipse(C[0],C[1],22,11,0,0,6.3);ctx.fill();}
+  const w=0.1,pk=0.06;
+  /* a walk along axis 'a' (planks laid across it) from a0 to a1 at c */const walkA=(a0,a1,c)=>{for(let a=a0;a<a1-0.01;a+=pk){const t=h2(sd,(a*100|0)+(c*1000|0),34),col=win?(t>0.5?'#EEF0EC':'#E2E4E0'):(t>0.7?'#A08460':t>0.35?'#937656':'#86694A');hoQ([f(a+0.004,c-w,0),f(a+pk-0.008,c-w,0),f(a+pk-0.008,c+w,0),f(a+0.004,c+w,0)],col);}
+      hoLine(f(a0,c+w,0),f(a1,c+w,0),'rgba(30,20,12,0.45)',0.6);hoLine(f(a0,c-w,0),f(a1,c-w,0),'rgba(30,20,12,0.3)',0.5);};
+  const walkC=(c0,c1,a)=>{for(let c=c0;c<c1-0.01;c+=pk){const t=h2(sd,(c*100|0)+(a*1000|0),35),col=win?(t>0.5?'#EEF0EC':'#E2E4E0'):(t>0.7?'#A08460':t>0.35?'#937656':'#86694A');hoQ([f(a-w,c+0.004,0),f(a+w,c+0.004,0),f(a+w,c+pk-0.004,0),f(a-w,c+pk-0.008,0)],col);}
+      hoLine(f(a+w,c0,0),f(a+w,c1,0),'rgba(30,20,12,0.45)',0.6);hoLine(f(a-w,c0,0),f(a-w,c1,0),'rgba(30,20,12,0.3)',0.5);};
+  const r=0.82;walkA(-r-w,r+w,-r);walkC(-r+w,r-w,-r);walkC(-r+w,r-w,r);walkA(-r-w,r+w,r);
+  walkA(r+w,hs,0);walkC(r+w,hs,0);walkA(-r+w,-0.32,0);walkA(0.32,r-w,0);walkC(-r+w,-0.25,0);walkC(0.25,r-w,0);}

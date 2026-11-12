@@ -2,6 +2,11 @@
 
 Versions are `Beta 0.MINOR.PATCH` until Town Hall 10 (`1.0.0`).
 
+## Beta 0.16.1
+- Every building casts a shadow in its own shape: walls, gable and hip roofs, towers, spires, sheds and booths, swinging with the sun.
+- The light trodden ground under a building now hugs the building instead of filling its whole square plot (fenced pens, the market and the Town Hall plaza keep their square yard).
+- At night the stray glowing "door" squares beside buildings are gone; the buildings' own doors and windows glow.
+
 ## Beta 0.16.0
 - New art for every building, drawn in one style: fine lines, a real door on every building, stone footings, timber frames, glowing windows with shutters, and roofs of thatch, slate, black shingles or red boards.
 - Houses are cottages that grow with each level, in 8 colour schemes (pick one in the house sheet, or keep a mixed village).

@@ -285,10 +285,13 @@ This file is mirrored in the claude.ai project as `claude/Estilo dos edificios.m
 - Smooth colour drift: each tile is tinted from low-frequency noise so lush hollows and dry tops blend across tiles (no blobs cut at tile edges — that made a checkerboard).
 - Fine blades and flowers only when zoomed in; fewer clumps when zoomed out. Prototype: `window.__setGrass(2)` (1 dense meadow, 3 grazed pasture, 4 heath, 5 flowering meadow, 6 painterly kept); screenshots `tools/ui/tmp_grass.py`.
 
-## Shadows (shared rule, 2026-11-12)
-- José: the dark box shadow (and the ground patch) does not match the buildings' shapes.
-- Each redrawn building gives its own **shadow volumes** (`shShape(b)` in `20_zzstyle.js`: ground outline + height); the cast shadow is the union of those, swept along the sun. The old box shadow stays only for buildings not yet redrawn. Done for the Iron Mine; to do for every building when the styles are rolled out.
-- The light ground patch under each plot (`drawGround`) should follow each building's shape too: a building can draw its own ground with `groundShape(b)` (done for the round Sheep Pen); to do for every redrawn building.
+## Shadows and ground (shared rule, done in Beta 0.16.1)
+- José: the dark box shadow (and the ground patch) did not match the buildings' shapes.
+- **Every** building now gives its own **shadow solids** (`shShape(b)`; the kit is `shKit` in `source/src/20_zzzshade.js`): `box`, `gable`, `gableC` (ridge across), `hip`, `pyr` (pyramid), `lean` (lean-to), `pole`. A solid can be a plain box `{pts,h}` or `{pts,parts:[[points,h],...]}`: every point is pushed along the sun by its own height, so gables and hips cast a roof-shaped shadow. The cast shadow is the union of all solids. Heights are the drawing's px / 35.
+- The **ground patch** under each plot follows the building: a soft rounded patch hugging its solids (outer + trodden inner, spots and pebbles inside), not the whole square. Buildings with their own ground (Sheep Pen, Training Ground, Altar, Pyre, Tomb, Beehives, Decor, fields) keep it; fenced or paved yards keep the square (Pig Pen, Thrall Pen, Market, Town Hall plaza, Harbour, Shipyard, Mill).
+- No painted "lit door" square on the ground at night any more (it stood beside the buildings); runestone, prow and nets give no light pool.
+- A new building: add its solids to `shShape` in `20_zzzshade.js`; the ground follows on its own.
+- Screenshots: `tools/ui/tmp_shadow.py OUT ZOOM TOD [types]` (gallery, one tile per type; TOD 0.5 noon, 0.78 dusk).
 
 ## Next buildings
 One at a time. José (2026-11-12): **send 4 drawn options straight away** (no separate "current look" step) → José's choice and notes → recorded here.

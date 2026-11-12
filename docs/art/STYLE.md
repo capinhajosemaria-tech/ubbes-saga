@@ -116,6 +116,13 @@ Prototype code: branch `house-options`, `source/src/20_zzhouseopt.js` (switch `w
 - L3: window with blue shutters; L5: longer hut, carved barge ends, a net drying on the jetty, a lantern at its end.
 - Own shadow. Prototype: `window.__setFish(1)`.
 
+## Preserver (chosen: option 3 "Jam workshop", 2026-11-12)
+- Makes **jam only** (José; game change noted in BACKLOG — dried fish moves to the Smokehouse).
+- Plank house in honey-brown planks, **brick-red board roof**, crossed barge boards, door on the long wall, window with red shutters on the gable.
+- **Open porch** in front (plank floor, three posts, lean-to of red boards): a **freestanding shelf rack facing the viewer** full of clay crocks with tied cloth covers, a **copper kettle of jam** on a stone hearth with a little steam (not smoke), a work table behind.
+- L3: longer rack; L5: longer house, second kettle, carved barge ends. No herbs hanging (they hid the shelves).
+- Own shadow. Prototype: `window.__setPres(3)`.
+
 ## Shadows (shared rule, 2026-11-12)
 - José: the dark box shadow (and the ground patch) does not match the buildings' shapes.
 - Each redrawn building gives its own **shadow volumes** (`shShape(b)` in `20_zzhouseopt.js`: ground outline + height); the cast shadow is the union of those, swept along the sun. The old box shadow stays only for buildings not yet redrawn. Done for the Iron Mine; to do for every building when the styles are rolled out.
@@ -124,4 +131,4 @@ Prototype code: branch `house-options`, `source/src/20_zzhouseopt.js` (switch `w
 ## Next buildings
 One at a time: show the current look close up → José's notes → 2–4 options → choice, recorded here.
 When José asks for a fix, change only that (no extra changes without asking).
-Order still to do: Preserver → Smokehouse → Pig Pen → Sheep Pen → Fields / Water Mill / Bakery → Brewery, Weaver, Tailor, Tavern → Training Ground, Arsenal, Watchtower → Shipyard / Harbour → Funeral Pyre, Altar, Ship-Tomb → Decor.
+Order still to do: Smokehouse → Pig Pen → Sheep Pen → Fields / Water Mill / Bakery → Brewery, Weaver, Tailor, Tavern → Training Ground, Arsenal, Watchtower → Shipyard / Harbour → Funeral Pyre, Altar, Ship-Tomb → Decor.

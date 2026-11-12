@@ -350,21 +350,21 @@ function drawTHOpt(b,win,opt){const J=TH_SET[opt]||TH_SET[1],L=thLevel(),hb=thHa
   if(L>=4){hoPlinthDark(fPl,hl+pad+0.14,hw+off+pad+0.14,ph*0.42,win,sd+1,J.st);const fUp=(a,c,h)=>fPl(a,c,(h||0)+ph*0.42);hoPlinthDark(fUp,hl+pad,hw+off+pad,ph*0.58,win,sd,J.st);}
   else hoPlinthDark(fPl,hl+pad,hw+off+pad,ph,win,sd,J.st);
   /* stair toward the plaza, in front of the vestibule */const fS=(a,c,h)=>f0(c,a,h);hoStair(fS,hw+vl+pad+(L>=4?0.14:0),0,0.36,ph,L>=4?4:3,win);
-  if(L>=5){hoBrazier(f0(0.55,hw+vl+pad+0.5,0));hoBrazier(f0(-0.55,hw+vl+pad+0.5,0));}
+  {const sf=hw+vl+pad+(L>=4?0.14:0)+(L>=4?0.44:0.33)+0.08;hoLampPost(f0(-0.5,sf,0),18);if(L>=5){hoBrazier(f0(0.55,sf,0));}else hoLampPost(f0(0.5,sf,0),18);}
   /* back annex from level 2 (a low lean-to behind, peeks over the roof line) */
   const g={sd,hl,hw,fh:1.6,wh,rh:0,wt:'staves',wall:J.wall,wallD:J.wallD,frame:true,frameCol:'#2E2018',k:1,v:1};
   hoWalls(fP,g,win);
   /* windows and shields along the front, clear of the vestibule */
-  const ws=L>=3?[-1.2,-0.75,0.75,1.2]:[-1.05,1.05];for(const a of ws)hoWindow(fP,g,'L',a*hl/1.66,0.17,10,16,{shutters:'#7A2E22'});
-  hoWindow(fP,g,'G',-hw*0.45,0.15,10,16,{shutters:'#7A2E22'});hoWindow(fP,g,'G',hw*0.45,0.15,10,16,{shutters:'#7A2E22'});
-  if(J.sh){const sc=[[-0.98,'#A34A3A','#D7CDB4'],[-0.52,'#D7CDB4','#A34A3A'],[0.52,'#C9A042','#2E3A44'],[0.98,'#A34A3A','#D7CDB4']];for(const s of sc)hoShield(fP(s[0]*hl/1.66,hw,wh*0.55),s[1],s[2],4.2);
-    if(L>=3){hoShield(fP(-1.42*hl/1.66,hw,wh*0.55),'#C9A042','#2E3A44',4.2);hoShield(fP(1.42*hl/1.66,hw,wh*0.55),'#C9A042','#2E3A44',4.2);}}
+  const ws=L>=3?[-1.38,-0.98,-0.58,0.58,0.98,1.38]:[-1.2,-0.7,0.7,1.2];for(const a of ws)hoWindow(fP,g,'L',a*hl/1.74,0.17,10,16,{shutters:'#7A2E22'});
+  for(const cc of (L>=3?[-0.62,-0.2,0.2,0.62]:[-0.45,0.45]))hoWindow(fP,g,'G',cc*hw,0.14,10,16,{shutters:'#7A2E22'});
+  /* no shields on the walls: windows only */
   /* main roof */
   const cR=ax?{T:fP(-hl,-hw),R:fP(hl,-hw),Bt:fP(hl,hw),L:fP(-hl,hw)}:{T:fP(-hl,-hw),R:fP(-hl,hw),Bt:fP(hl,hw),L:fP(hl,-hw)};
   HO_NOTEX=true;const r=hipRoof(cR,wh,rh,ax,{hp:J.hp,sag:J.sag,bow:J.bow,rt:'shingle',roof:J.roof,roofD:J.roofD,ov:5,seed:sd},win);HO_NOTEX=false;
   if(!win){hoRoofSurface(r.at,{sd,rt:J.rt,rh:J.rt==='slab'||J.rt==='boards'?rh*0.6:rh,roofD:J.roofD,blue:J.blue},win);
     const E=hipEdges(cR,ax),e0=up(E.fe[0],wh-1),e1=up(E.fe[1],wh-1);ctx.strokeStyle='rgba(15,12,10,0.35)';ctx.lineWidth=0.5;ctx.beginPath();for(let k=1;k<10;k++){const v=k/10,a=lerp(e0,r.rf,v),b2=lerp(e1,r.rf,v);ctx.moveTo(a[0],a[1]);ctx.lineTo(b2[0],b2[1]);}ctx.stroke();
     if(L>=4){/* gilded eave trim */ctx.strokeStyle='rgba(201,160,66,0.8)';ctx.lineWidth=0.7;ctx.beginPath();for(let k=0;k<=20;k++){const p=r.at(k/20,0.01);k?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]);}ctx.stroke();}}
+  if(L>=3)hoRidgePiece(r,ax,J.ds,J.dc,J.da,0,0.34,true,false);
   /* raised lantern from level 3: walls stand ON the roof (bottom follows the slope), lead flashing and a shadow where they meet, its own small roof */
   if(L>=3){const u0=0.34,u1=0.66,v0=0.55,bh=L>=5?13:11,rise=11,K=12,lift=(p,h)=>[p[0],p[1]-h],Ep=u=>r.at(u,v0),Rr=u=>r.ridge(u),us=[...Array(K+1)].map((_,k)=>u0+(u1-u0)*k/K);
     /* soft shadow on the roof just below the lantern */poly([].concat(...us.map(u=>r.at(u,v0-0.1)),...us.slice().reverse().map(u=>Ep(u))),'rgba(10,8,6,0.22)');
@@ -378,8 +378,8 @@ function drawTHOpt(b,win,opt){const J=TH_SET[opt]||TH_SET[1],L=thLevel(),hb=thHa
     poly([].concat(Eu(ue1),lift(Rr(ue1),bh),Ru(ru[K])),win?'#DCE2E1':J.roofD);
     poly([].concat(...[...Array(K+1)].map((_,k)=>Eu(ue0+(ue1-ue0)*k/K)),...ru.slice().reverse().map(u=>Ru(u))),win?'#EEF1F0':J.roof);
     if(!win)hoRoofSurface((a,v)=>lerp(Eu(ue0+(ue1-ue0)*a),Ru(ru[0]+(ru[K]-ru[0])*a),v),{sd:sd+3,rt:J.rt==='shields'?'scale':J.rt,rh:J.rt==='shields'?14:rise+6,roofD:J.roofD,blue:J.blue},win);
-    hoLine(Ru(ru[0]),Ru(ru[K]),J.dc,1.8);const tip=Ru(ru[K]);hoLine(tip,[tip[0]+(ax?3:-3),tip[1]-6],J.dc,1.4);}
-  hoRidgeDragons(r,ax,J.ds,J.dc,J.da);
+    hoLine(Ru(ru[0]),Ru(ru[K]),J.dc,1.8);}
+  if(L>=3)hoRidgePiece(r,ax,J.ds,J.dc,J.da,0.66,1,false,true);else hoRidgeDragons(r,ax,J.ds,J.dc,J.da);
   /* vestibule (antechamber) in front of the door: its own gable faces the plaza, Urnes portal, antlers on the apex */
   const vw=0.36,gv={sd:sd+9,hl:vl/2,hw:vw,fh:1.6,wh:wh*0.74,rh:20,ov:0.06,th:J.rt==='slab'?2:1.8,wt:'staves',wall:J.wall,wallD:J.wallD,roof:J.roof,roofD:J.roofD,roofE:shade(J.roofD,0.7),rt:J.rt==='shields'||J.rt==='clinker'?'scale':J.rt,blue:J.blue,frame:true,frameCol:'#2E2018',k:1,v:1};
   const fv=(a2,c2,h)=>fP(c2,hw+vl/2+a2-0.02,h);const rv=hoRoof(fv,gv,win);rv.back();hoWalls(fv,gv,win);rv.end();
@@ -387,5 +387,45 @@ function drawTHOpt(b,win,opt){const J=TH_SET[opt]||TH_SET[1],L=thLevel(),hb=thHa
   {/* Urnes interlace: extra gold ribbons over the door frame */const fh=gv.fh,hd=gv.wh-5,pt=(s,h)=>fv(gv.hl,s,h);ctx.strokeStyle='#D9B356';ctx.lineWidth=0.7;ctx.beginPath();for(let k=0;k<5;k++){const s=-0.2+0.1*k,p=pt(s,fh+hd+3),q=pt(s+0.1,fh+hd+3);ctx.moveTo(p[0],p[1]);ctx.bezierCurveTo(p[0]+2,p[1]-5,q[0]-2,q[1]+3,q[0],q[1]);}ctx.stroke();
     ctx.beginPath();for(const s of [-0.21,0.21]){const a=pt(s,fh),b2=pt(s,fh+hd);ctx.moveTo(a[0],a[1]);for(let k=1;k<=8;k++){const p=lerp(a,b2,k/8);ctx.bezierCurveTo(p[0]+3,p[1]+3,p[0]-3,p[1]+1,p[0],p[1]);}}ctx.stroke();}
   for(const s of [-0.3,0.3]){const p=fv(gv.hl+0.02,s,gv.wh-6);ctx.fillStyle='rgba(255,190,100,0.25)';ctx.beginPath();ctx.ellipse(p[0],p[1]-6,5,4,0,0,6.3);ctx.fill();hoLine(p,[p[0],p[1]-4],'#2E2018',1);ctx.fillStyle='#F0A040';ctx.beginPath();ctx.moveTo(p[0]-1.5,p[1]-4);ctx.quadraticCurveTo(p[0],p[1]-9,p[0]+1.5,p[1]-4);ctx.fill();}
+  hoWindow(fv,gv,'L',0,0.12,8,13,{shutters:'#7A2E22'});
   rv.front();rv.ridge();hoBarge(fv,gv,J.dc,0.25,true);hoAntlers(fv(gv.hl+gv.ov,0,gv.wh+gv.rh+1),1.15,'#E6DCC4');
   if(L>=2&&opt!==3)hoShield(fv(gv.hl,0,gv.wh+gv.rh*0.38),'#C9A042','#2E3A44',3.6);}
+/* ridge beam piece between ua and ub (0..1 along the ridge); a dragon neck+head at the back end (hb) and/or front end (hf) */
+function hoRidgePiece(r,ax,s,col,acc,ua,ub,hb,hf){const dirF=ax?1:-1,dirB=-dirF;
+  const neck=(p,q,dir)=>{let ux=p[0]-q[0],uy=p[1]-q[1];const L=Math.hypot(ux,uy)||1;ux/=L;uy/=L;const P0=p,P1=[p[0]+ux*6*s,p[1]+uy*6*s],P2=[p[0]+dir*8*s,p[1]-11*s],P3=[p[0]+dir*4.6*s,p[1]-19*s];
+    const pts=[];for(let k=1;k<=14;k++){const t=k/14,a=1-t;pts.push([a*a*a*P0[0]+3*a*a*t*P1[0]+3*a*t*t*P2[0]+t*t*t*P3[0],a*a*a*P0[1]+3*a*a*t*P1[1]+3*a*t*t*P2[1]+t*t*t*P3[1]]);}return {pts,P3};};
+  const F=hf?neck(r.rf,r.ridge(0.96),dirF):null,Bk=hb?neck(r.rb,r.ridge(0.04),dirB):null;
+  const n=Math.max(4,Math.round(24*(ub-ua))),ridge=[];for(let k=0;k<=n;k++)ridge.push(r.ridge(ua+(ub-ua)*k/n));
+  const bp=Bk?Bk.pts.slice().reverse():[],fpp=F?F.pts:[],C=[...bp,...ridge,...fpp],nb=bp.length,nr=ridge.length,N0=C.length;
+  const W=i=>{const base=1.35;if(i<nb)return base-0.4*(nb-i)/nb;if(i>=nb+nr)return base-0.4*(i-nb-nr+1)/fpp.length;return base;};
+  const Lp=[],Rp=[];for(let i=0;i<N0;i++){const a=C[Math.max(0,i-1)],b2=C[Math.min(N0-1,i+1)];let nx=-(b2[1]-a[1]),ny=b2[0]-a[0];const ln=Math.hypot(nx,ny)||1;nx/=ln;ny/=ln;const w=W(i)*s;Lp.push([C[i][0]+nx*w,C[i][1]+ny*w]);Rp.push([C[i][0]-nx*w,C[i][1]-ny*w]);}
+  if(Bk)hoHead(Bk.P3,dirB,s*1.35,col,acc);if(F)hoHead(F.P3,dirF,s*1.35,col,acc);
+  ctx.fillStyle=col;ctx.beginPath();ctx.moveTo(Lp[0][0],Lp[0][1]);for(const q of Lp)ctx.lineTo(q[0],q[1]);for(let i=N0-1;i>=0;i--)ctx.lineTo(Rp[i][0],Rp[i][1]);ctx.closePath();ctx.fill();
+  ctx.strokeStyle='rgba(15,10,6,0.6)';ctx.lineWidth=0.45;const i0=Bk?2:0,i1=F?N0-2:N0;for(const side of [Lp,Rp]){ctx.beginPath();for(let i=i0;i<i1;i++){const q=side[i];i===i0?ctx.moveTo(q[0],q[1]):ctx.lineTo(q[0],q[1]);}ctx.stroke();}
+  /* a cut end where the beam meets the lantern wall */if(!Bk){hoLine(Lp[0],Rp[0],'rgba(15,10,6,0.7)',0.6);}if(!F){hoLine(Lp[N0-1],Rp[N0-1],'rgba(255,230,190,0.35)',0.6);}
+  ctx.strokeStyle='rgba(255,236,200,0.22)';ctx.lineWidth=0.5;ctx.beginPath();for(let i=1;i<N0-1;i++){const q=lerp(C[i],Lp[i],0.6);i===1?ctx.moveTo(q[0],q[1]):ctx.lineTo(q[0],q[1]);}ctx.stroke();
+  ctx.strokeStyle=acc;ctx.lineWidth=0.4;ctx.beginPath();for(let i=1;i<N0-1;i++){const q=C[i];i===1?ctx.moveTo(q[0],q[1]):ctx.lineTo(q[0],q[1]);}ctx.stroke();}
+/* small iron lantern on a post with a cross-arm: frame, glass glow, a cap */
+function hoLampPost(p,h){const top=[p[0],p[1]-h];ctx.fillStyle='#2A2622';ctx.fillRect(p[0]-0.8,p[1]-h,1.6,h);ctx.fillRect(p[0]-1.6,p[1]-1.2,3.2,1.2);hoLine([p[0],p[1]-h+1],[p[0]+4,p[1]-h+1],'#2A2622',0.9);
+  const lx=p[0]+4,ly=p[1]-h+2;ctx.fillStyle='rgba(255,196,110,0.22)';ctx.beginPath();ctx.ellipse(lx,ly+3,7,5,0,0,6.3);ctx.fill();
+  ctx.fillStyle='#F2C060';ctx.fillRect(lx-1.6,ly+1,3.2,4);ctx.strokeStyle='#2A2622';ctx.lineWidth=0.5;ctx.strokeRect(lx-1.6,ly+1,3.2,4);hoLine([lx,ly+1],[lx,ly+5],'#2A2622',0.4);
+  ctx.fillStyle='#2A2622';ctx.beginPath();ctx.moveTo(lx-2.2,ly+1);ctx.lineTo(lx+2.2,ly+1);ctx.lineTo(lx,ly-1);ctx.fill();ctx.fillRect(lx-1.8,ly+5,3.6,0.8);}
+/* plaza: only the feast hearth (raised stone ring on its own flagstone circle, log benches) and lights */
+const _drawPlaza0=drawPlaza;drawPlaza=function(b,win){if(!TH_OPT)return _drawPlaza0(b,win);
+  const L=thLevel(),mr=TH_MX[(b.rot|0)&3],at=(x,y)=>iso(b.fx+(mr[0]?6-x:x)-0.5,b.fy+(mr[1]?6-y:y)-0.5),fire=at(5.3,5.3),feast=feastOn(),F=fire;ctx.save();
+  /* flagstone circle, lighter than the plaza, with a kerb */ctx.fillStyle=win?'#E0E3E0':'#B9B2A4';ctx.beginPath();ctx.ellipse(F[0],F[1],40,20,0,0,6.3);ctx.fill();
+  for(let ring=0;ring<2;ring++){const R=ring?34:24,n=ring?22:15;for(let k=0;k<n;k++){const a=(k+ring*0.5)/n*6.283;ctx.fillStyle=(k+ring)%3===0?(win?'#CDD0CD':'#A79F90'):(win?'#D6D9D6':'#C3BCAE');ctx.beginPath();ctx.ellipse(F[0]+Math.cos(a)*R,F[1]+Math.sin(a)*R*0.5,ring?5:4.4,ring?2.4:2.1,0,0,6.3);ctx.fill();}}
+  ctx.strokeStyle=win?'#B9BCB9':'#7E776B';ctx.lineWidth=1.2;ctx.beginPath();ctx.ellipse(F[0],F[1],40,20,0,0,6.3);ctx.stroke();
+  /* log benches */const bench=(a)=>{const x=F[0]+Math.cos(a)*30,y=F[1]+Math.sin(a)*15;ctx.save();ctx.translate(x,y);ctx.rotate(a+1.57);ctx.scale(1,0.5);ctx.fillStyle='#7A5A3C';ctx.fillRect(-9,-2.2,18,4.4);ctx.fillStyle='#C9A779';ctx.beginPath();ctx.ellipse(-9,0,1.4,2.2,0,0,6.3);ctx.ellipse(9,0,1.4,2.2,0,0,6.3);ctx.fill();ctx.restore();};
+  [3.6,4.6,5.6,0.6,1.6].forEach(bench);
+  /* raised hearth: two courses of stones, ember bed, crossed logs */for(let c2=0;c2<2;c2++){for(let k=0;k<12;k++){const a=k/12*6.283;ctx.fillStyle=k%2?(win?'#B5B8B5':'#7C766C'):(win?'#C3C6C3':'#8E877B');ctx.beginPath();ctx.ellipse(F[0]+Math.cos(a)*12,F[1]+Math.sin(a)*6-c2*2.4,3.4,2.2,0,0,6.3);ctx.fill();}}
+  ctx.fillStyle='#2A1E16';ctx.beginPath();ctx.ellipse(F[0],F[1]-3,9,4.4,0,0,6.3);ctx.fill();ctx.fillStyle='rgba(230,110,40,0.75)';ctx.beginPath();ctx.ellipse(F[0],F[1]-3,6.5,3,0,0,6.3);ctx.fill();
+  hoLine([F[0]-6,F[1]-1],[F[0]+5,F[1]-6],'#4A3020',2);hoLine([F[0]+6,F[1]-1],[F[0]-5,F[1]-6],'#5A3A26',2);
+  const big=feast?1.8:1.15,tt=typeof t==='number'?t:0;ctx.fillStyle='rgba(255,180,90,'+(feast?0.3:0.2)+')';ctx.beginPath();ctx.ellipse(F[0],F[1]-4,30*big,15*big,0,0,6.3);ctx.fill();
+  for(const [dx,hh,col] of [[-3,14,'#D9561E'],[3,12,'#E8742A'],[0,18,'#E8742A'],[0,10,'#F7C25A']]){ctx.fillStyle=col;ctx.beginPath();ctx.moveTo(F[0]+dx-4*big,F[1]-3);ctx.quadraticCurveTo(F[0]+dx+Math.sin(tt*6+dx)*1.5,F[1]-3-(hh+Math.sin(tt*9+dx)*2.5)*big,F[0]+dx+4*big,F[1]-3);ctx.fill();}
+  for(let k=0;k<5;k++){const q=((tt*0.7+k/5)%1);ctx.fillStyle='rgba(255,210,120,'+(1-q).toFixed(2)+')';ctx.fillRect(F[0]+Math.sin(k*7+tt)*6*q,F[1]-12-q*26*big,1,1);}
+  if(feast){ctx.strokeStyle='#3A2A1E';ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(F[0]-16,F[1]-2);ctx.lineTo(F[0]-16,F[1]-20);ctx.moveTo(F[0]+16,F[1]-2);ctx.lineTo(F[0]+16,F[1]-20);ctx.moveTo(F[0]-19,F[1]-18);ctx.lineTo(F[0]+19,F[1]-18);ctx.stroke();
+    ctx.fillStyle='#B0705A';ctx.beginPath();ctx.ellipse(F[0],F[1]-18,10,5.5,0,0,6.3);ctx.fill();const cols=['#5E7F8C','#8E5A4E','#7C8A6A','#4B6A76','#A34A3A','#6E5248','#C9A64A','#5E7F8C'];for(let k=0;k<8;k++){const a=tt*0.6+k/8*6.283;dancer(F[0]+Math.cos(a)*36-4,F[1]+Math.sin(a)*18-14,tt*2+k,cols[k]);}}
+  /* lights: lantern posts at the plaza corners and beside the hearth (level 2+: more) */
+  const posts=[[0.5,5.6],[5.6,0.5]];if(L>=2)posts.push([3.9,5.7],[5.7,3.9]);for(const q of posts){const p=at(q[0],q[1]);hoLampPost(p,16);}
+  ctx.restore();};

@@ -607,3 +607,34 @@ function drawWareOpt(b,win,opt){const J=WARE_SET[opt]||WARE_SET[1],L=Math.min(5,
   for(const s2 of [1,-1]){const e=f(a0,s2*ce,eH),r=f(a0,0,top),dx=r[0]-e[0],dy=r[1]-e[1],x=[r[0]+dx*ext,r[1]+dy*ext],st=[r[0]-dx*0.08,r[1]-dy*0.08];ctx.lineCap='round';
     hoLine(st,x,shade(col,0.7),2.4);hoLine(st,x,col,1.5);hoLine([st[0],st[1]-0.6],[x[0],x[1]-0.6],'rgba(255,240,210,0.3)',0.5);ctx.lineCap='butt';
     if(carve){ctx.strokeStyle=col;ctx.lineWidth=1.3;ctx.beginPath();ctx.moveTo(x[0],x[1]);ctx.quadraticCurveTo(x[0]+dx*0.12+s2*3,x[1]+dy*0.12-3,x[0]+s2*1,x[1]-5);ctx.stroke();}}};}
+
+/* =================== Woodcutter's Lodge options (prototype) — window.__setWood(n) =================== */
+let WOOD_OPT=0;window.__setWood=n=>{WOOD_OPT=n|0;};
+{const _ds3=drawShaped;drawShaped=function(b,win,c0,ax){if(WOOD_OPT&&b.t==='wood'){drawWoodOpt(b,win,WOOD_OPT);return true;}return _ds3(b,win,c0,ax);};}
+const WOOD_SET={1:{rt:'thatch',roof:'#C2A25C',roofD:'#9E8042'},2:{rt:'scale',roof:'#2F2C2A',roofD:'#211F1D'},3:{rt:'slab',blue:1,roof:'#5E7488',roofD:'#4A5D6E'},4:{rt:'boards',roof:'#9A4434',roofD:'#7A3428'}};
+/* one round log lying along a (a1→a2) at (c,h): bark body, cut end with rings facing +a */
+function hoLog(f,a1,a2,c,h,r,win){const t1=f(a1,c,h+r),t2=f(a2,c,h+r),b1=f(a1,c,h-r),b2=f(a2,c,h-r);hoQ([t1,t2,b2,b1],win?'#C9C3B8':'#6E5038');hoLine(t1,t2,win?'#F0F2F0':'rgba(255,230,190,0.25)',0.5);hoLine(b1,b2,'rgba(20,12,6,0.5)',0.5);
+  const e=f(a2,c,h);ctx.fillStyle=win?'#E0DCD2':'#D2AC74';ctx.beginPath();ctx.ellipse(e[0],e[1],r*0.85,r,0,0,6.3);ctx.fill();ctx.strokeStyle='rgba(90,58,30,0.75)';ctx.lineWidth=0.4;ctx.stroke();
+  ctx.beginPath();ctx.ellipse(e[0],e[1],r*0.45,r*0.55,0,0,6.3);ctx.stroke();ctx.fillStyle='rgba(90,58,30,0.6)';ctx.fillRect(e[0]-0.25,e[1]-0.25,0.5,0.5);}
+/* a pile of logs: rows get shorter going up, each row nests in the gaps of the one below; drawn back to front, bottom to top */
+function hoLogPile(f,a1,a2,c0,rows,r,win){const sp=0.098;for(let k=0;k<rows.length;k++){const n=rows[k],h=r+k*r*1.72;for(let i=0;i<n;i++){const c=c0+(i-(n-1)/2)*sp;hoLog(f,a1+k*0.02,a2-k*0.01,c,h,r,win);}}}
+function hoSawhorse(f,a,c,win){for(const da of [-0.12,0.12]){const p=f(a+da,c-0.06,0),q=f(a+da,c+0.06,0),m=f(a+da,c,6);hoLine(p,m,'#5A4230',0.9);hoLine(q,m,'#5A4230',0.9);}hoLog(f,a-0.25,a+0.22,c,7.4,1.6,win);
+  /* bow saw resting on it */const s1=f(a-0.05,c+0.04,9.6),s2=f(a+0.15,c+0.04,9.6);hoLine(s1,s2,'#8E949A',0.5);ctx.strokeStyle='#6E5038';ctx.lineWidth=0.7;ctx.beginPath();ctx.moveTo(s1[0],s1[1]);ctx.quadraticCurveTo((s1[0]+s2[0])/2,(s1[1]+s2[1])/2-5,s2[0],s2[1]);ctx.stroke();}
+function hoSled(f,a,c,win){for(const dc of [-0.08,0.08]){const p=f(a-0.3,c+dc,0.8),q=f(a+0.28,c+dc,0.8),tip=f(a+0.34,c+dc,3);hoLine(p,q,'#4A3424',1.1);hoLine(q,tip,'#4A3424',1.1);}
+  hoLog(f,a-0.28,a+0.22,c-0.05,3.2,1.6,win);hoLog(f,a-0.26,a+0.24,c+0.05,3.2,1.6,win);hoLog(f,a-0.25,a+0.2,c,5.9,1.6,win);}
+function drawWoodOpt(b,win,opt){const J=WOOD_SET[opt]||WOOD_SET[1],L=Math.min(5,b.lvl||1),f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),sd=(b.id||0)*29+opt;
+  /* log hut at the back */const fh=(a,c,h)=>f(a-0.42,c-0.38,h);const g={sd,hl:0.42,hw:0.36,fh:2.6,wh:11,rh:11,ov:0.06,th:J.rt==='thatch'?4:1.6,wt:'logs',wall:'#8A6440',wallD:'#6E4E32',roof:J.roof,roofD:J.roofD,roofE:shade(J.roofD,0.7),rt:J.rt,blue:J.blue,k:1,v:1};
+  hoQ([fh(-0.45,-0.4,0),fh(0.6,-0.4,0),fh(0.6,0.5,0),fh(-0.45,0.5,0)],'rgba(30,38,42,0.15)');
+  const r=hoRoof(fh,g,win);r.back();hoFooting(fh,g,win);hoWalls(fh,g,win);r.end();hoDoor(fh,g,'G',0.05,0.15,8,{col:'#5A4430',steps:1});hoWindow(fh,g,'L',0.12,0.09,g.fh+4,g.fh+7,{shutters:'#4E3A2C'});r.front();r.ridge();hoBarge(fh,g,'#5A4230',0.25,false);
+  /* open woodshed (front right): posts, lean-to roof, split firewood stacked square */
+  const sh=(a,c,h)=>f(a+0.45,c-0.42,h),sl=0.4,sw=0.3,sH=10;hoQ([sh(-sl,-sw,0),sh(sl,-sw,0),sh(sl,sw,0),sh(-sl,sw,0)],'rgba(70,58,44,0.3)');
+  hoQ([sh(-sl,-sw,0),sh(sl,-sw,0),sh(sl,-sw,sH+3),sh(-sl,-sw,sH+3)],'#3A2A1C');
+  {const rows=L>=3?4:3;for(let rr=0;rr<rows;rr++)for(let i=0;i<8;i++){const a=-sl+0.06+i*0.093,h=1.4+rr*2.5;const e=sh(a,sw-0.04,h);ctx.fillStyle=win?'#DCD6CA':((i+rr)%3?'#C59A64':'#B8895A');ctx.beginPath();ctx.moveTo(e[0]-1.4,e[1]+1.1);ctx.lineTo(e[0]+1.4,e[1]+0.3);ctx.lineTo(e[0]+0.6,e[1]-1.3);ctx.closePath();ctx.fill();ctx.strokeStyle='rgba(90,60,34,0.6)';ctx.lineWidth=0.35;ctx.stroke();}}
+  for(const q of [[-sl,sw],[sl,sw],[sl,-sw]])hoQ([sh(q[0]-0.03,q[1],0),sh(q[0]+0.03,q[1],0),sh(q[0]+0.03,q[1],sH),sh(q[0]-0.03,q[1],sH)],'#4A3424');
+  hoQ([sh(-sl-0.05,-sw-0.05,sH+4),sh(sl+0.05,-sw-0.05,sH+4),sh(sl+0.05,sw+0.07,sH-1),sh(-sl-0.05,sw+0.07,sH-1)],win?'#EEF1F0':J.roof);
+  if(!win)hoRoofSurface((u,v)=>lerp(sh(-sl-0.05+(2*sl+0.1)*u,sw+0.07,sH-1),sh(-sl-0.05+(2*sl+0.1)*u,-sw-0.05,sH+4),v),{sd:sd+3,rt:J.rt,rh:8,roofD:J.roofD,blue:J.blue},win);
+  hoQ([sh(sl+0.05,-sw-0.05,sH+4),sh(sl+0.05,sw+0.07,sH-1),sh(sl+0.05,sw+0.07,sH-2.4),sh(sl+0.05,-sw-0.05,sH+2.6)],shade(J.roofD,0.6));
+  /* round logs in a proper pile along the front edge (more rows with level) */
+  const rows=[[3,2,1],[3,2,1],[4,3,2,1],[4,3,2,1],[5,4,3,2,1]][L-1];hoLogPile(f,-0.75,0.05,0.62,rows,1.7,win);
+  /* sawhorse and chopping block in front; a log sled from level 3 */
+  hoSawhorse(f,0.55,0.45,win);hoChop(f(0.78,0.2,0));if(L>=3)hoSled(f,0.5,0.8,win);}

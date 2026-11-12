@@ -1837,3 +1837,34 @@ function drawTowerOpt(b,win,opt){const one=b.w===1,f0=hoFrame({fx:b.fx,fy:b.fy,w
     for(const [a,c] of [[-ts+0.03,ts],[ts,ts],[ts,-ts+0.03]])hoLine(f(a,c,H),f(a,c,H+10),win?'#C8C2B4':'#3A2A1C',1.1);hoPyramid(f,0,0,ts+0.08,H+10,H+24,J.roof,J.roofD,'scale',win,sd);}
   if(one)twStubs(b,f0,true,win,s*S);}
 {const _shQ=shShape;shShape=function(b){if(b.t==='tower'&&TOWER_OPT){const f0=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:0}),S=b.w===1?1:1.6,s=0.3*S;return [{pts:[f0(-s,-s,0),f0(s,-s,0),f0(s,s,0),f0(-s,s,0)],h:2.2}];}return _shQ(b);};}
+
+/* =================== Arsenal options (prototype) — window.__setArsenal(n) ===================
+   3×2, stores weapons. 1 Black-scale weapon hall with an open bay: spear racks, shields on the back wall · 2 Stone strong-house, iron-bound double door, shields under the eaves, slate
+   3 Red-board hall with a front lean-to: spear rack and a shield wall · 4 Raised armoury on posts (stabbur-like) with a ladder and a gallery of shields */
+let ARS_OPT=0;window.__setArsenal=n=>{ARS_OPT=n|0;};
+{const _dsA2=drawShaped;drawShaped=function(b,win,c0,ax){if(ARS_OPT&&b.t==='arsenal'){drawArsenalOpt(b,win,ARS_OPT);return true;}return _dsA2(b,win,c0,ax);};}
+const AR_SH=[['#A34A3A','#E8DFC8'],['#2E4A5E','#C9A042'],['#E8DFC8','#3A3634'],['#4E6A44','#E8DFC8'],['#C9A042','#A34A3A']];
+function arShield(p,r,i,win){if(win){ctx.fillStyle='#E2DCD0';ctx.beginPath();ctx.arc(p[0],p[1],r,0,6.3);ctx.fill();return;}hoShieldRound(p,r,AR_SH[i%AR_SH.length]);ctx.strokeStyle='#3A2A1C';ctx.lineWidth=0.5;ctx.beginPath();ctx.arc(p[0],p[1],r,0,6.3);ctx.stroke();ctx.fillStyle='#8A8E92';ctx.beginPath();ctx.arc(p[0],p[1],r*0.28,0,6.3);ctx.fill();}
+function arSpears(f,a0,a1,c,H,win){/* a rack: two rails, spears standing in it with iron heads */const wood=win?'#B8B0A0':'#5A4230';hoLine(f(a0,c,0),f(a0,c,H*0.7),wood,1);hoLine(f(a1,c,0),f(a1,c,H*0.7),wood,1);hoLine(f(a0,c,H*0.3),f(a1,c,H*0.3),wood,0.9);hoLine(f(a0,c,H*0.68),f(a1,c,H*0.68),wood,0.9);
+  const n=Math.max(3,Math.round((a1-a0)*22));for(let i=0;i<n;i++){const a=a0+0.03+(a1-a0-0.06)*i/(n-1),p=f(a,c+0.02,0.5),q=f(a,c-0.01,H);hoLine(p,q,win?'#C8C0B0':'#8A6A48',0.6);ctx.fillStyle=win?'#D8D8D4':'#A8ACB0';ctx.beginPath();ctx.moveTo(q[0],q[1]-3.4);ctx.lineTo(q[0]+0.9,q[1]);ctx.lineTo(q[0]-0.9,q[1]);ctx.closePath();ctx.fill();}}
+function arAxe(p,win){hoLine([p[0],p[1]],[p[0]+1.2,p[1]-8],win?'#C8C0B0':'#6E5038',0.7);ctx.fillStyle=win?'#D8D8D4':'#9A9EA2';ctx.beginPath();ctx.moveTo(p[0]+1,p[1]-7.6);ctx.lineTo(p[0]+3.6,p[1]-9);ctx.lineTo(p[0]+3.6,p[1]-5.8);ctx.closePath();ctx.fill();}
+function drawArsenalOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),L=Math.min(5,b.lvl||1),sd=(b.id||0)*71+opt,J=WOOD_SET[opt===2?3:opt===3?4:2];
+  const hc=opt===3?-0.35:-0.25,fw=(a,c,h)=>f(a,c+hc,h),ST=opt===4?7:0;const ff=(a,c,h)=>fw(a,c,h+ST);
+  const g={sd,hl:L>=5?1.25:1.1,hw:opt===4?0.42:0.5,fh:opt===4?0.2:2.4,wh:opt===4?13:13,rh:14,ov:0.07,th:1.7,wt:opt===4?'logs':'planks',wall:opt===1?'#4E3C2E':opt===2?'#8A7A64':opt===3?'#8A6A48':'#7E6248',wallD:opt===1?'#3A2C22':opt===2?'#6E604E':opt===3?'#6E5038':'#5F4936',
+    roof:J.roof,roofD:J.roofD,roofE:shade(J.roofD,0.7),rt:J.rt,blue:J.blue,frame:opt!==4,frameCol:'#2A1F18',k:1,v:1};
+  const r=hoRoof(ff,g,win);r.back();if(opt===4)hoStilts(fw,-g.hl,g.hl,-g.hw,g.hw,ST,win);else hoFooting(ff,g,win);hoWalls(ff,g,win);if(opt===2)hoStoneBox(ff,0,0,g.hl,g.hw,g.fh,g.wh,win,sd);r.end();
+  if(opt===1){/* open bay on the long wall: dark inside, spear racks, shields on the back wall */const P=(a,h)=>ff(a,g.hw+0.004,h),a0=-0.75,a1=0.55;hoQ([P(a0,g.fh),P(a1,g.fh),P(a1,g.wh-2),P(a0,g.wh-2)],win?'#C8C2B8':'#1E160F');
+    if(!win){for(let i=0;i<5;i++)arShield(P(a0+0.14+i*0.25,g.fh+7.2),2.8,i,win);arSpears((a,c,h)=>ff(a,g.hw-0.06,h),a0+0.06,a1-0.06,0,9,win);}
+    for(const a of [a0,a1,(a0+a1)/2])hoQ([P(a-0.02,g.fh),P(a+0.02,g.fh),P(a+0.02,g.wh),P(a-0.02,g.wh)],'#2A1F18');hoDoor(ff,g,'G',0,0.16,8.5,{col:'#3A2A1C',steps:1});}
+  else if(opt===2){/* iron-bound double door on the long wall, small barred windows */const P=(a,h)=>ff(a,g.hw+0.004,h);hoQ([P(-0.17,g.fh),P(0.17,g.fh),P(0.17,g.fh+9),P(0,g.fh+11),P(-0.17,g.fh+9)],'#4A3424');
+    if(!win){for(const h of [g.fh+2,g.fh+5.5,g.fh+8.6])hoLine(P(-0.16,h),P(0.16,h),'#2E2C2A',0.9);hoLine(P(0,g.fh),P(0,g.fh+10.6),'#2A1F18',0.6);for(const u of [-0.05,0.05]){ctx.strokeStyle='#2E2C2A';ctx.lineWidth=0.6;const q=P(u,g.fh+5);ctx.beginPath();ctx.arc(q[0],q[1]+0.8,0.9,0,6.3);ctx.stroke();}}
+    hoQ([ff(-0.2,g.hw+0.01,0),ff(0.2,g.hw+0.01,0),ff(0.2,g.hw+0.16,0),ff(-0.2,g.hw+0.16,0)],win?'#E2E4E0':'#9C978D');
+    for(const a of [-0.75,0.7]){hoQ([P(a-0.05,g.fh+6),P(a+0.05,g.fh+6),P(a+0.05,g.fh+9),P(a-0.05,g.fh+9)],'#1E160F');for(const u of [-0.02,0.02])hoLine(P(a+u,g.fh+6),P(a+u,g.fh+9),'#5E646A',0.6);}}
+  else if(opt===3){hoDoor(ff,g,'G',0,0.16,8.5,{col:'#4A3424',steps:1});hoWindow(ff,g,'L',-0.7,0.1,g.fh+5,g.fh+8,{shutters:'#A34A3A'});}
+  else{hoDoor(ff,g,'G',0,0.15,8,{col:'#4A3424'});/* ladder to the door */for(const u of [-0.06,0.06])hoLine(fw(g.hl+0.32,u,0),fw(g.hl+0.02,u,ST+0.4),win?'#B8B0A0':'#6E5038',0.8);for(let k=1;k<5;k++){const t2=k/5;hoLine(fw(g.hl+0.32-0.3*t2,-0.06,ST*t2),fw(g.hl+0.32-0.3*t2,0.06,ST*t2),win?'#B8B0A0':'#6E5038',0.6);}}
+  r.front();r.ridge();hoBarge(ff,g,'#4A3424',0.25,L>=5);
+  if(opt===2||opt===4){/* shields hung along the eave line on the long wall */const n=opt===2?6:7,P=(a,h)=>ff(a,g.hw+0.04,h);for(let i=0;i<n;i++){const a=-g.hl+0.18+(2*g.hl-0.36)*i/(n-1);arShield(P(a,g.wh-3.5),2.9,i,win);}}
+  if(opt===3){/* front lean-to: shield wall and a spear rack */const sh=(a,c,h)=>f(a,c+0.55,h),sl=1.1,sw=0.28;hoQ([sh(-sl,-sw,0),sh(sl,-sw,0),sh(sl,sw,0),sh(-sl,sw,0)],'rgba(70,60,50,0.3)');
+    for(let i=0;i<7;i++)arShield(sh(-0.95+i*0.27,-sw+0.02,8.5),3,i,win);arSpears((a,c,h)=>sh(a,c,h),-0.9,0.2,0.0,13,win);arAxe(sh(0.5,0.05,0),win);arAxe(sh(0.62,0.08,0),win);bkLeanTo(sh,-sl,sl,-sw,sw,13,18,win,J,sd);}}
+{const _shA2=shShape;shShape=function(b){if(b.t==='arsenal'&&ARS_OPT){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),box=(a,c,sa,sc,h)=>({pts:[f(a-sa,c-sc,0),f(a+sa,c-sc,0),f(a+sa,c+sc,0),f(a-sa,c+sc,0)],h});
+  const o=ARS_OPT,hc=o===3?-0.35:-0.25;const V=[box(0,hc,1.2,0.56,0.75),box(0,hc,1.2,0.06,1.25)];if(o===3)V.push(box(0,0.55,1.1,0.28,0.55));return V;}return _shA2(b);};}

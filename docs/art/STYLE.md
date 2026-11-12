@@ -275,7 +275,8 @@ This file is mirrored in the claude.ai project as `claude/Estilo dos edificios.m
 - **Herb Garden: 2** — four little beds with plank edges and a cross path; angelica (white umbels), chives (purple), thyme (low, pink).
 - **Carved Prow: 2** — a dragon neck and head (gold groove, eye, teeth) on log trestles, two painted shields leaning.
 - **Drying Nets: 2** — a three-pole rack, two nets with gold floats and stone weights, a fish hanging at the end.
-- **Wattle Fence** and **Rune Post**: not chosen yet (1 woven hazel / 2 skigard — both join their neighbours; 1 red carved post / 2 runestone).
+- **Wattle Fence: 1** — woven hazel; a fence piece joins the fence pieces next to it.
+- **Rune Post: 2** — a carved runestone (rounded top, red serpent band, runes, lichen).
 - The plot keeps its grass round every decor piece.
 
 ## Shadows (shared rule, 2026-11-12)
@@ -286,4 +287,4 @@ This file is mirrored in the claude.ai project as `claude/Estilo dos edificios.m
 ## Next buildings
 One at a time. José (2026-11-12): **send 4 drawn options straight away** (no separate "current look" step) → José's choice and notes → recorded here.
 When José asks for a fix, change only that (no extra changes without asking).
-Order still to do: Wattle Fence and Rune Post variants. Maybe later: palisade and gate in the new style.
+All buildings and decor are decided. Next: grass (6 options, José 2026-11-12). Maybe later: palisade and gate in the new style.

@@ -2253,7 +2253,7 @@ const DECOR_T=new Set(['camp','bench','wattle','rune','herbs','prow','nets']);
 {const _gsD=groundShape;groundShape=function(b,win){if(DECOR_OPT&&DECOR_T.has(b.t))return true;return _gsD(b,win);};}
 function dcNeighbours(b){const out=[];for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){const x=b.fx+dx,y=b.fy+dy;if(!inMap(x,y))continue;const id=occ[y*N+x];if(!id)continue;const o=B.find(q=>q.id===id);if(o&&o.t===b.t)out.push([dx,dy]);}return out;}
 /* José's picks (2026-11-12); window.__setDecor(3) shows the picks, 1/2 force a variant everywhere */
-const DECOR_PICK={camp:2,bench:2,herbs:2,prow:2,nets:2,wattle:1,rune:1};
+const DECOR_PICK={camp:2,bench:2,herbs:2,prow:2,nets:2,wattle:1,rune:2};
 function drawDecorOpt(b,win,opt){if(opt===3)opt=DECOR_PICK[b.t]||1;const f=hoFrame({fx:b.fx,fy:b.fy,w:1,h:1,rot:0}),sd=(b.id||0)*101+opt,t0=b.t,tt=typeof t==='number'?t:0;
   const pad=(r,col)=>{const o=[];for(let i=0;i<20;i++){const t2=i/20*6.283;o.push(f(Math.cos(t2)*r,Math.sin(t2)*r,0));}hoQ(o,col);};
   if(t0==='camp'){pad(0.42,win?'rgba(225,228,224,0.5)':'rgba(130,112,84,0.45)');
@@ -2295,3 +2295,40 @@ function drawDecorOpt(b,win,opt){if(opt===3)opt=DECOR_PICK[b.t]||1;const f=hoFra
     else{const P=[f(-0.35,-0.1,0),f(0,0.1,0),f(0.35,-0.1,0)];for(const p of P)hoLine(p,[p[0],p[1]-17],win?'#B8B0A0':'#4A3424',1.2);hoLine([P[0][0],P[0][1]-16],[P[2][0],P[2][1]-16],win?'#B8B0A0':'#5A4230',1);net([P[0][0],P[0][1]-15.5],[P[1][0],P[1][1]-15.5],10,win);net([P[1][0],P[1][1]-15.5],[P[2][0],P[2][1]-15.5],8,win);
       if(!win){const q=[P[2][0]+3,P[2][1]-14];hoLine([P[2][0],P[2][1]-14],q,'rgba(200,180,140,0.9)',0.4);hoSmokedFish(q,1,win);}}}}
 {const _shD=shShape;shShape=function(b){if(DECOR_OPT&&DECOR_T.has(b.t)){const f=hoFrame({fx:b.fx,fy:b.fy,w:1,h:1,rot:0}),box=(s,h)=>({pts:[f(-s,-s,0),f(s,-s,0),f(s,s,0),f(-s,s,0)],h});const H={camp:0.25,bench:0.3,wattle:0.2,rune:1.0,herbs:0.15,prow:1.0,nets:0.5}[b.t];return [box(b.t==='rune'||b.t==='prow'?0.1:0.3,H)];}return _shD(b);};}
+
+/* =================== Grass options (prototype) — window.__setGrass(1..6) ===================
+   1 Dense meadow: fine tapered blades in three greens, clover · 2 Tall grass that leans and sways in the wind, seed heads
+   3 Short grazed pasture: stippled turf, moss cushions, half-buried stones · 4 Nordic heath: heather, crowberry, lichen, grey boulders
+   5 Flowering meadow: drifts of buttercup, harebell, clover, yarrow (summer) · 6 Painterly: long soft brush strokes of greens and ochre, few blades */
+let GRASS_OPT=0;window.__setGrass=n=>{GRASS_OPT=n|0;};
+function grBlades(px,py,n,hMin,hMax,lean,cols,w,seed,x,y,sway){/* n tapered blades from a clump at (px,py) */for(let c=0;c<cols.length;c++){ctx.strokeStyle=cols[c];ctx.lineWidth=w;ctx.beginPath();
+  for(let k=c;k<n;k+=cols.length){const r=h2(x,y,seed+k),ox=(r-0.5)*6,hh=hMin+(hMax-hMin)*h2(x,y,seed+40+k),l=lean*(0.6+h2(x,y,seed+80+k)*0.8)+(sway||0);ctx.moveTo(px+ox,py);ctx.quadraticCurveTo(px+ox+l*0.3,py-hh*0.6,px+ox+l,py-hh);}ctx.stroke();}}
+{const _dtG=drawTile;drawTile=function(x,y,PL,win){if(!GRASS_OPT||win||!ARTV)return _dtG(x,y,PL,win);const i=y*N+x,tt=ter[i];
+  if(!grassy(tt)||roads[i])return _dtG(x,y,PL,win);if(occ[i]){/* occupied plot tiles: let the normal path (or GRASSY_PLOT) decide */return _dtG(x,y,PL,win);}
+  const e=elev[i],sx=(x-y)*HW,top=(x+y)*HH-e,o=GRASS_OPT,tt2=typeof t==='number'?t:0;
+  const z0=zoom;zoom=0.5;_drawTile0(x,y,PL,win);zoom=z0;
+  const inT=(ox,oy)=>Math.abs(ox)/HW+Math.abs(oy)/HH<0.98,lush=vn(x*0.11,y*0.11,21),dry=TDRY[i]||0,sp=summerProgress();
+  /* soft large-scale colour drift for all: lush hollows and dry tops that cross tile edges */
+  const drift=[[o===4?'rgba(96,80,70,':'rgba(60,96,44,',0.06+lush*0.14],[o===4?'rgba(150,140,110,':'rgba(190,176,104,',0.04+dry*0.18]];
+  for(let k=0;k<2;k++){const ox=(h2(x,y,500+k)-0.5)*44,oy=(h2(x,y,503+k)-0.5)*20,rr=24+h2(x,y,506+k)*22;ctx.fillStyle=drift[k][0]+drift[k][1].toFixed(3)+')';ctx.beginPath();ctx.ellipse(sx+ox,top+oy,rr,rr*0.5,0,0,6.3);ctx.fill();}
+  if(o===6){/* painterly strokes */const cols=['rgba(70,104,52,0.22)','rgba(110,140,70,0.2)','rgba(176,170,96,0.18)','rgba(52,84,44,0.2)'];for(let k=0;k<7;k++){const ox=(h2(x,y,700+k)-0.5)*56,oy=(h2(x,y,710+k)-0.5)*26;ctx.fillStyle=cols[k%4];ctx.beginPath();ctx.ellipse(sx+ox,top+oy,9+h2(x,y,720+k)*12,2+h2(x,y,730+k)*2,-0.46+(h2(x,y,740+k)-0.5)*0.3,0,6.3);ctx.fill();}
+    if(z0>1.2){for(let k=0;k<4;k++){const ox=(h2(x,y,750+k)-0.5)*44,oy=(h2(x,y,760+k)-0.5)*18;if(!inT(ox,oy))continue;grBlades(sx+ox,top+oy,4,3,6,1,['rgba(60,90,44,0.6)'],0.7,770+k*9,x,y);}}return;}
+  if(z0<0.7)return;const det=z0>1.25;
+  if(o===3||o===4){/* stippled short turf */const cols=o===4?['rgba(82,96,58,0.55)','rgba(120,110,70,0.5)','rgba(60,74,48,0.5)']:['rgba(70,104,52,0.55)','rgba(110,140,70,0.5)','rgba(52,84,40,0.5)'];const n=det?60:26;
+    for(let c=0;c<3;c++){ctx.fillStyle=cols[c];for(let k=c;k<n;k+=3){const ox=(h2(x,y,800+k)-0.5)*58,oy=(h2(x,y,830+k)-0.5)*28;if(!inT(ox,oy))continue;ctx.fillRect(sx+ox,top+oy,1.2,0.8);}}}
+  if(o===3){/* moss cushions and stones */if(h2(x,y,860)>0.55){const ox=(h2(x,y,861)-0.5)*36,oy=(h2(x,y,862)-0.5)*14;ctx.fillStyle='rgba(96,130,56,0.55)';ctx.beginPath();ctx.ellipse(sx+ox,top+oy,6,2.6,0,0,6.3);ctx.fill();ctx.fillStyle='rgba(150,180,80,0.4)';ctx.beginPath();ctx.ellipse(sx+ox-1,top+oy-0.6,3.4,1.3,0,0,6.3);ctx.fill();}
+    if(h2(x,y,870)>0.78){const px=sx+(h2(x,y,871)-0.5)*30,py=top+(h2(x,y,872)-0.5)*12,s=0.7+h2(x,y,873)*0.8;ctx.fillStyle='rgba(50,56,40,0.25)';ctx.beginPath();ctx.ellipse(px+1,py+1,5*s,2*s,0,0,6.3);ctx.fill();ctx.fillStyle='#8E8A7E';ctx.beginPath();ctx.ellipse(px,py,4.2*s,2.2*s,0,3.14,6.3);ctx.lineTo(px-4.2*s,py);ctx.fill();ctx.fillStyle='#A8A498';ctx.beginPath();ctx.ellipse(px-0.8*s,py-1*s,2.4*s,1*s,0,0,6.3);ctx.fill();}
+    if(det&&h2(x,y,880)>0.9){const px=sx+(h2(x,y,881)-0.5)*30,py=top+(h2(x,y,882)-0.5)*10;ctx.fillStyle='#E8DCC0';ctx.fillRect(px-0.4,py-2.4,0.8,2.4);ctx.fillStyle='#B8643A';ctx.beginPath();ctx.ellipse(px,py-2.6,1.8,1,0,3.14,6.3);ctx.fill();}
+    if(det)for(let k=0;k<5;k++){const ox=(h2(x,y,890+k)-0.5)*48,oy=(h2(x,y,895+k)-0.5)*22;if(!inT(ox,oy))continue;grBlades(sx+ox,top+oy,4,1.6,3.2,0.6,['rgba(64,96,46,0.8)','rgba(120,140,70,0.75)'],0.6,900+k*7,x,y);}return;}
+  if(o===4){/* heath: heather, crowberry, lichen, boulders */for(let k=0;k<4;k++){if(h2(x,y,910+k)<0.45)continue;const ox=(h2(x,y,914+k)-0.5)*44,oy=(h2(x,y,918+k)-0.5)*18;const pur=h2(x,y,922+k)>0.45;ctx.fillStyle=pur?(sp>0.5&&sp<1?'rgba(150,86,130,0.7)':'rgba(110,80,80,0.65)'):'rgba(40,60,40,0.7)';
+      for(let j=0;j<6;j++){ctx.beginPath();ctx.ellipse(sx+ox+(j-2.5)*1.8,top+oy+(h2(x,y,930+j+k*6)-0.5)*2.4,2,1.3,0,0,6.3);ctx.fill();}if(det&&pur){ctx.fillStyle='rgba(210,150,200,0.7)';for(let j=0;j<5;j++)ctx.fillRect(sx+ox+(j-2)*2,top+oy-1.4,0.8,0.8);}}
+    if(h2(x,y,940)>0.6){const ox=(h2(x,y,941)-0.5)*36,oy=(h2(x,y,942)-0.5)*14;ctx.fillStyle='rgba(200,206,170,0.45)';ctx.beginPath();ctx.ellipse(sx+ox,top+oy,5,2,0,0,6.3);ctx.fill();}
+    if(h2(x,y,950)>0.86){const px=sx+(h2(x,y,951)-0.5)*26,py=top+(h2(x,y,952)-0.5)*10,s=1+h2(x,y,953)*0.8;ctx.fillStyle='rgba(40,40,36,0.28)';ctx.beginPath();ctx.ellipse(px+2,py+1.5,7*s,2.6*s,0,0,6.3);ctx.fill();ctx.fillStyle='#7E7A72';ctx.beginPath();ctx.moveTo(px-6*s,py);ctx.quadraticCurveTo(px-5*s,py-5*s,px,py-5.4*s);ctx.quadraticCurveTo(px+5*s,py-4*s,px+6*s,py);ctx.closePath();ctx.fill();ctx.fillStyle='#9A968C';ctx.beginPath();ctx.ellipse(px-1.6*s,py-3.6*s,2.8*s,1.3*s,-0.2,0,6.3);ctx.fill();ctx.fillStyle='rgba(200,196,120,0.6)';ctx.beginPath();ctx.arc(px+2*s,py-2*s,1*s,0,6.3);ctx.fill();}
+    if(det)for(let k=0;k<4;k++){const ox=(h2(x,y,960+k)-0.5)*48,oy=(h2(x,y,965+k)-0.5)*22;if(!inT(ox,oy))continue;grBlades(sx+ox,top+oy,5,2,5,0.8,['rgba(120,120,70,0.8)','rgba(84,96,56,0.8)'],0.6,970+k*7,x,y);}return;}
+  /* blade grasses: 1 dense meadow, 2 tall leaning grass, 5 flowering meadow */const tall=o===2,clumps=Math.round((det?9:5)*(tall?1.1:1)),wave=tall?Math.sin(tt2*1.6+(x+y)*0.35)*1.4:0;
+  const cols=tall?['rgba(80,108,56,0.85)','rgba(132,146,78,0.8)','rgba(176,170,100,0.75)']:['rgba(58,90,42,0.85)','rgba(90,124,58,0.8)','rgba(134,156,80,0.75)'];
+  for(let k=0;k<clumps;k++){const ox=(h2(x,y,1000+k)-0.5)*52,oy=(h2(x,y,1020+k)-0.5)*24;if(!inT(ox,oy))continue;const n=det?7:5;grBlades(sx+ox,top+oy,n,tall?4:2.2,tall?9:5,tall?2.6:0.9,cols,det?0.55:0.8,1040+k*11,x,y,wave);}
+  if(tall&&det){/* seed heads */ctx.fillStyle='rgba(200,184,120,0.85)';for(let k=0;k<6;k++){const ox=(h2(x,y,1100+k)-0.5)*44,oy=(h2(x,y,1110+k)-0.5)*20;if(!inT(ox,oy))continue;const hh=8+h2(x,y,1120+k)*3;ctx.beginPath();ctx.ellipse(sx+ox+3+wave,top+oy-hh,0.7,1.8,0.4,0,6.3);ctx.fill();}}
+  if(o===1&&h2(x,y,1130)>0.6){/* clover patch */const ox=(h2(x,y,1131)-0.5)*34,oy=(h2(x,y,1132)-0.5)*14;ctx.fillStyle='rgba(70,112,56,0.6)';for(let j=0;j<7;j++){ctx.beginPath();ctx.arc(sx+ox+(h2(x,y,1133+j)-0.5)*8,top+oy+(h2(x,y,1140+j)-0.5)*3,1.2,0,6.3);ctx.fill();}if(det&&sp<1){ctx.fillStyle='#F0EEE6';ctx.beginPath();ctx.arc(sx+ox,top+oy-1.4,1,0,6.3);ctx.fill();}}
+  if(o===5&&sp<1){/* drifts of wildflowers, denser where the drift noise is high */const dn=vn(x*0.18,y*0.18,31),m=Math.round((det?10:5)*dn*1.6);const FL=[['#F2D23A',1.1],['#7E92D8',1],['#E8E4DA',1.2],['#C86A9A',1],['#F0EEE6',0.9]];
+    for(let k=0;k<m;k++){const ox=(h2(x,y,1200+k)-0.5)*52,oy=(h2(x,y,1230+k)-0.5)*24;if(!inT(ox,oy))continue;const fl=FL[Math.floor(h2(x,y,1260+k)*5)],hh=3+h2(x,y,1290+k)*4;hoLine([sx+ox,top+oy],[sx+ox+0.4,top+oy-hh],'rgba(70,104,52,0.8)',0.5);ctx.fillStyle=fl[0];ctx.beginPath();ctx.arc(sx+ox+0.4,top+oy-hh,fl[1],0,6.3);ctx.fill();}}};}

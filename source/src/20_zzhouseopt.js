@@ -2088,7 +2088,7 @@ function tmShipFine(f,L,W,win,pr,sd){/* a finer longship: planked floor and thwa
       if(!win){ctx.fillStyle='#E8C84A';ctx.beginPath();ctx.arc(b2[0]+3.4,b2[1]+0.4,0.8,0,6.3);ctx.fill();ctx.fillStyle='#E8E2D4';ctx.fillRect(b2[0]+5.2,b2[1]+2.4,0.8,0.8);ctx.fillRect(b2[0]+6.6,b2[1]+2.6,0.7,0.7);ctx.strokeStyle='#C9A042';ctx.lineWidth=0.4;ctx.beginPath();ctx.arc(b2[0]+1.2,b2[1]+2.4,1.4,0,6);ctx.stroke();}}
     else{ctx.strokeStyle=C[3];ctx.lineWidth=2.2;ctx.beginPath();ctx.arc(b2[0]-2.6,b2[1]-1.6,2.8,0.4,4.6);ctx.stroke();if(!win){ctx.strokeStyle='#C9A042';ctx.lineWidth=0.4;ctx.beginPath();ctx.arc(b2[0]-2.6,b2[1]-1.6,1.6,0.4,4.6);ctx.stroke();}}}}
 /* the plot of a shaped building keeps its grass round the building's own ground (José: no square patch) */
-const GRASSY_PLOT=b=>TOMB_OPT&&b.t==='tomb';
+const GRASSY_PLOT=b=>(TOMB_OPT&&b.t==='tomb')||(BEE_OPT&&b.t==='hives');
 {let _occMap=null,_occN=-1;const bAt=id=>{if(_occN!==B.length){_occMap=new Map(B.map(b=>[b.id,b]));_occN=B.length;}return _occMap.get(id);};
   const _dtile=drawTile;drawTile=function(x,y,PL,win){const i=y*N+x,id=occ[i];if(id){const b=bAt(id);if(b&&GRASSY_PLOT(b)){occ[i]=0;try{return _dtile(x,y,PL,win);}finally{occ[i]=id;}}}return _dtile(x,y,PL,win);};}
 function drawTomb2(b,win,opt,f,sd,st,pr){const L=1.3,W=0.46;
@@ -2203,3 +2203,41 @@ function drawTradeOpt(b,win,opt){if(opt===5){return drawTradeL(b,win,hoFrame({fx
 {const _shX=shShape;shShape=function(b){if(b.t==='trade'&&TRADE_OPT){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),box=(a,c,sa,sc,h)=>({pts:[f(a-sa,c-sc,0),f(a+sa,c-sc,0),f(a+sa,c+sc,0),f(a-sa,c+sc,0)],h});
   if(TRADE_OPT===5)return [box(-0.05,-0.52,1.27,0.47,0.6),box(-0.05,-0.52,1.27,0.06,1.0),box(0.82,0.12,0.4,0.69,0.55),box(-0.2,0.13,0.95,0.25,0.35)];
   const o=TRADE_OPT,hc=o===1||o===4?-0.35:-0.2,ha=o===4?-0.4:0,hl=o===4?0.85:1.15;const V=[box(ha,hc,hl+0.07,0.57,o===3?0.8:0.6),box(ha,hc,hl+0.07,0.06,o===3?1.3:1.1)];if(o===1)V.push(box(0,0.45,0.85,0.27,0.4));return V;}return _shX(b);};}
+
+/* =================== Beehives options (prototype) — window.__setBees(n) ===================
+   2×2, straw skeps on a sunny slope; more hives with each level (3 / 5 / 7). Bees fly in summer only.
+   1 Skeps on a plank bench under a little shingle roof, wattle fence, flowers · 2 A curved dry-stone bee wall with niches holding the skeps
+   3 Upright log hives with bark and a stone on the lid, in heather · 4 Skeps on stone stands among flowers, a small honey hut at the back */
+let BEE_OPT=0;window.__setBees=n=>{BEE_OPT=n|0;};
+{const _dsB2=drawShaped;drawShaped=function(b,win,c0,ax){if(BEE_OPT&&b.t==='hives'){drawBeesOpt(b,win,BEE_OPT);return true;}return _dsB2(b,win,c0,ax);};}
+{const _gsB2=groundShape;groundShape=function(b,win){if(BEE_OPT&&b.t==='hives')return true;return _gsB2(b,win);};}
+function bsSkep(p,s,win,sd){/* straw skep: a bell of coiled straw, a dark entrance at the foot */const w=4.6*s,h=8*s;ctx.fillStyle=win?'#EEEAE2':'#C8A050';ctx.beginPath();ctx.moveTo(p[0]-w,p[1]);ctx.bezierCurveTo(p[0]-w*1.05,p[1]-h*0.7,p[0]-w*0.55,p[1]-h*1.08,p[0],p[1]-h*1.08);ctx.bezierCurveTo(p[0]+w*0.55,p[1]-h*1.08,p[0]+w*1.05,p[1]-h*0.7,p[0]+w,p[1]);ctx.closePath();ctx.fill();
+  if(win){ctx.fillStyle='#F6F8F6';ctx.beginPath();ctx.ellipse(p[0],p[1]-h*0.9,w*0.7,h*0.25,0,0,6.3);ctx.fill();return;}
+  ctx.fillStyle='rgba(110,70,20,0.28)';ctx.beginPath();ctx.moveTo(p[0]+w*0.2,p[1]);ctx.bezierCurveTo(p[0]+w*0.3,p[1]-h*0.7,p[0]+w*0.2,p[1]-h*1.0,p[0],p[1]-h*1.08);ctx.bezierCurveTo(p[0]+w*0.55,p[1]-h*1.08,p[0]+w*1.05,p[1]-h*0.7,p[0]+w,p[1]);ctx.closePath();ctx.fill();
+  ctx.strokeStyle='rgba(120,80,24,0.7)';ctx.lineWidth=0.55;for(let k=1;k<6;k++){const y=p[1]-h*k/6.2,ww=w*Math.sqrt(1-Math.pow(k/6.4,2.2));ctx.beginPath();ctx.ellipse(p[0],y,ww,ww*0.22,0,0.1,3.04);ctx.stroke();}
+  ctx.fillStyle='rgba(255,230,160,0.35)';ctx.beginPath();ctx.ellipse(p[0]-w*0.4,p[1]-h*0.6,w*0.18,h*0.22,-0.3,0,6.3);ctx.fill();ctx.fillStyle='#2A1A0C';ctx.beginPath();ctx.ellipse(p[0]-w*0.1,p[1]-0.9,1.1*s,0.8*s,0,0,6.3);ctx.fill();}
+function bsLogHive(p,s,win){/* hollow log gum: bark cylinder, board lid with a stone, an entrance slot */const w=3.4*s,h=11*s;ctx.fillStyle=win?'#D8D0C0':'#6E5440';ctx.fillRect(p[0]-w,p[1]-h,2*w,h);ctx.beginPath();ctx.ellipse(p[0],p[1],w,w*0.4,0,0,3.14);ctx.fill();
+  if(!win){ctx.fillStyle='rgba(30,20,12,0.3)';ctx.fillRect(p[0]+w*0.2,p[1]-h,w*0.8,h);ctx.strokeStyle='rgba(30,20,12,0.5)';ctx.lineWidth=0.5;ctx.beginPath();for(const u of [-0.6,-0.1,0.45])for(let k=0;k<3;k++){ctx.moveTo(p[0]+u*w,p[1]-h*0.1-k*h*0.3);ctx.lineTo(p[0]+u*w+0.4,p[1]-h*0.1-k*h*0.3-h*0.18);}ctx.stroke();ctx.fillStyle='#1E140C';ctx.fillRect(p[0]-w*0.5,p[1]-h*0.25,w*0.7,1);}
+  ctx.fillStyle=win?'#E8E2D4':'#9A7A52';ctx.beginPath();ctx.ellipse(p[0],p[1]-h,w*1.3,w*0.5,0,0,6.3);ctx.fill();ctx.fillStyle=win?'#D4D6D2':'#8E877B';ctx.beginPath();ctx.ellipse(p[0]+0.4,p[1]-h-1.2,w*0.6,w*0.4,0,0,6.3);ctx.fill();}
+function bsBees(p,win,n,sd){if(win)return;const sp=summerProgress();if(sp>=1)return;const tt=typeof t==='number'?t:0;ctx.fillStyle='rgba(40,30,10,0.85)';for(let i=0;i<(n||5);i++){const ph=tt*(1.4+i*0.13)+i*2.1+sd,x=p[0]+Math.sin(ph)*7+Math.sin(ph*2.3)*3,y=p[1]-6+Math.cos(ph*1.7)*4;ctx.fillRect(x,y,1,0.8);}}
+function bsFlowers(f,R,win,sd,heather){if(win)return;for(let i=0;i<70;i++){const t2=h2(sd,i,91)*6.283,r=Math.sqrt(h2(sd,i,92))*R,p=f(Math.cos(t2)*r,Math.sin(t2)*r*0.95,0);const k=h2(sd,i,93);ctx.fillStyle=heather?(k>0.3?'#9A5A8A':'#B87AA8'):(k>0.7?'#E8E0F0':k>0.45?'#E8C84A':k>0.2?'#B86A8A':'#8EA6DA');ctx.beginPath();ctx.arc(p[0],p[1]-1,heather?1.1:0.8,0,6.3);ctx.fill();
+  if(heather){ctx.fillStyle='rgba(80,100,60,0.5)';ctx.fillRect(p[0]-0.8,p[1]-0.4,1.6,0.8);}}}
+function drawBeesOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),L=Math.min(5,b.lvl||1),sd=(b.id||0)*97+opt,n=L>=5?7:L>=3?5:3,J=WOOD_SET[2];
+  {/* meadow ground: soft green with a lighter round patch */const o=[];for(let i=0;i<32;i++){const t2=i/32*6.283;o.push(f(Math.cos(t2)*0.95,Math.sin(t2)*0.95,0));}hoQ(o,win?'rgba(232,234,230,0.6)':opt===3?'rgba(110,100,70,0.3)':'rgba(140,160,90,0.35)');}
+  bsFlowers(f,0.95,win,sd,opt===3);
+  if(opt===1){const E=0.92;hoWattle(f,[-E,-E],[E,-E],6,win,sd);hoWattle(f,[-E,-E],[-E,E],6,win,sd+1);
+    /* bench with skeps under a lean-to roof, along the back */const bc=-0.45,a0=-0.75,a1=0.75;for(const a of [a0+0.06,a1-0.06,0])hoLine(f(a,bc+0.08,0),f(a,bc+0.08,4),win?'#B8B0A0':'#5A4230',1);hoQ([f(a0,bc-0.12,4),f(a1,bc-0.12,4),f(a1,bc+0.14,4),f(a0,bc+0.14,4)],win?'#D8D0C0':'#8A6A48');hoQ([f(a0,bc+0.14,4),f(a1,bc+0.14,4),f(a1,bc+0.14,3),f(a0,bc+0.14,3)],win?'#C8C0B0':'#6E5038');
+    for(let i=0;i<n;i++){const a=a0+0.12+(a1-a0-0.24)*i/Math.max(1,n-1),p=f(a,bc,4);bsSkep(p,0.85,win,sd);bsBees(p,win,3,i);}
+    bkLeanTo(f,a0-0.06,a1+0.06,bc-0.22,bc+0.24,15,13,win,J,sd,[[a0,bc+0.24,13],[a1,bc+0.24,13],[a1,bc-0.22,15]]);
+    hoWattle(f,[E,-E],[E,E],6,win,sd+2);hoWattle(f,[-E,E],[0.2,E],6,win,sd+3);hoWattle(f,[0.6,E],[E,E],6,win,sd+4);for(const a of [0.2,0.6])hoLine(f(a,E,0),f(a,E,8),'#3A2A1C',1.3);}
+  else if(opt===2){/* curved dry-stone bee wall with niches */const R=0.85,N=n,P=t2=>[Math.cos(t2)*R,Math.sin(t2)*R];const t0=Math.PI*0.95,t1=Math.PI*1.95,H=12;
+    {const pts=[],top=[];for(let i=0;i<=24;i++){const t2=t0+(t1-t0)*i/24,q=P(t2);pts.push(f(q[0],q[1],0));top.push(f(q[0],q[1],H));}hoQ(pts.concat(top.slice().reverse()),win?'#C9CBC7':'#8E8980');
+      const th=[];for(let i=0;i<=24;i++){const t2=t0+(t1-t0)*i/24,q=[Math.cos(t2)*(R-0.18),Math.sin(t2)*(R-0.18)];th.push(f(q[0],q[1],H));}hoQ(top.concat(th.slice().reverse()),win?'#E2E4E0':'#A39D92');
+      if(!win){ctx.strokeStyle='rgba(40,36,30,0.5)';ctx.lineWidth=0.5;ctx.beginPath();for(let h=2.4;h<H;h+=2.4){for(let i=0;i<=24;i++){const t2=t0+(t1-t0)*i/24,q=P(t2),p=f(q[0],q[1],h);i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]);}}for(let r=0;r<5;r++)for(let i=0;i<24;i++){if((i+r)%2)continue;const t2=t0+(t1-t0)*(i+0.5)/24,q=P(t2),p=f(q[0],q[1],r*2.4),q2=f(q[0],q[1],r*2.4+2.4);ctx.moveTo(p[0],p[1]);ctx.lineTo(q2[0],q2[1]);}ctx.stroke();}}
+    for(let i=0;i<N;i++){const t2=t0+(t1-t0)*(i+0.5)/N,q=P(t2),dir=[Math.cos(t2),Math.sin(t2)];/* niche facing the centre */const c=f(q[0]-dir[0]*0.03,q[1]-dir[1]*0.03,3.5);ctx.fillStyle=win?'#B8BAB6':'#2E2820';ctx.beginPath();ctx.moveTo(c[0]-4.4,c[1]);ctx.lineTo(c[0]-4.4,c[1]-6);ctx.quadraticCurveTo(c[0],c[1]-10,c[0]+4.4,c[1]-6);ctx.lineTo(c[0]+4.4,c[1]);ctx.closePath();ctx.fill();bsSkep([c[0],c[1]],0.7,win,sd);bsBees([c[0],c[1]+2],win,3,i);}}
+  else if(opt===3){/* log hives in heather */const spots=[[-0.55,-0.45],[0.1,-0.6],[0.6,-0.25],[-0.35,0.15],[0.3,0.25],[-0.7,0.45],[0.65,0.5]];spots.slice(0,n).sort((x,y)=>(x[0]+x[1])-(y[0]+y[1])).forEach((q,i)=>{const p=f(q[0],q[1],0);bsLogHive(p,1,win);bsBees([p[0],p[1]-6],win,3,i);});}
+  else{/* skeps on stone stands, a small honey hut at the back left */const fh=(a,c,h)=>f(a-0.48,c-0.5,h),g={sd,hl:0.3,hw:0.28,fh:1.6,wh:9,rh:9,ov:0.05,th:1.4,wt:'planks',wall:'#8A6A48',wallD:'#6E5038',roof:J.roof,roofD:J.roofD,roofE:shade(J.roofD,0.7),rt:'scale',frame:true,frameCol:'#3A2A1C',k:1,v:1};
+    const r=hoRoof(fh,g,win);r.back();hoFooting(fh,g,win);hoWalls(fh,g,win);r.end();hoDoor(fh,g,'G',0,0.13,6.5,{col:'#4A3424'});r.front();r.ridge();hoBarge(fh,g,'#4A3424',0.2,L>=5);
+    const spots=[[0.15,-0.55],[0.6,-0.4],[0.0,0.0],[0.5,0.15],[-0.45,0.35],[0.15,0.55],[0.65,0.6]];spots.slice(0,n).sort((x,y)=>(x[0]+x[1])-(y[0]+y[1])).forEach((q,i)=>{const p=f(q[0],q[1],0);hoBox(f,q[0],q[1],0.07,0,3.4,win?'#D4D6D2':'#8E8980',win?'#B8BAB6':'#76726A',win);bsSkep(f(q[0],q[1],3.6),0.85,win,sd);bsBees(f(q[0],q[1],3.6),win,3,i);});}}
+{const _shB3=shShape;shShape=function(b){if(b.t==='hives'&&BEE_OPT){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),box=(a,c,sa,sc,h)=>({pts:[f(a-sa,c-sc,0),f(a+sa,c-sc,0),f(a+sa,c+sc,0),f(a-sa,c+sc,0)],h});
+  if(BEE_OPT===1)return [box(0,-0.45,0.8,0.24,0.5)];if(BEE_OPT===2)return [box(0,-0.35,0.85,0.5,0.35)];if(BEE_OPT===4)return [box(-0.48,-0.5,0.32,0.3,0.6)];return [box(0,0,0.7,0.6,0.15)];}return _shB3(b);};}

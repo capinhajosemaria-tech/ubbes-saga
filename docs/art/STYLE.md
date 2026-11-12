@@ -39,5 +39,15 @@ Prototype code: branch `house-options`, `source/src/20_zzhouseopt.js` (switch `w
 - **Plaza cleared**: no runestone, banners, barrels, posts or tables. Only lights are the windows and the two door torches. The **feast hearth** stands out: its own circle of light flagstones with a kerb, log benches, raised two-course stone hearth, embers, crossed logs, layered flames and sparks; feast adds the spit and dancers.
 - Prototype: `window.__setTH(2)`.
 
+## Hof (chosen: option 1 "Black stave", 2026-11-12)
+- Stave-church temple on a stone plinth (flush with the back gallery, margin + 2-step stair in front of the door).
+- Hall: dark staves on a frame, steep gable roof in **black tarred scale shingles**; carved arched door with gold portal on the front gable, fully visible.
+- **Covered galleries on both long sides** (lean-to roofs on posts, carved arches, low rail), none on the front facade.
+- **Tower stands on the ridge**: its walls start on the roof and follow both slopes (the end wall shows the ridge peak), lead flashing + shadow at the foot, louvred openings; pyramid skirt, second tier, tall spire, gold weathervane; small dragon heads at the skirt corners.
+- **Ridge beam + dragons** in one carved piece (dark wood, gold groove), stopping at the tower; the front piece comes out of the tower wall.
+- **Geometric sacred pole** beside the door (never in front of it): stepped stone base, square shaft with painted chevron/diamond/triangle bands (red, gold, black), stepped capital, one-eyed Odin mask in flat planes, gold valknut. **Stone altar** (hörgr) next to it with a bronze bowl.
+- Roof textures are clipped to their surface on every building.
+- Prototype: `window.__setHof(1)`.
+
 ## Next buildings
 One at a time: show the current look close up → José's notes → 2–4 options → choice, recorded here.

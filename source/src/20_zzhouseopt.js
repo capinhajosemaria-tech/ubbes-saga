@@ -1557,7 +1557,7 @@ function drawMillOpt(b,win,opt){const {F,s}=mlFrame(b),L=Math.min(5,b.lvl||1),sd
   const cw=s*0.14,wallC=hc+s*g.hw;
   const house=()=>{const r=hoRoof(H,g,win);r.back();hoFooting(H,g,win);hoWalls(H,g,win);if(opt===4)hoStoneBox(H,0,0,g.hl,g.hw,g.fh,g.fh+8,win,sd);r.end();
     hoDoor(H,g,'G',0,0.17,8.5,{col:'#4A3424',steps:1});if(L>=3)hoWindow(H,g,'L',-0.25,0.1,g.fh+5.5,g.fh+8.6,{shutters:'#7A2E24'});r.front();r.ridge();hoBarge(H,g,'#4A3424',0.25,L>=5);
-    const dp=H(g.hl+0.12,0.22,0);mlSacks(dp,win,L>=3?4:3);mlStone(H(g.hl+0.06,-0.24,0),win);};
+    if(opt!==4){const dp=H(g.hl+0.12,0.22,0);mlSacks(dp,win,L>=3?4:3);mlStone(H(g.hl+0.06,-0.24,0),win);}};
   const wheelRun=()=>{const ang=tt*(opt===2?0.9:1.3)*-s;
     if(opt===3){/* kvern: a little hut on stilts over the stream, a chute from upstream drives a horizontal wheel under the floor */const kc=s*0.22,K=(a,c,h)=>F(a,c+kc,h),ST=7,gk={sd,hl:0.34,hw:0.3,fh:ST,wh:ST+11,rh:10,ov:0.05,th:1.6,wt:'planks',wall:'#8A7C6A',wallD:'#6E6252',roof:J.roof,roofD:J.roofD,roofE:shade(J.roofD,0.7),rt:'scale',frame:true,frameCol:'#3A2E24',k:1,v:1};
       /* horizontal wheel under the floor */const hub=F(0,kc,2.2);ctx.fillStyle='rgba(30,40,46,0.35)';ctx.beginPath();ctx.ellipse(hub[0],hub[1]+1,13,5,0,0,6.3);ctx.fill();

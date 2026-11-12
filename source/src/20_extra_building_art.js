@@ -67,7 +67,7 @@ function drawExtra(b,win,c0,alongX){
   return false;
 }
 function drawBuilding(b,win,alpha,ghost){if(!ghost&&b.cons&&b.cons.k==='build'){drawScaffold(b,win,alpha);return;}if(!ghost&&b.cons&&!b.thumb){const r=drawBuilding1(b,win,alpha,ghost);drawConsBar(b,Math.min(1,b.cons.done/b.cons.days));return r;}return drawBuilding1(b,win,alpha,ghost);}
-function drawBuilding1(b,win,alpha,ghost){DOOR_SIDE=SIDES[(b.rot|0)&3];PROP_B=ghost||b.thumb?null:b;CUR_T=b.t;try{drawBuilding0(b,win,alpha,ghost);}finally{DOOR_SIDE=null;PROP_B=null;CUR_T=null;}}
+function drawBuilding1(b,win,alpha,ghost){DOOR_SIDE=doorSide(b);PROP_B=ghost||b.thumb?null:b;CUR_T=b.t;try{drawBuilding0(b,win,alpha,ghost);}finally{DOOR_SIDE=null;PROP_B=null;CUR_T=null;}}
 function drawBuilding0(b,win,alpha,ghost){
   const D=DEF[b.t],e=D.water?1:(elev[b.fy*N+b.fx]||2);
   if(alpha<1)ctx.globalAlpha=alpha;

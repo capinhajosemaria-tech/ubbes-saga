@@ -124,7 +124,7 @@ const _doorPaths0=doorPaths;
 doorPaths=function(win){if(!ARTV)return _doorPaths0(win);
   const A=win?AV.w:AV[ARTV],segs=[];
   for(const b of B){if(DEF[b.t].road===false||FIELDS.has(b.t)||DEF[b.t].cat==='Decor'||underCons(b))continue;
-    const st=sideTiles(b,SIDES[(b.rot|0)&3]);const mid=st[Math.floor((st.length-1)/2)];if(!mid||!inMap(mid[0],mid[1]))continue;
+    const st=sideTiles(b,doorSide(b)),mid=doorTile(b);if(!mid||!inMap(mid[0],mid[1]))continue;
     const fx0=Math.min(Math.max(mid[0],b.fx),b.fx+b.w-1),fy0=Math.min(Math.max(mid[1],b.fy),b.fy+b.h-1),door=[mid[0]*0.42+fx0*0.58,mid[1]*0.42+fy0*0.58],ei=elev[mid[1]*N+mid[0]]||2;
     const mi=mid[1]*N+mid[0];
     if(roads[mi]){/* the road is right at the door: a short apron up to its edge */const r=[mid[0],mid[1]],d=Math.hypot(door[0]-r[0],door[1]-r[1]),k=Math.min(1,0.34/d);segs.push([door,[r[0]+(door[0]-r[0])*k,r[1]+(door[1]-r[1])*k],ei]);continue;}

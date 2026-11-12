@@ -10,7 +10,7 @@ ok=True
 rc,out=run('python3 ../source/build.py');print(('PASS' if rc==0 else 'FAIL')+'  build  '+(out.strip().splitlines() or [''])[-1]);ok&=rc==0
 rc,out=run('python3 build_test.py');print(('PASS' if rc==0 else 'FAIL')+'  test page');ok&=rc==0
 checks=[('ui/t5.py','Town Hall 5 test village + panels'),('ui/uitest.py','new saga, raids, modals (phone size)'),('ui/roadui.py','road tool and build menu'),
-        ('ui/ghosts.py test.html','placement preview of every building'),('ui/wshot2.py','world map drag, zoom, click'),('ui/uishot.py','dock, tray, inspector (PC and phone)')]
+        ('ui/ghosts.py test.html','placement preview of every building'),('ui/wshot2.py','world map drag, zoom, click'),('ui/uishot.py','dock, tray, inspector (PC and phone)'),('ui/doorcheck.py','doors drawn where the game puts them')]
 if '--quick' in sys.argv:checks=checks[:2]
 for c,label in checks:
     try:rc,out=run('python3 '+c)

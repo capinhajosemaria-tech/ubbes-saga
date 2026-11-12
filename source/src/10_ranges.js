@@ -30,7 +30,8 @@ function canPlace(t,fx,fy,rot,ignoreId){
   }
   if(D.river&&!wet)return {ok:false,why:'The water mill must stand on the river: its wheel turns in the water'};
   if(D.river&&wet>Math.floor(d.w*d.h/2))return {ok:false,why:'Needs a foothold on the bank: too much of it is over the river'};
-  if(D.pier){const ax=d.w>d.h,Lr=ax?d.w:d.h,Wr=ax?d.h:d.w,row=k=>{let n=0;for(let s=0;s<Wr;s++){const x=ax?fx+k:fx+s,y=ax?fy+s:fy+k;if(tAt(x,y)===T.SEA)n++;}return n;};const r0=row(0),r1=row(Lr-1);
+  if(D.slip){if(!slipDir(b))return {ok:false,why:'The boathouse needs a row of dry shore, and its slipway must reach open sea on the far side'};}
+  else if(D.pier){const ax=d.w>d.h,Lr=ax?d.w:d.h,Wr=ax?d.h:d.w,row=k=>{let n=0;for(let s=0;s<Wr;s++){const x=ax?fx+k:fx+s,y=ax?fy+s:fy+k;if(tAt(x,y)===T.SEA)n++;}return n;};const r0=row(0),r1=row(Lr-1);
     if(!((r0===0&&r1===Wr)||(r1===0&&r0===Wr)))return {ok:false,why:'The pier must run from dry shore straight out to open sea'};}
   else if(D.water&&wet>Math.floor(d.w*d.h*0.6))return {ok:false,why:'Needs a foothold on the shore: too much of it is over water'};
   const nc=needCount(b,D.need,!ignoreId);

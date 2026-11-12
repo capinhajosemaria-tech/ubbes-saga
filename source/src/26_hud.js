@@ -162,7 +162,7 @@ let lastPlaceKey='';
 function updatePlaceBar(){if(mode!=='place'||!place)return;if(place.asking){if(place.asking===place.fx+','+place.fy+','+place.rot)return;place.asking=null;lastPlaceKey='';}const D=DEF[place.t],chk=place.chk||{ok:false,why:'Move the map to choose a spot'};
   const key=place.t+place.rot+(chk.ok?1:0)+(chk.why||'')+(chk.label||'');if(key===lastPlaceKey)return;lastPlaceKey=key;
   const msg='<strong>'+esc(D.name)+'</strong> · '+esc(place.moving?'moving (free)':(Object.keys(costOf(place.t)).length?costStr(costOf(place.t)):'free'))+'<br>'+(chk.ok?esc(chk.label||'Drag the map to choose a spot, then place.'):esc(chk.why))+(D.cat!=='Decor'&&!FIELDS.has(place.t)?'<br><span class="meta">Entrance faces '+SIDE_ARROW[place.rot&3]+'. Rotate to turn it to any side.</span>':'');
-  setModeBar(msg,!chk.ok,[{label:'Cancel',fn:()=>{endMode();}},{label:'Rotate '+SIDE_ARROW[place.rot&3],fn:()=>{place.rot=((place.rot|0)+1)%4;lastPlaceKey='';}},{label:place.moving?'Move here':'Place',cls:'primary',disabled:!chk.ok,fn:confirmPlace}]);}
+  setModeBar(msg,!chk.ok,[{label:'Cancel',fn:()=>{endMode();}},...(rotTurns(place.t)?[{label:'Rotate '+(SIDE_ARR[doorSide({t:place.t,rot:place.rot,fx:0,fy:0,w:1,h:1})]||''),fn:()=>{place.rot=nextRot(place.t,place.rot);lastPlaceKey='';}}]:[]),{label:place.moving?'Move here':'Place',cls:'primary',disabled:!chk.ok,fn:confirmPlace}]);}
 function confirmPlace(){if(!place||!place.chk||!place.chk.ok)return;const D=DEF[place.t];
   /* building over trees or bushes: ask first */
   const cl=(place.chk.clears||[]).filter(i=>{const p=plantsOn(i);return p.t||p.b;});

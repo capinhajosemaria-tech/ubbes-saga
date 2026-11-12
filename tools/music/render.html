@@ -1,0 +1,16 @@
+<!doctype html><html><body><script src="compose.js"></script><script>
+let LIB=null;
+async function loadLib(){if(LIB)return LIB;const man=await (await fetch('/samp/lib/manifest.json')).json();const dc=new OfflineAudioContext(1,44100,44100);LIB={};
+  const get=async p=>dc.decodeAudioData(await (await fetch(p)).arrayBuffer());
+  for(const k in man){const v=man[k];if(typeof v[0]==='number'){const buf={};await Promise.all(v.map(async m=>{buf[m]=await get(`/samp/lib/${k}/${m}.wav`);}));LIB[k]={keys:v,buf};}
+    else{const bufs=await Promise.all(v.map(o=>get(`/samp/lib/${k}/${o.i}.wav`)));LIB[k]={buf:bufs};}}
+  return LIB;}
+async function renderTrack(name){
+  const lib=await loadLib(),sr=44100,ctx=new OfflineAudioContext(2,sr*200,sr),tr=UM2.T[name],st=new UM2.Studio(ctx,tr.seed,lib);
+  const len=tr.build(st);const buf=await ctx.startRendering();
+  const n=Math.min(buf.length,Math.floor(len*sr)),L=buf.getChannelData(0),R=buf.getChannelData(1);let peak=0;for(let i=0;i<n;i++){peak=Math.max(peak,Math.abs(L[i]),Math.abs(R[i]));}
+  const sc=peak>0.98?0.98/peak:1,dv=new DataView(new ArrayBuffer(44+n*4)),w=(o,s)=>{for(let i=0;i<s.length;i++)dv.setUint8(o+i,s.charCodeAt(i));};
+  w(0,'RIFF');dv.setUint32(4,36+n*4,true);w(8,'WAVEfmt ');dv.setUint32(16,16,true);dv.setUint16(20,1,true);dv.setUint16(22,2,true);dv.setUint32(24,sr,true);dv.setUint32(28,sr*4,true);dv.setUint16(32,4,true);dv.setUint16(34,16,true);w(36,'data');dv.setUint32(40,n*4,true);
+  for(let i=0;i<n;i++){dv.setInt16(44+i*4,Math.round(L[i]*sc*32767),true);dv.setInt16(46+i*4,Math.round(R[i]*sc*32767),true);}
+  const u=new Uint8Array(dv.buffer);let s='';for(let i=0;i<u.length;i+=0x8000)s+=String.fromCharCode.apply(null,u.subarray(i,i+0x8000));return {b64:btoa(s),len,peak,title:tr.title};}
+</script></body></html>

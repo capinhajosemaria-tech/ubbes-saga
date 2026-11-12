@@ -8,7 +8,7 @@ document.addEventListener('keydown',e=>{if(typing(e)||e.ctrlKey||e.metaKey||e.al
   if(modalOpen)return;
   if(k===' '){e.preventDefault();if(speed>0){speedBefore=speed;setSpeed(0);}else setSpeed(speedBefore||1);return;}
   if(k==='1'){setSpeed(1);return;}if(k==='2'){setSpeed(2);return;}if(k==='3'){setSpeed(4);return;}if(k==='0'){setSpeed(0.5);return;}
-  if((k==='r'||k==='R')&&mode==='place'&&place){place.rot=((place.rot|0)+1)%4;lastPlaceKey='';return;}
+  if((k==='r'||k==='R')&&mode==='place'&&place){place.rot=nextRot(place.t,place.rot);lastPlaceKey='';return;}
   if(k==='Enter'&&mode==='place'){confirmPlace();return;}
   if(k==='Enter'&&mode==='road'){confirmRoad();return;}
   if(k==='+'||k==='='){zoom=Math.min(ZMAX,zoom*1.15);return;}if(k==='-'||k==='_'){zoom=Math.max(ZMIN,zoom/1.15);return;}

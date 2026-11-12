@@ -53,7 +53,7 @@ function drawLight(win,vis){const L=todNow(win);ctx.save();ctx.setTransform(dpr,
   /* lamps: doors and windows glow, fires throw a warm pool */
   if(L.lights>0.02){ctx.setTransform(dpr*zoom,0,0,dpr*zoom,dpr*(W/2-camX*zoom),dpr*(H/2-camY*zoom));ctx.globalCompositeOperation='lighter';const a=L.lights;
     for(const b of BS){if(FIELDS.has(b.t)||b.t==='pigpen'||b.t==='sheeppen'||b.t==='bench'||b.t==='wattle'||b.t==='herbs'||b.t==='hives'||b.t==='rune'||b.t==='prow'||b.t==='nets')continue;if(b.t==='pyre'&&!pyreBurning())continue;
-      const st=sideTiles(b,SIDES[(b.rot||0)&3]);const m=st[Math.floor((st.length-1)/2)];if(!m)continue;
+      const m=doorTile(b);if(!m)continue;
       const fx=(m[0]+(b.fx+b.w/2-.5))/2,fy=(m[1]+(b.fy+b.h/2-.5))/2;const sx=(fx-fy)*HW,sy=(fx+fy)*HH-elev[b.fy*N+b.fx];if(!vis(sx,sy))continue;
       const k=LIT_BIG[b.t]||1,R=34*k;ctx.globalAlpha=a;ctx.drawImage(GLOW,sx-R,sy-6-R,R*2,R*2);ctx.globalAlpha=1;/* no painted door square: the redrawn buildings light their own doors and windows */}
   }

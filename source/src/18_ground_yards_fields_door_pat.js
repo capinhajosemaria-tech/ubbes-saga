@@ -42,7 +42,7 @@ function drawGround(b,win){
 function doorPaths(win){
   ctx.strokeStyle=win?'#CFCABD':'rgba(178,160,122,0.8)';ctx.lineWidth=5;ctx.lineCap='round';ctx.beginPath();
   for(const b of B){if(DEF[b.t].road===false||FIELDS.has(b.t))continue;
-    const st=sideTiles(b,SIDES[(b.rot|0)&3]);const mid=st[Math.floor((st.length-1)/2)];
+    const st=sideTiles(b,doorSide(b));const mid=doorTile(b);
     if(mid&&inMap(mid[0],mid[1])&&!occ[mid[1]*N+mid[0]]&&DEF[b.t].cat!=='Decor'){const fx0=Math.min(Math.max(mid[0],b.fx),b.fx+b.w-1),fy0=Math.min(Math.max(mid[1],b.fy),b.fy+b.h-1);const a=iso((mid[0]*0.35+fx0*0.65),(mid[1]*0.35+fy0*0.65)),r=iso(mid[0],mid[1]),ei=elev[mid[1]*N+mid[0]]||2;ctx.moveTo(a[0],a[1]-ei);ctx.lineTo(r[0],r[1]-ei);}
     for(const p of st.concat(edgeTiles(b))){if(!inMap(p[0],p[1]))continue;const i=p[1]*N+p[0];if(!roads[i])continue;
       const fx=Math.min(Math.max(p[0],b.fx),b.fx+b.w-1),fy=Math.min(Math.max(p[1],b.fy),b.fy+b.h-1);const a=iso((p[0]+fx)/2,(p[1]+fy)/2),r=iso(p[0],p[1]);

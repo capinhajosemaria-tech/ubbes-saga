@@ -406,6 +406,10 @@ h3 svg{vertical-align:-3px}
 .upi b{font:400 14px var(--display)}.upi em{font-style:normal;font-size:11.5px;color:var(--muted)}.upi em.dn{color:var(--accent)}
 .upi .cost{font:400 13px var(--display)}
 .dk{position:relative}.dk .bdg{position:absolute;top:3px;right:6px;min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:#6E8B4E;color:#fff;font:600 10.5px/16px var(--body);font-style:normal}
+
+/* music button and settings */
+#music .mute{display:none}#music.off{opacity:.6}#music.off .mute{display:inline}
+.mu-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}.mu-row label{display:flex;align-items:center;gap:6px;cursor:pointer}.mu-row input[type=range]{flex:1;min-width:140px;accent-color:#8A6A3E}
 </style>
 
 <canvas id="map" aria-label="Mapa isométrico de Kaldstrand"></canvas>
@@ -435,6 +439,7 @@ h3 svg{vertical-align:-3px}
     <button type="button" data-speed="16" aria-pressed="false" class="fast" hidden>16×</button>
   </div>
   <button type="button" class="round" id="home" aria-label="Centrar na vila"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 9 L9 3 L16 9 M4 8 V15 H14 V8" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linejoin="round"></path></svg></button>
+  <button type="button" class="round" id="music" aria-label="Music on or off" aria-pressed="true"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M7 13.5 V4 L15 2.5 V12" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linejoin="round"></path><ellipse cx="5" cy="13.6" rx="2.2" ry="1.7" fill="currentColor"></ellipse><ellipse cx="13" cy="12.1" rx="2.2" ry="1.7" fill="currentColor"></ellipse><path class="mute" d="M2.5 2.5 L15.5 15.5" stroke="currentColor" stroke-width="1.8"></path></svg></button>
 </div>
 
 <div class="fabs" id="fabs">
@@ -461,7 +466,7 @@ h3 svg{vertical-align:-3px}
 <script>
 (function(){
 'use strict';
-const GAME_VERSION="Beta 0.16.1";
+const GAME_VERSION="Beta 0.17.0";
 /* =================== constants =================== */
 const N=132,OX=30,OY=24,SX=12,SY=6,HW=32,HH=16,TW=64;
 const HOME_X=63,HOME_Y=60;  /* the village centre in tile coords */
@@ -703,7 +708,7 @@ const DEF={
   bakery:{name:'Bakery',w:2,h:2,cost:{wood:20,planks:25},slots:2,cat:'Food',lvl:3,up:true,out:'3 flour + ½ wood → 3 bread per worker a day',desc:'Flat bread from a clay oven, all year round. Bread keeps a while and feeds 1½.'},
   flax:{name:'Flax Field',w:3,h:3,cost:{wood:20},slots:2,road:false,tools:true,farm:true,seasonal:true,cat:'Farms',lvl:3,up:true,out:'4 flax per worker a day (summer)',desc:'Flax for rope.'},
   weaver:{name:'Weaver',w:2,h:2,cost:{wood:20,planks:25},slots:2,cat:'Crafts',lvl:3,up:true,out:'2 wool → 1 sailcloth; 2 flax → 1 rope',desc:'Weaves wool into sailcloth and twists flax into rope for ships.'},
-  shipyard:{name:'Shipyard',water:true,w:4,h:3,cost:{wood:60,planks:60,iron:10},slots:4,need:{k:'sea',r:1},cat:'Sea',lvl:3,desc:'Builds ships on a slipway. Its slipway may run out over the water, but it needs a foothold on the shore. A ship takes many worker-days.'},
+  shipyard:{name:'Shipyard',water:true,slip:true,w:3,h:3,cost:{wood:60,planks:60,iron:10},slots:4,need:{k:'sea',r:1},cat:'Sea',lvl:3,desc:'Builds ships. The boathouse (3 tiles) stands on dry shore; its quay and slipway run out over the sea. A ship takes many worker-days.'},
   harbour:{name:'Harbour',water:true,pier:true,w:2,h:6,cost:{wood:40,planks:50},slots:0,road:false,need:{k:'sea',r:1},cat:'Sea',lvl:3,desc:'A long pier where ships moor and merchants land. It runs from the shore straight out to sea.'},
   thrall:{name:'Thrall Pen',w:3,h:2,cost:{wood:40,planks:20,iron:5},slots:0,road:false,cat:'Homes',lvl:3,up:true,desc:'Holds 8 thralls (+4 per upgrade). Thralls work without pay, eat half a meal and may try to flee.'},
   camp:{name:'Community Fire',w:1,h:1,cost:{wood:10},slots:0,road:false,cat:'Decor',lvl:1,deco:3,desc:'A ring of stones where neighbours gather. +3 attractiveness.'},
@@ -820,9 +825,27 @@ const count=t=>B.filter(b=>b.t===t).length;
 const herdTotal=()=>S.herd.pigs+S.herd.sheep;
 function dims(t,rot){const D=DEF[t];return rot%2?{w:D.h,h:D.w}:{w:D.w,h:D.h};}
 const SIDES=['+y','+x','-y','-x'],SIDE_ARROW=['↙','↘','↗','↖'];let DOOR_SIDE=null;
+/* Where each building's door is DRAWN at rot 0: side, and its place along that side (0–1). Rot 1 is the mirror picture (x↔y), so the door
+   moves to the other front face. Only the two front faces can be seen, so buildings turn between two pictures (the Town Hall square keeps 4).
+   A third value 1 = the picture never turns. Kept in step with the art by tools/ui/doorcheck.py (part of check.py). */
+const DOOR_AT={house:['+x',0.5],jarl:['+x',0.42],wood:['+x',0.33],carp:['+x',0.3],smith:['+x',0.29],fish:['+x',0.38],pres:['+y',0.21],gran:['+x',0.36],bakery:['+x',0.29],weaver:['+x',0.29],
+  trade:['+y',0.78],hives:['+x',0.25],tailor:['+x',0.29],hof:['+x',0.45],mill:['+x',0.75,1],tower:['+x',0.5,1]};
+const SIDE_ARR={'+y':'↙','+x':'↘','-y':'↗','-x':'↖'};
+function rotTurns(t){return t!=='shipyard'&&!(DOOR_AT[t]&&DOOR_AT[t][2]);}
+function nextRot(t,r){r=r|0;if(t==='th')return (r+1)&3;if(!rotTurns(t))return r&1;return r&1?0:1;}
+function doorSide(b){const r=(b.rot|0)&3;if(b.t==='th')return SIDES[r];if(b.t==='shipyard'){const o=slipDir(b);return o?(o.alongY?'+x':'+y'):SIDES[r&1];}
+  const D=DOOR_AT[b.t];if(!D)return SIDES[r&1];if(D[2]||!(r&1))return D[0];return D[0]==='+x'?'+y':'+x';}
+function doorTile(b){const st=sideTiles(b,doorSide(b));if(!st.length)return null;
+  if(b.t==='shipyard'){const o=slipDir(b);if(o){/* the boathouse gable, in the row on dry land */const k=o.s>0?0:st.length-1;return st[k];}}
+  const D=DOOR_AT[b.t];const k=D?Math.min(st.length-1,Math.max(0,Math.floor(D[1]*st.length-1e-6))):Math.floor((st.length-1)/2);return st[k];}
+/* the shipyard's boathouse row stands on dry shore and its far row (slipway end) lies in the sea: which way does it face? */
+function slipDir(b){const L=(x,y)=>inMap(x,y)&&ter[y*N+x]!==T.SEA,Sx=(x,y)=>inMap(x,y)&&ter[y*N+x]===T.SEA,row=(f,n)=>{for(let k=0;k<n;k++)if(!f(k))return false;return true;};
+  const c=[{alongY:true,s:1,land:k=>L(b.fx+k,b.fy),sea:k=>Sx(b.fx+k,b.fy+b.h-1),n:b.w},{alongY:true,s:-1,land:k=>L(b.fx+k,b.fy+b.h-1),sea:k=>Sx(b.fx+k,b.fy),n:b.w},
+    {alongY:false,s:1,land:k=>L(b.fx,b.fy+k),sea:k=>Sx(b.fx+b.w-1,b.fy+k),n:b.h},{alongY:false,s:-1,land:k=>L(b.fx+b.w-1,b.fy+k),sea:k=>Sx(b.fx,b.fy+k),n:b.h}];
+  for(const o of c)if(row(o.land,o.n)&&row(o.sea,o.n))return {alongY:o.alongY,s:o.s};return null;}
 function sideTiles(b,side){const o=[];if(side==='+y')for(let x=b.fx;x<b.fx+b.w;x++)o.push([x,b.fy+b.h]);else if(side==='-y')for(let x=b.fx;x<b.fx+b.w;x++)o.push([x,b.fy-1]);else if(side==='+x')for(let y=b.fy;y<b.fy+b.h;y++)o.push([b.fx+b.w,y]);else for(let y=b.fy;y<b.fy+b.h;y++)o.push([b.fx-1,y]);return o;}
 function doorOnFace(a,b,wh){const m=lerp(a,b,0.5),dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy)||1,ux=dx/L*5.6,uy=dy/L*5.6,h=Math.min(14,wh-3);poly([m[0]-ux,m[1]-uy,m[0]+ux,m[1]+uy,m[0]+ux,m[1]+uy-h,m[0]-ux,m[1]-uy-h],'#3C2E24');poly([m[0]-ux*0.7,m[1]-uy*0.7+1,m[0]+ux*0.7,m[1]+uy*0.7+1,m[0]+ux*0.7,m[1]+uy*0.7-1,m[0]-ux*0.7,m[1]-uy*0.7-1],'#6E543D');}
-function addBuilding(t,fx,fy,rot,silent){const d=dims(t,rot);const b={id:nextId++,t:t,fx:fx,fy:fy,rot:(rot|0)&3,w:d.w,h:d.h,lvl:1,desired:0,workers:0,anvil:100,mode:'tools',proj:null,status:'',made:'',conn:false};B.push(b);if(!silent){rebuildOcc();recomputeConn();}return b;}
+function addBuilding(t,fx,fy,rot,silent){const d=dims(t,rot);const b={id:nextId++,t:t,fx:fx,fy:fy,rot:t==='th'?(rot|0)&3:(rot|0)&1,w:d.w,h:d.h,lvl:1,desired:0,workers:0,anvil:100,mode:'tools',proj:null,status:'',made:'',conn:false};B.push(b);if(!silent){rebuildOcc();recomputeConn();}return b;}
 function rebuildOcc(){occ.fill(0);for(const b of B)for(let y=b.fy;y<b.fy+b.h;y++)for(let x=b.fx;x<b.fx+b.w;x++)if(inMap(x,y))occ[y*N+x]=b.id;sortBuildings();}
 function edgeTiles(b){const out=[];for(let x=b.fx-1;x<=b.fx+b.w;x++)for(let y=b.fy-1;y<=b.fy+b.h;y++){const inside=x>=b.fx&&x<b.fx+b.w&&y>=b.fy&&y<b.fy+b.h;const corner=(x<b.fx||x>=b.fx+b.w)&&(y<b.fy||y>=b.fy+b.h);if(!inside&&!corner&&inMap(x,y))out.push([x,y]);}return out;}
 function recomputeConn(){
@@ -866,7 +889,8 @@ function canPlace(t,fx,fy,rot,ignoreId){
   }
   if(D.river&&!wet)return {ok:false,why:'The water mill must stand on the river: its wheel turns in the water'};
   if(D.river&&wet>Math.floor(d.w*d.h/2))return {ok:false,why:'Needs a foothold on the bank: too much of it is over the river'};
-  if(D.pier){const ax=d.w>d.h,Lr=ax?d.w:d.h,Wr=ax?d.h:d.w,row=k=>{let n=0;for(let s=0;s<Wr;s++){const x=ax?fx+k:fx+s,y=ax?fy+s:fy+k;if(tAt(x,y)===T.SEA)n++;}return n;};const r0=row(0),r1=row(Lr-1);
+  if(D.slip){if(!slipDir(b))return {ok:false,why:'The boathouse needs a row of dry shore, and its slipway must reach open sea on the far side'};}
+  else if(D.pier){const ax=d.w>d.h,Lr=ax?d.w:d.h,Wr=ax?d.h:d.w,row=k=>{let n=0;for(let s=0;s<Wr;s++){const x=ax?fx+k:fx+s,y=ax?fy+s:fy+k;if(tAt(x,y)===T.SEA)n++;}return n;};const r0=row(0),r1=row(Lr-1);
     if(!((r0===0&&r1===Wr)||(r1===0&&r0===Wr)))return {ok:false,why:'The pier must run from dry shore straight out to open sea'};}
   else if(D.water&&wet>Math.floor(d.w*d.h*0.6))return {ok:false,why:'Needs a foothold on the shore: too much of it is over water'};
   const nc=needCount(b,D.need,!ignoreId);
@@ -2155,7 +2179,7 @@ function drawGround(b,win){
 function doorPaths(win){
   ctx.strokeStyle=win?'#CFCABD':'rgba(178,160,122,0.8)';ctx.lineWidth=5;ctx.lineCap='round';ctx.beginPath();
   for(const b of B){if(DEF[b.t].road===false||FIELDS.has(b.t))continue;
-    const st=sideTiles(b,SIDES[(b.rot|0)&3]);const mid=st[Math.floor((st.length-1)/2)];
+    const st=sideTiles(b,doorSide(b));const mid=doorTile(b);
     if(mid&&inMap(mid[0],mid[1])&&!occ[mid[1]*N+mid[0]]&&DEF[b.t].cat!=='Decor'){const fx0=Math.min(Math.max(mid[0],b.fx),b.fx+b.w-1),fy0=Math.min(Math.max(mid[1],b.fy),b.fy+b.h-1);const a=iso((mid[0]*0.35+fx0*0.65),(mid[1]*0.35+fy0*0.65)),r=iso(mid[0],mid[1]),ei=elev[mid[1]*N+mid[0]]||2;ctx.moveTo(a[0],a[1]-ei);ctx.lineTo(r[0],r[1]-ei);}
     for(const p of st.concat(edgeTiles(b))){if(!inMap(p[0],p[1]))continue;const i=p[1]*N+p[0];if(!roads[i])continue;
       const fx=Math.min(Math.max(p[0],b.fx),b.fx+b.w-1),fy=Math.min(Math.max(p[1],b.fy),b.fy+b.h-1);const a=iso((p[0]+fx)/2,(p[1]+fy)/2),r=iso(p[0],p[1]);
@@ -2342,7 +2366,7 @@ const _doorPaths0=doorPaths;
 doorPaths=function(win){if(!ARTV)return _doorPaths0(win);
   const A=win?AV.w:AV[ARTV],segs=[];
   for(const b of B){if(DEF[b.t].road===false||FIELDS.has(b.t)||DEF[b.t].cat==='Decor'||underCons(b))continue;
-    const st=sideTiles(b,SIDES[(b.rot|0)&3]);const mid=st[Math.floor((st.length-1)/2)];if(!mid||!inMap(mid[0],mid[1]))continue;
+    const st=sideTiles(b,doorSide(b)),mid=doorTile(b);if(!mid||!inMap(mid[0],mid[1]))continue;
     const fx0=Math.min(Math.max(mid[0],b.fx),b.fx+b.w-1),fy0=Math.min(Math.max(mid[1],b.fy),b.fy+b.h-1),door=[mid[0]*0.42+fx0*0.58,mid[1]*0.42+fy0*0.58],ei=elev[mid[1]*N+mid[0]]||2;
     const mi=mid[1]*N+mid[0];
     if(roads[mi]){/* the road is right at the door: a short apron up to its edge */const r=[mid[0],mid[1]],d=Math.hypot(door[0]-r[0],door[1]-r[1]),k=Math.min(1,0.34/d);segs.push([door,[r[0]+(door[0]-r[0])*k,r[1]+(door[1]-r[1])*k],ei]);continue;}
@@ -2455,7 +2479,7 @@ function drawExtra(b,win,c0,alongX){
   return false;
 }
 function drawBuilding(b,win,alpha,ghost){if(!ghost&&b.cons&&b.cons.k==='build'){drawScaffold(b,win,alpha);return;}if(!ghost&&b.cons&&!b.thumb){const r=drawBuilding1(b,win,alpha,ghost);drawConsBar(b,Math.min(1,b.cons.done/b.cons.days));return r;}return drawBuilding1(b,win,alpha,ghost);}
-function drawBuilding1(b,win,alpha,ghost){DOOR_SIDE=SIDES[(b.rot|0)&3];PROP_B=ghost||b.thumb?null:b;CUR_T=b.t;try{drawBuilding0(b,win,alpha,ghost);}finally{DOOR_SIDE=null;PROP_B=null;CUR_T=null;}}
+function drawBuilding1(b,win,alpha,ghost){DOOR_SIDE=doorSide(b);PROP_B=ghost||b.thumb?null:b;CUR_T=b.t;try{drawBuilding0(b,win,alpha,ghost);}finally{DOOR_SIDE=null;PROP_B=null;CUR_T=null;}}
 function drawBuilding0(b,win,alpha,ghost){
   const D=DEF[b.t],e=D.water?1:(elev[b.fy*N+b.fx]||2);
   if(alpha<1)ctx.globalAlpha=alpha;
@@ -5048,10 +5072,10 @@ function drawHarbourOpt(b,win){const F=hbFrame(b),Lp=F.L,W=F.W,hP=F.hL+4,hD=4,pa
   items.sort((x,y)=>x.d-y.d).forEach(o=>o.f());ships.filter(o=>o.side!==back).forEach(o=>o.f());}
 function ydFrame(b){/* the sea side of the shipyard plot: F has +a,+c toward the viewer; the sea lies at c = s·C */const f0=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:0}),isS=(x,y)=>inMap(x,y)&&ter[y*N+x]===T.SEA,cx=b.fx+b.w/2-0.5,cy=b.fy+b.h/2-0.5;
   let sx=0,sy=0,n=0;for(let y=b.fy-1;y<=b.fy+b.h;y++)for(let x=b.fx-1;x<=b.fx+b.w;x++)if(isS(x,y)){sx+=x-cx;sy+=y-cy;n++;}const alongY=Math.abs(sy)>=Math.abs(sx);
-  const s=(alongY?sy:sx)>=0?1:-1,F=alongY?f0:(a,c,h)=>f0(c,a,h),A=(alongY?b.w:b.h)/2,C=(alongY?b.h:b.w)/2;return {F,s,A,C,flip:alongY};}
+  let s=(alongY?sy:sx)>=0?1:-1,ay=alongY;const o=slipDir(b);if(o){ay=o.alongY;s=o.s;}const F=ay?f0:(a,c,h)=>f0(c,a,h),A=(ay?b.w:b.h)/2,C=(ay?b.h:b.w)/2;return {F,s,A,C,flip:ay};}
 function drawYardOpt(b,win,opt){const {F,s,A,C,flip}=ydFrame(b),sd=(b.id||0)*73+opt,J=WOOD_SET[opt===2?4:opt===3?3:2],tt=typeof t==='number'?t:0;
-  const big=opt===2,qd=0.42,hwv=big?0.62:0.55,hc=opt===3?s*(C-qd-hwv):-s*(C-0.55),H=(a,c,h)=>F(a,c+hc,h);/* option 3: the hall stands against the quay */
-  const g={sd,hl:A-0.25,hw:opt===3?hwv:big?0.62:0.48,fh:big?2.2:2.4,wh:big?3.4:15,rh:big?40:18,ov:0.07,th:1.7,wt:opt===1?'logs':'planks',wall:opt===1?'#7E6248':opt===3?'#8A7A64':'#6E5442',wallD:opt===1?'#5F4936':opt===3?'#6E604E':'#54402F',
+  const big=opt===2,qd=0.42,hwv=opt===3?0.42:big?0.62:0.55,hc=opt===3?-s*(C-0.5):-s*(C-0.55),H=(a,c,h)=>F(a,c+hc,h);/* option 3 (released, Beta 0.17): boathouse on the shore row, quay on the middle row, slipway pier on the sea row — all inside the 3×3 plot *//* option 3: the hall stands against the quay */
+  const g={sd,hl:opt===3?A-0.12:A-0.25,hw:opt===3?hwv:big?0.62:0.48,fh:big?2.2:2.4,wh:big?3.4:15,rh:big?40:18,ov:0.07,th:1.7,wt:opt===1?'logs':'planks',wall:opt===1?'#7E6248':opt===3?'#8A7A64':'#6E5442',wallD:opt===1?'#5F4936':opt===3?'#6E604E':'#54402F',
     roof:J.roof,roofD:J.roofD,roofE:shade(J.roofD,0.7),rt:J.rt,blue:J.blue,frame:opt!==1,frameCol:'#2A1F18',k:1,v:1};
   const hall=()=>{const r=hoRoof(H,g,win);r.back();hoFooting(H,g,win);hoWalls(H,g,win);if(opt===3)hoStoneBox(H,0,0,g.hl,g.hw,g.fh,g.fh+7,win,sd);r.end();
     if(!big){/* wide double gate on the long wall facing the yard (if that wall is the visible one), otherwise a door on the gable */if(s>0){const P=(a,h)=>H(a,g.hw+0.004,h);hoQ([P(-0.3,g.fh),P(0.3,g.fh),P(0.3,g.fh+10),P(-0.3,g.fh+10)],'#4A3424');if(!win){ctx.strokeStyle='rgba(20,12,6,0.5)';ctx.lineWidth=0.45;ctx.beginPath();for(let k=1;k<8;k++){const p=P(-0.3+0.6*k/8,g.fh),q=P(-0.3+0.6*k/8,g.fh+10);ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);}ctx.stroke();hoLine(P(0,g.fh),P(0,g.fh+10),'#2A1F18',0.8);for(const h of [g.fh+2.5,g.fh+7.5])hoLine(P(-0.29,h),P(0.29,h),'#2E2C2A',0.8);}}
@@ -5060,21 +5084,22 @@ function drawYardOpt(b,win,opt){const {F,s,A,C,flip}=ydFrame(b),sd=(b.id||0)*73+
     if(opt===4&&s>0){/* open bay at the end of the long wall: planks stacked inside */const P=(a,h)=>H(a,g.hw+0.004,h),a0=g.hl-0.95,a1=g.hl-0.45;hoQ([P(a0,g.fh),P(a1,g.fh),P(a1,g.wh-2),P(a0,g.wh-2)],win?'#C8C2B8':'#1E160F');if(!win)for(let k=0;k<5;k++)hoQ([P(a0+0.04,g.fh+k*1.6),P(a1-0.04,g.fh+k*1.6),P(a1-0.04,g.fh+k*1.6+1.1),P(a0+0.04,g.fh+k*1.6+1.1)],k%2?'#C8A878':'#B8966A');}
     r.front();r.ridge();hoBarge(H,g,'#4A3424',0.25,true);};
   /* José (option 3): a narrow timber quay along the whole water side, joined to the hall, and a pier like the Harbour's, shorter; the ship on the stocks lies in the yard, along the shore */
-  const qc0=s>0?C-qd:-C,qc1=s>0?C:-C+qd,hq=3.5,DK=win?'#E2E3DF':'#9C7E5E',DP=win?'#E2E3DF':'#A88A69';
+  const qc0=opt===3?-0.5:s>0?C-qd:-C,qc1=opt===3?0.5:s>0?C:-C+qd,hq=3.5,DK=win?'#E2E3DF':'#9C7E5E',DP=win?'#E2E3DF':'#A88A69';
   const deck=(a0,a1,c0,c1,h,top,acrossA)=>{/* timber deck in F: piles, the two visible edge faces, planks */for(let a=a0+0.12;a<a1;a+=0.5)for(const c of [c0+0.04,c1-0.04]){const p=F(a,c,0);hbPile(p[0],p[1]+2,2,h,win);}
     hoQ([F(a0,c1,0),F(a1,c1,0),F(a1,c1,h),F(a0,c1,h)],win?'#8E8478':'#5C4634');hoQ([F(a1,c0,0),F(a1,c1,0),F(a1,c1,h),F(a1,c0,h)],win?'#7A7166':'#4A382A');hoQ([F(a0,c0,h),F(a1,c0,h),F(a1,c1,h),F(a0,c1,h)],top);
     if(!win){ctx.strokeStyle='rgba(50,36,26,0.38)';ctx.lineWidth=0.55;ctx.beginPath();if(acrossA){for(let a=a0+0.14;a<a1-0.02;a+=0.14){const p=F(a,c0,h),q=F(a,c1,h);ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);}}else{for(let c=c0+0.14;c<c1-0.02;c+=0.14){const p=F(a0,c,h),q=F(a1,c,h);ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);}}ctx.stroke();}};
   const quay=()=>{deck(-A,A,qc0,qc1,hq,DK,true);/* a short ramp from the hall's yard down onto the quay is not needed: the yard is level with it */};
-  const pa=A*0.45,pw=0.36,pL=2.0,pc0=s>0?C:-C-pL,pc1=s>0?C+pL:-C;
+  const pa=A*0.45,pw=0.36,pL=2.0,pc0=opt===3?(s>0?0.5:-C):s>0?C:-C-pL,pc1=opt===3?(s>0?C:-0.5):s>0?C+pL:-C;
   const pier=()=>{deck(pa-pw,pa+pw,pc0,pc1,hq,DP,false);for(const k of [0.35,0.75])for(const o of [-pw+0.05,pw-0.05]){const c=s>0?pc0+(pc1-pc0)*k:pc1-(pc1-pc0)*k,p=F(pa+o,c,0);hbPile(p[0],p[1],0,hq+6,win);}
     {const c=s>0?pc1-0.15:pc0+0.15,p=F(pa+pw-0.06,c,hq);hoLine(p,[p[0],p[1]-18],win?'#5E564C':'#3E2E22',1.4);hoLine([p[0],p[1]-17],[p[0]-4,p[1]-17],win?'#5E564C':'#3E2E22',1);const lx=p[0]-4,ly=p[1]-15;ctx.fillStyle='#3E3A36';ctx.fillRect(lx-2,ly-1,4,5);ctx.fillStyle=win?'#FFD27A':'#E8B860';ctx.fillRect(lx-1.2,ly+0.2,2.4,2.8);}};
-  const yard=()=>{/* the ship on its stocks in the yard, lying along the shore */const yc=(hc+s*g.hw+(s>0?qc0:qc1))/2,pr=b.proj?b.proj.done/SHIPS[b.proj.type].work:0.55;
-    if(!win)for(const o of [-0.5,-0.15,0.2,0.55]){const p=F(-A*0.3+o,yc,0);hoQ([[p[0]-2,p[1]],[p[0]+2,p[1]],[p[0]+1.4,p[1]-4],[p[0]-1.4,p[1]-4]],'#4A3424');}
-    const m=F(-A*0.3,yc,5);drawShip(m[0],m[1],0.28,!flip,b.proj?b.proj.type:'karvi',pr);};
+  const yard=()=>{/* the ship on its stocks in the yard, lying along the shore */if(opt===3&&!b.proj&&!b.gallery)return;const yc=opt===3?0:(hc+s*g.hw+(s>0?qc0:qc1))/2,yh=opt===3?hq:0,pr=b.proj?b.proj.done/SHIPS[b.proj.type].work:0.55;
+    if(!win)for(const o of [-0.5,-0.15,0.2,0.55]){const p=F((opt===3?0:-A*0.3)+o,yc,yh);hoQ([[p[0]-2,p[1]],[p[0]+2,p[1]],[p[0]+1.4,p[1]-4],[p[0]-1.4,p[1]-4]],'#4A3424');}
+    const m=F(opt===3?0:-A*0.3,yc,5+yh);drawShip(m[0],m[1],0.28,!flip,b.proj?b.proj.type:'karvi',pr);};
   const moored=()=>{const home=S.ships.filter(x=>!x.away);if(!home.length&&!b.gallery)return;const p=F(pa+pw+0.5,(pc0+pc1)/2,0);drawShip(p[0],p[1]+3+Math.sin(tt*1.2)*1,0.32,!flip,'karvi');};
   /* the ship is built inside the hall and slid out through the gate onto the quay */
+  if(opt===3){if(s>0){hall();quay();yard();pier();moored();}else{moored();pier();quay();yard();hall();}return;}
   if(s>0){hall();quay();pier();moored();}else{moored();pier();quay();hall();}}
-{const _shY2=shShape;shShape=function(b){if(b.t==='shipyard'&&YARD_OPT){const {F,s,A,C}=ydFrame(b),hc=YARD_OPT===3?s*(C-0.97):-s*(C-0.55),box=(a,c,sa,sc,h)=>({pts:[F(a-sa,c-sc,0),F(a+sa,c-sc,0),F(a+sa,c+sc,0),F(a-sa,c+sc,0)],h});return [box(0,hc,A-0.2,0.55,YARD_OPT===2?0.2:0.9),box(0,hc,A-0.2,0.06,YARD_OPT===2?1.6:1.4)];}return _shY2(b);};}
+{const _shY2=shShape;shShape=function(b){if(b.t==='shipyard'&&YARD_OPT){const {F,s,A,C}=ydFrame(b),hc=-s*(C-(YARD_OPT===3?0.5:0.55)),box=(a,c,sa,sc,h)=>({pts:[F(a-sa,c-sc,0),F(a+sa,c-sc,0),F(a+sa,c+sc,0),F(a-sa,c+sc,0)],h});return [box(0,hc,A-0.2,0.55,YARD_OPT===2?0.2:0.9),box(0,hc,A-0.2,0.06,YARD_OPT===2?1.6:1.4)];}return _shY2(b);};}
 
 /* =================== Thrall Pen options (prototype) — window.__setThrall(n) ===================
    3×2, houses thralls (8, +4 per level); they may try to flee, so the yard is fenced. Humble, undecorated buildings.
@@ -5689,7 +5714,7 @@ function render(){
     const D=DEF[place.t];
     if(D.need){const r=D.need.r;ctx.fillStyle='rgba(243,245,243,0.12)';for(let y=fy-r;y<fy+d.h+r;y++)for(let x=fx-r;x<fx+d.w+r;x++){if(!inMap(x,y))continue;const sx=(x-y)*HW,sy=(x+y)*HH-elev[y*N+x];poly([sx,sy-HH,sx+HW,sy,sx,sy+HH,sx-HW,sy],'rgba(243,245,243,0.13)');}}
     for(let y=fy;y<fy+d.h;y++)for(let x=fx;x<fx+d.w;x++){if(!inMap(x,y))continue;const sx=(x-y)*HW,sy=(x+y)*HH-elev[y*N+x];poly([sx,sy-HH,sx+HW,sy,sx,sy+HH,sx-HW,sy],chk.ok?'rgba(127,170,96,0.55)':'rgba(163,74,58,0.55)');}
-    if(D.cat!=='Decor'&&!FIELDS.has(place.t)){const st=sideTiles({fx:fx,fy:fy,w:d.w,h:d.h},SIDES[place.rot&3]);const m=st[Math.floor((st.length-1)/2)];if(m&&inMap(m[0],m[1])){const sx=(m[0]-m[1])*HW,sy=(m[0]+m[1])*HH-elev[m[1]*N+m[0]];poly([sx,sy-HH*0.55,sx+HW*0.55,sy,sx,sy+HH*0.55,sx-HW*0.55,sy],'rgba(201,166,74,0.95)');ctx.fillStyle='#263035';ctx.font='bold 13px "Marcellus SC", serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('door',sx,sy+0.5);}}}
+    if(D.cat!=='Decor'&&!FIELDS.has(place.t)){const m=doorTile({t:place.t,rot:place.rot,fx:fx,fy:fy,w:d.w,h:d.h});if(m&&inMap(m[0],m[1])){const sx=(m[0]-m[1])*HW,sy=(m[0]+m[1])*HH-elev[m[1]*N+m[0]];poly([sx,sy-HH*0.55,sx+HW*0.55,sy,sx,sy+HH*0.55,sx-HW*0.55,sy],'rgba(201,166,74,0.95)');ctx.fillStyle='#263035';ctx.font='bold 13px "Marcellus SC", serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('door',sx,sy+0.5);}}}
   /* selection outline */
   if(sel&&sel.b){const c=fp(sel.b),e=elev[sel.b.fy*N+sel.b.fx];ctx.strokeStyle='#F3F5F3';ctx.lineWidth=2.5/zoom+0.8;ctx.beginPath();ctx.moveTo(c.T[0],c.T[1]-e);ctx.lineTo(c.R[0],c.R[1]-e);ctx.lineTo(c.Bt[0],c.Bt[1]-e);ctx.lineTo(c.L[0],c.L[1]-e);ctx.closePath();ctx.stroke();}
   else if(sel&&sel.x!==undefined){const x=sel.x,y=sel.y,sx=(x-y)*HW,sy=(x+y)*HH-elev[y*N+x];ctx.strokeStyle='#F3F5F3';ctx.lineWidth=2.5/zoom+0.8;ctx.beginPath();ctx.moveTo(sx,sy-HH);ctx.lineTo(sx+HW,sy);ctx.lineTo(sx,sy+HH);ctx.lineTo(sx-HW,sy);ctx.closePath();ctx.stroke();}
@@ -5836,7 +5861,7 @@ function drawLight(win,vis){const L=todNow(win);ctx.save();ctx.setTransform(dpr,
   /* lamps: doors and windows glow, fires throw a warm pool */
   if(L.lights>0.02){ctx.setTransform(dpr*zoom,0,0,dpr*zoom,dpr*(W/2-camX*zoom),dpr*(H/2-camY*zoom));ctx.globalCompositeOperation='lighter';const a=L.lights;
     for(const b of BS){if(FIELDS.has(b.t)||b.t==='pigpen'||b.t==='sheeppen'||b.t==='bench'||b.t==='wattle'||b.t==='herbs'||b.t==='hives'||b.t==='rune'||b.t==='prow'||b.t==='nets')continue;if(b.t==='pyre'&&!pyreBurning())continue;
-      const st=sideTiles(b,SIDES[(b.rot||0)&3]);const m=st[Math.floor((st.length-1)/2)];if(!m)continue;
+      const m=doorTile(b);if(!m)continue;
       const fx=(m[0]+(b.fx+b.w/2-.5))/2,fy=(m[1]+(b.fy+b.h/2-.5))/2;const sx=(fx-fy)*HW,sy=(fx+fy)*HH-elev[b.fy*N+b.fx];if(!vis(sx,sy))continue;
       const k=LIT_BIG[b.t]||1,R=34*k;ctx.globalAlpha=a;ctx.drawImage(GLOW,sx-R,sy-6-R,R*2,R*2);ctx.globalAlpha=1;/* no painted door square: the redrawn buildings light their own doors and windows */}
   }
@@ -6208,7 +6233,7 @@ let lastPlaceKey='';
 function updatePlaceBar(){if(mode!=='place'||!place)return;if(place.asking){if(place.asking===place.fx+','+place.fy+','+place.rot)return;place.asking=null;lastPlaceKey='';}const D=DEF[place.t],chk=place.chk||{ok:false,why:'Move the map to choose a spot'};
   const key=place.t+place.rot+(chk.ok?1:0)+(chk.why||'')+(chk.label||'');if(key===lastPlaceKey)return;lastPlaceKey=key;
   const msg='<strong>'+esc(D.name)+'</strong> · '+esc(place.moving?'moving (free)':(Object.keys(costOf(place.t)).length?costStr(costOf(place.t)):'free'))+'<br>'+(chk.ok?esc(chk.label||'Drag the map to choose a spot, then place.'):esc(chk.why))+(D.cat!=='Decor'&&!FIELDS.has(place.t)?'<br><span class="meta">Entrance faces '+SIDE_ARROW[place.rot&3]+'. Rotate to turn it to any side.</span>':'');
-  setModeBar(msg,!chk.ok,[{label:'Cancel',fn:()=>{endMode();}},{label:'Rotate '+SIDE_ARROW[place.rot&3],fn:()=>{place.rot=((place.rot|0)+1)%4;lastPlaceKey='';}},{label:place.moving?'Move here':'Place',cls:'primary',disabled:!chk.ok,fn:confirmPlace}]);}
+  setModeBar(msg,!chk.ok,[{label:'Cancel',fn:()=>{endMode();}},...(rotTurns(place.t)?[{label:'Rotate '+(SIDE_ARR[doorSide({t:place.t,rot:place.rot,fx:0,fy:0,w:1,h:1})]||''),fn:()=>{place.rot=nextRot(place.t,place.rot);lastPlaceKey='';}}]:[]),{label:place.moving?'Move here':'Place',cls:'primary',disabled:!chk.ok,fn:confirmPlace}]);}
 function confirmPlace(){if(!place||!place.chk||!place.chk.ok)return;const D=DEF[place.t];
   /* building over trees or bushes: ask first */
   const cl=(place.chk.clears||[]).filter(i=>{const p=plantsOn(i);return p.t||p.b;});
@@ -6741,8 +6766,10 @@ function sagaPanel(){const g=currentGoal();
   h+='<h3>The saga so far</h3>'+S.saga.slice().reverse().slice(0,40).map(e=>'<p class="saga">Year '+e.y+'. '+esc(e.t)+'</p>').join('');
   h+='<h3>Controls on a computer</h3><div class="keys"><kbd>Drag · right-drag</kbd><span>Move the map</span><kbd>Roads</kbd><span>Click a start, move to the end, click, then Build road (or Enter)</span><kbd>W A S D / arrows</kbd><span>Move the map</span><kbd>Wheel · + −</kbd><span>Zoom</span><kbd>Space</kbd><span>Pause or resume</span><kbd>0 1 2 3</kbd><span>Speed ½× 1× 2× 4×</span><kbd>B · E</kbd><span>Build · roads</span><kbd>R · Enter</kbd><span>Rotate · place a building</span><kbd>Esc</kbd><span>Cancel or close</span><kbd>V P G M J · H</kbd><span>Village, People, War, World, Saga · home</span></div>';
   h+='<p class="meta">Ubbe’s Saga '+esc(GAME_VERSION)+'</p>';
+  h+='<h3>Music</h3><div class="mu-row"><label><input type="checkbox" id="mu-on"'+(MU.on?' checked':'')+'> Play music</label><input type="range" id="mu-vol" min="0" max="100" value="'+Math.round(MU.vol*100)+'" aria-label="Music volume"></div><p class="meta">'+(MU.name&&MUSIC.names[MU.name]?'Now playing: '+esc(MUSIC.names[MU.name])+'. ':'')+'Summer and winter pieces follow the seasons; raids, feasts, a new Town Hall and the death of a jarl have their own. Instruments: VSCO-2 Community Edition (public domain).</p>';
   h+='<h3>Save</h3><p>The saga saves itself in this browser. Export a code to keep a copy or move it to another device.</p><div class="acts"><button type="button" class="btn" id="sv-title">Title screen</button><button type="button" class="btn" id="sv-imp">Import</button><button type="button" class="btn primary" id="sv-exp">Export</button></div><div id="sv-box"></div>';
   openSheet(h,'panel');$('sheet-card').dataset.p='saga';onA.forEach(f=>f());
+  if($('mu-on'))$('mu-on').onchange=e=>{MU.started=true;muSetOn(e.target.checked);};if($('mu-vol'))$('mu-vol').oninput=e=>muSetVol(+e.target.value/100);
   if($('sg-guide'))$('sg-guide').onclick=()=>{S.guide=0;guideKey='';closeSheet();renderGuide();};
   $('sv-exp').onclick=()=>{save();const code=exportCode();$('sv-box').innerHTML='<textarea id="sv-code" readonly aria-label="Save code"></textarea><div class="acts"><button type="button" class="btn small" id="sv-copy">Copy</button></div>';$('sv-code').value=code;$('sv-copy').onclick=()=>{const ta=$('sv-code');try{navigator.clipboard.writeText(code).then(()=>toast('Save code copied.'),()=>{ta.select();toast('Select the code and copy it.');});}catch(e){ta.select();toast('Select the code and copy it.');}};};
   $('sv-imp').onclick=()=>{$('sv-box').innerHTML='<textarea id="sv-in" aria-label="Paste a save code" placeholder="Paste a save code here"></textarea><div class="acts"><button type="button" class="btn small primary" id="sv-load">Load into this slot</button></div>';$('sv-load').onclick=()=>{const ok=importCode($('sv-in').value.trim());if(ok){closeSheet();toast('Saga loaded.');}else toast('That code could not be read. Check it was copied whole.');};};
@@ -7111,6 +7138,8 @@ function apply(d){
   B=[];nextId=1;for(const a of d.b){if(!DEF[a[0]])continue;const b=addBuilding(a[0],a[1]|0,a[2]|0,(a[3]|0)&3,true);
     b.lvl=Math.min(5,Math.max(1,a[5]|0||1));b.anvil=num(a[6],100);b.mode=SMITH[a[7]]?a[7]:'tools';b.proj=a[8]&&SHIPS[a[8].type]?{type:a[8].type,done:num(a[8].done,0)}:(a[8]&&b.t==='tomb'?{done:num(a[8].done,0)}:null);if(a[9]!==null&&a[9]!==undefined&&HOUSE_SCH[a[9]])b.sch=a[9]|0;if(a[10]&&typeof a[10]==='object')b.cons={k:a[10].k,days:num(a[10].days,1),w:num(a[10].w,1),done:num(a[10].done,0),lv:num(a[10].lv,b.lvl),builders:0};
     b.desired=Math.min(slotsOf(b),Math.max(0,a[4]|0));}
+  /* Beta 0.17: the shipyard became 3×3 (boathouse on the shore + quay and slipway over the sea); move old ones to the nearest spot that fits */
+  rebuildOcc();for(const b of B){if(b.t!=='shipyard'||canPlace('shipyard',b.fx,b.fy,b.rot,b.id).ok)continue;let best=null;for(let dy=-1;dy<=2&&!best;dy++)for(let dx=-1;dx<=2&&!best;dx++)if(canPlace('shipyard',b.fx+dx,b.fy+dy,b.rot,b.id).ok)best=[b.fx+dx,b.fy+dy];if(best){b.fx=best[0];b.fy=best[1];rebuildOcc();}}
   roads=new Uint8Array(N*N);(d.roads||[]).forEach(i=>{if(i>=0&&i<N*N)roads[i]=1;});
   walls=new Uint8Array(N*N);(d.walls||[]).forEach(q=>{const i=q>>2;if(i>=0&&i<N*N)walls[i]=q&3;});S.maps=S.maps||{};S.mkt=S.mkt||{};S.advs=S.advs||(S.adv?[S.adv]:[]);
   unlocked=new Set((d.zones||[]).filter(z=>typeof z==='string'));if(!unlocked.size)defaultZones();
@@ -7137,7 +7166,7 @@ document.addEventListener('keydown',e=>{if(typing(e)||e.ctrlKey||e.metaKey||e.al
   if(modalOpen)return;
   if(k===' '){e.preventDefault();if(speed>0){speedBefore=speed;setSpeed(0);}else setSpeed(speedBefore||1);return;}
   if(k==='1'){setSpeed(1);return;}if(k==='2'){setSpeed(2);return;}if(k==='3'){setSpeed(4);return;}if(k==='0'){setSpeed(0.5);return;}
-  if((k==='r'||k==='R')&&mode==='place'&&place){place.rot=((place.rot|0)+1)%4;lastPlaceKey='';return;}
+  if((k==='r'||k==='R')&&mode==='place'&&place){place.rot=nextRot(place.t,place.rot);lastPlaceKey='';return;}
   if(k==='Enter'&&mode==='place'){confirmPlace();return;}
   if(k==='Enter'&&mode==='road'){confirmRoad();return;}
   if(k==='+'||k==='='){zoom=Math.min(ZMAX,zoom*1.15);return;}if(k==='-'||k==='_'){zoom=Math.max(ZMIN,zoom/1.15);return;}
@@ -7157,6 +7186,49 @@ requestAnimationFrame(frame);
 
 // Installable game: register the service worker when served over https (GitHub Pages).
 if('serviceWorker' in navigator&&location.protocol==='https:'){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).catch(()=>{});});}
+
+/* =================== music ===================
+   Pieces composed for the game with recorded instruments (VSCO-2 Community Edition, public domain) and rendered to music/*.mp3
+   (source rules in tools/music/). A season playlist plays on and on: summer pieces in summer, winter pieces in winter, a short
+   breath between pieces. Special moments play their own piece and then the playlist goes on: the fleet sails, the ships come home,
+   a feast, a new Town Hall level, the death of a jarl. Files are fetched whole (the service worker keeps them for offline play).
+   Settings live in the browser (ubbesaga.music): on/off and volume, from the note button or the Saga panel. */
+const MUSIC={summer:['s1','s2','s3','s4'],winter:['w1','w2','w3','w4'],
+  names:{s1:'Morning on the Bay',s2:'Harvest Dance',s3:'A Long Summer Day',s4:'Fair Winds',w1:'The Long Night',w2:'Frost on the Fjord',w3:'Snow over Kaldstrand',w4:'Wolves at the Gate',
+    raid_depart:'The Fleet Sails',raid_return:'The Ships Come Home',festival:'Feast in the Hall',townhall:'A Greater Hall',funeral:'Ashes to the Sea'}};
+const MU={on:true,vol:0.6,started:false,el:null,name:null,season:null,special:false,bag:{summer:[],winter:[]},last:null,urls:{},gap:0,hidden:false};
+try{const o=JSON.parse(localStorage.getItem('ubbesaga.music')||'{}');if(typeof o.on==='boolean')MU.on=o.on;if(typeof o.vol==='number')MU.vol=Math.max(0,Math.min(1,o.vol));}catch(e){}
+function muSave(){try{localStorage.setItem('ubbesaga.music',JSON.stringify({on:MU.on,vol:MU.vol}));}catch(e){}}
+function muUrl(n){if(MU.urls[n])return Promise.resolve(MU.urls[n]);return fetch('music/'+n+'.mp3').then(r=>{if(!r.ok)throw new Error('music '+r.status);return r.blob();}).then(b=>(MU.urls[n]=URL.createObjectURL(b)));}
+function muSeason(){return S&&!titleOn&&isWinter()?'winter':'summer';}
+function muFade(el,to,ms,done){clearInterval(el._f);const from=el._g||0,t0=performance.now();el._f=setInterval(()=>{const k=Math.min(1,(performance.now()-t0)/ms);el._g=from+(to-from)*k;el.volume=Math.max(0,Math.min(1,el._g*MU.vol));if(k>=1){clearInterval(el._f);if(done)done();}},50);}
+function muStop(ms){const el=MU.el;MU.el=null;MU.name=null;if(!el)return;muFade(el,0,ms||1500,()=>{try{el.pause();}catch(e){}el.src='';});}
+/* the next piece of the season: each piece once before any repeats, never the same twice in a row */
+function muNext(){const s=muSeason();MU.season=s;let bag=MU.bag[s];if(!bag.length){bag=MU.bag[s]=MUSIC[s].slice().sort(()=>Math.random()-0.5);if(bag[0]===MU.last&&bag.length>1)bag.push(bag.shift());}return bag.shift();}
+function muPlay(n,special){if(!MU.on||!MU.started)return;muStop(special?1200:2500);MU.special=!!special;MU.name=n;MU.last=special?MU.last:n;clearTimeout(MU.gap);
+  muUrl(n).then(u=>{if(MU.name!==n||!MU.on)return;const el=new Audio(u);el._g=0;el.volume=0;MU.el=el;
+    el.addEventListener('ended',()=>{if(MU.el!==el)return;MU.el=null;MU.name=null;const was=MU.special;MU.special=false;MU.gap=setTimeout(()=>{if(!MU.el&&!MU.special)muPlay(muNext());},was?1500:4000+Math.random()*4000);});
+    const p=el.play();if(p&&p.catch)p.catch(()=>{});muFade(el,1,special?400:2500);if(typeof updMusicBtn==='function')updMusicBtn();}).catch(()=>{if(MU.name===n){MU.name=null;MU.special=false;}});}
+function muSpecial(n){if(!MU.on||!MU.started||MU.hidden)return;muPlay(n,true);}
+function muStart(){if(MU.started)return;MU.started=true;if(MU.on)muPlay(muNext());}
+function muSetOn(v){MU.on=!!v;muSave();if(!MU.on){clearTimeout(MU.gap);muStop(800);MU.special=false;}else if(MU.started&&!MU.el)muPlay(muNext());updMusicBtn();}
+function muSetVol(v){MU.vol=Math.max(0,Math.min(1,v));muSave();if(MU.el)MU.el.volume=Math.max(0,Math.min(1,(MU.el._g||0)*MU.vol));}
+function updMusicBtn(){const b=document.getElementById('music');if(!b)return;b.setAttribute('aria-pressed',String(MU.on));b.classList.toggle('off',!MU.on);
+  b.title=MU.on?('Music on'+(MU.name&&MUSIC.names[MU.name]?': “'+MUSIC.names[MU.name]+'”':'')+' · click to turn off'):'Music off · click to turn on';}
+/* browsers only let sound start after the player touches the page */
+['pointerdown','keydown'].forEach(ev=>window.addEventListener(ev,()=>muStart(),{once:false,passive:true}));
+document.addEventListener('visibilitychange',()=>{MU.hidden=document.hidden;if(!MU.el)return;if(document.hidden){try{MU.el.pause();}catch(e){}}else if(MU.on){const p=MU.el.play();if(p&&p.catch)p.catch(()=>{});}});
+/* the season turns: let the piece fade and start one of the new season (not during a special piece) */
+let muFeast=false;
+setInterval(()=>{if(!MU.started||!MU.on)return;const s=muSeason();
+  if(!MU.special&&MU.season&&s!==MU.season&&MU.el){MU.bag[s]=[];muStop(6000);MU.gap=setTimeout(()=>{if(!MU.el)muPlay(muNext());},6500);MU.season=s;}
+  const f=typeof feastOn==='function'&&!titleOn&&feastOn();if(f&&!muFeast)muSpecial('festival');muFeast=f;},1000);
+/* special moments */
+{const _lr=launchRaid;launchRaid=function(plan){const w=_lr.apply(this,arguments);if(!w)muSpecial('raid_depart');return w;};}
+{const _hc=homecoming;homecoming=function(r){const x=_hc.apply(this,arguments);muSpecial('raid_return');return x;};}
+{const _ft=finishTH;finishTH=function(lv){const x=_ft.apply(this,arguments);muSpecial('townhall');return x;};}
+{const _su=succession;succession=function(cause){const x=_su.apply(this,arguments);if(cause!=='deposed'&&cause!=='left')muSpecial('funeral');return x;};}
+{const b=document.getElementById('music');if(b)b.onclick=e=>{e.stopPropagation();MU.started=true;muSetOn(!MU.on);};updMusicBtn();}
 
 // Horizontal strips (top resource bar) scroll with the mouse wheel and by dragging on PC.
 (function(){const hook=el=>{if(!el||el.__sx)return;el.__sx=1;

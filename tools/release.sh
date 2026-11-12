@@ -7,6 +7,7 @@ R=$(cd "$(dirname "$0")/.." && pwd)
 python3 "$R/source/build.py"
 cp "$R/source/dist/index.html" "$R/source/dist/sw.js" "$R/source/dist/manifest.webmanifest" "$R/"
 cp "$R/source/dist/"icon-*.png "$R/"
+mkdir -p "$R/music" && cp "$R/source/music/"*.mp3 "$R/music/"
 V=$(cat "$R/source/VERSION")
 sed -i "s/Current version: \*\*[^*]*\*\*/Current version: **$V**/" "$R/README.md"
 echo "Ready to commit: $V"

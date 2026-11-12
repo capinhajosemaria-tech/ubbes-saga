@@ -2,6 +2,13 @@
 
 Versions are `Beta 0.MINOR.PATCH` until Town Hall 10 (`1.0.0`).
 
+## Beta 0.17.0
+- Music: 20 minutes of new pieces played with real recorded instruments: 4 summer pieces (harp, flute, fiddle, hand-drum grooves) and 4 winter pieces (low strings, horn, frame drum, wind), following the seasons.
+- Special music when the fleet sails, when the ships come home, for a feast, a new Town Hall level and the death of a jarl.
+- Music button under Home (on/off); volume and "now playing" in the Saga panel.
+- Turning buildings now switches between their two pictures, and the door marker, path and night light match the drawn door on every building. Mill and Watchtower no longer show a Rotate button.
+- The Shipyard is 3 × 3: boathouse on the shore (roads can touch it), quay and slipway over the sea, all inside its plot. Old shipyards move to the nearest spot that fits.
+
 ## Beta 0.16.1
 - Every building casts a shadow in its own shape: walls, gable and hip roofs, towers, spires, sheds and booths, swinging with the sun.
 - The light trodden ground under a building now hugs the building instead of filling its whole square plot (fenced pens, the market and the Town Hall plaza keep their square yard).

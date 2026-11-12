@@ -14,6 +14,7 @@ Finished items are removed from this file; what each version changed is in `CHAN
 - Urgent fixes 1 — village centre, unlock hints, worker output, bottom bar, roads and ground (Beta 0.13.0).
 - Round 1 — economy, resources and first art (Beta 0.14.0).
 - Round 1C — production panel, reserves, chains, upgrades list (Beta 0.15.0).
+- Music and placement — 20 min of season music + special pieces, building rotation, doors where they are drawn, 3×3 shipyard (Beta 0.17.0).
 
 ## 1. Core redesign (decided with José, 2026-11-11)
 Goal: fewer systems, each one counts more; decisions matter, but the player stays free to build his own way and can always progress (maybe more slowly). City building and resources first; the lineage matters later, when resources are less of a worry.
@@ -24,8 +25,8 @@ Order: Round 1 (done, 0.14.0) → 1C (done, 0.15.0) → **1H** → 1D → 1I →
 
 ## Next rounds (in this order)
 
-### Small art fixes (seen 2026-11-12)
-- [ ] **Night lights at the door**: the warm light pool at night sits beside the building (old door position), not at its drawn door; the drawn windows should also glow at night.
+### Music feedback (Beta 0.17.0)
+- [ ] José listens and says what to change per piece (instruments, tempo, mood, groove). Composer and steps: `tools/music/README.md`.
 
 ### 1H. Living village (José, 2026-11-11)
 - [ ] **Real people walk**: each villager is a walker (today only 3–10 decorative ones wander near the hall). At dawn they walk from their own house to their workplace along roads, at dusk back home; children play near home, warriors at the Training Ground, elders walk slower. Commute follows the light cycle (3 game days), not every 27-second day.

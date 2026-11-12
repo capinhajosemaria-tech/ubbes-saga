@@ -58,9 +58,9 @@ José's problems with buildings close up: many have **no door**, **chimneys badl
 Decided: roads B, grass B (now in Round 1).
 **Building style work (2026-11-12, continue in a new conversation):** every decision is in `docs/art/STYLE.md` on branch `house-options` (prototype code `source/src/20_zzhouseopt.js`, switches `window.__setHouse/__setJarl/__setTH/__setHof/__setGran/__setWare/__setWood/__setCarp/__setSmith/__setMarket` in the test page; screenshot scripts `tools/ui/tmp_optgrid.py`, `tmp_bshot.py`, `tmp_thopt.py`). Nothing is released.
 - Approved: Houses (cottage, 4 roofs, 8 colour schemes), Jarl's House, Town Hall (red boards), Hof, Granary, Warehouse, Woodcutter, Carpenter, Smithy.
-- [ ] **Next: Sheep Pen** (Market, Iron Mine, Berry Gatherer, Fisher's Hut, Preserver, Smokehouse and Pig Pen decided 2026-11-12), then the rest of the list in STYLE.md, one building at a time.
+- [ ] **Next: Fields / Water Mill / Bakery** (Market, Iron Mine, Berry Gatherer, Fisher's Hut, Preserver, Smokehouse, Pig Pen and Sheep Pen decided 2026-11-12), then the rest of the list in STYLE.md, one building at a time.
 - [ ] **Preserver makes jam only; dried fish goes to the Smokehouse** (José, 2026-11-12): today the Preserver turns fish into dried fish and berries into jam (`13_zflow.js`, `13_daily_economy.js`), and the Smokehouse makes smoked fish and meat. Change: Preserver = berries → jam only; fish preserving only at the Smokehouse (merge dried fish into smoked fish or keep both there). Check balance after.
-- [ ] **Shadows follow the building shape** (José, 2026-11-12): give every redrawn building its own shadow volumes (`shShape`), done for the Iron Mine prototype; also review the rectangular ground patch under each plot.
+- [ ] **Shadows follow the building shape** (José, 2026-11-12): give every redrawn building its own shadow volumes (`shShape`), done for the Iron Mine prototype; the ground patch under each plot must follow the building's shape too (`groundShape`, done for the round Sheep Pen).
 - [ ] After all buildings are approved: a round to build them properly into the game (shared parts kit, performance check, phone check), replacing the prototype file.
 To decide:
 - [ ] **Building grime** (contact shadow, damp walls, moss on footings, rain streaks) from option B — ask José.

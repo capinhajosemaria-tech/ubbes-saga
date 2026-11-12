@@ -136,12 +136,19 @@ Prototype code: branch `house-options`, `source/src/20_zzhouseopt.js` (switch `w
 - Natural **mud wallow** (irregular, wet sheen); **low plank sty** with black scales and an open doorway with straw; a hatch from L3, carved barge ends at L5. Nothing else on the ground.
 - Own shadow. Prototype: `window.__setPig(1)`.
 
+## Sheep Pen (chosen: option 4 "Round stone fold + shieling", 2026-11-12)
+- **Round dry-stone fold** (courses of stones, cap stones, moss) with a pole gate facing the viewer; back half drawn before the animals, front half after.
+- **Small shieling** inside at the back: stone walls, **turf roof** with grass tufts on the ridge, a dark doorway with a lintel stone.
+- **Norse short-tailed sheep**: small, tufted wool in white, cream, grey, brown, black; some with curled horns; slow wander inside the ring; count follows the herd.
+- **Ground follows the pen's shape** (José): round trodden earth inside the wall instead of the square yard patch, a worn path out of the gate (`groundShape(b)` in `20_zzhouseopt.js`).
+- Own shadow. Prototype: `window.__setSheep(4)` (options 1–3 kept: wattle, dry-stone square, skigard).
+
 ## Shadows (shared rule, 2026-11-12)
 - José: the dark box shadow (and the ground patch) does not match the buildings' shapes.
 - Each redrawn building gives its own **shadow volumes** (`shShape(b)` in `20_zzhouseopt.js`: ground outline + height); the cast shadow is the union of those, swept along the sun. The old box shadow stays only for buildings not yet redrawn. Done for the Iron Mine; to do for every building when the styles are rolled out.
-- The light ground patch under each plot (`drawGround`) is still a rectangle; to review with José.
+- The light ground patch under each plot (`drawGround`) should follow each building's shape too: a building can draw its own ground with `groundShape(b)` (done for the round Sheep Pen); to do for every redrawn building.
 
 ## Next buildings
-One at a time: show the current look close up → José's notes → 2–4 options → choice, recorded here.
+One at a time. José (2026-11-12): **send 4 drawn options straight away** (no separate "current look" step) → José's choice and notes → recorded here.
 When José asks for a fix, change only that (no extra changes without asking).
-Order still to do: Sheep Pen → Fields / Water Mill / Bakery → Brewery, Weaver, Tailor, Tavern → Training Ground, Arsenal, Watchtower → Shipyard / Harbour → Funeral Pyre, Altar, Ship-Tomb → Decor.
+Order still to do: Fields / Water Mill / Bakery → Brewery, Weaver, Tailor, Tavern → Training Ground, Arsenal, Watchtower → Shipyard / Harbour → Funeral Pyre, Altar, Ship-Tomb → Decor.

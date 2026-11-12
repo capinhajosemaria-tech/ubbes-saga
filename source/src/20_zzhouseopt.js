@@ -1246,3 +1246,11 @@ function drawSheepOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,ro
     hoLine(G(0.18,1.3),G(0.72,gh-1),'#5A4230',1.2);for(const a of [0.15,0.75]){const p=G(a,0),q=G(a,gh+1.5);hoLine(p,q,'#3A2A1C',1.6);}}}
 {const _shSh=shShape;shShape=function(b){if(b.t==='sheeppen'&&SHEEP_OPT){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),o4=SHEEP_OPT===4,ca=o4?-0.55:-0.85,cc=o4?-0.55:-0.95,hl=o4?0.32:0.5,hw=o4?0.26:0.34,box=(a0,a1,c0,c1)=>[f(a0,c0,0),f(a1,c0,0),f(a1,c1,0),f(a0,c1,0)];
   return [{pts:box(ca-hl,ca+hl,cc-hw,cc+hw),h:0.38},{pts:box(ca-hl,ca+hl,cc-0.05,cc+0.05),h:0.62}];}return _shSh(b);};}
+
+/* ground under a building that follows its real shape; return true to replace the square yard patch */
+function groundShape(b,win){if(b.t==='sheeppen'&&SHEEP_OPT===4){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),sd=(b.id||0)*5,ring=(r,n,j)=>{const o=[];for(let k=0;k<n;k++){const t2=k/n*6.283,rr=r*(1+(h2(sd,k,j)-0.5)*0.05);o.push(f(Math.cos(t2)*rr,Math.sin(t2)*rr,0));}return o;};
+    hoQ(ring(1.42,28,1),win?'rgba(225,228,224,0.55)':'rgba(150,134,100,0.3)');hoQ(ring(1.27,28,2),win?'rgba(210,213,208,0.8)':'rgba(150,134,100,0.6)');
+    if(!win){ctx.fillStyle='rgba(110,90,60,0.25)';for(let k=0;k<30;k++){const th=h2(sd,k,3)*6.283,r=h2(sd,k,4)*1.15,p=f(Math.cos(th)*r,Math.sin(th)*r,0);ctx.beginPath();ctx.ellipse(p[0],p[1],2.4,1,0,0,6.3);ctx.fill();}
+      /* a worn path out of the gate */const g=f(Math.cos(Math.PI/4)*1.3,Math.sin(Math.PI/4)*1.3,0),g2=f(1.42,1.42,0);ctx.strokeStyle='rgba(150,134,100,0.45)';ctx.lineWidth=9;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(g[0],g[1]);ctx.lineTo(g2[0],g2[1]);ctx.stroke();ctx.lineCap='butt';}
+    return true;}
+  return false;}

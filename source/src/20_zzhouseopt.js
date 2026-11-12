@@ -907,7 +907,7 @@ function drawMineOpt(b,win,opt){const L=Math.min(5,b.lvl||1),f=hoFrame({fx:b.fx,
       for(let m=0;m<M;m++){const n=(m+1)%M,nx=(A0[m][1]-A0[n][1]),nc=(A0[n][0]-A0[m][0]);/* outward normal (a,c) */const face=nx+nc;if(face<-0.02)continue;quads.push({d:(A0[m][0]+A0[n][0]+A0[m][1]+A0[n][1]),m,n,face:nc>nx?1:0,t:h2(sd,k*17+m,63)});}
       quads.sort((x,y)=>x.d-y.d);for(const q of quads){const col=win?(q.face?'#CFD1CD':'#C4C6C2'):q.face?(q.t>0.5?'#857E73':'#7A746A'):(q.t>0.5?'#6E685E':'#655F56');
         hoQ([f(A0[q.m][0],A0[q.m][1],h0),f(A0[q.n][0],A0[q.n][1],h0),f(A1[q.n][0],A1[q.n][1],h1),f(A1[q.m][0],A1[q.m][1],h1)],col);
-        if(!win&&q.t>0.8&&q.face){const p2=lerp(f(A0[q.m][0],A0[q.m][1],h1-0.8),f(A0[q.n][0],A0[q.n][1],h1-0.8),0.5);ctx.fillStyle='rgba(150,80,45,0.35)';ctx.fillRect(p2[0]-1.5,p2[1],3,LH*0.6);}}
+}
       /* cap: grass on the upper layers, rock with a grass rim lower down */const cap=A1.map(q=>f(q[0],q[1],h1));hoQ(cap,win?'#DCDEDA':k>=N-3?'#8E9150':'#8A8478');
       if(!win&&k<N-3){const in2=A1.map(q=>f(ca+(q[0]-ca)*0.86,cc+(q[1]-cc)*0.86,h1));hoQ(in2,'#8E9150');}}
     if(!win){ctx.fillStyle='rgba(70,90,40,0.55)';for(let k=0;k<26;k++){const th=h2(sd,k,64)*6.283,r=h2(sd,k,65)*0.85,lv=2+(h2(sd,k,66)*(N-2)|0),sh=1-0.78*Math.pow(lv/N,1.3),p2=f(ca+Math.cos(th)*RA*sh*r,cc+Math.sin(th)*RC*sh*r,lv*LH);ctx.fillRect(p2[0]-0.4,p2[1]-2.6,0.8,2.6);}}
@@ -925,7 +925,7 @@ function drawMineOpt(b,win,opt){const L=Math.min(5,b.lvl||1),f=hoFrame({fx:b.fx,
       ctx.strokeStyle='rgba(20,14,8,0.45)';ctx.lineWidth=0.4;ctx.beginPath();for(let a=a0+0.06;a<a1;a+=0.06){const p2=f(a,c0,0),q2=f(a,c0,hB);ctx.moveTo(p2[0],p2[1]);ctx.lineTo(q2[0],q2[1]);}ctx.stroke();
       for(let i=0;i<4;i++){const p2=f(a0+0.1+i*0.1,c0+0.01,hB-2);hoLine(p2,[p2[0],p2[1]+6],'#6E5038',0.7);ctx.fillStyle='#3A3836';ctx.fillRect(p2[0]-1.5,p2[1]+(i%2?5:0),3,1.1);}
       for(const q of [[a0,c1,hF],[a1,c1,hF],[a1,c0,hB]])hoQ([f(q[0]-0.02,q[1],0),f(q[0]+0.02,q[1],0),f(q[0]+0.02,q[1],q[2]),f(q[0]-0.02,q[1],q[2])],'#4A3424');
-      const R=[f(a0-0.04,c0-0.03,hB+0.5),f(a1+0.04,c0-0.03,hB+0.5),f(a1+0.04,c1+0.05,hF),f(a0-0.04,c1+0.05,hF)];hoQ(R,win?'#EEF1F0':'#2F2C2A');if(!win)hoRoofSurface((u,v)=>lerp(lerp(R[3],R[2],u),lerp(R[0],R[1],u),v),{sd:sd+3,rt:'scale',rh:5,roofD:'#211F1D'},win);hoLine(R[3],R[2],'rgba(10,8,6,0.5)',0.7);
+      const R=[f(a0-0.04,c0-0.03,hB+0.5),f(a1+0.04,c0-0.03,hB+0.5),f(a1+0.04,c1+0.05,hF),f(a0-0.04,c1+0.05,hF)];hoQ(R,win?'#EEF1F0':'#2F2C2A');if(!win)hoRoofSurface((u,v)=>lerp(lerp(R[3],R[2],u),lerp(R[0],R[1],u),v),{sd:sd+3,rt:'scale',rh:12,roofD:'#211F1D'},win);hoLine(R[3],R[2],'rgba(10,8,6,0.5)',0.7);
       hoQ([R[1],R[2],[R[2][0],R[2][1]+1.3],[R[1][0],R[1][1]+1.3]],'#1E1C1A');}
     hoOre(f(0.3,0.62,0),L>=3?16:10,sd+5,1.1);
     {const p2=f(pa+pw+0.1,cp+0.08,0);hoLine(p2,[p2[0]+3,p2[1]-11],'#6E5038',0.8);hoLine([p2[0]+1.5,p2[1]-11.5],[p2[0]+5,p2[1]-9.5],'#3A3836',1.1);}
@@ -959,3 +959,11 @@ function drawMineOpt(b,win,opt){const L=Math.min(5,b.lvl||1),f=hoFrame({fx:b.fx,
 function hoCartSlope(f,a,h,win,sd){const P=(da,dc,dh)=>f(a+da,dc,h+dh);hoQ([P(-0.11,0.07,1.5),P(0.11,0.07,3.5),P(0.11,0.07,8.5),P(-0.11,0.07,6.5)],'#7A5A3C');hoQ([P(0.11,-0.07,3.5),P(0.11,0.07,3.5),P(0.11,0.07,8.5),P(0.11,-0.07,8.5)],'#5E4430');
   const top=P(0,0,7.5);ctx.fillStyle='#2E2620';ctx.beginPath();ctx.ellipse(top[0],top[1],5,2.5,0,0,6.3);ctx.fill();hoOre([top[0],top[1]-0.5],7,sd,0.9);}
 function hoLamp(p){hoLine(p,[p[0],p[1]-12],'#3A2A1C',0.9);ctx.fillStyle='#2A2622';ctx.fillRect(p[0]-1.4,p[1]-12,2.8,3.4);ctx.fillStyle='rgba(255,190,90,0.95)';ctx.fillRect(p[0]-0.8,p[1]-11.4,1.6,2.2);ctx.fillStyle='rgba(255,170,80,0.18)';ctx.beginPath();ctx.ellipse(p[0],p[1]-10,7,5,0,0,6.3);ctx.fill();}
+
+/* shadows that follow the real shape: a building can return volumes {pts: ground points (screen), h: height in tile units};
+   the cast shadow is the union of each volume swept along the sun. null = keep the old box shadow. */
+function shShape(b){if(b.t==='mine'&&MINE_OPT===1){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),L=Math.min(5,b.lvl||1),ring=(ca,cc,ra,rc,n)=>{const r=[];for(let m=0;m<n;m++){const t2=m/n*6.283;r.push(f(ca+Math.cos(t2)*ra,cc+Math.sin(t2)*rc,0));}return r;},V=[];
+    V.push({pts:ring(-0.12,-0.42,0.82,0.53,16),h:0.35},{pts:ring(-0.12,-0.42,0.5,0.32,14),h:0.75});
+    V.push({pts:ring(-0.2,0.55,0.08,0.12,8),h:0.25});V.push({pts:ring(-0.72,0.45,0.18,0.18,8),h:0.25});
+    if(L>=3)V.push({pts:[f(0.32,0.06,0),f(0.78,0.06,0),f(0.78,0.36,0),f(0.32,0.36,0)],h:0.42});return V;}
+  return null;}

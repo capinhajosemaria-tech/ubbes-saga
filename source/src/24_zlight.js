@@ -31,6 +31,7 @@ function shHull(P){P=P.slice().sort((a,b)=>a[0]-b[0]||a[1]-b[1]);const cr=(o,a,b
 function drawShadows(win,vis){const L=todNow(win),s=L.sh;if(s[3]<=0.01||s[2]<1)return;
   const dx=s[0]*s[2],dy=s[1]*s[2],path=new Path2D();
   for(const b of BS){if(FIELDS.has(b.t)||(place&&place.moving===b))continue;const pp=iso(b.fx,b.fy);if(!vis(pp[0],pp[1])&&!vis(pp[0],pp[1]+120))continue;
+    {const vols=typeof shShape==='function'&&shShape(b);if(vols){const e=elev[b.fy*N+b.fx];for(const v of vols){const base=v.pts.map(p=>[p[0],p[1]-e]),top=base.map(p=>[p[0]+dx*v.h,p[1]+dy*v.h]),q=shHull(base.concat(top));if(q.length<3)continue;path.moveTo(q[0][0],q[0][1]);for(let i=1;i<q.length;i++)path.lineTo(q[i][0],q[i][1]);path.closePath();}continue;}}
     const c=fp(b),e=elev[b.fy*N+b.fx],h=(SH_H[b.t]!==undefined?SH_H[b.t]:1.25+0.15*(Math.min(b.w,b.h)-2));
     const k=.16,cx=(c.T[0]+c.Bt[0])/2,cy=(c.T[1]+c.Bt[1])/2,ins=p=>[p[0]+(cx-p[0])*k,p[1]-e+(cy-p[1])*k];
     const base=[ins(c.T),ins(c.R),ins(c.Bt),ins(c.L)],top=base.map(p=>[p[0]+dx*h,p[1]+dy*h]);

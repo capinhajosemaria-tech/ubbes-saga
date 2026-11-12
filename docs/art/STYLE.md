@@ -92,7 +92,20 @@ Prototype code: branch `house-options`, `source/src/20_zzhouseopt.js` (switch `w
 - Rejected concepts: dyed-stripe stalls round a well, tent fair, covered hall, market tree ("pouco realista"), cobble fans.
 - Prototype: `window.__setMarket(5)`.
 
+## Iron Mine (chosen: option 1 "Hillside adit", 2026-11-12)
+- Stands on grass beside the iron outcrop tiles, so it must read as **a way down underground**.
+- **Rock knoll** built in irregular layers (grey rock sides, grass on the top layers, boulders at the foot), no rust streaks.
+- **Cut rock face** at the front with the **timbered adit**: dark mouth with an inner frame, two posts and a lintel, log cribbing on both sides; a glow of lamp light inside and a lantern on a post at L5.
+- **Wooden rails** out of the mouth to an **ore cart** (plank box, iron bands, heaped red ore); grey **spoil heap** on the left (a second one at L5), rusty **ore pile** in front, a pick against the rock.
+- **Tool lean-to** from L3 on the right: plank back wall with hanging tools, posts, black scale shingles at house density.
+- Prototype: `window.__setMine(1)`.
+
+## Shadows (shared rule, 2026-11-12)
+- José: the dark box shadow (and the ground patch) does not match the buildings' shapes.
+- Each redrawn building gives its own **shadow volumes** (`shShape(b)` in `20_zzhouseopt.js`: ground outline + height); the cast shadow is the union of those, swept along the sun. The old box shadow stays only for buildings not yet redrawn. Done for the Iron Mine; to do for every building when the styles are rolled out.
+- The light ground patch under each plot (`drawGround`) is still a rectangle; to review with José.
+
 ## Next buildings
 One at a time: show the current look close up → José's notes → 2–4 options → choice, recorded here.
 When José asks for a fix, change only that (no extra changes without asking).
-Order still to do: Iron Mine → Berry Gatherer → Fisher's Hut → Preserver → Smokehouse → Pig Pen → Sheep Pen → Fields / Water Mill / Bakery → Brewery, Weaver, Tailor, Tavern → Training Ground, Arsenal, Watchtower → Shipyard / Harbour → Funeral Pyre, Altar, Ship-Tomb → Decor.
+Order still to do: Berry Gatherer → Fisher's Hut → Preserver → Smokehouse → Pig Pen → Sheep Pen → Fields / Water Mill / Bakery → Brewery, Weaver, Tailor, Tavern → Training Ground, Arsenal, Watchtower → Shipyard / Harbour → Funeral Pyre, Altar, Ship-Tomb → Decor.

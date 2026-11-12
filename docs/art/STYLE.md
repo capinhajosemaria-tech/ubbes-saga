@@ -123,6 +123,13 @@ Prototype code: branch `house-options`, `source/src/20_zzhouseopt.js` (switch `w
 - L3: longer rack; L5: longer house, second kettle, carved barge ends. No herbs hanging (they hid the shelves).
 - Own shadow. Prototype: `window.__setPres(3)`.
 
+## Smokehouse (chosen: option B "A-frame", 2026-11-12)
+- Will also make the dried fish (see BACKLOG).
+- **A-frame**: black scale-shingle roof down to a low stone footing, almost no walls; plank gable with a **tall pointed door** (planks, straps, ring, stone step) and a **slatted vent near the apex** with soot around it.
+- **Slatted ridge louvres** letting the smoke out (one at L1, two from L3); carved barge ends at L5.
+- **Open drying shed** behind it (black scales, lean-to rising toward the viewer): smoked fish hung in pairs; a second rail of **hams** from L3.
+- Own shadow. Prototype: `window.__setSmoke(2)`. (Option A "smoke tower" kept in the prototype as `__setSmoke(1)`.)
+
 ## Shadows (shared rule, 2026-11-12)
 - José: the dark box shadow (and the ground patch) does not match the buildings' shapes.
 - Each redrawn building gives its own **shadow volumes** (`shShape(b)` in `20_zzhouseopt.js`: ground outline + height); the cast shadow is the union of those, swept along the sun. The old box shadow stays only for buildings not yet redrawn. Done for the Iron Mine; to do for every building when the styles are rolled out.
@@ -131,4 +138,4 @@ Prototype code: branch `house-options`, `source/src/20_zzhouseopt.js` (switch `w
 ## Next buildings
 One at a time: show the current look close up → José's notes → 2–4 options → choice, recorded here.
 When José asks for a fix, change only that (no extra changes without asking).
-Order still to do: Smokehouse → Pig Pen → Sheep Pen → Fields / Water Mill / Bakery → Brewery, Weaver, Tailor, Tavern → Training Ground, Arsenal, Watchtower → Shipyard / Harbour → Funeral Pyre, Altar, Ship-Tomb → Decor.
+Order still to do: Pig Pen → Sheep Pen → Fields / Water Mill / Bakery → Brewery, Weaver, Tailor, Tavern → Training Ground, Arsenal, Watchtower → Shipyard / Harbour → Funeral Pyre, Altar, Ship-Tomb → Decor.

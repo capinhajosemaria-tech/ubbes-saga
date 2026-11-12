@@ -571,3 +571,37 @@ function drawGranOpt(b,win,opt){const J=GRAN_SET[opt]||GRAN_SET[1],L=Math.min(5,
   /* no props scattered on the ground */}
 /* test switch: hide the sea-mist at the map edge (gallery screenshots) */
 {const _ef=drawEdgeFog;drawEdgeFog=function(win,vis){if(window.__NOFOG)return;return _ef(win,vis);};}
+
+/* =================== Warehouse options (prototype) — window.__setWare(n) =================== */
+let WARE_OPT=0;window.__setWare=n=>{WARE_OPT=n|0;};
+{const _ds2=drawShaped;drawShaped=function(b,win,c0,ax){if(WARE_OPT&&b.t==='ware'){drawWareOpt(b,win,WARE_OPT);return true;}return _ds2(b,win,c0,ax);};}
+const WARE_SET={1:{rt:'thatch',roof:'#C2A25C',roofD:'#9E8042',wall:'#A08060',wallD:'#836548'},2:{rt:'slab',blue:1,roof:'#5E7488',roofD:'#4A5D6E',wall:'#4E3A2C',wallD:'#3E2E22'},
+  3:{rt:'boards',roof:'#9A4434',roofD:'#7A3428',wall:'#8E887E',wallD:'#736E65'},4:{rt:'scale',roof:'#2F2C2A',roofD:'#211F1D',wall:'#7E5A3C',wallD:'#664830'}};
+function hoGate(f,g,a,w,hd){/* wide double gate on the long wall: frame, two leaves with planks, iron straps and rings, a stone ramp */const fh=g.fh,pt=(s,h)=>f(s,g.hw,h);
+  hoQ([pt(a-w/2-0.035,fh),pt(a+w/2+0.035,fh),pt(a+w/2+0.035,fh+hd+1.6),pt(a-w/2-0.035,fh+hd+1.6)],'#2E2018');hoQ([pt(a-w/2,fh),pt(a+w/2,fh),pt(a+w/2,fh+hd),pt(a-w/2,fh+hd)],'#9A7650');for(const sg of [-1,1]){const x0=a+sg*0.01,x1=a+sg*(w/2-0.01);hoLine(pt(x0,fh+0.6),pt(x1,fh+hd-0.6),'#4A3424',1.1);hoLine(pt(x0,fh+hd*0.5),pt(x1,fh+hd*0.5),'#4A3424',0.9);}
+  ctx.strokeStyle='rgba(30,20,12,0.5)';ctx.lineWidth=0.5;ctx.beginPath();for(let k=1;k<8;k++){const p=pt(a-w/2+w*k/8,fh),q=pt(a-w/2+w*k/8,fh+hd);ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);}ctx.stroke();hoLine(pt(a,fh),pt(a,fh+hd),'#2E2018',0.9);
+  for(const hh of [0.25,0.75]){hoLine(pt(a-w/2,fh+hd*hh),pt(a-0.03,fh+hd*hh),'#2A2622',0.9);hoLine(pt(a+0.03,fh+hd*hh),pt(a+w/2,fh+hd*hh),'#2A2622',0.9);}
+  for(const s of [-0.05,0.05]){const r=pt(a+s,fh+hd*0.5);ctx.strokeStyle='#8E949A';ctx.lineWidth=0.6;ctx.beginPath();ctx.arc(r[0],r[1],1,0,6.3);ctx.stroke();}
+  const c=g.hw;hoQ([f(a-w/2-0.05,c,fh),f(a+w/2+0.05,c,fh),f(a+w/2+0.05,c+0.2,0),f(a-w/2-0.05,c+0.2,0)],'#A39D92');hoQ([f(a+w/2+0.05,c,fh),f(a+w/2+0.05,c+0.2,0),f(a+w/2+0.05,c,0)],'#857F76');
+  ctx.strokeStyle='rgba(60,56,50,0.4)';ctx.lineWidth=0.4;ctx.beginPath();for(let k=1;k<4;k++){const p=f(a-w/2-0.05,c+0.07*k,fh*(1-k/4)),q=f(a+w/2+0.05,c+0.07*k,fh*(1-k/4));ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);}ctx.stroke();}
+function hoCrate(f,a,c,h,s){const P=(da,dc,dh)=>f(a+da*s,c+dc*s,h+dh*s*16);hoQ([P(-1,1,0),P(1,1,0),P(1,1,1),P(-1,1,1)],'#A88A62');hoQ([P(1,-1,0),P(1,1,0),P(1,1,1),P(1,-1,1)],'#8A6E4C');hoQ([P(-1,1,1),P(1,1,1),P(1,-1,1),P(-1,-1,1)],'#C2A57A');
+  hoLine(P(-1,1,0),P(1,1,1),'rgba(60,40,20,0.5)',0.5);hoLine(P(1,-1,0),P(1,1,1),'rgba(60,40,20,0.5)',0.5);}
+function drawWareOpt(b,win,opt){const J=WARE_SET[opt]||WARE_SET[1],L=Math.min(5,b.lvl||1),f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.w>=b.h?0:1}),sd=(b.id||0)*23+opt;
+  const hl=[0.95,1.0,1.05,1.12,1.25][L-1],hw=0.58,ao=L>=3?-0.18:0,fA=(a,c,h)=>f(a+ao,c,h);
+  const g={sd,hl,hw,fh:3.2,wh:18,rh:13,ov:0.07,th:J.rt==='thatch'?4.5:1.8,wt:'planks',wall:J.wall,wallD:J.wallD,roof:J.roof,roofD:J.roofD,roofE:shade(J.roofD,0.7),rt:J.rt,blue:J.blue,frame:true,frameCol:'#3A2A1C',midPost:true,k:1,v:1};
+  hoQ([fA(-hl-0.07+0.15,-hw-0.07+0.15,0),fA(hl+0.07+0.2,-hw-0.07+0.15,0),fA(hl+0.07+0.2,hw+0.07+0.3,0),fA(-hl-0.07+0.15,hw+0.07+0.3,0)],'rgba(30,38,42,0.16)');
+  const r=hoRoof(fA,g,win);r.back();hoFooting(fA,g,win);hoWalls(fA,g,win);r.end();
+  const gates=L>=5?[-0.5,0.5]:[0];for(const a of gates)hoGate(fA,g,a,0.42,12.5);
+  hoWindow(fA,g,'G',0,0.1,g.fh+5,g.fh+8.5,{shutters:'#4E3A2C'});
+  /* covered loading lean-to on the front gable from level 3: posts, sloping roof, crates stacked neatly under it */
+  if(L>=3){const lw=0.34,lh=10,fl=(a,c,h)=>fA(hl+a,c,h);hoQ([fl(0,-hw,0),fl(lw,-hw,0),fl(lw,hw,0),fl(0,hw,0)],'rgba(80,70,56,0.25)');
+    hoCrate(fA,hl+0.13,0.25,0,0.08);hoCrate(fA,hl+0.13,0.05,0,0.08);hoCrate(fA,hl+0.13,0.15,2.6,0.07);
+    for(const c of [-hw+0.03,hw-0.03])hoQ([fl(lw-0.035,c,0),fl(lw,c,0),fl(lw,c,lh),fl(lw-0.035,c,lh)],'#3A2A1C');
+    hoQ([fl(0,-hw-0.04,lh+5),fl(0,hw+0.04,lh+5),fl(lw+0.05,hw+0.04,lh-0.5),fl(lw+0.05,-hw-0.04,lh-0.5)],win?'#EEF1F0':J.roof);
+    if(!win)hoRoofSurface((u,v)=>lerp(fl(lw+0.05,hw+0.04-(2*hw+0.08)*u,lh-0.5),fl(0,hw+0.04-(2*hw+0.08)*u,lh+5),v),{sd:sd+2,rt:J.rt,rh:8,roofD:J.roofD,blue:J.blue},win);
+    hoQ([fl(lw+0.05,hw+0.04,lh-0.5),fl(0,hw+0.04,lh+5),fl(0,hw+0.04,lh+3.6),fl(lw+0.05,hw+0.04,lh-1.9)],shade(J.roofD,0.6));}
+  r.front();r.ridge();hoBarge(fA,g,'#5A4230',0.25,false);
+  /* hoist from level 3: a beam out of the wall above the gate, brace, pulley, rope and a hanging bale */
+  if(L>=3){const a=gates[0],b0=fA(a,hw,g.wh-1),b1=fA(a,hw+0.36,g.wh-1),br=fA(a,hw,g.wh-6);hoLine(b0,b1,'#4A3424',2.2);hoLine(br,lerp(b0,b1,0.6),'#4A3424',1.2);
+    ctx.fillStyle='#2A2622';ctx.beginPath();ctx.arc(b1[0],b1[1]+1.6,1.2,0,6.3);ctx.fill();const bl=fA(a,hw+0.36,g.fh+4);hoLine([b1[0],b1[1]+2.6],[bl[0],bl[1]-3],'#C9B38A',0.5);
+    ctx.fillStyle='#B89A6A';ctx.beginPath();ctx.ellipse(bl[0],bl[1],2.6,2.2,0,0,6.3);ctx.fill();hoLine([bl[0]-2.6,bl[1]],[bl[0]+2.6,bl[1]],'#6E5440',0.5);hoLine([bl[0],bl[1]-2.2],[bl[0],bl[1]+2.2],'#6E5440',0.5);}}

@@ -601,7 +601,9 @@ function drawWareOpt(b,win,opt){const J=WARE_SET[opt]||WARE_SET[1],L=Math.min(5,
     if(!win)hoRoofSurface((u,v)=>lerp(fl(lw+0.05,hw+0.04-(2*hw+0.08)*u,lh-0.5),fl(0,hw+0.04-(2*hw+0.08)*u,lh+5),v),{sd:sd+2,rt:J.rt,rh:8,roofD:J.roofD,blue:J.blue},win);
     hoQ([fl(lw+0.05,hw+0.04,lh-0.5),fl(0,hw+0.04,lh+5),fl(0,hw+0.04,lh+3.6),fl(lw+0.05,hw+0.04,lh-1.9)],shade(J.roofD,0.6));}
   r.front();r.ridge();hoBarge(fA,g,'#5A4230',0.25,false);
-  /* hoist from level 3: a beam out of the wall above the gate, brace, pulley, rope and a hanging bale */
-  if(L>=3){const a=gates[0],b0=fA(a,hw,g.wh-1),b1=fA(a,hw+0.36,g.wh-1),br=fA(a,hw,g.wh-6);hoLine(b0,b1,'#4A3424',2.2);hoLine(br,lerp(b0,b1,0.6),'#4A3424',1.2);
-    ctx.fillStyle='#2A2622';ctx.beginPath();ctx.arc(b1[0],b1[1]+1.6,1.2,0,6.3);ctx.fill();const bl=fA(a,hw+0.36,g.fh+4);hoLine([b1[0],b1[1]+2.6],[bl[0],bl[1]-3],'#C9B38A',0.5);
-    ctx.fillStyle='#B89A6A';ctx.beginPath();ctx.ellipse(bl[0],bl[1],2.6,2.2,0,0,6.3);ctx.fill();hoLine([bl[0]-2.6,bl[1]],[bl[0]+2.6,bl[1]],'#6E5440',0.5);hoLine([bl[0],bl[1]-2.2],[bl[0],bl[1]+2.2],'#6E5440',0.5);}}
+  /* no hoist (José: removed) */}
+/* crossed barge boards at BOTH gables: the back pair shows its crossing tips above the ridge */
+{const _hb=hoBarge;hoBarge=function(f,g,col,ext,carve){_hb(f,g,col,ext,carve);const {hl,hw,wh,rh,ov}=g,a0=-hl-ov-0.01,top=wh+rh,eH=wh-ov/hw*rh,ce=hw+ov;
+  for(const s2 of [1,-1]){const e=f(a0,s2*ce,eH),r=f(a0,0,top),dx=r[0]-e[0],dy=r[1]-e[1],x=[r[0]+dx*ext,r[1]+dy*ext],st=[r[0]-dx*0.08,r[1]-dy*0.08];ctx.lineCap='round';
+    hoLine(st,x,shade(col,0.7),2.4);hoLine(st,x,col,1.5);hoLine([st[0],st[1]-0.6],[x[0],x[1]-0.6],'rgba(255,240,210,0.3)',0.5);ctx.lineCap='butt';
+    if(carve){ctx.strokeStyle=col;ctx.lineWidth=1.3;ctx.beginPath();ctx.moveTo(x[0],x[1]);ctx.quadraticCurveTo(x[0]+dx*0.12+s2*3,x[1]+dy*0.12-3,x[0]+s2*1,x[1]-5);ctx.stroke();}}};}

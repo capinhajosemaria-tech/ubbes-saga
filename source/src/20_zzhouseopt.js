@@ -1467,3 +1467,61 @@ function drawPyreOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot
     const [ra,rc]=o===1||o===4?[1.08,0.7]:[1,1];hoQ(el(ra,rc,30,1),win?'rgba(225,228,224,0.5)':'rgba(110,104,92,0.28)');hoQ(el(ra*0.88,rc*0.86,30,2),win?'rgba(232,230,222,0.85)':'rgba(128,120,104,0.55)');
     if(!win){ctx.fillStyle='rgba(60,54,48,0.25)';for(let k=0;k<30;k++){const th=h2(sd,k,3)*6.283,r=h2(sd,k,4)*0.8,p=f(Math.cos(th)*r*ra,Math.sin(th)*r*rc,0);ctx.beginPath();ctx.ellipse(p[0],p[1],1.2+h2(sd,k,5)*1.6,0.6,0,0,6.3);ctx.fill();}}
     return true;}return _gsY(b,win);};}
+
+/* =================== Field options (prototype) — window.__setField(n) ===================
+   Grain (barley), Flax and Fodder fields, 3×3. Crops are drawn as upright plants in rows, back to front, and follow the summer
+   (window.__SP forces the summer progress 0..1 for screenshots). 1 Wattle fence · 2 Skigard + drying rack (hesje) · 3 Cleared-stone banks + cairn · 4 Open strips with balks and stooks */
+let FIELD_OPT=0;window.__setField=n=>{FIELD_OPT=n|0;};
+{const _sp=summerProgress;summerProgress=function(){return window.__SP!=null?window.__SP:_sp();};}
+{const _dsF=drawShaped;drawShaped=function(b,win,c0,ax){if(FIELD_OPT&&FIELDS.has(b.t)){drawFieldOpt(b,win,FIELD_OPT);return true;}return _dsF(b,win,c0,ax);};}
+{const _gsF=groundShape;groundShape=function(b,win){if(FIELD_OPT&&FIELDS.has(b.t))return true;return _gsF(b,win);};}
+/* one row of plants along a, at cross position c, from a0 to a1 */
+function fdRow(f,t,a0,a1,c,p,win,sd,k,dense){const n=Math.max(3,Math.round((a1-a0)*(dense||17)));const pts=[];for(let i=0;i<n;i++){const a=a0+(i+0.5)/n*(a1-a0)+(h2(sd,k*97+i,61)-0.5)*0.04,cc=c+(h2(sd,k*97+i,62)-0.5)*0.035;pts.push({p:f(a,cc,0),j:h2(sd,k*97+i,63)});}
+  if(win){ctx.strokeStyle='rgba(150,140,120,0.55)';ctx.lineWidth=0.6;ctx.beginPath();for(const q of pts){ctx.moveTo(q.p[0],q.p[1]);ctx.lineTo(q.p[0]+0.3,q.p[1]-1.6);}ctx.stroke();return;}
+  if(t==='grain'){const g=Math.min(1,0.2+p*1.3),H=8.5*g,col=p>0.8?'#D8B862':p>0.62?'#C3B260':'#7FA05A',colD=p>0.8?'#B8963E':p>0.62?'#9FA04E':'#668A46';
+    ctx.strokeStyle=colD;ctx.lineWidth=0.7;ctx.beginPath();for(const q of pts){for(const dx of [-0.9,0.9]){ctx.moveTo(q.p[0]+dx*0.5,q.p[1]);ctx.lineTo(q.p[0]+dx+q.j*0.4,q.p[1]-H*(0.82+q.j*0.15));}}ctx.stroke();
+    ctx.strokeStyle=col;ctx.lineWidth=0.75;ctx.beginPath();for(const q of pts){ctx.moveTo(q.p[0],q.p[1]);ctx.lineTo(q.p[0]+0.2,q.p[1]-H);}ctx.stroke();
+    if(p>0.35){/* ears: nod over when ripe, with awns */const nod=p>0.75?1:0.3;ctx.strokeStyle=p>0.8?'#E6CC7A':p>0.62?'#CDBE6A':'#8FB064';ctx.lineWidth=1.3;ctx.beginPath();for(const q of pts)for(const dx of [-0.9,0,0.9]){const x=q.p[0]+dx+(dx?q.j*0.4:0.2),y=q.p[1]-H*(dx?0.82+q.j*0.15:1);ctx.moveTo(x,y);ctx.quadraticCurveTo(x+1.2*nod,y-1.2,x+1.8*nod,y-2.4+nod*1.6);}ctx.stroke();
+      ctx.strokeStyle='rgba(245,225,160,0.55)';ctx.lineWidth=0.35;ctx.beginPath();for(const q of pts){const x=q.p[0]+0.2,y=q.p[1]-H;ctx.moveTo(x+1.2*nod,y-1.6);ctx.lineTo(x-0.4+2.6*nod,y-4.4+nod*1.4);}ctx.stroke();}}
+  else if(t==='flax'){const g=Math.min(1,0.2+p*1.3),H=10*g,col=p>0.8?'#B8A868':'#7E9A62';ctx.strokeStyle=col;ctx.lineWidth=0.55;ctx.beginPath();for(const q of pts)for(const dx of [-0.8,0,0.8]){ctx.moveTo(q.p[0]+dx*0.3,q.p[1]);ctx.lineTo(q.p[0]+dx+q.j*0.3,q.p[1]-H*(dx?0.9:1));}ctx.stroke();
+    if(p>0.3&&p<0.78){ctx.fillStyle='#8EA6DA';for(const q of pts)for(const dx of [-0.8,0.8]){ctx.beginPath();ctx.arc(q.p[0]+dx+q.j*0.3,q.p[1]-H*0.9-0.4,0.95,0,6.3);ctx.fill();}ctx.fillStyle='#B8C8EE';for(const q of pts){ctx.beginPath();ctx.arc(q.p[0],q.p[1]-H-0.4,0.8,0,6.3);ctx.fill();}}
+    else if(p>=0.78){ctx.fillStyle='#A08848';for(const q of pts)for(const dx of [-0.8,0,0.8]){ctx.beginPath();ctx.arc(q.p[0]+dx+(dx?q.j*0.3:0),q.p[1]-H*(dx?0.9:1)-0.4,0.75,0,6.3);ctx.fill();}}}
+  else{/* fodder: grass tufts, oat panicles, a few meadow flowers */const g=Math.min(1,0.25+p*1.4),H=6*g;ctx.strokeStyle=p>0.7?'#A8AA66':'#7E9E58';ctx.lineWidth=0.6;ctx.beginPath();for(const q of pts)for(const dx of [-1.4,-0.6,0.3,1.2]){ctx.moveTo(q.p[0]+dx*0.4,q.p[1]);ctx.quadraticCurveTo(q.p[0]+dx*0.6,q.p[1]-H*0.6,q.p[0]+dx*1.2,q.p[1]-H*(0.7+q.j*0.3));}ctx.stroke();
+    if(p>0.4){ctx.strokeStyle=p>0.7?'#D2C27C':'#A6B672';ctx.lineWidth=0.45;ctx.beginPath();for(const q of pts){const x=q.p[0]+0.3,y=q.p[1]-H*1.25;ctx.moveTo(q.p[0],q.p[1]);ctx.lineTo(x,y);for(const s of [-1,1]){ctx.moveTo(x,y+1);ctx.lineTo(x+s*1.2,y+2.6);}}ctx.stroke();}
+    if(p>0.25&&p<0.8){for(const q of pts)if(q.j>0.8){ctx.fillStyle=q.j>0.93?'#E8E0F0':q.j>0.86?'#E8C84A':'#C86A8A';ctx.beginPath();ctx.arc(q.p[0]-1,q.p[1]-H*0.8,0.8,0,6.3);ctx.fill();}}}}
+function fdSoil(f,E,win,sd,t,rows,irregular){/* the tilled ground with raised ridges along a */const ed=(u)=>irregular?(h2(sd,Math.round(u*13),71)-0.5)*0.12:0;const pts=[];const N=12;
+  for(let i=0;i<=N;i++)pts.push(f(-E+2*E*i/N,-E+ed(i/N),0));for(let i=0;i<=N;i++)pts.push(f(E+ed(i/N+3),-E+2*E*i/N,0));for(let i=N;i>=0;i--)pts.push(f(-E+2*E*i/N,E+ed(i/N+5),0));for(let i=N;i>=0;i--)pts.push(f(-E+ed(i/N+7),-E+2*E*i/N,0));
+  hoQ(pts,win?'#DDE1DE':t==='fodder'?'#8E9C62':'#7E6A4E');if(win||t==='fodder')return;
+  for(let k=0;k<rows.length;k++){const c=rows[k],w=0.055;hoQ([f(-E+0.04,c-w,0),f(E-0.04,c-w,0),f(E-0.04,c+w,0),f(-E+0.04,c+w,0)],'#94805E');hoLine(f(-E+0.04,c+w,0),f(E-0.04,c+w,0),'rgba(50,36,22,0.45)',0.5);}}
+function fdStook(f,a,c,win,col){/* a stook: sheaves leaning together, tied */const p=f(a,c,0);ctx.fillStyle=win?'#E4E4DE':col||'#C8A456';ctx.beginPath();ctx.moveTo(p[0]-4.2,p[1]);ctx.lineTo(p[0]-1.2,p[1]-10);ctx.lineTo(p[0]+1.2,p[1]-10);ctx.lineTo(p[0]+4.2,p[1]);ctx.closePath();ctx.fill();
+  ctx.fillStyle='rgba(60,40,10,0.25)';ctx.beginPath();ctx.moveTo(p[0],p[1]-10);ctx.lineTo(p[0]+1.2,p[1]-10);ctx.lineTo(p[0]+4.2,p[1]);ctx.lineTo(p[0]+0.6,p[1]);ctx.closePath();ctx.fill();if(win)return;
+  ctx.strokeStyle='rgba(90,64,24,0.6)';ctx.lineWidth=0.4;ctx.beginPath();for(let k=-3;k<=3;k++){ctx.moveTo(p[0]+k*1.1,p[1]);ctx.lineTo(p[0]+k*0.25,p[1]-9.6);}ctx.stroke();hoLine([p[0]-2,p[1]-6.5],[p[0]+2,p[1]-6.5],'#8A6A2A',0.7);
+  ctx.fillStyle='#E0C072';ctx.beginPath();ctx.ellipse(p[0],p[1]-10.6,2.2,1.4,0,0,6.3);ctx.fill();}
+function fdHesje(f,a0,a1,c,win,t,p,sd){/* hesje: posts with rails, the crop hung over them to dry */const n=Math.max(2,Math.round((a1-a0)/0.45)),H=11;const P=(a,h)=>f(a,c,h);
+  for(let i=0;i<=n;i++){const a=a0+(a1-a0)*i/n;hoLine(P(a,0),P(a,H+1.5),win?'#B8B0A0':'#5A4230',1.1);}
+  for(const h of [4,7.5,H]){hoLine(P(a0,h),P(a1,h),win?'#C8C2B4':'#7A5A3A',0.5);}
+  if(p<0.7&&!win)return;const col=t==='flax'?'#B8A46A':t==='fodder'?'#A8A660':'#D0AE58',colD=t==='flax'?'#9A8650':t==='fodder'?'#8A8A48':'#B0903E';
+  for(const h of [7.5,H]){const pts=[];const N=16;for(let i=0;i<=N;i++)pts.push(P(a0+0.03+(a1-a0-0.06)*i/N,h+0.8));for(let i=N;i>=0;i--){const q=P(a0+0.03+(a1-a0-0.06)*i/N,h-3.6-Math.sin(i*1.7+sd)*0.6);pts.push(q);}hoQ(pts,win?'#E8E8E2':col);
+    if(!win){ctx.strokeStyle=colD;ctx.lineWidth=0.4;ctx.beginPath();for(let i=0;i<N*2;i++){const q=P(a0+0.05+(a1-a0-0.1)*i/(N*2),h);ctx.moveTo(q[0],q[1]+0.6);ctx.lineTo(q[0]+0.2,q[1]-3.4);}ctx.stroke();}}}
+function fdCairn(f,a,c,win,sd){const st=[];for(let k=0;k<14;k++){const r=h2(sd,k,81)*0.16,th=h2(sd,k,82)*6.283,h=(1-r/0.16)*5*(h2(sd,k,83)*0.5+0.5);st.push({d:Math.cos(th)*r+Math.sin(th)*r,h,p:f(a+Math.cos(th)*r,c+Math.sin(th)*r,h),k});}
+  st.sort((x,y)=>x.h-y.h||x.d-y.d);for(const s of st){const tn=h2(sd,s.k,84);alCobble(s.p,2+tn,1.4+tn*0.5,win?'#D4D6D2':tn>0.5?'#8E877B':'#7A746A',win);}}
+function drawFieldOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),sd=(b.id||0)*13+opt,t=b.t,p=summerProgress(),E=1.42;
+  const reaped=p>=0.92; /* end of summer: grain and flax stand in stooks, fodder in haycocks */
+  const fence=(back)=>{const runs=back?[[[-E,-E],[E,-E]],[[-E,-E],[-E,E]]]:[[[E,-E],[E,E]],[[-E,E],[-0.25,E]],[[0.35,E],[E,E]]];
+    runs.forEach((r,i)=>{if(opt===1)hoWattle(f,r[0],r[1],6,win,sd+i+(back?0:5));else if(opt===2)hoSkigard(f,r[0],r[1],6.5,win,sd+i+(back?0:5));else if(opt===3)hoStoneWall(f,r[0],r[1],3.5,win,sd+i+(back?0:5));});
+    if(!back&&opt!==3){for(const a of [-0.25,0.35]){hoLine(f(a,E,0),f(a,E,9),win?'#B8B0A0':'#3A2A1C',1.5);}}};
+  const inner=opt===4?E:E-0.12,rowStep=t==='fodder'?0.16:0.2,rows=[];for(let c=-inner+0.12;c<inner-0.05;c+=rowStep)rows.push(c);
+  fdSoil(f,inner,win,sd,t,rows,opt===3);
+  if(opt===4&&!win){/* grass balks between three strips */for(const c of [-0.48,0.48]){hoQ([f(-E,c-0.07,0),f(E,c-0.07,0),f(E,c+0.07,0),f(-E,c+0.07,0)],'#8EA060');}}
+  if(opt!==4)fence(true);
+  if(opt===3)fdCairn(f,-E+0.2,-E+0.2,win,sd);
+  const hesC=-inner+0.14,useHesje=opt===2;
+  for(let k=0;k<rows.length;k++){const c=rows[k];if(opt===4&&(Math.abs(c+0.48)<0.1||Math.abs(c-0.48)<0.1))continue;
+    if(useHesje&&(k===0||(reaped&&k%4===0))){fdHesje(f,-inner+0.15,inner-0.15,c,win,t,p,sd+k);continue;}
+    if(reaped&&t!=='fodder'){/* stubble and stooks */if(!win){ctx.strokeStyle='#B8A060';ctx.lineWidth=0.5;ctx.beginPath();for(let i=0;i<24;i++){const q=f(-inner+0.1+i*(2*inner-0.2)/24,c,0);ctx.moveTo(q[0],q[1]);ctx.lineTo(q[0],q[1]-1.4);}ctx.stroke();}
+      if(k%2===1&&!useHesje)for(let i=0;i<4;i++)fdStook(f,-inner+0.4+i*(2*inner-0.8)/3+(h2(sd,k*5+i,91)-0.5)*0.1,c,win,t==='flax'?'#B8A46A':null);continue;}
+    if(reaped&&t==='fodder'){if(k%3===1)for(let i=0;i<4;i++){const q=f(-inner+0.4+i*(2*inner-0.8)/3,c,0);ctx.fillStyle=win?'#E8E8E2':'#A8A660';ctx.beginPath();ctx.ellipse(q[0],q[1]-3,5,4.2,0,3.14,6.3);ctx.lineTo(q[0]-5,q[1]-3);ctx.fill();ctx.beginPath();ctx.ellipse(q[0],q[1]-3,5,1.6,0,0,3.14);ctx.fill();if(!win){ctx.fillStyle='rgba(60,60,20,0.2)';ctx.beginPath();ctx.ellipse(q[0]+2,q[1]-3,3,4,0,3.14,6.3);ctx.fill();}}continue;}
+    fdRow(f,t,-inner+0.06,inner-0.06,c,opt===4?p*(Math.abs(c)<0.48?1:c<0?0.92:1.05):p,win,sd,k);}
+  if(opt===4){/* boundary stone at the front corner */alStone(f(E-0.05,E-0.05,0),2.2,7,sd,3,win);}
+  if(opt!==4)fence(false);}
+{const _shF=shShape;shShape=function(b){if(FIELD_OPT&&FIELDS.has(b.t))return [];return _shF(b);};}

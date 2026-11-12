@@ -1015,3 +1015,51 @@ function drawBerryOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,ro
     for(let k=0;k<n;k+=6){const t0=TH(k);if(!vis(t0))continue;const p=pt(t0,Rr+0.01,he-thick-1.5);ctx.fillStyle='#7E776C';ctx.beginPath();ctx.ellipse(p[0],p[1],1.5,1.2,0,0,6.3);ctx.fill();hoLine([p[0],p[1]-1.2],[p[0],p[1]-3.2],'rgba(80,60,36,0.7)',0.5);}}}
 {const _shB=shShape;shShape=function(b){if(b.t==='berry'&&BERRY_OPT){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),{L,R,wh,ca,cc}=berryDims(b),ring=(r,n)=>{const o=[];for(let m=0;m<n;m++){const t2=m/n*6.283;o.push(f(ca+Math.cos(t2)*r,cc+Math.sin(t2)*r,0));}return o;};
   return [{pts:ring(R+0.08,18),h:(wh+2)/26},{pts:ring(R*0.5,14),h:(wh+17)/26},{pts:ring(0.05,6),h:(wh+30+1.2*L)/26}];}return _shB(b);};}
+
+/* =================== Fisher's Hut options (prototype) — window.__setFish(n) ===================
+   1: plank hut raised on stilts with a short plank jetty to its door, a stockfish rack, a real-size færing on log rollers */
+let FISH_OPT=0;window.__setFish=n=>{FISH_OPT=n|0;};
+{const _dsF=drawShaped;drawShaped=function(b,win,c0,ax){if(FISH_OPT&&b.t==='fish'){drawFishOpt(b,win,FISH_OPT);return true;}return _dsF(b,win,c0,ax);};}
+function fishDims(b){const L=Math.min(5,b.lvl||1);return {L,hl:L>=5?0.44:0.38,hw:0.27,ha:-0.42,hc:-0.12,ST:6};}
+function hoStilts(f,a0,a1,c0,c1,h,win){/* posts under a raised floor, cross braces on the visible sides, a sill beam on top */const col=win?'#B8B2A6':'#4A3A2C',colL='#5E4A38';
+  const xs=[];for(let k=0;k<=3;k++)xs.push(a0+(a1-a0)*k/3);
+  for(const a of xs)hoQ([f(a-0.018,c1,0),f(a+0.018,c1,0),f(a+0.018,c1,h),f(a-0.018,c1,h)],colL);for(const c of [c0,(c0+c1)/2])hoQ([f(a1,c-0.018,0),f(a1,c+0.018,0),f(a1,c+0.018,h),f(a1,c-0.018,h)],col);
+  for(let k=0;k<3;k++){hoLine(f(xs[k],c1,0.6),f(xs[k+1],c1,h-0.6),col,0.6);}hoLine(f(a1,c0,0.6),f(a1,c1,h-0.6),col,0.6);
+  hoQ([f(a0,c1,h-1.2),f(a1,c1,h-1.2),f(a1,c1,h),f(a0,c1,h)],'#6E5038');hoQ([f(a1,c0,h-1.2),f(a1,c1,h-1.2),f(a1,c1,h),f(a1,c0,h)],'#5A4230');}
+function hoFaering(f,a,c,bl,bw,win,sd){/* clinker-built Norse rowing boat: pointed both ends, rising sheer, curved stem posts, three strakes, two thwarts, oars inside */
+  const n=16,P=(u,s,h)=>f(a+u*bl,c+s*bw,h),W=u=>Math.pow(Math.max(0,1-u*u),0.62),G=u=>5.2+2.6*u*u,K=u=>1.1+1.6*u*u;
+  /* far gunwale and inside */const inner=[],far=[],near=[];for(let i=0;i<=n;i++){const u=-1+2*i/n;far.push(P(u,-W(u),G(u)));near.push(P(u,W(u),G(u)));}
+  hoQ(far.concat(near.slice().reverse()),win?'#9A9690':'#3A2C20');
+  {const fl=[];for(let i=0;i<=n;i++){const u=-0.85+1.7*i/n;fl.push(P(u,-W(u)*0.45,K(u)+0.9));}for(let i=n;i>=0;i--){const u=-0.85+1.7*i/n;fl.push(P(u,W(u)*0.45,K(u)+0.9));}hoQ(fl,win?'#B8B2A6':'#5A4430');}
+  /* inner face of the far side planks */{const q=[];for(let i=0;i<=n;i++){const u=-1+2*i/n;q.push(P(u,-W(u),G(u)));}for(let i=n;i>=0;i--){const u=-0.85+1.7*i/n*1;const uu=-1+2*i/n;q.push(P(uu*0.9,-W(uu)*0.5,K(uu)+1));}hoQ(q,win?'#C4BEB2':'#6E5440');}
+  /* thwarts and oars */for(const u of [-0.25,0.3])hoQ([P(u-0.05,-W(u)*0.95,G(u)-0.8),P(u+0.05,-W(u)*0.95,G(u)-0.8),P(u+0.05,W(u)*0.95,G(u)-0.8),P(u-0.05,W(u)*0.95,G(u)-0.8)],'#8A6A4A');
+  hoLine(P(-0.7,-0.15,G(0)-1.5),P(0.75,0.05,G(0)-1.2),'#A88A62',0.9);hoLine(P(-0.65,0.1,G(0)-1.6),P(0.8,0.25,G(0)-1.3),'#A88A62',0.9);
+  /* near side: strakes from the keel up to the gunwale, each overlapping the one below */const strk=[[0,0.36,'#6E5038'],[0.36,0.7,'#7A5A3C'],[0.7,1,'#86664A']];
+  for(const [s0,s1,col] of strk){const q=[];for(let i=0;i<=n;i++){const u=-1+2*i/n,w=W(u),hk=K(u),hg=G(u);q.push(P(u,w*(0.35+0.65*s0),hk+(hg-hk)*s0));}for(let i=n;i>=0;i--){const u=-1+2*i/n,w=W(u),hk=K(u),hg=G(u);q.push(P(u,w*(0.35+0.65*s1),hk+(hg-hk)*s1));}hoQ(q,win?'#D2CCC0':col);
+    ctx.strokeStyle='rgba(30,20,12,0.55)';ctx.lineWidth=0.5;ctx.beginPath();for(let i=0;i<=n;i++){const u=-1+2*i/n,w=W(u),hk=K(u),hg=G(u),p=P(u,w*(0.35+0.65*s1),hk+(hg-hk)*s1);i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]);}ctx.stroke();}
+  if(zoom>1.2&&!win){ctx.fillStyle='rgba(30,26,22,0.6)';for(let i=2;i<n-1;i+=2){const u=-1+2*i/n,p=P(u,W(u)*0.83,K(u)+(G(u)-K(u))*0.7);ctx.fillRect(p[0]-0.35,p[1]-0.35,0.7,0.7);}}
+  /* gunwale rail */ctx.strokeStyle='#4A3424';ctx.lineWidth=1;ctx.beginPath();near.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.stroke();
+  /* stem and stern posts curling up */for(const e of [-1,1]){const b0=P(e*0.98,0,G(1)-0.5),b1=P(e*1.08,0,G(1)+2.6),b2=P(e*1.06,0,G(1)+4.6);ctx.strokeStyle='#5A4230';ctx.lineWidth=1.6;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(b0[0],b0[1]);ctx.quadraticCurveTo(b1[0],b1[1],b2[0],b2[1]);ctx.stroke();}}
+function hoStockfish(f,a0,a1,c,hr,pairs,win){/* drying rack: posts, a rail, split cod hung in pairs over it */const P=(a,h)=>f(a,c,h);
+  for(const a of [a0,(a0+a1)/2,a1]){const p=P(a,0),q=P(a,hr+1.5);hoQ([[p[0]-0.7,p[1]],[p[0]+0.7,p[1]],[q[0]+0.7,q[1]],[q[0]-0.7,q[1]]],'#5A4230');}
+  for(const a of [a0,a1]){hoLine(P(a,hr+1.5),f(a,c-0.12,0),'#4A3424',0.7);}
+  hoLine(P(a0-0.03,hr),P(a1+0.03,hr),'#6E5038',1.3);
+  for(let i=0;i<pairs;i++){const a=a0+0.05+(a1-a0-0.1)*i/Math.max(1,pairs-1),top=P(a,hr);for(const s of [-1,1]){const x=top[0]+s*1.3,y=top[1]+0.6;ctx.fillStyle=win?'#E8E4DA':(i%3?'#C9B898':'#B8A684');ctx.beginPath();ctx.moveTo(x-0.5,y);ctx.lineTo(x+0.5,y);ctx.quadraticCurveTo(x+1.5*s+0.3,y+3,x+0.9,y+6.2);ctx.lineTo(x-0.9,y+6.2);ctx.quadraticCurveTo(x-1.2,y+3,x-0.5,y);ctx.fill();
+      ctx.fillStyle='rgba(90,70,50,0.45)';ctx.fillRect(x-0.25,y+1,0.5,4.6);}hoLine([top[0]-1.3,top[1]+0.4],[top[0]+1.3,top[1]+0.4],'rgba(200,180,140,0.8)',0.4);}}
+function drawFishOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),sd=(b.id||0)*19+opt,{L,hl,hw,ha,hc,ST}=fishDims(b),J=WOOD_SET[2];
+  /* stockfish rack behind, on the right */hoStockfish(f,0.12,0.88,-0.3,12,L>=3?7:5,win);if(L>=3)hoStockfish(f,0.3,0.88,-0.08,10,4,win);
+  /* the hut, raised on stilts */const fw=(a,c,h)=>f(a+ha,c+hc,h);
+  const g={sd,hl,hw,fh:ST,wh:ST+13,rh:10,ov:0.05,th:1.6,wt:'planks',wall:'#8A7C6A',wallD:'#6E6252',roof:J.roof,roofD:J.roofD,roofE:shade(J.roofD,0.7),rt:'scale',frame:true,frameCol:'#3A2E24',k:1,v:1};
+  const r=hoRoof(fw,g,win);r.back();hoStilts(fw,-hl,hl,-hw,hw,ST,win);hoWalls(fw,g,win);r.end();
+  hoDoor(fw,g,'G',0,0.15,8,{col:'#4A3424'});if(L>=3)hoWindow(fw,g,'L',-0.12,0.09,ST+3.5,ST+6.8,{shutters:'#2E4A5E'});
+  r.front();r.ridge();hoBarge(fw,g,'#4A3424',0.25,L>=5);
+  /* plank jetty from the door, on piles */{const j0=ha+hl,j1=0.98,jc=hc,jw=0.11;for(let a=j0+0.12;a<=j1;a+=0.2){for(const s of [-1,1]){const p=f(a,jc+s*jw,0),q=f(a,jc+s*jw,ST);if(s>0)hoQ([[p[0]-0.8,p[1]],[p[0]+0.8,p[1]],[q[0]+0.8,q[1]],[q[0]-0.8,q[1]]],'#4A3A2C');}}
+    for(let a=j0;a<j1;a+=0.045){const t2=h2(sd,a*100|0,81);hoQ([f(a+0.003,jc-jw,ST),f(a+0.04,jc-jw,ST),f(a+0.04,jc+jw,ST),f(a+0.003,jc+jw,ST)],win?'#E4E6E2':t2>0.5?'#9A8268':'#8A735A');}
+    hoQ([f(j0,jc+jw,ST-1.2),f(j1,jc+jw,ST-1.2),f(j1,jc+jw,ST),f(j0,jc+jw,ST)],'#5E4A38');hoQ([f(j1,jc-jw,ST-1.2),f(j1,jc+jw,ST-1.2),f(j1,jc+jw,ST),f(j1,jc-jw,ST)],'#4A3A2C');
+    /* mooring post at the end, a net drying over the rail from L5, a lantern from L5 */{const p=f(j1-0.02,jc+jw,ST),q=f(j1-0.02,jc+jw,ST+5);hoQ([[p[0]-0.9,p[1]],[p[0]+0.9,p[1]],[q[0]+0.9,q[1]],[q[0]-0.9,q[1]]],'#5A4230');}
+    if(L>=5){ctx.strokeStyle='rgba(60,50,40,0.55)';ctx.lineWidth=0.4;ctx.beginPath();for(let k=0;k<7;k++){const p=f(j0+0.15+k*0.04,jc+jw,ST),q=f(j0+0.15+k*0.04,jc+jw,ST-4.5);ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);}for(let h=1;h<4.5;h+=1.1){const p=f(j0+0.15,jc+jw,ST-h),q=f(j0+0.39,jc+jw,ST-h);ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);}ctx.stroke();hoLamp(f(j1-0.02,jc-jw,ST));}}
+  /* færing pulled up on two log rollers in front: length about the hut's, width a quarter of that */
+  const ba=0.1,bc=0.36,bl=0.4,bw=0.105;for(const u of [-0.5,0.5]){const p=f(ba+u*bl,bc-0.16,0.9),q=f(ba+u*bl,bc+0.16,0.9);hoLine(p,q,'#6E5038',2.2);}
+  hoFaering(f,ba,bc,bl,bw,win,sd);}
+{const _shF=shShape;shShape=function(b){if(b.t==='fish'&&FISH_OPT){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:b.rot}),{hl,hw,ha,hc,ST}=fishDims(b),box=(a0,a1,c0,c1)=>[f(a0,c0,0),f(a1,c0,0),f(a1,c1,0),f(a0,c1,0)];
+  return [{pts:box(ha-hl,ha+hl,hc-hw,hc+hw),h:(ST+17)/26},{pts:box(ha-hl*0.6,ha+hl*0.6,hc-0.05,hc+0.05),h:(ST+23)/26},{pts:box(0.12,0.88,-0.32,-0.28),h:0.45},{pts:box(-0.28,0.52,0.22,0.38),h:0.22}];}return _shF(b);};}

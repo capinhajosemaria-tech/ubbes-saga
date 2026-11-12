@@ -1525,3 +1525,58 @@ function drawFieldOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,ro
   if(opt===4){/* boundary stone at the front corner */alStone(f(E-0.05,E-0.05,0),2.2,7,sd,3,win);}
   if(opt!==4)fence(false);}
 {const _shF=shShape;shShape=function(b){if(FIELD_OPT&&FIELDS.has(b.t))return [];return _shF(b);};}
+
+/* =================== Water Mill options (prototype) — window.__setMill(n) ===================
+   2×2 on the bank; millSide(b) tells which edge the river runs along. A frame F is built so the river lies at c = s (s = ±1):
+   the mill house stands on the land half, the wheel turns in the river beside its long wall (drawn before the house when the river is behind it).
+   1 Log mill, undershot wheel · 2 Plank mill, overshot wheel fed by a flume on trestles · 3 Norse horizontal mill (kvern) on stilts over the stream · 4 Stone mill, big undershot wheel */
+let MILL_OPT=0;window.__setMill=n=>{MILL_OPT=n|0;};
+{const _dsM=drawShaped;drawShaped=function(b,win,c0,ax){if(MILL_OPT&&b.t==='mill'){drawMillOpt(b,win,MILL_OPT);return true;}return _dsM(b,win,c0,ax);};}
+function mlSide(b){/* toward the river water: centroid of river tiles in and around the footprint, relative to its centre */const isR=(x,y)=>inMap(x,y)&&ter[y*N+x]===T.RIVER,cx=b.fx+b.w/2-0.5,cy=b.fy+b.h/2-0.5;let sx=0,sy=0,n=0;
+  for(let y=b.fy-1;y<=b.fy+b.h;y++)for(let x=b.fx-1;x<=b.fx+b.w;x++)if(isR(x,y)){const wgt=(x>=b.fx&&x<b.fx+b.w&&y>=b.fy&&y<b.fy+b.h)?2:1;sx+=(x-cx)*wgt;sy+=(y-cy)*wgt;n+=wgt;}
+  if(!n)return millSide(b);return Math.abs(sx)>Math.abs(sy)?(sx>0?'+x':'-x'):(sy>0?'+y':'-y');}
+function mlFrame(b){const f0=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,rot:0}),side=mlSide(b),s=side[0]==='+'?1:-1,F=side[1]==='y'?f0:(a,c,h)=>f0(c,a,h);return {F,s,side};}
+function mlWheel(F,a0,cw,hub,R,win,ang,s){/* vertical wheel in the (a,h) plane at c = cw: two rims, paddles between them, spokes, hub; the lower part runs in the water */
+  const P=(th,r,c)=>F(a0+Math.cos(th)*r/36,c,hub+Math.sin(th)*r),cB=cw-0.05,cF=cw+0.05,wood=win?'#8A7A64':'#4E3828',lite=win?'#A8987E':'#7A5A3C',n=12;
+  const ring=(c,r,col,w)=>{ctx.strokeStyle=col;ctx.lineWidth=w;ctx.beginPath();for(let k=0;k<=40;k++){const p=P(k/40*6.283,r,c);k?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]);}ctx.stroke();};
+  ring(cB,R,wood,1.4);ring(cB,R*0.74,wood,0.9);
+  for(let k=0;k<n;k++){const th=ang+k/n*6.283,p1=P(th,R,cB),p2=P(th,R,cF),q1=P(th,R*0.74,cB),q2=P(th,R*0.74,cF);hoQ([p1,p2,q2,q1],k%2?lite:shade(lite,0.85));}
+  ctx.strokeStyle=wood;ctx.lineWidth=0.9;ctx.beginPath();for(let k=0;k<6;k++){const th=ang+k/6*6.283,p=P(th,R*0.74,cF),q=P(th+Math.PI,R*0.74,cF);ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);}ctx.stroke();
+  ring(cF,R*0.74,lite,1);ring(cF,R,lite,1.6);const h=P(0,0,cF);ctx.fillStyle=wood;ctx.beginPath();ctx.arc(h[0],h[1],2.2,0,6.3);ctx.fill();ctx.fillStyle='#2E2C2A';ctx.beginPath();ctx.arc(h[0],h[1],1,0,6.3);ctx.fill();
+  if(!win){/* water at the wheel's foot: a band of river colour over the lowest paddles, foam */const wl=0;const pts=[F(a0-R/36-0.08,cB-0.06,wl),F(a0+R/36+0.08,cB-0.06,wl),F(a0+R/36+0.08,cF+0.08,wl),F(a0-R/36-0.08,cF+0.08,wl)];
+    ctx.save();ctx.beginPath();ctx.rect(-1e5,P(0,0,cF)[1]-1e3,2e5,1e3);ctx.restore();
+    const tt=typeof t==='number'?t:0;ctx.fillStyle='rgba(240,246,248,0.75)';for(let k=0;k<7;k++){const ph=(tt*1.7+k*0.29)%1,p=F(a0+(k-3)*0.07+ph*0.08,cF+0.04,0);ctx.globalAlpha=0.8*(1-ph);ctx.beginPath();ctx.ellipse(p[0],p[1],2.2+ph*2,0.9+ph*0.6,0,0,6.3);ctx.fill();}ctx.globalAlpha=1;}
+  return P;}
+function mlSacks(p,win,n){if(win)return;const o=[[0,0],[4.5,1.4],[2.2,-2.2],[-3.6,1.6]];for(let i=0;i<(n||3);i++){const q=[p[0]+o[i][0],p[1]+o[i][1]];ctx.fillStyle='#E4D9C0';ctx.beginPath();ctx.ellipse(q[0],q[1]-3,2.6,3.4,0,0,6.3);ctx.fill();ctx.fillStyle='rgba(120,100,60,0.25)';ctx.beginPath();ctx.ellipse(q[0]+1,q[1]-2.6,1.4,3,0,0,6.3);ctx.fill();ctx.fillStyle='#B8A57A';ctx.fillRect(q[0]-1.2,q[1]-7,2.4,1.1);}}
+function mlStone(p,win){/* a spare millstone leaning on the wall */ctx.fillStyle=win?'#C2C5C3':'#9C9790';ctx.beginPath();ctx.ellipse(p[0],p[1]-5,2.4,5.4,0,0,6.3);ctx.fill();ctx.fillStyle=win?'#B0B3B1':'#7E7A74';ctx.beginPath();ctx.ellipse(p[0]-0.8,p[1]-5,2,5.2,0,1.57,4.71);ctx.fill();ctx.fillStyle='#5E5A54';ctx.beginPath();ctx.ellipse(p[0],p[1]-5,0.7,1.5,0,0,6.3);ctx.fill();}
+function drawMillOpt(b,win,opt){const {F,s}=mlFrame(b),L=Math.min(5,b.lvl||1),sd=(b.id||0)*41+opt,tt=win?0:(typeof t==='number'?t:0),J=WOOD_SET[opt===2?4:opt===4?3:2];
+  const hc=-s*0.5,H=(a,c,h)=>F(a,c+hc,h),back=s<0;
+  const g={sd,hl:L>=5?0.68:0.6,hw:0.36,fh:2.4,wh:13,rh:12,ov:0.06,th:1.6,wt:opt===1?'logs':'planks',wall:opt===1?'#7E6248':opt===2?'#8E6F52':'#7E7A72',wallD:opt===1?'#5F4936':opt===2?'#6E543D':'#625E57',
+    roof:J.roof,roofD:J.roofD,roofE:shade(J.roofD,0.7),rt:J.rt,blue:J.blue,frame:opt!==1,frameCol:'#3A2A1C',k:1,v:1};
+  if(opt===4){g.wh=17;g.rh=13;g.wall='#8A7A64';g.wallD='#6E604E';}
+  const cw=s*0.14,wallC=hc+s*g.hw;
+  const house=()=>{const r=hoRoof(H,g,win);r.back();hoFooting(H,g,win);hoWalls(H,g,win);if(opt===4)hoStoneBox(H,0,0,g.hl,g.hw,g.fh,g.fh+8,win,sd);r.end();
+    hoDoor(H,g,'G',0,0.17,8.5,{col:'#4A3424',steps:1});if(L>=3)hoWindow(H,g,'L',-0.25,0.1,g.fh+5.5,g.fh+8.6,{shutters:'#7A2E24'});r.front();r.ridge();hoBarge(H,g,'#4A3424',0.25,L>=5);
+    const dp=H(g.hl+0.12,0.22,0);mlSacks(dp,win,L>=3?4:3);mlStone(H(g.hl+0.06,-0.24,0),win);};
+  const wheelRun=()=>{const ang=tt*(opt===2?0.9:1.3)*-s;
+    if(opt===3){/* kvern: a little hut on stilts over the stream, a chute from upstream drives a horizontal wheel under the floor */const kc=s*0.22,K=(a,c,h)=>F(a,c+kc,h),ST=7,gk={sd,hl:0.34,hw:0.3,fh:ST,wh:ST+11,rh:10,ov:0.05,th:1.6,wt:'planks',wall:'#8A7C6A',wallD:'#6E6252',roof:J.roof,roofD:J.roofD,roofE:shade(J.roofD,0.7),rt:'scale',frame:true,frameCol:'#3A2E24',k:1,v:1};
+      /* horizontal wheel under the floor */const hub=F(0,kc,2.2);ctx.fillStyle='rgba(30,40,46,0.35)';ctx.beginPath();ctx.ellipse(hub[0],hub[1]+1,13,5,0,0,6.3);ctx.fill();
+      for(let k=0;k<10;k++){const th=tt*2.2+k/10*6.283,p=F(Math.cos(th)*0.3,kc+Math.sin(th)*0.3,2.2),q=F(Math.cos(th)*0.1,kc+Math.sin(th)*0.1,2.2);hoLine(q,p,win?'#A8987E':'#7A5A3C',1.6);}
+      hoLine(hub,[hub[0],hub[1]-ST+1],win?'#8A7A64':'#4E3828',1.6);if(!win){const tt2=tt;ctx.fillStyle='rgba(240,246,248,0.7)';for(let k=0;k<6;k++){const ph=(tt2*1.5+k/6)%1,p=F(-0.3+ph*0.6,kc+0.3,0.5);ctx.globalAlpha=0.8*(1-ph);ctx.beginPath();ctx.ellipse(p[0],p[1],2+ph*2,0.8,0,0,6.3);ctx.fill();}ctx.globalAlpha=1;}
+      /* chute from upstream (−a), on two trestles */const c0=F(-1.05,kc,6),c1=F(-0.2,kc,3.6);for(const u of [0.25,0.7]){const p=lerp(F(-1.05,kc,0),F(-0.2,kc,0),u),q=lerp(c0,c1,u);hoLine(p,q,win?'#B8B0A0':'#4A3A2C',1.2);}
+      hoQ([c0,c1,[c1[0],c1[1]+2.6],[c0[0],c0[1]+2.6]],win?'#B4AEA0':'#6E5038');hoQ([[c0[0],c0[1]-1.6],[c1[0],c1[1]-1.6],c1,c0],win?'#C8C2B4':'#8A6A48');if(!win){ctx.strokeStyle='rgba(170,210,226,0.9)';ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(c0[0],c0[1]-0.8);ctx.lineTo(c1[0],c1[1]-0.8);ctx.quadraticCurveTo(c1[0]+3,c1[1]+1,hub[0]-6,hub[1]);ctx.stroke();}
+      const r=hoRoof(K,gk,win);r.back();hoStilts(K,-gk.hl,gk.hl,-gk.hw,gk.hw,ST,win);hoWalls(K,gk,win);r.end();hoDoor(K,gk,'G',0,0.15,7.5,{col:'#4A3424'});r.front();r.ridge();hoBarge(K,gk,'#4A3424',0.25,L>=5);
+      /* plank bridge from the bank to the door */const j0=gk.hl,jc=kc;hoQ([F(j0,jc-0.09,ST),F(0.95,jc-0.09,ST*0.2),F(0.95,jc+0.09,ST*0.2),F(j0,jc+0.09,ST)],win?'#D0C8B8':'#8A6A48');
+      mlSacks(F(0.75,-s*0.55,0),win,L>=3?4:3);mlStone(F(0.45,-s*0.75,0),win);return;}
+    const R=opt===2?20:opt===4?21:17,hub=opt===2?R+3:R*0.5;const P=mlWheel(F,0,cw,hub,R,win,ang,s);
+    /* axle into the mill wall */const h0=P(0,0,cw),h1=F(0,wallC,hub);hoLine(h0,h1,win?'#8A7A64':'#3E2C1E',2);
+    if(opt===2){/* flume on trestles from upstream to the top of the wheel */const top=hub+R+3,a1=-R/36*0.2,f0=F(-1.05,cw,top+3),f1=F(a1,cw,top);
+      for(const u of [0.2,0.6]){const pa=-1.05+(a1+1.05)*u;hoLine(F(pa,cw,0),F(pa,cw,top+3-3*u),win?'#B8B0A0':'#4A3A2C',1.2);hoLine(F(pa,cw-0.06,0),F(pa,cw-0.06,top+3-3*u),win?'#B8B0A0':'#3A2A1C',1);}
+      hoQ([f0,f1,[f1[0],f1[1]+3],[f0[0],f0[1]+3]],win?'#B4AEA0':'#6E5038');hoQ([[f0[0],f0[1]-2],[f1[0],f1[1]-2],f1,f0],win?'#C8C2B4':'#8A6A48');
+      if(!win){ctx.strokeStyle='rgba(170,210,226,0.9)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(f0[0],f0[1]-1);ctx.lineTo(f1[0],f1[1]-1);const tp=P(Math.PI/2+0.25,R,cw);ctx.quadraticCurveTo(f1[0]+3,f1[1]+1,tp[0]+1,tp[1]+3);ctx.stroke();}}
+    if(opt===4&&!win){/* stone wheel-pit wall along the bank behind the wheel */}};
+  if(opt===4){/* wheel-pit: dressed stone walls either side of the wheel, at the bank */const pc=cw-s*0.12;hoStoneWall(F,[-0.75,pc],[0.75,pc],4,win,sd);}
+  if(opt===3){wheelRun();return;}
+  if(back){wheelRun();house();}else{house();wheelRun();}}
+{const _shM=shShape;shShape=function(b){if(b.t==='mill'&&MILL_OPT){const {F,s}=mlFrame(b),hc=-s*0.5,box=(a,c,sa,sc,h)=>({pts:[F(a-sa,c-sc,0),F(a+sa,c-sc,0),F(a+sa,c+sc,0),F(a-sa,c+sc,0)],h});
+  if(MILL_OPT===3)return [box(0,s*0.22,0.36,0.32,1),box(0.6,-s*0.55,0.15,0.15,0.2)];return [box(0,hc,0.62,0.38,0.85),box(0,s*0.14,0.55,0.06,1.2)];}return _shM(b);};}

@@ -49,10 +49,12 @@ Version when released: **Beta 0.22.0**.
   - **P3, P4**: hall population 22/32/48/80 → 22/40/70/110?; TH5 fame 1,700 → 1,500? (check current values first — some changed since the audit).
   - Re-measure and decide: more food output (A3), TH4 cost cut (P2), pen scaling (A6), the "4–8 spare workers" target (A8).
   - A2 (Bakery) was replaced by 1B: only check bread is not the weak link of TH5 winters.
-- [ ] **B6. Bot profile for the goal, then tune until it passes**:
+- [ ] **B6. Bot profile for the goal, then tune until it passes** (José, 2026-11-13: "começa os testes com os números que achares certos e afina até atingirmos o objetivo"). Start with the proposed numbers in B1–B5, run, adjust, repeat, until `steady` reaches TH5 without problems.
   - Teach `bot4.js` to **upgrade collectors and workshops** (today it upgrades houses, storage and what the TH asks), to **use the open limits** (build a 3rd/4th copy when its sources are free and it pays), and to **keep morale and attractiveness ≥ 60 on average** (decor, feasts, food variety, offerings). New profile, e.g. `steady`, in `tools/bots/profiles.json`; keep `planner`, `warlord`, `challenge`, `lazy`.
+  - **Land by resources** (José): today the bot picks land only by free grass/beach per fame (plus sea for the shipyard at TH3) — `tools/bots/bot4.js` line ~108. It must also value the **sources** in a zone against what the village lacks: free trees when wood is short, iron outcrops when iron is short, bushes, fishing water. Also check: the land loop scans zones 0–13 but the "no fame" check (line ~18) scans 0–17 — make them agree.
   - **Targets for `steady`** (several seeds, 900 days): average morale and attractiveness ≥ 60; reaches TH5 (about 450–600 days, today's 434–587); no starvation, no day without water, wood never at 0 in winter, firewood never burns planks below the reserve; no Town Hall wait longer than ~60 days caused by a missing resource; spare workers within the A8 target. **`lazy` must still progress** (slower is fine) — the player is never stuck.
-  - Tune the numbers of B1–B5 until the targets hold; write the before / after table in `tools/balance/` and summarise it for José in Portuguese.
+  - **No pile-ups without a reason** (José saw a lot of iron pile up at TH1–TH2): log each good's stock per Town Hall level; flag any good that keeps growing with nothing to spend it on (e.g. stock > ~2 TH-upgrades' worth, or > 3× its yearly use). Fix the cause (output too high for that level, too few sinks, or the bot overbuilding) — iron at TH1–TH2 first. Silver is the same question (B4 O1).
+  - Write the before / after table in `tools/balance/` and summarise it for José in Portuguese.
 - End of round as usual: `SPEC.md`, `docs/NUMBERS.md`, `CHANGELOG.md`, tick this list, `tools/check.py` via the tester, release with **ubbe-release**.
 
 ## Bugs and small fixes

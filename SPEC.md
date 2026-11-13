@@ -1,4 +1,4 @@
-# Ubbe's Saga — specification (Beta 0.18.0)
+# Ubbe's Saga — specification (Beta 0.18.1)
 
 How the game works **today**. Numbers are in `docs/NUMBERS.md` (generated). The long-term vision for Town Hall 6–10 is in `docs/DESIGN.md`.
 
@@ -6,7 +6,7 @@ How the game works **today**. Numbers are in `docs/NUMBERS.md` (generated). The 
 A cozy-but-harsh Viking village builder for the browser. Year 865, the village of **Kaldstrand** on a Norwegian bay. The player is Ubbe's line: raise the Town Hall from level 1 to 5 (10 in the full game), feed and house the people, keep morale and the gods content, build ships, raid and trade across the North Sea, and live through a realistic succession of jarls. Isometric, low-poly, muted colours ("Névoa do Norte", in the spirit of Bad North).
 
 ## 2. Modes
-- **Relaxed**, **Challenge** (harsher events and consumption), **Sandbox** (free resources, fast speeds).
+- **Relaxed**, **Challenge** (harsher events and consumption), **Sandbox** (endless stores: costs are free and every store is kept at 999, the HUD shows ∞; every building, limit and upgrade of Town Hall 5 is open from the start; construction, upgrades and the Town Hall finish at once, and the Town Hall needs no people or house level; all land is unlocked; fast speeds and test tools. People still arrive, work, eat and live as in the other modes; no raids on Kaldstrand).
 - **Test**: choose Town Hall 1–5 and start with a prebuilt village (every building at its limit and highest level, full population, warriors, ships, herd), with test tools and 8×/16× speed. **Gallery**: every building at levels 1/3/5 and every house colour scheme side by side.
 - Three save slots per device (`localStorage`, keys `ubbesaga.b14.*`; older saves do not load), plus Export/Import in the Saga panel.
 

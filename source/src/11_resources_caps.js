@@ -24,8 +24,8 @@ const penRoom=t=>B.filter(b=>b.t===t&&!underCons(b)).reduce((a,b)=>a+12+8*(b.lvl
 const pigCap=()=>penRoom('pigpen'),sheepCap=()=>penRoom('sheeppen'),herdCap=()=>pigCap()+sheepCap();
 function addRes(k,a){if(a<=0)return 0;let room=Infinity;if(FOOD.includes(k))room=capFood()-foodItems();else if(MAT.includes(k)&&k!=='tools')room=capMat()-matItems();else if(ARMS.includes(k))room=capArms()-armsItems();const g=Math.max(0,Math.min(a,room));S.res[k]+=g;if(PRODLOG&&g>0){const kk=FOOD.includes(k)?'food':k;const L=PRODLOG[kk]||(PRODLOG[kk]={});L[PRODSRC]=(L[PRODSRC]||0)+g;}return g;}
 let PRODLOG=null,PRODSRC='other';
-function afford(cost){return Object.keys(cost).every(k=>(S.res[k]||0)>=cost[k]);}
-function pay(cost,sign){Object.keys(cost).forEach(k=>{S.res[k]=(S.res[k]||0)-cost[k]*sign;});}
+function afford(cost){if(SBX())return true;return Object.keys(cost).every(k=>(S.res[k]||0)>=cost[k]);}
+function pay(cost,sign){if(SBX()&&sign>0)return;Object.keys(cost).forEach(k=>{S.res[k]=(S.res[k]||0)-cost[k]*sign;});}
 const fmt=n=>Math.floor(n+1e-9).toString();
 /* cost with resource icons (names on hover); falls back to words for goods without an icon */
 const costIco=c=>Object.keys(c).length?Object.keys(c).map(k=>typeof ICON!=='undefined'&&ICON[k]?'<span class="ci" title="'+(RNAME[k]||k)+'">'+ICON[k]+c[k]+'</span>':'<span class="ci">'+c[k]+' '+(RNAME[k]||k).toLowerCase()+'</span>').join(''):'free';

@@ -49,7 +49,7 @@ const ico=(k,sz)=>'<svg width="'+(sz||20)+'" height="'+(sz||20)+'" viewBox="0 0 
 let trayCat=null;
 function renderDock(){let d=$('dock');if(!d){d=document.createElement('div');d.id='dock';d.className='dock';document.body.appendChild(d);const tr=document.createElement('div');tr.id='tray';tr.className='tray';tr.hidden=true;document.body.appendChild(tr);}
   const navs=[...document.querySelectorAll('.nav button')].map(b=>{const pi=PANEL_ICON[b.dataset.panel];return '<button type="button" class="dk'+(b.classList.contains('locked')?' locked':'')+'" data-dp="'+b.dataset.panel+'">'+(pi?'<svg width="22" height="22" viewBox="0 0 20 20" aria-hidden="true">'+pi+'</svg>'+esc(b.textContent.trim()):b.innerHTML)+'</button>';}).join('');
-  const cats=CATS.map(c=>{const any=Object.keys(DEF).some(k=>DEF[k].cat===c&&DEF[k].lvl<=thLevel());return '<button type="button" class="dk cat'+(trayCat===c?' on':'')+(any?'':' locked')+'" data-dc="'+c+'">'+ico(c)+'<span>'+c+'</span></button>';}).join('');
+  const cats=CATS.map(c=>{const any=Object.keys(DEF).some(k=>DEF[k].cat===c&&DEF[k].lvl<=gateLv());return '<button type="button" class="dk cat'+(trayCat===c?' on':'')+(any?'':' locked')+'" data-dc="'+c+'">'+ico(c)+'<span>'+c+'</span></button>';}).join('');
   const prodB='<button type="button" class="dk'+(sheetKind==='prod'&&!$('sheet').hidden?' on':'')+'" id="dk-prod"><svg width="22" height="22" viewBox="0 0 20 20" aria-hidden="true">'+PANEL_ICON.prod+'</svg>Production</button>';
   const mktB=has('trade')?'<button type="button" class="dk'+(sheetKind==='market'&&!$('sheet').hidden?' on':'')+'" id="dk-mkt"><svg width="22" height="22" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3v13M4 16h12M3 7h14M10 3l-1 1M10 3l1 1" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M3 7l-2 5a2.5 1.4 0 0 0 4 0zM17 7l-2 5a2.5 1.4 0 0 0 4 0z" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linejoin="round"/></svg>Market</button>':'';
   d.innerHTML='<div class="dgrp">'+navs+prodB+mktB+'</div><div class="dsep"></div><div class="dgrp">'+cats+'</div><div class="dsep"></div><div class="dgrp"><button type="button" class="dk'+(mode==='road'&&roadKind==='road'?' on':'')+'" id="dk-road">'+ico('Roads')+'<span>Roads</span></button><button type="button" class="dk'+(mode==='remove'?' on':'')+'" id="dk-rem">'+ico('Remove')+'<span>Remove</span></button><button type="button" class="dk'+(uplOpen?' on':'')+'" id="dk-upl">'+ico('Upgrades')+'<span>Upgrades</span><i class="bdg" hidden></i></button>'+(thLevel()>=5?'<button type="button" class="dk'+(mode==='road'&&roadKind==='wall'?' on':'')+'" id="dk-wall">'+ico('Palisade')+'<span>Palisade</span></button>':'')+'</div>';
@@ -65,13 +65,13 @@ function closeTray(){trayCat=null;const t=$('tray');if(t)t.hidden=true;if($('doc
 function openTray(cat){trayCat=cat;buildCat=cat;const tr=$('tray');
   const keys=Object.keys(DEF).filter(k=>DEF[k].cat===cat);
   let h='<div class="trh"><b>'+esc(cat)+'</b><span>Town Hall level '+thLevel()+' · click a building, then choose its spot</span><button type="button" class="x" id="tray-x" aria-label="Close">×</button></div><div class="trl">';
-  for(const k of keys){const D=DEF[k],av=isAvail(k),lim=limitOf(k),cnt=count(k),uq=cnt>=lim,cst=costOf(k),free=!Object.keys(cst).length&&Object.keys(D.cost).length,ok=av&&!uq&&afford(cst)&&D.lvl<=thLevel();
-    const msU=MS.find(m=>m.unlock.includes(k)),lkP=[];if(D.lvl>thLevel())lkP.push('Town Hall '+D.lvl);if(!av&&msU)lkP.push('saga goal “'+msU.title+'”');const lock=lkP.length?'🔒 Unlocks with: '+lkP.join(' + '):uq?'Limit reached':'';
-    h+='<button type="button" class="tcard'+(ok?'':' no')+(lock?' lk':'')+'" data-b="'+k+'" title="'+esc((D.desc||'')+(needsOf(k).length?' Needs: '+needsOf(k).join(', ')+'.':''))+'"><img alt="" src="'+buildThumb(k,1)+'"><b>'+esc(D.name)+'</b><span class="tc3">'+esc(roleOf(k))+'</span><span class="tc2">'+(D.lvl<=thLevel()?cnt+(UNLIMITED.has(k)?' built':' / '+lim):'')+(D.slots?' · '+D.slots+' workers':'')+(D.housing?' · '+D.housing+' beds':'')+(needsShort(k)?'<br>Needs '+esc(needsShort(k)):'')+'</span>'+(lock?'<span class="lkb'+(uq?' lim':'')+'">'+esc(lock)+'</span>':'')+'<span class="cost big'+(!lock&&av&&!afford(cst)?' bad':'')+'">'+(free?'First one free':costHave(cst))+'</span></button>';}
+  for(const k of keys){const D=DEF[k],av=isAvail(k),lim=limitOf(k),cnt=count(k),uq=cnt>=lim,cst=costOf(k),free=!Object.keys(cst).length&&Object.keys(D.cost).length,ok=av&&!uq&&afford(cst)&&D.lvl<=gateLv();
+    const msU=MS.find(m=>m.unlock.includes(k)),lkP=[];if(D.lvl>gateLv())lkP.push('Town Hall '+D.lvl);if(!av&&msU)lkP.push('saga goal “'+msU.title+'”');const lock=lkP.length?'🔒 Unlocks with: '+lkP.join(' + '):uq?'Limit reached':'';
+    h+='<button type="button" class="tcard'+(ok?'':' no')+(lock?' lk':'')+'" data-b="'+k+'" title="'+esc((D.desc||'')+(needsOf(k).length?' Needs: '+needsOf(k).join(', ')+'.':''))+'"><img alt="" src="'+buildThumb(k,1)+'"><b>'+esc(D.name)+'</b><span class="tc3">'+esc(roleOf(k))+'</span><span class="tc2">'+(D.lvl<=gateLv()?cnt+(UNLIMITED.has(k)?' built':' / '+lim):'')+(D.slots?' · '+D.slots+' workers':'')+(D.housing?' · '+D.housing+' beds':'')+(needsShort(k)?'<br>Needs '+esc(needsShort(k)):'')+'</span>'+(lock?'<span class="lkb'+(uq?' lim':'')+'">'+esc(lock)+'</span>':'')+'<span class="cost big'+(!lock&&av&&!afford(cst)?' bad':'')+'">'+(free?'First one free':costHave(cst))+'</span></button>';}
   tr.innerHTML=h+'</div>';tr.hidden=false;
   $('tray-x').onclick=closeTray;
   tr.querySelectorAll('.tcard').forEach(c=>c.onclick=()=>{const k=c.dataset.b,D=DEF[k];
-    if(D.lvl>thLevel()){toast('Raise the Town Hall to level '+D.lvl+' to build this.');return;}
+    if(D.lvl>gateLv()){toast('Raise the Town Hall to level '+D.lvl+' to build this.');return;}
     if(!isAvail(k)){toast('Complete the saga goal "'+(MS.find(m=>m.unlock.includes(k))||{title:''}).title+'" to unlock this.');return;}
     if(count(k)>=limitOf(k)){toast('Limit reached: '+limitOf(k)+' at Town Hall level '+thLevel()+'.');return;}
     if(!afford(costOf(k))){toast('Not enough materials: needs '+costStr(costOf(k))+'.');return;}
@@ -95,7 +95,7 @@ cv.addEventListener('pointerdown',()=>{const t=$('htip');if(t)t.hidden=true;});
 
 /* --- suggested actions: what needs doing, one click to get there --- */
 function focusOn(b,open){const p=iso(b.fx+b.w/2-0.5,b.fy+b.h/2-0.5);camX=p[0];camY=p[1]-(isWide()?0:60);zoom=Math.max(zoom,0.9);clampCam();if(open)buildingSheet(b);}
-function canBuildNow(k){return DEF[k]&&DEF[k].lvl<=thLevel()&&isAvail(k)&&count(k)<limitOf(k)&&afford(costOf(k));}
+function canBuildNow(k){return DEF[k]&&DEF[k].lvl<=gateLv()&&isAvail(k)&&count(k)<limitOf(k)&&afford(costOf(k));}
 function placeType(k){closeSheet();closeTray();if(!canBuildNow(k)){const D=DEF[k];toast(count(k)>=limitOf(k)?'Limit reached for '+D.name.toLowerCase()+'.':'Not enough materials for a '+D.name.toLowerCase()+': '+costStr(costOf(k))+'.');return;}startPlace(k,null);}
 function suggestions(){const out=[],r=S.res,win=isWinter();
   const th=B.find(b=>b.t==='th');const q=thReq();

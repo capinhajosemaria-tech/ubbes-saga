@@ -12,7 +12,7 @@ const ADVISORS={floki:{n:'Floki',role:'Shipwright',b:'Ships cost 20% less and ar
   thorbjorg:{n:'Thorbjörg',role:'Völva',b:'The gods’ favour rises 30% faster. Her winter forecasts are never wrong.',q:'“I see the winter before it comes.”'},
   egil:{n:'Egil',role:'Skald',b:'+20% fame from every source.',q:'“Deeds die. Songs do not.”'}};
 const ROMAN=['','','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
-const MODES={relaxed:{n:'Relaxed',d:'Hunger drives families away but never kills. Odin’s wrath is mild. Recommended.'},challenge:{n:'Challenge',d:'Hard winters. People starve. The Jarl can fall in battle. A revolt or a broken line ends the saga.'},sandbox:{n:'Sandbox',d:'Endless stores and every building of level 1 open. For building freely.'},
+const MODES={relaxed:{n:'Relaxed',d:'Hunger drives families away but never kills. Odin’s wrath is mild. Recommended.'},challenge:{n:'Challenge',d:'Hard winters. People starve. The Jarl can fall in battle. A revolt or a broken line ends the saga.'},sandbox:{n:'Sandbox',d:'Endless stores, every building and upgrade open, building done at once and all the land yours. People still come and go. For building freely.'},
   test:{n:'Test',d:'Pick a Town Hall level and start in a finished village of that age: every building at its limit and highest level. Test tools and 8×/16× speed.'}};
 const RATION={normal:{f:1,m:0,n:'Normal'},reduced:{f:0.8,m:-8,n:'Reduced'},severe:{f:0.6,m:-20,n:'Severe'}};
 const FARMLIKE=new Set(['fodder','grain','flax','berry','pigpen','sheeppen']);

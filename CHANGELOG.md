@@ -2,6 +2,12 @@
 
 Versions are `Beta 0.MINOR.PATCH` until Town Hall 10 (`1.0.0`).
 
+## Beta 0.18.1
+- Sandbox mode is now truly free: endless stores (costs are free, the top bar shows ∞), every building and every upgrade up to Town Hall 5 open from the start, with Town Hall 5 limits.
+- In Sandbox, construction, upgrades and the Town Hall finish at once, and the Town Hall needs no people or house level.
+- In Sandbox all the land is unlocked from the start (also for older sandbox saves).
+- People still arrive, work, eat and live as in the other modes.
+
 ## Beta 0.18.0
 - Much more wood: woodcutters make 5 wood per worker a day (was 3), and a lodge needs only 20 trees of its own (was 45). Each tree gives 50 wood a year.
 - Sources run out again: trees 50 wood, berry bushes 45, sea 100 fish a tile (river 70), iron outcrops 80. Used-up trees stand as stumps and grow back 3 days after winter; bushes and fish come back when summer starts; iron every two years, when winter starts.

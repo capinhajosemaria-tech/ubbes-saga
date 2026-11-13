@@ -110,6 +110,7 @@ function thReq(){const lv=thLevel()+1,u=TH_UP[lv];if(!u)return null;const hall=B
   if(hall&&hall.cons)return {lv:lv,cost:u.cost,items:[{ok:false,t:consStatus(hall)}],ok:false,busy:true};
   const items=[{ok:S.pop>=u.pop,t:'At least '+u.pop+' people ('+S.pop+')'},
     {ok:B.some(b=>b.t==='house'&&b.lvl>=u.house),t:u.house>1?'A house at level '+u.house:'A house'},{ok:afford(u.cost),t:'Materials: '+costStr(u.cost)}];
+  if(SBX())return {lv:lv,cost:u.cost,items:[{ok:true,t:'Sandbox: no requirements'}],ok:true};
   return {lv:lv,cost:u.cost,items:items,ok:items.every(i=>i.ok)};}
 function roadReach(){recomputeConn();const R=new Uint8Array(N*N),q=[];for(let i=0;i<N*N;i++)if(roads[i]&&conn[i]){R[i]=1;q.push(i);}
   let qi=0;while(qi<q.length){const k=q[qi++],x=k%N,y=(k/N)|0;for(const d of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+d[0],ny=y+d[1];if(!inMap(nx,ny))continue;const nk=ny*N+nx;if(R[nk]||occ[nk]||walls[nk]===1||!isUnl(nx,ny))continue;if(!(roads[nk]||BUILDABLE.has(ter[nk])||ter[nk]===T.RIVER))continue;R[nk]=1;q.push(nk);}}return R;}

@@ -466,7 +466,7 @@ h3 svg{vertical-align:-3px}
 <script>
 (function(){
 'use strict';
-const GAME_VERSION="Beta 0.18.0";
+const GAME_VERSION="Beta 0.18.1";
 /* =================== constants =================== */
 const N=132,OX=30,OY=24,SX=12,SY=6,HW=32,HH=16,TW=64;
 const HOME_X=63,HOME_Y=60;  /* the village centre in tile coords */
@@ -724,11 +724,15 @@ const DEF={
 const LIMITS={th:[1,1,1],house:[6,10,14],jarl:[1,1,1],pyre:[1,1,2],wood:[2,3,4],carp:[1,2,2],mine:[1,2,2],smith:[1,1,2],fish:[2,2,2],berry:[2,2,3],pres:[1,1,2],gran:[1,2,2],ware:[1,2,2],market:[1,1,1],
   pigpen:[0,1,1],sheeppen:[0,1,1],fodder:[0,1,2],smoke:[0,1,2],altar:[0,1,1],train:[0,1,1],arsenal:[0,1,1],grain:[0,0,3],bakery:[0,0,1],flax:[0,0,2],weaver:[0,0,1],mill:[0,0,1],tavern:[0,0,1],shipyard:[0,0,1],harbour:[0,0,1],trade:[0,0,1],thrall:[0,0,1],camp:[4,6,8],bench:[6,8,10],wattle:[20,30,40],rune:[0,4,6],herbs:[0,4,6],prow:[0,0,3],nets:[0,0,4]};
 const thLevel=()=>S.th||1;
+/* Sandbox: endless stores, every building and upgrade open, instant building, all land (see 30_zzsandbox.js) */
+const SBX=()=>!!(typeof S!=='undefined'&&S&&S.mode==='sandbox');
+const MAX_TH=5;
+const gateLv=()=>SBX()?MAX_TH:thLevel();   /* the level that gates buildings, limits and upgrades */
 /* houses, granaries and warehouses have no limit (granaries and warehouses cost more after the second) */
 const UNLIMITED=new Set(['house','gran','ware']),NOLIMIT=9999;
 /* how many of these a test village builds */
 const TEST_COUNT={house:[11,15,22,25,27],gran:[1,2,2,3,3],ware:[1,2,2,3,3]};
-const limitOf=k=>UNLIMITED.has(k)?NOLIMIT:(LIMITS[k]||[1,1,1])[thLevel()-1];
+const limitOf=k=>UNLIMITED.has(k)?NOLIMIT:(LIMITS[k]||[1,1,1])[gateLv()-1];
 const limTxt=k=>UNLIMITED.has(k)?'no limit':limitOf(k);
 const FIRST_FREE=['berry','wood'];
 /* 1st and 2nd at base price, 3rd–5th each +30% on the one before, then each +50% */
@@ -737,13 +741,13 @@ const costOf=k=>{if(FIRST_FREE.includes(k)&&!B.some(b=>b.t===k))return {};const 
   const m=storeMult(B.filter(b=>b.t===k).length+1);if(m===1)return c;const o={};for(const q in c)o[q]=Math.round(c[q]*m);return o;};
 const CATS=['Homes','Food','Farms','Materials','Crafts','Storage','Community','Military','Sea','Decor'];
 const BUILDABLE=new Set([T.GRASS,T.BEACH,T.FOOT]);
-const isAvail=k=>{const D=DEF[k];if(D.needB&&!has(D.needB))return false;if(D.lvl>1||D.cat==='Decor')return thLevel()>=D.lvl;return S.avail.includes(k);};
+const isAvail=k=>{const D=DEF[k];if(SBX())return !D.hidden;if(D.needB&&!has(D.needB))return false;if(D.lvl>1||D.cat==='Decor')return thLevel()>=D.lvl;return S.avail.includes(k);};
 /* Town Hall: people + materials + at least one house at the highest level the current hall allows */
 const TH_UP={2:{cost:{wood:110,planks:70,iron:20},pop:22,house:1},
              3:{cost:{wood:190,planks:150,iron:50,tools:10},pop:32,house:2}};
 const slotsOf=b=>(b.cons&&b.cons.k==='build')?0:(DEF[b.t].slots||0)+(DEF[b.t].slots&&!DEF[b.t].wonder&&!FIELDS.has(b.t)&&b.lvl>=3?1:0);
 const upCost=b=>{const c=DEF[b.t].cost,o={};Object.keys(c).forEach(k=>o[k]=Math.round(c[k]*(b.lvl)*1.0));if(!Object.keys(o).length)o.wood=20*b.lvl;return o;};
-const canUpgrade=b=>DEF[b.t].up&&b.lvl<thLevel()&&!b.cons;
+const canUpgrade=b=>DEF[b.t].up&&b.lvl<gateLv()&&!b.cons;
 
 /* ---- Town Hall levels 4 and 5 ---- */
 Object.assign(DEF,{
@@ -1008,8 +1012,8 @@ const penRoom=t=>B.filter(b=>b.t===t&&!underCons(b)).reduce((a,b)=>a+12+8*(b.lvl
 const pigCap=()=>penRoom('pigpen'),sheepCap=()=>penRoom('sheeppen'),herdCap=()=>pigCap()+sheepCap();
 function addRes(k,a){if(a<=0)return 0;let room=Infinity;if(FOOD.includes(k))room=capFood()-foodItems();else if(MAT.includes(k)&&k!=='tools')room=capMat()-matItems();else if(ARMS.includes(k))room=capArms()-armsItems();const g=Math.max(0,Math.min(a,room));S.res[k]+=g;if(PRODLOG&&g>0){const kk=FOOD.includes(k)?'food':k;const L=PRODLOG[kk]||(PRODLOG[kk]={});L[PRODSRC]=(L[PRODSRC]||0)+g;}return g;}
 let PRODLOG=null,PRODSRC='other';
-function afford(cost){return Object.keys(cost).every(k=>(S.res[k]||0)>=cost[k]);}
-function pay(cost,sign){Object.keys(cost).forEach(k=>{S.res[k]=(S.res[k]||0)-cost[k]*sign;});}
+function afford(cost){if(SBX())return true;return Object.keys(cost).every(k=>(S.res[k]||0)>=cost[k]);}
+function pay(cost,sign){if(SBX()&&sign>0)return;Object.keys(cost).forEach(k=>{S.res[k]=(S.res[k]||0)-cost[k]*sign;});}
 const fmt=n=>Math.floor(n+1e-9).toString();
 /* cost with resource icons (names on hover); falls back to words for goods without an icon */
 const costIco=c=>Object.keys(c).length?Object.keys(c).map(k=>typeof ICON!=='undefined'&&ICON[k]?'<span class="ci" title="'+(RNAME[k]||k)+'">'+ICON[k]+c[k]+'</span>':'<span class="ci">'+c[k]+' '+(RNAME[k]||k).toLowerCase()+'</span>').join(''):'free';
@@ -1074,7 +1078,7 @@ const isBuilt=b=>!underCons(b);
 function startCons(b,k,lv){if(NO_CONS.has(b.t)&&k==='build')return;const c=consSpec(b.t);b.cons={k:k,days:c.days,w:c.w,done:0,lv:lv||b.lvl,builders:0};}
 /* builders are the Town Hall's builder posts (see 12_workers.js) */
 function consTick(gdt){if(!B.some(b=>b.cons))return;
-  for(const b of B){const c=b.cons;if(!c)continue;if(c.builders>0)c.done+=gdt/DAY*c.builders/c.w;if(c.done>=c.days)finishCons(b);}}
+  for(const b of B){const c=b.cons;if(!c)continue;if(SBX())c.done=c.days;else if(c.builders>0)c.done+=gdt/DAY*c.builders/c.w;if(c.done>=c.days)finishCons(b);}}
 function finishCons(b){const c=b.cons,D=DEF[b.t];b.cons=null;
   if(c.k==='build'){toast(D.name+' is finished.');}
   else if(c.k==='up'){b.lvl=c.lv;toast(D.name+' reached level '+b.lvl+'.');}
@@ -1200,6 +1204,7 @@ function thReq(){const lv=thLevel()+1,u=TH_UP[lv];if(!u)return null;const hall=B
   if(hall&&hall.cons)return {lv:lv,cost:u.cost,items:[{ok:false,t:consStatus(hall)}],ok:false,busy:true};
   const items=[{ok:S.pop>=u.pop,t:'At least '+u.pop+' people ('+S.pop+')'},
     {ok:B.some(b=>b.t==='house'&&b.lvl>=u.house),t:u.house>1?'A house at level '+u.house:'A house'},{ok:afford(u.cost),t:'Materials: '+costStr(u.cost)}];
+  if(SBX())return {lv:lv,cost:u.cost,items:[{ok:true,t:'Sandbox: no requirements'}],ok:true};
   return {lv:lv,cost:u.cost,items:items,ok:items.every(i=>i.ok)};}
 function roadReach(){recomputeConn();const R=new Uint8Array(N*N),q=[];for(let i=0;i<N*N;i++)if(roads[i]&&conn[i]){R[i]=1;q.push(i);}
   let qi=0;while(qi<q.length){const k=q[qi++],x=k%N,y=(k/N)|0;for(const d of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+d[0],ny=y+d[1];if(!inMap(nx,ny))continue;const nk=ny*N+nx;if(R[nk]||occ[nk]||walls[nk]===1||!isUnl(nx,ny))continue;if(!(roads[nk]||BUILDABLE.has(ter[nk])||ter[nk]===T.RIVER))continue;R[nk]=1;q.push(nk);}}return R;}
@@ -1306,7 +1311,7 @@ const ADVISORS={floki:{n:'Floki',role:'Shipwright',b:'Ships cost 20% less and ar
   thorbjorg:{n:'Thorbjörg',role:'Völva',b:'The gods’ favour rises 30% faster. Her winter forecasts are never wrong.',q:'“I see the winter before it comes.”'},
   egil:{n:'Egil',role:'Skald',b:'+20% fame from every source.',q:'“Deeds die. Songs do not.”'}};
 const ROMAN=['','','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
-const MODES={relaxed:{n:'Relaxed',d:'Hunger drives families away but never kills. Odin’s wrath is mild. Recommended.'},challenge:{n:'Challenge',d:'Hard winters. People starve. The Jarl can fall in battle. A revolt or a broken line ends the saga.'},sandbox:{n:'Sandbox',d:'Endless stores and every building of level 1 open. For building freely.'},
+const MODES={relaxed:{n:'Relaxed',d:'Hunger drives families away but never kills. Odin’s wrath is mild. Recommended.'},challenge:{n:'Challenge',d:'Hard winters. People starve. The Jarl can fall in battle. A revolt or a broken line ends the saga.'},sandbox:{n:'Sandbox',d:'Endless stores, every building and upgrade open, building done at once and all the land yours. People still come and go. For building freely.'},
   test:{n:'Test',d:'Pick a Town Hall level and start in a finished village of that age: every building at its limit and highest level. Test tools and 8×/16× speed.'}};
 const RATION={normal:{f:1,m:0,n:'Normal'},reduced:{f:0.8,m:-8,n:'Reduced'},severe:{f:0.6,m:-20,n:'Severe'}};
 const FARMLIKE=new Set(['fodder','grain','flax','berry','pigpen','sheeppen']);
@@ -6254,12 +6259,12 @@ function renderBuild(){if(isWide()){if(mode!=='view')endMode();closeSheet();open
   let h=head('Build','Construction is instant. Town Hall level '+thLevel()+'.');
   h+='<div class="tabs" role="group" aria-label="Categories">'+CATS.map(c=>'<button type="button" data-cat="'+c+'" aria-pressed="'+(c===buildCat)+'">'+c+'</button>').join('')+'</div><div class="blist">';
   Object.keys(DEF).filter(k=>DEF[k].cat===buildCat).forEach(k=>{const D=DEF[k],av=isAvail(k),lim=limitOf(k),cnt=count(k),uq=cnt>=lim,cst=costOf(k),free=!Object.keys(cst).length&&Object.keys(D.cost).length,ok=av&&!uq&&afford(cst);
-    const lock=D.lvl>thLevel()?'Needs Town Hall level '+D.lvl:!av?'Unlocks with: '+(MS.find(m=>m.unlock.includes(k))||{title:'?'}).title:uq?'Limit reached for this level':'';
-    h+='<button type="button" class="bcard'+(ok?'':' no')+'" data-b="'+k+'"><img class="bth" alt="" src="'+buildThumb(k,1)+'"><b>'+esc(D.name)+'</b>'+(D.lvl<=thLevel()?'<span class="lim">Built '+cnt+(UNLIMITED.has(k)?'':' / '+lim)+'</span>':'')+'<span>'+D.w+'×'+D.h+(D.slots?' · '+D.slots+' workers':'')+(D.housing?' · '+D.housing+' people':'')+'</span><span class="cost'+(av&&!afford(cst)?' bad':'')+'">'+(free?'First one free':costIco(cst))+'</span>'+(lock?'<span>'+esc(lock)+'</span>':'')+'</button>';});
+    const lock=D.lvl>gateLv()?'Needs Town Hall level '+D.lvl:!av?'Unlocks with: '+(MS.find(m=>m.unlock.includes(k))||{title:'?'}).title:uq?'Limit reached for this level':'';
+    h+='<button type="button" class="bcard'+(ok?'':' no')+'" data-b="'+k+'"><img class="bth" alt="" src="'+buildThumb(k,1)+'"><b>'+esc(D.name)+'</b>'+(D.lvl<=gateLv()?'<span class="lim">Built '+cnt+(UNLIMITED.has(k)?'':' / '+lim)+'</span>':'')+'<span>'+D.w+'×'+D.h+(D.slots?' · '+D.slots+' workers':'')+(D.housing?' · '+D.housing+' people':'')+'</span><span class="cost'+(av&&!afford(cst)?' bad':'')+'">'+(free?'First one free':costIco(cst))+'</span>'+(lock?'<span>'+esc(lock)+'</span>':'')+'</button>';});
   h+='</div>';openSheet(h,'build');
   $('sheet-card').querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{buildCat=b.dataset.cat;renderBuild();});
   $('sheet-card').querySelectorAll('.bcard').forEach(c=>c.onclick=()=>{const k=c.dataset.b,D=DEF[k];
-    if(D.lvl>thLevel()){toast('Raise the Town Hall to level '+D.lvl+' to build this.');return;}
+    if(D.lvl>gateLv()){toast('Raise the Town Hall to level '+D.lvl+' to build this.');return;}
     if(!isAvail(k)){toast('Complete the saga goal "'+(MS.find(m=>m.unlock.includes(k))||{title:''}).title+'" to unlock this.');return;}
     if(count(k)>=limitOf(k)){toast('Limit reached: '+limitOf(k)+' at Town Hall level '+thLevel()+'.');return;}
     if(!afford(costOf(k))){toast('Not enough materials: needs '+costStr(costOf(k))+'.');return;}
@@ -6461,7 +6466,7 @@ const ico=(k,sz)=>'<svg width="'+(sz||20)+'" height="'+(sz||20)+'" viewBox="0 0 
 let trayCat=null;
 function renderDock(){let d=$('dock');if(!d){d=document.createElement('div');d.id='dock';d.className='dock';document.body.appendChild(d);const tr=document.createElement('div');tr.id='tray';tr.className='tray';tr.hidden=true;document.body.appendChild(tr);}
   const navs=[...document.querySelectorAll('.nav button')].map(b=>{const pi=PANEL_ICON[b.dataset.panel];return '<button type="button" class="dk'+(b.classList.contains('locked')?' locked':'')+'" data-dp="'+b.dataset.panel+'">'+(pi?'<svg width="22" height="22" viewBox="0 0 20 20" aria-hidden="true">'+pi+'</svg>'+esc(b.textContent.trim()):b.innerHTML)+'</button>';}).join('');
-  const cats=CATS.map(c=>{const any=Object.keys(DEF).some(k=>DEF[k].cat===c&&DEF[k].lvl<=thLevel());return '<button type="button" class="dk cat'+(trayCat===c?' on':'')+(any?'':' locked')+'" data-dc="'+c+'">'+ico(c)+'<span>'+c+'</span></button>';}).join('');
+  const cats=CATS.map(c=>{const any=Object.keys(DEF).some(k=>DEF[k].cat===c&&DEF[k].lvl<=gateLv());return '<button type="button" class="dk cat'+(trayCat===c?' on':'')+(any?'':' locked')+'" data-dc="'+c+'">'+ico(c)+'<span>'+c+'</span></button>';}).join('');
   const prodB='<button type="button" class="dk'+(sheetKind==='prod'&&!$('sheet').hidden?' on':'')+'" id="dk-prod"><svg width="22" height="22" viewBox="0 0 20 20" aria-hidden="true">'+PANEL_ICON.prod+'</svg>Production</button>';
   const mktB=has('trade')?'<button type="button" class="dk'+(sheetKind==='market'&&!$('sheet').hidden?' on':'')+'" id="dk-mkt"><svg width="22" height="22" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3v13M4 16h12M3 7h14M10 3l-1 1M10 3l1 1" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/><path d="M3 7l-2 5a2.5 1.4 0 0 0 4 0zM17 7l-2 5a2.5 1.4 0 0 0 4 0z" stroke="currentColor" stroke-width="1.2" fill="none" stroke-linejoin="round"/></svg>Market</button>':'';
   d.innerHTML='<div class="dgrp">'+navs+prodB+mktB+'</div><div class="dsep"></div><div class="dgrp">'+cats+'</div><div class="dsep"></div><div class="dgrp"><button type="button" class="dk'+(mode==='road'&&roadKind==='road'?' on':'')+'" id="dk-road">'+ico('Roads')+'<span>Roads</span></button><button type="button" class="dk'+(mode==='remove'?' on':'')+'" id="dk-rem">'+ico('Remove')+'<span>Remove</span></button><button type="button" class="dk'+(uplOpen?' on':'')+'" id="dk-upl">'+ico('Upgrades')+'<span>Upgrades</span><i class="bdg" hidden></i></button>'+(thLevel()>=5?'<button type="button" class="dk'+(mode==='road'&&roadKind==='wall'?' on':'')+'" id="dk-wall">'+ico('Palisade')+'<span>Palisade</span></button>':'')+'</div>';
@@ -6477,13 +6482,13 @@ function closeTray(){trayCat=null;const t=$('tray');if(t)t.hidden=true;if($('doc
 function openTray(cat){trayCat=cat;buildCat=cat;const tr=$('tray');
   const keys=Object.keys(DEF).filter(k=>DEF[k].cat===cat);
   let h='<div class="trh"><b>'+esc(cat)+'</b><span>Town Hall level '+thLevel()+' · click a building, then choose its spot</span><button type="button" class="x" id="tray-x" aria-label="Close">×</button></div><div class="trl">';
-  for(const k of keys){const D=DEF[k],av=isAvail(k),lim=limitOf(k),cnt=count(k),uq=cnt>=lim,cst=costOf(k),free=!Object.keys(cst).length&&Object.keys(D.cost).length,ok=av&&!uq&&afford(cst)&&D.lvl<=thLevel();
-    const msU=MS.find(m=>m.unlock.includes(k)),lkP=[];if(D.lvl>thLevel())lkP.push('Town Hall '+D.lvl);if(!av&&msU)lkP.push('saga goal “'+msU.title+'”');const lock=lkP.length?'🔒 Unlocks with: '+lkP.join(' + '):uq?'Limit reached':'';
-    h+='<button type="button" class="tcard'+(ok?'':' no')+(lock?' lk':'')+'" data-b="'+k+'" title="'+esc((D.desc||'')+(needsOf(k).length?' Needs: '+needsOf(k).join(', ')+'.':''))+'"><img alt="" src="'+buildThumb(k,1)+'"><b>'+esc(D.name)+'</b><span class="tc3">'+esc(roleOf(k))+'</span><span class="tc2">'+(D.lvl<=thLevel()?cnt+(UNLIMITED.has(k)?' built':' / '+lim):'')+(D.slots?' · '+D.slots+' workers':'')+(D.housing?' · '+D.housing+' beds':'')+(needsShort(k)?'<br>Needs '+esc(needsShort(k)):'')+'</span>'+(lock?'<span class="lkb'+(uq?' lim':'')+'">'+esc(lock)+'</span>':'')+'<span class="cost big'+(!lock&&av&&!afford(cst)?' bad':'')+'">'+(free?'First one free':costHave(cst))+'</span></button>';}
+  for(const k of keys){const D=DEF[k],av=isAvail(k),lim=limitOf(k),cnt=count(k),uq=cnt>=lim,cst=costOf(k),free=!Object.keys(cst).length&&Object.keys(D.cost).length,ok=av&&!uq&&afford(cst)&&D.lvl<=gateLv();
+    const msU=MS.find(m=>m.unlock.includes(k)),lkP=[];if(D.lvl>gateLv())lkP.push('Town Hall '+D.lvl);if(!av&&msU)lkP.push('saga goal “'+msU.title+'”');const lock=lkP.length?'🔒 Unlocks with: '+lkP.join(' + '):uq?'Limit reached':'';
+    h+='<button type="button" class="tcard'+(ok?'':' no')+(lock?' lk':'')+'" data-b="'+k+'" title="'+esc((D.desc||'')+(needsOf(k).length?' Needs: '+needsOf(k).join(', ')+'.':''))+'"><img alt="" src="'+buildThumb(k,1)+'"><b>'+esc(D.name)+'</b><span class="tc3">'+esc(roleOf(k))+'</span><span class="tc2">'+(D.lvl<=gateLv()?cnt+(UNLIMITED.has(k)?' built':' / '+lim):'')+(D.slots?' · '+D.slots+' workers':'')+(D.housing?' · '+D.housing+' beds':'')+(needsShort(k)?'<br>Needs '+esc(needsShort(k)):'')+'</span>'+(lock?'<span class="lkb'+(uq?' lim':'')+'">'+esc(lock)+'</span>':'')+'<span class="cost big'+(!lock&&av&&!afford(cst)?' bad':'')+'">'+(free?'First one free':costHave(cst))+'</span></button>';}
   tr.innerHTML=h+'</div>';tr.hidden=false;
   $('tray-x').onclick=closeTray;
   tr.querySelectorAll('.tcard').forEach(c=>c.onclick=()=>{const k=c.dataset.b,D=DEF[k];
-    if(D.lvl>thLevel()){toast('Raise the Town Hall to level '+D.lvl+' to build this.');return;}
+    if(D.lvl>gateLv()){toast('Raise the Town Hall to level '+D.lvl+' to build this.');return;}
     if(!isAvail(k)){toast('Complete the saga goal "'+(MS.find(m=>m.unlock.includes(k))||{title:''}).title+'" to unlock this.');return;}
     if(count(k)>=limitOf(k)){toast('Limit reached: '+limitOf(k)+' at Town Hall level '+thLevel()+'.');return;}
     if(!afford(costOf(k))){toast('Not enough materials: needs '+costStr(costOf(k))+'.');return;}
@@ -6507,7 +6512,7 @@ cv.addEventListener('pointerdown',()=>{const t=$('htip');if(t)t.hidden=true;});
 
 /* --- suggested actions: what needs doing, one click to get there --- */
 function focusOn(b,open){const p=iso(b.fx+b.w/2-0.5,b.fy+b.h/2-0.5);camX=p[0];camY=p[1]-(isWide()?0:60);zoom=Math.max(zoom,0.9);clampCam();if(open)buildingSheet(b);}
-function canBuildNow(k){return DEF[k]&&DEF[k].lvl<=thLevel()&&isAvail(k)&&count(k)<limitOf(k)&&afford(costOf(k));}
+function canBuildNow(k){return DEF[k]&&DEF[k].lvl<=gateLv()&&isAvail(k)&&count(k)<limitOf(k)&&afford(costOf(k));}
 function placeType(k){closeSheet();closeTray();if(!canBuildNow(k)){const D=DEF[k];toast(count(k)>=limitOf(k)?'Limit reached for '+D.name.toLowerCase()+'.':'Not enough materials for a '+D.name.toLowerCase()+': '+costStr(costOf(k))+'.');return;}startPlace(k,null);}
 function suggestions(){const out=[],r=S.res,win=isWinter();
   const th=B.find(b=>b.t==='th');const q=thReq();
@@ -7261,6 +7266,22 @@ setInterval(save,10000);
 document.addEventListener('visibilitychange',()=>{if(document.hidden)save();});
 window.addEventListener('pagehide',save);
 showTitle('home');
+
+/* =================== Sandbox mode =================== */
+/* Endless stores (building costs are free, stores are topped up every frame), every building and every upgrade
+   open (gateLv() = MAX_TH, see 07_building_definitions.js), construction and upgrades finish at once
+   (12_zconstruction.js), the Town Hall rises without requirements (13_daily_economy.js) and all land is ours.
+   People still move in, eat, work and live as in the other modes. */
+const SBX_STOCK=999;
+function sbxUnlockAll(){for(let zx=0;zx<ZN;zx++)for(let zy=0;zy<ZN;zy++)unlocked.add(zx+','+zy);}
+function sbxFill(){const r=S.res;for(const k in r){const v=k==='water'?Math.max(SBX_STOCK,capWater()):SBX_STOCK;if(!(r[k]>=v))r[k]=v;}
+  if(S.fame<5000)S.fame=5000;}
+{const _fs=freshState;freshState=function(mode,adv){const x=_fs.apply(this,arguments);if(SBX()){sbxUnlockAll();sbxFill();}return x;};}
+{const _ap=apply;apply=function(d){const ok=_ap.apply(this,arguments);if(ok&&SBX()){sbxUnlockAll();sbxFill();}return ok;};}
+{const _up=update;update=function(dt){_up(dt);if(SBX())sbxFill();};}
+{const _dt=dayTick;dayTick=function(){_dt.apply(this,arguments);if(SBX())sbxFill();};}
+{const _hd=hud;hud=function(){_hd.apply(this,arguments);if(!SBX())return;
+  for(const k of ['food','wood','planks','iron','tools','silver']){const e=$('r-'+k);if(e)e.textContent='∞';const d=$('d-'+k);if(d){d.textContent='';d.className='';}}};}
 
 /* =================== keyboard =================== */
 const keysHeld=new Set();

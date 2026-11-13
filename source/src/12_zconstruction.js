@@ -13,7 +13,7 @@ const isBuilt=b=>!underCons(b);
 function startCons(b,k,lv){if(NO_CONS.has(b.t)&&k==='build')return;const c=consSpec(b.t);b.cons={k:k,days:c.days,w:c.w,done:0,lv:lv||b.lvl,builders:0};}
 /* builders are the Town Hall's builder posts (see 12_workers.js) */
 function consTick(gdt){if(!B.some(b=>b.cons))return;
-  for(const b of B){const c=b.cons;if(!c)continue;if(c.builders>0)c.done+=gdt/DAY*c.builders/c.w;if(c.done>=c.days)finishCons(b);}}
+  for(const b of B){const c=b.cons;if(!c)continue;if(SBX())c.done=c.days;else if(c.builders>0)c.done+=gdt/DAY*c.builders/c.w;if(c.done>=c.days)finishCons(b);}}
 function finishCons(b){const c=b.cons,D=DEF[b.t];b.cons=null;
   if(c.k==='build'){toast(D.name+' is finished.');}
   else if(c.k==='up'){b.lvl=c.lv;toast(D.name+' reached level '+b.lvl+'.');}

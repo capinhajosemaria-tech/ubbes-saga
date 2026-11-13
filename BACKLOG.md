@@ -49,6 +49,14 @@ Order: Round 1 (done, 0.14.0) → 1C (done, 0.15.0) → 1D + 1E (done, 0.19.0) �
 - [ ] Rotation: on the last two turns the door is on the hidden far side (no new art). If José wants a visible back door or different back walls, that needs new art per building.
 - [ ] Heirs get or inherit traits (lineage): today Ubbe's trait stays with the whole line.
 
+### 1L. Open building limits (José, 2026-11-13) — place in the order not decided yet, ask José
+Goal: the player chooses his own economy (e.g. food only from fish and bread, more wood and less iron). Buildings still unlock by Town Hall level and saga goals, but most have **no count limit**.
+- [ ] **Remove the limit** for ordinary buildings (resources, food, farms, storage, decor?) **and houses**. **Keep a limit** on unique or strategic ones: Town Hall, Jarl's House, Market Square, Tomb of Ragnar and other wonders, Altar/Hof, Training Ground, Shipyard, Harbour (berths), Trading House. Decide decor with José.
+- [ ] **Rising cost per copy**, so cheap buildings can't be spammed and upgrading stays worth it: e.g. +30% per copy above the 2nd (numbers to tune).
+- [ ] **Crowding lowers output** where a source is shared: many Fisher's Huts on the same stretch of shore catch less each; woodcutters thin the forest around them (builds on `10_zsources.js`). Specialising works, but costs space and resources.
+- [ ] **Unlimited houses, population held by mood**: births and new settlers fall **sharply** when morale / attractiveness is very low (and rise when high), so building houses alone doesn't grow the village.
+- [ ] Check what depends on today's limits: saga goals, the unlock hints, the build tray ("2/3"), bots (`tools/bots`), `gen_numbers.py` (Limits column).
+
 ### 1I. Saga and events
 - [ ] **Year chronicle**: at the end of each winter a short saga page (births, deaths, harvests, raids, the jarl); kept in a book that can be reread.
 - [ ] **Events tied to the player's choices**: fewer, stronger events (26 today) that react to the patron god and Ubbe's trait (Thor's sign before a battle, merchants for a Trader, wolves only in winter).

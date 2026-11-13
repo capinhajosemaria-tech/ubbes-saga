@@ -2,6 +2,9 @@
 
 Versions are `Beta 0.MINOR.PATCH` until Town Hall 10 (`1.0.0`).
 
+## Beta 0.20.1
+- "God" and "Gods" are now written with a capital letter in every text of the game.
+
 ## Beta 0.20.0
 - **A new opening for every saga:** three illustrated story pages present the year 865, Ubbe and Kaldstrand over the new village. Then come three choice pages with picture cards: Ubbe's gift, the patron god (gift, blessing, offering and wrath on each card) and the first advisor.
 - **New guide (11 steps)** for today's game: seasons, food and wood (with sources that run out), builders, worker priority, fish, planks, preserving, firewood, the Production panel and reserves, your patron god and the Feast, tools and the Town Hall. Each step has a picture, a task list that ticks itself, a button that does the step, and the button it is talking about pulses. On PC the guide sits on the left and moves aside when a sheet opens.

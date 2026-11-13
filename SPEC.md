@@ -1,4 +1,4 @@
-# Ubbe's Saga — specification (Beta 0.20.0)
+# Ubbe's Saga — specification (Beta 0.20.1)
 
 How the game works **today**. Numbers are in `docs/NUMBERS.md` (generated). The long-term vision for Town Hall 6–10 is in `docs/DESIGN.md`.
 
@@ -91,6 +91,7 @@ Requirements per level: **population + materials + at least one house at the hig
 - **Placing and turning buildings:** Rotate (R) turns a building to any of 4 sides: the first two turns are its two pictures (mirror images) with the door on a visible face (lower-left / lower-right); the next two use the same pictures with the entrance on the far side (upper-left / upper-right), so the walls you see have no door, and the door tile, path and road connection are behind. The button's arrow shows where the door will be. Buildings whose picture cannot turn (Water Mill, Watchtower, Shipyard) have no Rotate button; the Town Hall square keeps 4 turns. The gold "door" marker while placing, the path to the road and the night light sit exactly at the drawn door (table `DOOR_AT` in `09_state.js`, checked by `tools/ui/doorcheck.py`).
 - **Music:** pieces with recorded instruments (VSCO-2 CE, public domain): 4 summer pieces (~10 min: harp, flute, fiddle, hand-drum grooves) and 4 winter pieces (~10.5 min: low strings, horn, frame drum, wind), shuffled within the season with a short breath between them; when the season turns the piece fades into one of the new season. Special pieces: the fleet sails, the ships come home, a feast, a new Town Hall level, the death of a jarl; then the playlist goes on. Music starts at the first click or key (browser rule); note button under Home toggles it; Saga panel has on/off, volume and the piece now playing. Files live in `music/*.mp3` (source `source/music/`, composer in `tools/music/`), fetched when first played and kept offline by the service worker.
 - **World map:** full screen, large chart (Iceland to the Baltic, Norway to Frankia); drag/swipe to move, wheel/pinch to zoom; mist at the edges and over lands not yet open, their places still visible (England only lightly misted, so the goal is always in sight). Opens framing Kaldstrand and every open place. Norway and Sweden are labelled; Birka sits on an island off the Swedish coast.
+- Text: "God" / "Gods" are always capitalised in game text (José, 0.20.1).
 - Fonts: Marcellus SC for everything (titles, numbers and all text, also on the map). Classic look: dark wood bars, parchment sheets with dark headers, white building cards whose pictures are cropped and centred automatically. PC keeps the central bottom dock (panels, build categories, roads).
 
 ## 12. Art direction

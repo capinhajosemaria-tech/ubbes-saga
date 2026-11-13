@@ -20,7 +20,7 @@ const DEF={
   sheeppen:{name:'Sheep Pen',w:3,h:3,cost:{wood:40,planks:10},slots:2,road:false,cat:'Farms',lvl:2,up:true,out:'Keeps sheep: wool for sails and warm clothing',desc:'Sheep are shorn in summer and eat fodder in winter. Holds 12 sheep, +8 per upgrade.'},
   fodder:{name:'Fodder Field',w:3,h:3,cost:{wood:15},slots:2,road:false,tools:true,farm:true,seasonal:true,cat:'Farms',lvl:2,up:true,out:'5 fodder per worker a day (summer)',desc:'Grass and oats for the animals through winter. Not food for people. Needs tools.'},
   smoke:{name:'Smokehouse',w:2,h:2,cost:{wood:20,planks:15},slots:2,cat:'Food',lvl:2,up:true,out:'Smoked fish and meat',desc:'2 meat or fish + ½ wood → 1 smoked food (2 meals) per worker a day. Smoked food never spoils.'},
-  altar:{name:'Altar',w:2,h:2,cost:{wood:20,planks:20,iron:5},slots:0,road:false,cat:'Community',lvl:2,desc:'The patron god’s altar. Offerings here give 50% more favour, and blessings are asked here.'},
+  altar:{name:'Altar',w:2,h:2,cost:{wood:20,planks:20,iron:5},slots:0,road:false,cat:'Community',lvl:2,desc:'The patron God’s altar. Offerings here give 50% more favour, and blessings are asked here.'},
   train:{name:'Training Ground',w:3,h:3,cost:{wood:40,planks:30},slots:0,cat:'Military',lvl:2,up:true,desc:'Turns villagers into warriors in batches. Each recruit needs weapons. Warriors stop working in summer and eat 1½ meals.'},
   arsenal:{name:'Arsenal',w:3,h:2,cost:{wood:30,planks:30,iron:10},slots:0,road:false,store:{arms:60},cat:'Military',lvl:2,up:true,desc:'Stores weapons. Holds 60 more.'},
   /* ---- Town Hall level 3 ---- */
@@ -78,7 +78,7 @@ Object.assign(DEF,{
   hives:{name:'Beehives',w:2,h:2,cost:{wood:20,planks:10},slots:1,road:false,seasonal:true,farm:true,cat:'Farms',lvl:3,up:true,out:'3 honey per keeper a day (summer)',desc:'Straw skeps on a sunny slope. Honey for mead, offerings to Freyja and trade.'},
   tomb:{name:'Ragnar’s Ship-Tomb',w:4,h:4,cost:{planks:150,iron:40},slots:5,cat:'Community',lvl:4,wonder:true,out:'A wonder: up to 5 builders raise it, year after year',desc:'A great mound over a sacrificed ship, for Ragnar Lothbrok. To begin: 40 gold, 6 swords and one of your ships. When finished, Odin’s favour never falls below 30 and Kaldstrand gains 1 fame every day.'},
   tailor:{name:'Tailor',w:2,h:2,cost:{wood:20,planks:30},slots:2,cat:'Crafts',lvl:5,up:true,out:'2 wool + 1 hide → 1 warm clothing',desc:'Sews wool cloaks and fur-lined boots. With enough warm clothing for everyone, winter sickness is halved and spirits rise.'},
-  hof:{name:'Hof',w:4,h:3,cost:{wood:80,planks:80,iron:20,silver:50},slots:1,cat:'Community',lvl:5,desc:'A temple hall kept by a gothi. Favour rises 25% faster, the gothi tends the least-honoured god, and blessings cost 20 favour instead of 30.'},
+  hof:{name:'Hof',w:4,h:3,cost:{wood:80,planks:80,iron:20,silver:50},slots:1,cat:'Community',lvl:5,desc:'A temple hall kept by a gothi. Favour rises 25% faster, the gothi tends the least-honoured God, and blessings cost 20 favour instead of 30.'},
   tower:{name:'Watchtower',w:2,h:2,cost:{wood:40,planks:30},slots:0,road:false,cat:'Military',lvl:5,desc:'A timber tower for two archers. Adds to the village’s defence, more if it stands by the palisade.'}
 });
 for(const k in LIMITS){const a=LIMITS[k];while(a.length<5)a.push(a[a.length-1]);}

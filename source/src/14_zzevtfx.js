@@ -6,7 +6,7 @@ const EVT_FX={
   herring:[[[],[[60,'fish']]],[[],[]]],
   wolves:[[['A man may be hurt'],[[2,'hides'],'The herd is safe']],[['Lose 1 sheep and 1 pig'],[]]],
   bear:[[['A hunter may be hurt'],[[30,'meat'],[2,'hides']]],[['Woodcutters at half pace for 5 days'],[]]],
-  aurora:[[[[10,'food']],['All gods +5 favour']],[[],['Morale +3 for 10 days']]],
+  aurora:[[[[10,'food']],['All Gods +5 favour']],[[],['Morale +3 for 10 days']]],
   twins:[[[],['2 children','Freyja +5 favour']]],
   holmgang:[[['One of them may die'],['Morale +3 if both live']],[[[20,'food']],['The quarrel ends']],[['Morale −4 for 15 days'],[[10,'silver']]]],
   feud:[[[[25,'food']],['The families make peace']],[['Morale −8 for 20 days'],[]]],
@@ -25,7 +25,7 @@ const EVT_FX={
   thrallflee:[[[],[a=>'About '+Math.round(a.n*0.7)+' of '+a.n+' brought back']],[[a=>'Lose '+a.n+' thrall'+(a.n>1?'s':'')],[]]],
   rumours:[[[()=>[S.pop,'food']],['Morale +10 for 15 days']],[['Morale −4 for 20 days'],['The muttering stops']],[['The unrest goes on'],[]]],
   freedom:[[['−1 thrall'],[[10,'silver'],'+1 free man']],[['Morale −2 for 10 days'],[]]],
-  curse:[[['The god’s anger falls on the village'],[]]]};
+  curse:[[['The God’s anger falls on the village'],[]]]};
 const FX_NAME={food:'meals',misc:'odds and ends',people:'people'};
 function fxItems(list,a){return (list||[]).map(x=>typeof x==='function'?x(a):x).map(x=>Array.isArray(x)?{n:x[0],k:x[1]}:{t:x});}
 /* labels keep only the action; the amounts move to the pay / get lines */

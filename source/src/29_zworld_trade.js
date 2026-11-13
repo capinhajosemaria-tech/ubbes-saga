@@ -101,7 +101,7 @@ function tradeHtml(b,on){if(!has('harbour'))return '<p style="color:#8E3B2F">Mer
   h+='<div class="acts"><button type="button" class="btn primary" id="t-mkt">Open the market</button></div><p class="meta">Sell and buy every good with each village that trades with you, also from the Market button in the bottom bar.</p>';
   on.push(()=>{$('t-mkt').onclick=()=>{mktPartner=S.trader.from;marketPanel();};});
   return h;}
-function thExtraHtml(on){let h='<h3>The patron god</h3>'+patronHtml(on,false)+feastHtml(on);return h;}
+function thExtraHtml(on){let h='<h3>The patron God</h3>'+patronHtml(on,false)+feastHtml(on);return h;}
 function thExtraHtmlOld(on){let h='';
   h+='<h3>Banquets</h3><p class="meta">Each banquet this season costs more than the last.</p>'+Object.keys(BANQ).map(k=>{const c=banqCost(k);return '<div class="wk"><button type="button" class="btn small'+(afford(c)?' primary':'')+'" data-bq="'+k+'" '+(afford(c)?'':'disabled')+'>'+esc(BANQ[k].n)+'</button><span class="meta">'+esc(BANQ[k].d)+' · '+esc(costStr(c))+'</span></div>';}).join('');
   on.push(()=>{$('sheet-card').querySelectorAll('[data-bq]').forEach(x=>x.onclick=()=>{const w=holdBanquet(x.dataset.bq);if(w){toast(w);return;}toast(BANQ[x.dataset.bq].n+': the hall roars.');closeSheet();save();});});return h;}

@@ -51,7 +51,7 @@ showTitle=function(screen,arg){
   if(screen==='patron'){
     const row=(l,v)=>'<span class="ocrow"><i>'+l+'</i>'+esc(v)+'</span>';
     const cards=GOD_KEYS.map(k=>{const G=GODS[k],o=PATRON_OFF[k],L=GOD_LOOK[k];return '<button type="button" class="opcard god" data-pg="'+k+'" style="--bc:'+L.c+'"><span class="ocban">'+EMB[k]+'</span><span class="ocbody"><b>'+esc(G.n)+'</b><em>'+esc(L.ep)+' · loves '+esc(G.likes.toLowerCase())+'</em>'+row('Gift',G.pass)+row('Blessing',G.bless.n+': '+G.bless.d.toLowerCase())+row('Offering',o.n+' '+o.t)+row('Wrath',WRATH[k].d)+'</span></button>';}).join('');
-    opPage(T,4,'','',head('The patron','Which god does Kaldstrand follow?','You honour one god. Keep his favour with offerings and feasts: his gift works from 50, his blessing from 80. Below 25, his wrath falls on you.')+'<div class="opgrid g4">'+cards+'</div>',back);
+    opPage(T,4,'','',head('The patron','Which God does Kaldstrand follow?','You honour one God. Keep his favour with offerings and feasts: his gift works from 50, his blessing from 80. Below 25, his wrath falls on you.')+'<div class="opgrid g4">'+cards+'</div>',back);
     $('t-back').onclick=()=>showTitle('trait',arg);T.querySelectorAll('[data-pg]').forEach(b=>b.onclick=()=>showTitle('advisor',Object.assign({},arg,{pg:b.dataset.pg})));return;}
   if(screen==='advisor'){
     const sum='<div class="opsum">'+(arg.ut&&UTRAITS[arg.ut]?'<span>'+EMB[arg.ut]+'Ubbe the '+esc(UTRAITS[arg.ut].n)+'</span>':'')+(arg.pg&&GODS[arg.pg]?'<span>'+EMB[arg.pg]+'Sworn to '+esc(GODS[arg.pg].n)+'</span>':'')+'</div>';

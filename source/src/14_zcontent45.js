@@ -58,7 +58,7 @@ function defenceValue(){const home=S.people.filter(p=>p.w&&!p.away&&p.sick<=0);l
 /* banquets in the hall (Town Hall 4+): cost rises if repeated within a season */
 const BANQ={people:{n:'People’s feast',d:'+12 morale for 20 days',c:()=>({smoked:Math.ceil(S.pop*0.25),ale:Math.ceil(S.pop*0.4)}),fx:()=>{addMod('banq','A feast in the hall',12,20);}},
   warriors:{n:'Warriors’ feast',d:'The next raid fights 15% harder',c:()=>({smoked:Math.ceil(S.warriors*0.6+4),mead:Math.ceil(S.warriors*0.4+2)}),fx:()=>{S.blessOn.feastR=1;addMod('banqw','The warriors feasted',4,15);}},
-  council:{n:'Council feast',d:'+20 fame and the gods take note',c:()=>({smoked:10,mead:10}),fx:()=>{addFame(20);GOD_KEYS.forEach(g=>addFavor(g,3));}}};
+  council:{n:'Council feast',d:'+20 fame and the Gods take note',c:()=>({smoked:10,mead:10}),fx:()=>{addFame(20);GOD_KEYS.forEach(g=>addFavor(g,3));}}};
 function banqCost(k){const base=BANQ[k].c(),m=1+0.5*(S.banqN||0);const o={};for(const x in base)o[x]=Math.ceil(base[x]*m);return o;}
 function holdBanquet(k){const c=banqCost(k);if(!afford(c))return 'Not enough: needs '+costStr(c);pay(c,1);BANQ[k].fx();S.banqN=(S.banqN||0)+1;S.banqReset=S.day+20;S.feast={until:S.gameT+DAY*1.5};return '';}
 /* mercenaries: hired for a year, paid in silver up front */

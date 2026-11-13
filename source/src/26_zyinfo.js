@@ -6,7 +6,7 @@ const ROLE={house:'Beds for 4 people, 5 after an upgrade',jarl:'Home of Ubbe and
   smoke:'Smoked meat and fish',mill:'Grinds grain into flour, on the river',bakery:'Bakes bread from flour, all year',brewery:'Brews ale and mead',tavern:'Ale and mead raise morale',
   pigpen:'Pigs: meat and hides',sheeppen:'Sheep: wool',fodder:'Fodder for the animals in winter',grain:'Grows grain for flour and ale',flax:'Grows flax for rope',hives:'Honey for mead and offerings',
   gran:'Stores more food',ware:'Stores more goods',arsenal:'Stores more weapons',
-  market:'Draws newcomers to the village',altar:'Offerings to the gods for blessings',hof:'Temple: the gods favour you faster',tomb:'A great mound for Ragnar Lothbrok',
+  market:'Draws newcomers to the village',altar:'Offerings to the Gods for blessings',hof:'Temple: the Gods favour you faster',tomb:'A great mound for Ragnar Lothbrok',
   train:'Turns villagers into warriors',tower:'Two archers defend the village',
   shipyard:'Builds ships',harbour:'Moors ships; merchants land here',trade:'Trade with merchants in summer',
   thrall:'Houses thralls, unpaid workers'};

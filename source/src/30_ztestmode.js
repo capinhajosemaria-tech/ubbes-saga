@@ -43,7 +43,7 @@ const TEST_TOOLS=[['res','+500 of everything',()=>{for(const k in S.res)S.res[k]
   ['feast','Light the feast fire',()=>{S.feast={until:S.gameT+DAY*2};return 'The pig turns on the spit.';}],
   ['raids','Bring all raids home now',()=>{for(const r of S.raids.slice()){if(r.ph==='out'){r.t=0;arrive(r);}else{r.ph='back';r.t=1;}}return 'The ships are on their way home.';}],
   ['jarl','Kill the Jarl',()=>{const j=jarlP();if(j)removePerson(j,'age');return 'The Jarl is dead.';}],
-  ['gods','All gods to 90 favour',()=>{GOD_KEYS.forEach(g=>S.gods[g]=90);return 'The gods are pleased.';}],
+  ['gods','All Gods to 90 favour',()=>{GOD_KEYS.forEach(g=>S.gods[g]=90);return 'The Gods are pleased.';}],
   ['mhi','Morale 90',()=>{S.mods.push({k:'test',t:'Test: high spirits',v:40,until:S.day+20});S.morale=90;return 'Morale 90.';}],
   ['mlo','Morale 15',()=>{S.mods.push({k:'test',t:'Test: misery',v:-45,until:S.day+20});S.morale=15;return 'Morale 15.';}],
   ['pop','Fill every house',()=>{const cap=housing();while(S.people.length<cap)newPerson({a:Math.round(U(18,40)),tr:randTrait()});syncPop();return 'The houses are full.';}],

@@ -1,6 +1,6 @@
 /* =================== world map (Bad North style), trade market, level 4–5 sheets =================== */
 /* World chart: 1000 × 800 units, north up. Drag or swipe to move, wheel or pinch to zoom. */
-const WPOS={home:[590,240],hval:[610,125],sogn:[615,195],hord:[565,310],ringa:[680,280],skir:[660,385],jut:[620,530],hedeby:[632,615],birka:[896,398],
+const WPOS={dublin:[214,522],home:[590,240],hval:[610,125],sogn:[615,195],hord:[565,310],ringa:[680,280],skir:[660,385],jut:[620,530],hedeby:[632,615],birka:[896,398],
   shet:[402,155],ork:[342,246],heb:[232,315],lind:[408,462],iona:[214,374],york:[384,535],london:[448,676]};
 const WLANDS=[
   {r:'scand',n:'Norway',lp:[760,150],p:'650,-160 640,0 618,40 600,88 586,130 570,170 576,210 560,250 548,300 556,340 584,380 618,408 650,424 700,440 760,470 800,500 832,480 862,420 882,360 902,300 932,240 962,170 1000,100 1160,70 1160,-160'},
@@ -17,7 +17,7 @@ const WLANDS=[
   {r:'far',n:'Frankia',lp:[700,740],p:'380,800 420,762 520,742 600,702 662,672 760,662 880,640 1000,622 1160,610 1160,960 350,960'},
   {r:'far',n:'Baltic',lp:[975,330],p:'1000,200 962,262 950,340 968,420 1000,462 1160,490 1160,170'}];
 const WMTN=[[600,60],[640,100],[700,90],[660,170],[620,150],[740,150],[700,220],[780,230],[640,250],[720,320],[812,290],[742,372],[310,330],[350,360],[140,60]];
-let WV=null;/* view box */
+let WV=null;/* view box */let WMODE='raid';/* 'trade' draws the trading partners instead of the raid targets */
 function wOpen(r){return r==='west'||r==='far'?false:regionOpen(r);}
 function worldSVG(){const reg=r=>wOpen(r);
   let o='<svg id="wsvg" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Map of the north"><defs>'
@@ -32,7 +32,7 @@ function worldSVG(){const reg=r=>wOpen(r);
   o+='<rect x="-300" y="-300" width="1600" height="1400" fill="url(#wsea)"/><rect x="-300" y="-300" width="1600" height="1400" fill="url(#wwave)"/>';
   /* sailing routes under the land */
   const H=WPOS.home;
-  for(const t of TARGETS){if(!reg(t.reg))continue;const p=WPOS[t.id];if(!p)continue;const mx=(H[0]+p[0])/2+(p[1]-H[1])*0.18,my=(H[1]+p[1])/2-(p[0]-H[0])*0.18;
+  if(WMODE==='trade')o+=tradeRoutesSVG();else for(const t of TARGETS){if(!reg(t.reg))continue;const p=WPOS[t.id];if(!p)continue;const mx=(H[0]+p[0])/2+(p[1]-H[1])*0.18,my=(H[1]+p[1])/2-(p[0]-H[0])*0.18;
     o+='<path d="M'+H[0]+' '+H[1]+' Q'+mx+' '+my+' '+p[0]+' '+p[1]+'" stroke="#E7E3D2" stroke-width="'+(worldSel===t.id?2.2:1.4)+'" stroke-dasharray="6 6" fill="none" opacity="'+(worldSel===t.id?0.95:0.35)+'"/>';}
   for(const L of WLANDS){if(!L.p)continue;const pts=L.p.split(' ').map(q=>q.split(',').map(Number));const sh=pts.map(q=>q[0]+','+(q[1]+9)).join(' ');const op=reg(L.r);
     o+='<polygon points="'+sh+'" fill="#4A5547"/><polygon points="'+L.p+'" fill="'+(op?'#B3BC9E':'#9AA392')+'" stroke="#EDE8D6" stroke-width="1.2" stroke-opacity="0.55" stroke-linejoin="round"/>';
@@ -43,7 +43,7 @@ function worldSVG(){const reg=r=>wOpen(r);
   for(const q of WMTN){o+='<polygon points="'+(q[0]-16)+','+(q[1]+10)+' '+q[0]+','+(q[1]-18)+' '+(q[0]+16)+','+(q[1]+10)+'" fill="#8F9A90"/><polygon points="'+q[0]+','+(q[1]-18)+' '+(q[0]+16)+','+(q[1]+10)+' '+(q[0]+4)+','+(q[1]+10)+'" fill="#7A847B"/><polygon points="'+(q[0]-6)+','+(q[1]-8)+' '+q[0]+','+(q[1]-18)+' '+(q[0]+6)+','+(q[1]-8)+'" fill="#F1F0EA"/>';}
   for(const L of WLANDS)if(L.n&&L.lp&&!(L.n==='England'&&!reg(L.r)))o+='<text x="'+L.lp[0]+'" y="'+L.lp[1]+'" text-anchor="middle" font-family="Marcellus SC, Georgia, serif" font-size="17" letter-spacing="3" fill="#56604E" opacity="0.75">'+esc(L.n.toUpperCase())+'</text>';
   /* places (dim when their land is still in the mist) */
-  for(const t of TARGETS){const lk=!reg(t.reg);const p=WPOS[t.id];if(!p)continue;const st=S.tg[t.id]||{},sel=worldSel===t.id,col=t.walls?'#A34A3A':t.trade?'#C9A64A':'#F3EBD8';
+  if(WMODE==='trade')o+=tradeMarkersSVG();else for(const t of TARGETS){const lk=!reg(t.reg);const p=WPOS[t.id];if(!p)continue;const st=S.tg[t.id]||{},sel=worldSel===t.id,col=t.walls?'#A34A3A':t.trade?'#C9A64A':'#F3EBD8';
     o+='<g '+(lk?'opacity="0.55"':'data-tg="'+t.id+'" style="cursor:pointer"')+' transform="translate('+p[0]+' '+p[1]+')"><circle r="22" fill="transparent"/>';
     if(/Monastery/.test(t.type))o+='<rect x="-6" y="-9" width="12" height="12" fill="'+col+'" stroke="#2F2620" stroke-width="1.5"/><path d="M0 -18 v9 M-4 -14 h8" stroke="#2F2620" stroke-width="2"/>';
     else if(t.walls)o+='<path d="M-9 5 v-12 h4 v4 h3 v-4 h4 v4 h3 v-4 h4 v12 z" fill="'+col+'" stroke="#2F2620" stroke-width="1.5"/>';
@@ -83,7 +83,7 @@ function wInit(box){const sv=$('wsvg');const R=box.getBoundingClientRect();const
   box.insertAdjacentHTML('beforeend','<div class="wzoom"><button type="button" data-wz="0.8" aria-label="Zoom in">+</button><button type="button" data-wz="1.25" aria-label="Zoom out">−</button><button type="button" data-wz="home" aria-label="Back to Kaldstrand">⌂</button></div>');
   box.querySelectorAll('[data-wz]').forEach(b=>{b.addEventListener('pointerdown',e=>e.stopPropagation());b.onclick=e=>{e.stopPropagation();const z=b.dataset.wz;if(z==='home'){WV.x=WPOS.home[0]-WV.w/2;WV.y=WPOS.home[1]-WV.h/2;}else{const cx=WV.x+WV.w/2,cy=WV.y+WV.h/2,asp2=WV.h/WV.w;WV.w*=+z;WV.h=WV.w*asp2;wClamp();WV.x=cx-WV.w/2;WV.y=cy-WV.h/2;}wClamp();wSetView();};});}
 function worldClose(){const w=$('wfs');if(w)w.remove();worldSel=null;}
-function worldPanel(){closeSheet();let w=$('wfs');if(!w){w=document.createElement('div');w.id='wfs';w.className='wfs';document.body.appendChild(w);}
+function worldPanel(){WMODE='raid';closeSheet();let w=$('wfs');if(!w){w=document.createElement('div');w.id='wfs';w.className='wfs';document.body.appendChild(w);}
   let side='<div class="wside"><div class="whd"><div><h2>The World</h2><p>Where the ships of Kaldstrand can sail</p></div><button type="button" class="x" id="wfs-x" aria-label="Close map">×</button></div>';
   side+='<p class="meta">Red towers: walled. Gold: trades with you. Red dot: plundered, recovering. Lands in the mist open as Kaldstrand grows.</p>';
   if(thLevel()>=5&&!(S.maps&&S.maps.england))side+='<div class="god"><strong>A traveller from the west</strong><p>He sells a map of England, drawn on calfskin: monasteries, towns and the roads between.</p><div class="acts">'+btn('w-map','Buy the map (40 gold)',{cls:'primary',dis:S.res.gold<40})+'</div></div>';
@@ -95,13 +95,14 @@ function worldPanel(){closeSheet();let w=$('wfs');if(!w){w=document.createElemen
   w.querySelectorAll('[data-tg]').forEach(b=>b.onclick=()=>{worldSel=b.dataset.tg;targetSheet(b.dataset.tg);});
   if($('w-map'))$('w-map').onclick=()=>{if(S.res.gold<40)return;S.res.gold-=40;S.maps=S.maps||{};S.maps.england=1;checkMilestones();toast('England lies open on the map.');worldPanel();save();};}
 function tradeHtml(b,on){if(!has('harbour'))return '<p style="color:#8E3B2F">Merchants need a harbour to land.</p>';
-  if(!S.trader){on.push(()=>{$('t-mkt').onclick=()=>marketPanel();});return '<div class="acts"><button type="button" class="btn primary" id="t-mkt">Open the market</button></div><p>Trade with every partner village from the market at any time. In summer a merchant ship also calls every 12 days and stays 4 days, bringing special orders that pay 50% more.</p><h3>Trading partners</h3><table class="t">'+Object.keys(PARTNERS).map(id=>{const P=PARTNERS[id],ok=partnerOk(id),ban=((S.tg[id]||{}).ban||0)>S.day;return '<tr><td>'+esc(P.n)+'<br><span class="meta">Wants '+P.wants.map(k=>RNAME[k]?RNAME[k].toLowerCase():k).join(', ')+'</span></td><td>'+(ok?'Trades':ban?'Angry after your raid':'Not yet')+'</td></tr>';}).join('')+'</table>';}
+  if(!S.trader){on.push(()=>{$('t-mkt').onclick=()=>marketPanel();$('t-trd').onclick=()=>tradePanel();});return '<div class="acts"><button type="button" class="btn primary" id="t-mkt">Open the market</button><button type="button" class="btn" id="t-trd">Trade map</button></div><p>Trade with every partner village from the market at any time. In summer a merchant ship also calls every 12 days and stays 4 days, bringing special orders that pay 50% more.</p><h3>Trading partners</h3><table class="t">'+Object.keys(PARTNERS).map(id=>{const P=PARTNERS[id],ok=partnerOk(id),ban=((S.tg[id]||{}).ban||0)>S.day;return '<tr><td>'+esc(P.n)+'<br><span class="meta">Wants '+P.wants.map(k=>RNAME[k]?RNAME[k].toLowerCase():k).join(', ')+'</span></td><td>'+(ok?'Trades':ban?'Angry after your raid':'Not yet')+'</td></tr>';}).join('')+'</table>';}
   const P=PARTNERS[S.trader.from];let h='<p><strong>A merchant from '+esc(P.n)+' is in port</strong> for '+(S.trader.until-S.day)+' more days. Silver '+fmt(S.res.silver)+' · gold '+fmt(S.res.gold)+'</p>';
   const deals=(S.trader.deals||[]).filter(d=>d.left>0);if(deals.length)h+='<h3>Special orders</h3><table class="t">'+deals.map(d=>'<tr><td>Wants '+d.left+' '+esc((RNAME[d.k]||d.k).toLowerCase())+'</td><td>pays 50% more</td></tr>').join('')+'</table>';
   h+='<div class="acts"><button type="button" class="btn primary" id="t-mkt">Open the market</button></div><p class="meta">Sell and buy every good with each village that trades with you, also from the Market button in the bottom bar.</p>';
   on.push(()=>{$('t-mkt').onclick=()=>{mktPartner=S.trader.from;marketPanel();};});
   return h;}
-function thExtraHtml(on){let h='';if(thLevel()<4)return h;
+function thExtraHtml(on){let h='<h3>The patron god</h3>'+patronHtml(on,false)+feastHtml(on);return h;}
+function thExtraHtmlOld(on){let h='';
   h+='<h3>Banquets</h3><p class="meta">Each banquet this season costs more than the last.</p>'+Object.keys(BANQ).map(k=>{const c=banqCost(k);return '<div class="wk"><button type="button" class="btn small'+(afford(c)?' primary':'')+'" data-bq="'+k+'" '+(afford(c)?'':'disabled')+'>'+esc(BANQ[k].n)+'</button><span class="meta">'+esc(BANQ[k].d)+' · '+esc(costStr(c))+'</span></div>';}).join('');
   on.push(()=>{$('sheet-card').querySelectorAll('[data-bq]').forEach(x=>x.onclick=()=>{const w=holdBanquet(x.dataset.bq);if(w){toast(w);return;}toast(BANQ[x.dataset.bq].n+': the hall roars.');closeSheet();save();});});return h;}
 const TOMB_WORK=520;

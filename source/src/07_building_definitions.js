@@ -20,7 +20,7 @@ const DEF={
   sheeppen:{name:'Sheep Pen',w:3,h:3,cost:{wood:40,planks:10},slots:2,road:false,cat:'Farms',lvl:2,up:true,out:'Keeps sheep: wool for sails and warm clothing',desc:'Sheep are shorn in summer and eat fodder in winter. Holds 12 sheep, +8 per upgrade.'},
   fodder:{name:'Fodder Field',w:3,h:3,cost:{wood:15},slots:2,road:false,tools:true,farm:true,seasonal:true,cat:'Farms',lvl:2,up:true,out:'5 fodder per worker a day (summer)',desc:'Grass and oats for the animals through winter. Not food for people. Needs tools.'},
   smoke:{name:'Smokehouse',w:2,h:2,cost:{wood:20,planks:15},slots:2,cat:'Food',lvl:2,up:true,out:'Smoked fish and meat',desc:'2 meat or fish + ½ wood → 1 smoked food (2 meals) per worker a day. Smoked food never spoils.'},
-  altar:{name:'Altar',w:2,h:2,cost:{wood:20,planks:20,iron:5},slots:0,road:false,cat:'Community',lvl:2,desc:'Make offerings to Odin, Thor, Freyja, Njord and Loki. Favoured gods give gifts and blessings.'},
+  altar:{name:'Altar',w:2,h:2,cost:{wood:20,planks:20,iron:5},slots:0,road:false,cat:'Community',lvl:2,desc:'The patron god’s altar. Offerings here give 50% more favour, and blessings are asked here.'},
   train:{name:'Training Ground',w:3,h:3,cost:{wood:40,planks:30},slots:0,cat:'Military',lvl:2,up:true,desc:'Turns villagers into warriors in batches. Each recruit needs weapons. Warriors stop working in summer and eat 1½ meals.'},
   arsenal:{name:'Arsenal',w:3,h:2,cost:{wood:30,planks:30,iron:10},slots:0,road:false,store:{arms:60},cat:'Military',lvl:2,up:true,desc:'Stores weapons. Holds 60 more.'},
   /* ---- Town Hall level 3 ---- */
@@ -44,7 +44,7 @@ const DEF={
 };
 /* limits per Town Hall level [1,2,3] */
 const LIMITS={th:[1,1,1],house:[6,10,14],jarl:[1,1,1],pyre:[1,1,2],wood:[2,3,4],carp:[1,2,2],mine:[1,2,2],smith:[1,1,2],fish:[2,2,2],berry:[2,2,3],pres:[1,1,2],gran:[1,2,2],ware:[1,2,2],market:[1,1,1],
-  pigpen:[0,1,1],sheeppen:[0,1,1],fodder:[0,1,2],smoke:[0,1,2],altar:[0,1,1],train:[0,1,1],arsenal:[0,1,1],grain:[0,0,3],bakery:[0,0,1],flax:[0,0,2],weaver:[0,0,1],mill:[0,0,1],tavern:[0,0,1],shipyard:[0,0,1],harbour:[0,0,1],trade:[0,0,1],thrall:[0,0,1],camp:[4,6,8],bench:[6,8,10],wattle:[20,30,40],rune:[0,4,6],herbs:[0,4,6],prow:[0,0,3],nets:[0,0,4]};
+  pigpen:[0,1,1],sheeppen:[0,1,1],fodder:[0,1,2],smoke:[0,1,2],altar:[0,1,1],train:[0,1,1],arsenal:[0,1,1],grain:[0,0,3],bakery:[0,0,1],flax:[0,0,2],weaver:[0,0,1],mill:[0,0,1],tavern:[0,0,1],shipyard:[0,0,1],harbour:[0,0,1,1,2],trade:[0,0,1],thrall:[0,0,1],camp:[4,6,8],bench:[6,8,10],wattle:[20,30,40],rune:[0,4,6],herbs:[0,4,6],prow:[0,0,3],nets:[0,0,4]};
 const thLevel=()=>S.th||1;
 /* Sandbox: endless stores, every building and upgrade open, instant building, all land (see 30_zzsandbox.js) */
 const SBX=()=>!!(typeof S!=='undefined'&&S&&S.mode==='sandbox');
@@ -59,7 +59,8 @@ const limTxt=k=>UNLIMITED.has(k)?'no limit':limitOf(k);
 const FIRST_FREE=['berry','wood'];
 /* 1st and 2nd at base price, 3rd–5th each +30% on the one before, then each +50% */
 const storeMult=n=>{let m=1;for(let i=3;i<=n;i++)m*=i<=5?1.3:1.5;return m;};
-const costOf=k=>{if(FIRST_FREE.includes(k)&&!B.some(b=>b.t===k))return {};const c=DEF[k].cost;if(k!=='gran'&&k!=='ware')return c;
+const costOf=k=>builderMul(costOf0(k));
+const costOf0=k=>{if(FIRST_FREE.includes(k)&&!B.some(b=>b.t===k))return {};const c=DEF[k].cost;if(k!=='gran'&&k!=='ware')return c;
   const m=storeMult(B.filter(b=>b.t===k).length+1);if(m===1)return c;const o={};for(const q in c)o[q]=Math.round(c[q]*m);return o;};
 const CATS=['Homes','Food','Farms','Materials','Crafts','Storage','Community','Military','Sea','Decor'];
 const BUILDABLE=new Set([T.GRASS,T.BEACH,T.FOOT]);
@@ -68,7 +69,7 @@ const isAvail=k=>{const D=DEF[k];if(SBX())return !D.hidden;if(D.needB&&!has(D.ne
 const TH_UP={2:{cost:{wood:110,planks:70,iron:20},pop:22,house:1},
              3:{cost:{wood:190,planks:150,iron:50,tools:10},pop:32,house:2}};
 const slotsOf=b=>(b.cons&&b.cons.k==='build')?0:(DEF[b.t].slots||0)+(DEF[b.t].slots&&!DEF[b.t].wonder&&!FIELDS.has(b.t)&&b.lvl>=3?1:0);
-const upCost=b=>{const c=DEF[b.t].cost,o={};Object.keys(c).forEach(k=>o[k]=Math.round(c[k]*(b.lvl)*1.0));if(!Object.keys(o).length)o.wood=20*b.lvl;return o;};
+const upCost=b=>{const c=DEF[b.t].cost,o={};Object.keys(c).forEach(k=>o[k]=Math.round(c[k]*(b.lvl)*1.0));if(!Object.keys(o).length)o.wood=20*b.lvl;return builderMul(o);};
 const canUpgrade=b=>DEF[b.t].up&&b.lvl<gateLv()&&!b.cons;
 
 /* ---- Town Hall levels 4 and 5 ---- */

@@ -9,9 +9,9 @@ const mkS=(id,k)=>{S.mk2=S.mk2||{};const o=S.mk2[id]||{};return o[k]===undefined
 const mkB=(id,k)=>{S.mb2=S.mb2||{};const o=S.mb2[id]||{};return o[k]===undefined?1:o[k];};
 function mkSet(store,id,k,v){S[store]=S[store]||{};S[store][id]=S[store][id]||{};S[store][id][k]=v;}
 const mktUnit=k=>k==='arrows'?10:1;   /* arrows are traded in bundles of 10 */
-function buyAt(id,k){const P=PARTNERS[id];let p=BASEP[k]*1.45*(P.sells.includes(k)?0.85:1.2)*(BUYX[k]||1)*mkB(id,k);if(hasAdv('athelstan'))p*=0.85;return Math.max(0.5,p);}
+function buyAt(id,k){const P=PARTNERS[id];let p=BASEP[k]*1.45*(P.sells.includes(k)?0.85:1.2)*(BUYX[k]||1)*mkB(id,k);if(hasAdv('athelstan'))p*=0.85;if(ut('trader'))p*=0.87;p*=relBuy(id);return Math.max(0.5,p);}
 function mktDeal(id,k){return S.trader&&S.trader.from===id?(S.trader.deals||[]).find(x=>x.k===k&&x.left>0):null;}
-function sellAt(id,k){const P=PARTNERS[id];let p=BASEP[k]*(P.wants.includes(k)?1.35:1)*mkS(id,k);if(hasAdv('athelstan'))p*=1.2;if(jt('wise'))p*=1.1;if(mktDeal(id,k))p*=1.5;
+function sellAt(id,k){const P=PARTNERS[id];let p=BASEP[k]*(P.wants.includes(k)?1.35:1)*mkS(id,k);if(hasAdv('athelstan'))p*=1.2;if(jt('wise'))p*=1.1;if(ut('trader'))p*=1.15;p*=relSell(id);if(mktDeal(id,k))p*=1.5;
   /* never more than 85% of the cheapest asking price anywhere, so buying to sell again always loses */
   let lo=Infinity;for(const q of mktPartners())lo=Math.min(lo,buyAt(q,k));if(lo<Infinity)p=Math.min(p,lo*0.85);return Math.max(0.05,p);}
 const mktPartners=()=>Object.keys(PARTNERS).filter(partnerOk);
@@ -39,9 +39,10 @@ function mktRecover(){for(const st of ['mk2','mb2']){const A=S[st];if(!A)continu
 const pfmt=p=>p>=10?Math.round(p).toString():p.toFixed(1);
 function marketPanel(){const ids=mktPartners(),sc=$('sheet-card')?$('sheet-card').scrollTop:0;
   let h=head('Market','Silver '+fmt(S.res.silver)+' · gold '+fmt(S.res.gold));
+  if(thLevel()>=3)h+='<div class="acts"><button type="button" class="btn primary" id="m-trade">Trade map: offers by knarr</button></div><p class="meta">Here you sell and buy at once for silver. On the trade map you make offers to each village, answer their requests and build up friendships; the goods go by knarr.</p>';
   if(!tradeOpen()){h+='<p>Build a <strong>Harbour</strong> and a <strong>Trading House</strong> (Town Hall 3) to trade with other villages.</p>';}
   else if(!ids.length){h+='<p>No village trades with you yet.</p>';}
-  if(!tradeOpen()||!ids.length){h+=mktPartnerList();openSheet(h,'market');renderDock();return;}
+  if(!tradeOpen()||!ids.length){h+=mktPartnerList();openSheet(h,'market');if($('m-trade'))$('m-trade').onclick=()=>tradePanel();renderDock();return;}
   if(!ids.includes(mktPartner))mktPartner=ids[0];const id=mktPartner,P=PARTNERS[id];
   h+='<div class="tabs mtabs">'+ids.map(q=>'<button type="button" data-mp="'+q+'" aria-pressed="'+(q===id)+'">'+esc(PARTNERS[q].n)+(S.trader&&S.trader.from===q?' ⚓':'')+'</button>').join('')+'</div>';
   h+='<p class="meta">'+esc(P.n)+' pays more for '+P.wants.map(k=>mktName(k).toLowerCase()).join(', ')+' and sells '+P.sells.map(k=>mktName(k).toLowerCase()).join(', ')+' cheaper. Prices change with every deal and settle again over the days.'+(S.trader&&S.trader.from===id?' Its merchant is in port: special orders pay 50% more.':'')+'</p>';
@@ -54,6 +55,7 @@ function marketPanel(){const ids=mktPartners(),sc=$('sheet-card')?$('sheet-card'
     return '<tr><td>'+esc(mktName(k))+(u>1?' <span class="meta">×'+u+'</span>':'')+tag+'</td><td>'+have+'</td><td>'+(canSell(k)?'<button type="button" class="btn small" data-ms="'+k+'" '+(sN>0?'':'disabled')+'>Sell '+(sN||n)+'</button> <span class="meta">'+pfmt(sp)+sDir+'</span>':'<span class="meta">—</span>')+'</td><td><button type="button" class="btn small" data-mb="'+k+'" '+(bN>0?'':'disabled')+'>Buy '+(bN||n)+'</button> <span class="meta">'+pfmt(bp)+bDir+'</span></td></tr>';}).join('')+'</table>';
   h+=mktPartnerList();
   openSheet(h,'market');const card=$('sheet-card');card.scrollTop=sc;renderDock();hud();
+  if($('m-trade'))$('m-trade').onclick=()=>tradePanel();
   card.querySelectorAll('[data-mp]').forEach(x=>x.onclick=()=>{mktPartner=x.dataset.mp;marketPanel();});
   card.querySelectorAll('[data-mq]').forEach(x=>x.onclick=()=>{mktQ=+x.dataset.mq;marketPanel();});
   card.querySelectorAll('[data-ms]').forEach(x=>x.onclick=()=>{const k=x.dataset.ms,g=mktSell(id,k,mktQ);if(g>0){toast('Sold to '+P.n+' for '+pfmt(g)+' silver.');checkMilestones();save();}marketPanel();});

@@ -14,7 +14,7 @@ async def new_game(pg, mode):
     await pg.goto('file://' + os.path.abspath('test.html')); await pg.wait_for_timeout(500)
     await pg.click('#t-new'); await pg.click('[data-sl="1"]')
     if mode == 'start':
-        await pg.click('[data-md="relaxed"]'); await pg.click('#t-skip'); await pg.click('[data-ad="bjorn"]')
+        await pg.click('[data-md="relaxed"]'); await pg.click('#t-skip');await pg.click('[data-ut="builder"]');await pg.click('[data-pg="odin"]'); await pg.click('[data-ad="bjorn"]')
     else:
         await pg.click('[data-md="test"]'); await pg.click(f'[data-tl="{mode}"]')
     await pg.wait_for_timeout(2500 if mode == 'g' else 1500)

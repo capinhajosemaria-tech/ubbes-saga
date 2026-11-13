@@ -8,6 +8,9 @@ function apply(d){
   freshState(d.S.mode||'relaxed',d.S.adv||'');
   const base=S;S=Object.assign(base,d.S);S.res=Object.assign(EMPTY_RES(),d.S.res||{});for(const k in S.res)S.res[k]=Math.max(0,num(S.res[k],0));
   S.pol=Object.assign({ration:'normal',rite:'cremation',child:false,borders:'open',loot:'jarl',thralls:'soft'},d.S.pol||{});S.gods=Object.assign({odin:40,thor:40,freyja:40,njord:40,loki:30},d.S.gods||{});
+  /* sagas from before 0.19: the god with the most favour becomes the patron */
+  if(!d.S.patron){const g=GOD_KEYS.slice().sort((a,c)=>S.gods[c]-S.gods[a])[0];const f=S.gods[g];setPatron(g);S.gods[g]=Math.max(30,f);}
+  S.utrait=S.utrait||'';S.rel=S.rel||{};S.treq=S.treq||{};S.voy=Array.isArray(S.voy)?S.voy:[];
   S.bal=null;S.modal=Array.isArray(S.modal)?S.modal:[];S.people=Array.isArray(S.people)?S.people:[];S.ships=Array.isArray(S.ships)?S.ships:[];S.raids=Array.isArray(S.raids)?S.raids:[];
   S.reserve=S.reserve||{};S.flow=S.flow||{};S.tg=S.tg||{};S.blessCd=S.blessCd||{};S.blessOn=S.blessOn||{};S.fx=S.fx||{};S.mods=S.mods||[];S.evtSeen=S.evtSeen||{};S.yr=S.yr||{births:0,deaths:0,arrived:0,left:0,raids:0,silver:0,fame:0};S.winter=S.winter||{hard:false,said:false,told:false};
   B=[];nextId=1;for(const a of d.b){if(!DEF[a[0]])continue;const b=addBuilding(a[0],a[1]|0,a[2]|0,(a[3]|0)&3,true);

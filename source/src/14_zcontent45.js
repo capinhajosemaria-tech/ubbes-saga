@@ -18,7 +18,7 @@ TARGETS.push(
   {id:'london',reg:'england',n:'London',type:'Walled port of Mercia',x:0,y:0,d:12,def:64,loot:{silver:400,gold:50,cloth:40,tools:15},pris:16,walls:true,trade:true});
 const regionOpen=r=>{const R=REGIONS[r||'scand'];return thLevel()>=R.lv&&(!R.map||!!(S.maps&&S.maps[R.map]));};
 const hasAdv=k=>S.advs?S.advs.includes(k):S.adv===k;
-const advSlots=()=>[1,1,1,2,3][thLevel()-1];
+const advSlots=()=>[1,1,2,3,4][thLevel()-1];   /* the council: 4 seats in all, the 4th at Town Hall 5 */
 /* trading partners unlock step by step */
 const PARTNERS={skir:{n:'Skiringssal',open:()=>thLevel()>=3,wants:['flour','dfish','smoked','planks','hides'],sells:['iron','tools','flour','pig','sheep','arrows']},
   hedeby:{n:'Hedeby',open:()=>thLevel()>=3&&S.ships.length>0,wants:['wool','cloth','hides','mead','misc'],sells:['tools','iron','swords','shields','thrall','gold']},
@@ -29,12 +29,12 @@ const BASEP={wood:0.4,planks:2,iron:3,tools:6,flour:1,fodder:0.5,wool:2,flax:1.2
   spears:5,shields:8,bows:6,arrows:0.6,swords:18,axes:10,armour:32,thrall:18,pig:6,sheep:8,gold:10,silver:1};
 function partnerOk(id){const P=PARTNERS[id];return P&&P.open()&&!(((S.tg[id]||{}).ban||0)>S.day);}
 function mktSat(k){S.mkt=S.mkt||{};return S.mkt[k]===undefined?1:S.mkt[k];}
-function priceSell(k){const P=PARTNERS[S.trader.from]||{wants:[]};let p=BASEP[k]*(P.wants.includes(k)?1.35:1)*mktSat(k);if(hasAdv('athelstan'))p*=1.2;if(jt('wise'))p*=1.1;const d=(S.trader.deals||[]).find(x=>x.k===k&&x.left>0);if(d)p*=1.5;return p;}
+function priceSell(k){const P=PARTNERS[S.trader.from]||{wants:[]};let p=BASEP[k]*(P.wants.includes(k)?1.35:1)*mktSat(k);if(hasAdv('athelstan'))p*=1.2;if(jt('wise'))p*=1.1;if(ut('trader'))p*=1.15;const d=(S.trader.deals||[]).find(x=>x.k===k&&x.left>0);if(d)p*=1.5;return p;}
 /* buying: iron and tools cost more than their selling value; every iron or tool bought raises its price (2.5% each, up to ×2.5), easing back 1% a day */
 const BUYX={iron:1.35,tools:1.35};
 function mktDem(k){S.mktB=S.mktB||{};return S.mktB[k]===undefined?1:S.mktB[k];}
 function bought(k,q){if(!BUYX[k])return;S.mktB=S.mktB||{};S.mktB[k]=Math.min(2.5,mktDem(k)*Math.pow(1.025,k==='arrows'?q/10:q));}
-function priceBuy(k){const P=PARTNERS[S.trader.from]||{sells:[]};let p=BASEP[k]*1.45*(P.sells.includes(k)?0.85:1.2)*(BUYX[k]||1)*mktDem(k);if(hasAdv('athelstan'))p*=0.85;return Math.max(1,p);}
+function priceBuy(k){const P=PARTNERS[S.trader.from]||{sells:[]};let p=BASEP[k]*1.45*(P.sells.includes(k)?0.85:1.2)*(BUYX[k]||1)*mktDem(k);if(hasAdv('athelstan'))p*=0.85;if(ut('trader'))p*=0.87;return Math.max(1,p);}
 function newTrader(){const ok=Object.keys(PARTNERS).filter(partnerOk);if(!ok.length)return null;const id=pick(ok),P=PARTNERS[id];
   const deals=[];const w=P.wants.slice().sort(()=>Math.random()-0.5).slice(0,2);w.forEach(k=>deals.push({k:k,left:Math.round(20+Math.random()*40)}));
   return {until:S.day+4,from:id,deals:deals};}
@@ -54,7 +54,7 @@ function wallsClosed(){const th=B.find(b=>b.t==='th');if(!th)return false;if(!wa
 function recomputeWalls(){S.wallClosed=thLevel()>=5&&wallsClosed();}
 function defenceValue(){const home=S.people.filter(p=>p.w&&!p.away&&p.sick<=0);let d=home.reduce((a,p)=>a+soldierStr(p),0);
   const archers=home.filter(p=>p.w==='archer').length;const tw=B.filter(b=>b.t==='tower').length;d+=Math.min(tw,Math.floor(archers/2))*6;
-  if(S.wallClosed)d*=1.5;if(S.gods.thor>=50)d*=1.1;return Math.round(d);}
+  if(S.wallClosed)d*=1.5;if(fav('thor')>=50)d*=1.1;if(ut('warrior'))d*=1.15;return Math.round(d);}
 /* banquets in the hall (Town Hall 4+): cost rises if repeated within a season */
 const BANQ={people:{n:'People’s feast',d:'+12 morale for 20 days',c:()=>({smoked:Math.ceil(S.pop*0.25),ale:Math.ceil(S.pop*0.4)}),fx:()=>{addMod('banq','A feast in the hall',12,20);}},
   warriors:{n:'Warriors’ feast',d:'The next raid fights 15% harder',c:()=>({smoked:Math.ceil(S.warriors*0.6+4),mead:Math.ceil(S.warriors*0.4+2)}),fx:()=>{S.blessOn.feastR=1;addMod('banqw','The warriors feasted',4,15);}},

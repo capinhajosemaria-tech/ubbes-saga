@@ -122,7 +122,7 @@ function hoBarge(f,g,col,ext,carve){const {hl,hw,wh,rh,ov}=g,a1=hl+ov+0.01,top=w
     ctx.lineCap='round';hoLine(e,x,shade(col,0.7),2.4);hoLine(e,x,col,1.5);hoLine([e[0],e[1]-0.6],[x[0],x[1]-0.6],'rgba(255,240,210,0.35)',0.5);
     if(carve){ctx.strokeStyle=col;ctx.lineWidth=1.3;ctx.beginPath();ctx.moveTo(x[0],x[1]);ctx.quadraticCurveTo(x[0]+dx*0.12+s*3,x[1]+dy*0.12-3,x[0]+s*1,x[1]-5);ctx.stroke();}
     ctx.lineCap='butt';}}
-function hoDoor(f,g,face,s,w,hd,o){o=o||{};w*=g.k||1;hd=Math.min(hd*(g.v||1),g.wh-g.fh-1.5);const fh=g.fh,P1=hoPt(f,g,face,s-w/2,fh),P2=hoPt(f,g,face,s+w/2,fh);
+function hoDoor(f,g,face,s,w,hd,o){if(DOOR_BACK)return;o=o||{};w*=g.k||1;hd=Math.min(hd*(g.v||1),g.wh-g.fh-1.5);const fh=g.fh,P1=hoPt(f,g,face,s-w/2,fh),P2=hoPt(f,g,face,s+w/2,fh);
   /* frame */hoRect(f,g,face,s-w/2-0.03,s+w/2+0.03,fh,fh+hd+1.6,o.frame||'#4A3624');
   if(o.arch){const t=hoPt(f,g,face,s,fh+hd+5);hoQ([hoPt(f,g,face,s-w/2-0.03,fh+hd+1.6),hoPt(f,g,face,s+w/2+0.03,fh+hd+1.6),t],o.frame||'#4A3624');}
   hoRect(f,g,face,s-w/2,s+w/2,fh,fh+hd,o.col||'#6B4E34');
@@ -1776,7 +1776,7 @@ function drawTailorOpt(b,win,opt){const f=hoFrame({fx:b.fx,fy:b.fy,w:b.w,h:b.h,r
    2 Red-board hall with a covered porch along the front: long table, benches, tankards · 3 Thatched hall + yard with a fire pit and log benches · 4 Stone-footed hall, slate roof, two barrels at the gable, sign */
 let TAV_OPT=0;window.__setTavern=n=>{TAV_OPT=n|0;};
 {const _dsK=drawShaped;drawShaped=function(b,win,c0,ax){if(TAV_OPT&&b.t==='tavern'){drawTavernOpt(b,win,TAV_OPT);return true;}return _dsK(b,win,c0,ax);};}
-function tvDoorLit(f,g,s,win){/* open door on the long wall: warm light inside, the leaf swung in, a pool of light on the ground */const w=0.18,hd=9,fh=g.fh;hoRect(f,g,'L',s-w/2-0.03,s+w/2+0.03,fh,fh+hd+1.6,'#3A2A1C');hoRect(f,g,'L',s-w/2,s+w/2,fh,fh+hd,win?'#C8C2B8':'#E8A048');
+function tvDoorLit(f,g,s,win){if(DOOR_BACK)return;/* open door on the long wall: warm light inside, the leaf swung in, a pool of light on the ground */const w=0.18,hd=9,fh=g.fh;hoRect(f,g,'L',s-w/2-0.03,s+w/2+0.03,fh,fh+hd+1.6,'#3A2A1C');hoRect(f,g,'L',s-w/2,s+w/2,fh,fh+hd,win?'#C8C2B8':'#E8A048');
   if(!win){hoRect(f,g,'L',s-w/2,s-w/2+0.05,fh,fh+hd,'#5A4230');const p=f(s,g.hw+0.18,0);ctx.fillStyle='rgba(255,190,100,0.28)';ctx.beginPath();ctx.ellipse(p[0],p[1],13,5.5,0,0,6.3);ctx.fill();ctx.fillStyle='rgba(255,220,150,0.35)';const q=f(s,g.hw+0.004,fh+hd*0.5);ctx.beginPath();ctx.ellipse(q[0],q[1],3,5,0,0,6.3);ctx.fill();}
   const st=f(s,g.hw+0.1,0);ctx.fillStyle=win?'#E2E4E0':'#8E877B';ctx.beginPath();ctx.ellipse(st[0],st[1],4.6,1.9,0,0,6.3);ctx.fill();}
 function tvBench(f,a0,a1,c,win){/* plank bench along a: two legs, a seat */const h=2.6,w=0.045,col=win?'#D0C8B8':'#8A6A48',colD=win?'#B8B0A0':'#5E4630';for(const a of [a0+0.05,a1-0.05])hoLine(f(a,c+w*0.5,0),f(a,c+w*0.5,h),colD,1);hoQ([f(a0,c-w,h),f(a1,c-w,h),f(a1,c+w,h),f(a0,c+w,h)],col);hoQ([f(a0,c+w,h),f(a1,c+w,h),f(a1,c+w,h-0.7),f(a0,c+w,h-0.7)],colD);}
@@ -1884,7 +1884,7 @@ function hb2Berths(b){/* the two inner berths at the middle of the pier, one eac
   return [pick(0),pick(1)].filter(Boolean);}
 function drawHarbourOpt(b,win){const F=hbFrame(b),Lp=F.L,W=F.W,hP=F.hL+4,hD=4,pa=1.7,ps0=W/2-0.36,ps1=W/2+0.36;const depth=(a,s)=>{const q=F.w(a,s);return q[0]+q[1];};const items=[];
   const sea=(a,s)=>{const q=F.w(a,s);return tAt(Math.round(q[0]),Math.round(q[1]))===T.SEA;};
-  const home=S.ships.filter(s=>!s.away),berths=hb2Berths(b),back=depth(2,-1)<depth(2,W+1)?0:1;
+  const home=shipsAt(b).filter(s=>!s.away),berths=hb2Berths(b),back=depth(2,-1)<depth(2,W+1)?0:1;
   const ships=PROP_B===b?home.slice(0,2).map((s,i)=>{const sp=berths.find(o=>o.side===(i===0?(1-back):back))||berths[i];if(!sp)return null;const p=iso(sp.q[0],sp.q[1]);return {side:sp.side,f:()=>{const bob=Math.sin(t*1.2+i)*1.0;drawShip(p[0],p[1]+3+bob,0.34,sp.flip,s.type);SHIP_HITS.push([p[0],p[1]]);}};}).filter(Boolean):[];
   ships.filter(o=>o.side===back).forEach(o=>o.f());
   if(!win){const c=hbRect(F,pa,Lp-0.05,ps0,ps1);poly(P([c.T[0]+3,c.T[1]+3],[c.R[0]+3,c.R[1]+3],[c.Bt[0]+3,c.Bt[1]+3],[c.L[0]+3,c.L[1]+3]),'rgba(20,34,44,0.25)');}
@@ -1925,7 +1925,7 @@ function drawYardOpt(b,win,opt){const {F,s,A,C,flip}=ydFrame(b),sd=(b.id||0)*73+
   const yard=()=>{/* the ship on its stocks in the yard, lying along the shore */if(opt===3&&!b.proj&&!b.gallery)return;const yc=opt===3?0:(hc+s*g.hw+(s>0?qc0:qc1))/2,yh=opt===3?hq:0,pr=b.proj?b.proj.done/SHIPS[b.proj.type].work:0.55;
     if(!win)for(const o of [-0.5,-0.15,0.2,0.55]){const p=F((opt===3?0:-A*0.3)+o,yc,yh);hoQ([[p[0]-2,p[1]],[p[0]+2,p[1]],[p[0]+1.4,p[1]-4],[p[0]-1.4,p[1]-4]],'#4A3424');}
     const m=F(opt===3?0:-A*0.3,yc,5+yh);drawShip(m[0],m[1],0.28,!flip,b.proj?b.proj.type:'karvi',pr);};
-  const moored=()=>{const home=S.ships.filter(x=>!x.away);if(!home.length&&!b.gallery)return;const p=F(pa+pw+0.5,(pc0+pc1)/2,0);drawShip(p[0],p[1]+3+Math.sin(tt*1.2)*1,0.32,!flip,'karvi');};
+  const moored=()=>{const home=b.thumb?[]:shipsAt(b).filter(x=>!x.away);if(!home.length&&!b.gallery)return;const p=F(pa+pw+0.5,(pc0+pc1)/2,0);drawShip(p[0],p[1]+3+Math.sin(tt*1.2)*1,0.32,!flip,home[0]?home[0].type:'karvi');if(home[0])SHIP_HITS.push([p[0],p[1],home[0].id]);};
   /* the ship is built inside the hall and slid out through the gate onto the quay */
   if(opt===3){if(s>0){hall();quay();yard();pier();moored();}else{moored();pier();quay();yard();hall();}return;}
   if(s>0){hall();quay();pier();moored();}else{moored();pier();quay();hall();}}

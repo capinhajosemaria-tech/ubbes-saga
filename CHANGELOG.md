@@ -2,6 +2,18 @@
 
 Versions are `Beta 0.MINOR.PATCH` until Town Hall 10 (`1.0.0`).
 
+## Beta 0.19.0
+- **New saga choices:** after the intro you choose Ubbe's trait (Builder, Warrior, Trader, Provider or Skald, bonuses only), the patron god and the first advisor.
+- **One patron god:** only your patron (Odin, Thor, Freyja or Njord) has a favour bar. Each asks his own offering, made from the Town Hall or the Altar (+50% there): Odin preserved food, Thor iron, Freyja berries, Njord fish. Each keeps his gift at 50 and his blessing at 80 (asked at the Altar).
+- **Patron's wrath:** below 25 favour (not in the first year) you are warned, and 10 days later the god strikes, each in his own way: plague, lightning, blight or storms.
+- **The Feast** replaces the banquets and the three festivals: hold it from the Town Hall at any level; with ale or mead (Town Hall 3) it does more. The holy days (start of summer, start of winter, midwinter) are announced: a feast then pleases the patron twice as much.
+- The council grows to 4 advisors: the 2nd at Town Hall 3, the 3rd at 4, the 4th at 5.
+- **Trade map** (from the Market or the Trading House): the partner villages on the world chart. Answer their requests, or offer your goods for silver or for theirs; they accept, refuse or haggle. Each village has a relation that grows with good deals and gives better Market prices. The goods go by knarr and the payment comes home with it days later.
+- **More newcomers when people are happy:** with free beds, morale above 55 brings 1.5× more people, 70 or more 2.2× (more couples too). The Attractiveness panel says so.
+- **Berths:** each Harbour moors 2 ships, one on each side, and the Shipyard has its own pier for 1. When every berth is taken the Shipyard cannot start a new ship. At Town Hall 5 you can build a second Harbour. The sheets show berths used and free.
+- **Rotate to all 4 sides:** buildings now turn four ways; on the last two turns the entrance is on the far side (out of sight), with the path and road behind.
+- Older sagas still load: they get no trait, and the god with the most favour becomes the patron.
+
 ## Beta 0.18.1
 - Sandbox mode is now truly free: endless stores (costs are free, the top bar shows ∞), every building and every upgrade up to Town Hall 5 open from the start, with Town Hall 5 limits.
 - In Sandbox, construction, upgrades and the Town Hall finish at once, and the Town Hall needs no people or house level.

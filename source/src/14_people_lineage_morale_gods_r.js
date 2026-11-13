@@ -42,9 +42,9 @@ const GODS={odin:{n:'Odin',likes:'Fame, brave deaths, sacrifice',pass:'+10% fame
   freyja:{n:'Freyja',likes:'Harvests and births',pass:'+10% from farms, gatherers and the pens; more births',bless:{n:'Rich Harvest',d:'+30% from farms and gatherers for 15 days'},off:[['wool',5,6],['berries',15,5],['honey',5,6],['misc',4,5]]},
   njord:{n:'Njord',likes:'Ships, fishing and trade',pass:'+10% fishing; fewer storms',bless:{n:'Fair Winds',d:'The next voyage is safe and twice as fast'},off:[['fish',15,5],['rope',3,6],['dfish',5,5],['misc',4,5]]},
   loki:{n:'Loki',likes:'Chaos and cunning',pass:'Strange things happen more often',bless:{n:'Trickster’s Wager',d:'The next raid brings double loot, or none'},off:[['misc',3,6],['planks',10,5],['silver',5,6]]}};
-const GOD_KEYS=Object.keys(GODS);
-function addFavor(g,v){if(!S.gods)return;if(v>0){if(jt('devout'))v*=1.25;if(has('hof'))v*=1.25;if(hasAdv('thorbjorg'))v*=1.3;}S.gods[g]=clamp(S.gods[g]+v,0,100);if(g==='loki'&&v>0)S.gods.thor=Math.max(0,S.gods.thor-v*0.3);}
-function addFame(v){if(v>0){if(hasAdv('egil'))v*=1.2;if(jt('ambitious'))v*=1.1;if(S.gods&&S.gods.odin>=50)v*=1.1;S.fameEarned=(S.fameEarned||0)+v;}S.fame=Math.max(0,S.fame+v);if(S.yr)S.yr.fame+=v;return v;}
+const GOD_KEYS=Object.keys(GODS).filter(k=>k!=='loki');   /* the four who can be a patron (Loki is no patron) */
+function addFavor(g,v){if(!S.gods)return;if(g!==patron())return;/* only the patron's favour counts */if(v>0){if(jt('devout'))v*=1.25;if(has('hof'))v*=1.25;if(hasAdv('thorbjorg'))v*=1.3;}S.gods[g]=clamp(S.gods[g]+v,0,100);if(g==='loki'&&v>0)S.gods.thor=Math.max(0,S.gods.thor-v*0.3);}
+function addFame(v){if(v>0){if(hasAdv('egil'))v*=1.2;if(jt('ambitious'))v*=1.1;if(S.gods&&fav('odin')>=50)v*=1.1;if(ut('skald'))v*=1.15;S.fameEarned=(S.fameEarned||0)+v;}S.fame=Math.max(0,S.fame+v);if(S.yr)S.yr.fame+=v;return v;}
 
 /* ---------- world ---------- */
 const TARGETS=[
@@ -70,7 +70,7 @@ function freshState(mode,adv){
   const r=EMPTY_RES();Object.assign(r,{fish:55,berries:55,dfish:30,wood:80,planks:20,tools:6});
   S={v:3,mode:mode,gameT:20,day:0,pop:11,fame:0,res:r,woodReserve:40,reserve:{},th:1,herd:{pigs:2,sheep:2},herdAcc:0,warriors:0,train:null,ships:[],trades:0,trader:null,
      ms:[],avail:START_AVAIL.slice(),saga:[{y:1,t:'Ragnar has fallen. Ubbe, his son, came to this cold shore with sixteen souls and raised a hall.'}],bal:null,lastShort:'',
-     people:[],nextPid:1,jarl:0,heir:0,gen:1,morale:60,mf:[],attr:35,af:[],mods:[],gods:{odin:40,thor:40,freyja:40,njord:40,loki:30},blessCd:{},blessOn:{},offers:0,
+     people:[],nextPid:1,jarl:0,heir:0,gen:1,morale:60,mf:[],attr:35,af:[],mods:[],gods:{odin:50,thor:0,freyja:0,njord:0,loki:0},patron:'odin',utrait:'',rel:{},treq:{},voy:[],blessCd:{},blessOn:{},offers:0,
      adv:adv||'',pol:{ration:'normal',rite:'cremation',child:false,borders:'open',loot:'jarl',thralls:'soft'},thralls:0,thrallSave:0,contam:0,
      raids:[],tg:{},raidsDone:0,winter:{hard:false,said:false,told:false},fx:{},modal:[],nextEvt:14,evtSeen:{},yr:{births:0,deaths:0,arrived:0,left:0,raids:0,silver:0,fame:0},
      lowDays:0,wrathWarn:0,wrathCd:0,shipSeq:1,over:false,meta:null,maps:{},mkt:{},advs:adv?[adv]:[],mobilUntil:0,banqN:0,wallClosed:false,feast:null};
@@ -117,7 +117,7 @@ function recalcMorale(){
   add(RATION[S.pol.ration].m?'Rationing: '+RATION[S.pol.ration].n.toLowerCase():'',RATION[S.pol.ration].m);
   if(has('altar'))add('An altar in the village',4);
   if(S.tavernOn)add(S.tavernOn>=8?'Mead in the tavern':'Ale in the tavern',S.tavernOn);
-  const avg=GOD_KEYS.reduce((a,g)=>a+S.gods[g],0)/5;if(avg>=50)add('The gods are pleased',5);if(GOD_KEYS.some(g=>S.gods[g]<20))add('A god is angry',-5);
+  {const f=fav(patron());if(f>=50)add(PN()+' is pleased',5);else if(f<25)add(PN()+' is angry',-5);}if(ut('skald'))add('Ubbe’s songs in the hall',4);
   const sick=S.people.filter(p=>p.sick>0).length;if(sick)add(sick+' sick or wounded',-Math.min(15,sick*3));
   if(hasAdv('lagertha'))add('Lagertha’s fair judgement',6);
   if(S.pol.child)add('Children at work',-10);
@@ -143,6 +143,8 @@ function recalcMorale(){
   S.af=a;S.attr=clamp(a.reduce((s,x)=>s+x.v,0),0,100);
 }
 const moraleProd=()=>S.morale>=70?1.1:S.morale<40?0.85:1;
+/* newcomers: good morale draws people when there are free beds (José, 2026-11-12) */
+const moraleArrive=()=>S.morale>=70?2.2:S.morale>55?1.5:S.morale<40?0.5:1;
 
 /* ---------- production multipliers ---------- */
 const NB={smith:['mine'],carp:['wood'],pres:['fish'],smoke:['fish','pigpen'],bakery:['mill'],mill:['grain']};
@@ -151,7 +153,8 @@ function traitBonus(t){const tc=S.tc||{};const m=k=>Math.min(0.15,0.03*(tc[k]||0
   if(['carp','smith','weaver','bakery'].includes(t))return 1+m('steady');if(t==='wood'||t==='mine')return 1+m('strong');if(['fish','pres','smoke'].includes(t))return 1+m('patient');if(t==='shipyard')return 1+m('seafarer');return 1;}
 function prodMult(b){const t=b.t;let m=moraleProd()*traitBonus(t);
   if(nbOf(b))m*=1.15;
-  if(S.gods.freyja>=50&&FARMLIKE.has(t))m*=1.1;if(S.gods.njord>=50&&t==='fish')m*=1.1;
+  if(fav('freyja')>=50&&FARMLIKE.has(t))m*=1.1;if(fav('njord')>=50&&t==='fish')m*=1.1;if(ut('provider')&&PROVIDER.has(t))m*=1.1;
+  if((S.fx.blight||0)>S.day&&(FARMLIKE.has(t)||t==='berry'))m*=0.6;if((S.fx.storm||0)>S.day&&t==='fish')m*=0.4;
   if((S.blessOn.freyja||0)>S.day&&FARMLIKE.has(t))m*=1.3;
   if((S.fx.dry||0)>S.day&&FARMLIKE.has(t))m*=0.7;if((S.fx.bear||0)>S.day&&t==='wood')m*=0.5;if((S.fx.nofish||0)>S.day&&t==='fish')m*=0.7;
   if(t==='fish'&&isWinter()&&S.winter.hard)m*=0.8;
@@ -165,7 +168,7 @@ function removePerson(p,cause){S.people=S.people.filter(o=>o!==p);if(p.sp){const
   if(S.heir===p.id)S.heir=0;
   if(cause!=='left'){S.yr.deaths++;
     if(S.pol.rite==='cremation'&&has('pyre')&&S.res.wood>=8){S.res.wood-=8;S.pyreT=S.gameT;}else S.contam=Math.max(S.contam,12);
-    if(cause==='battle'){if(S.gods.freyja>=70&&Math.random()<0.5)addFavor('freyja',2);else addFavor('odin',2);}
+    if(cause==='battle'){if(fav('freyja')>=70&&Math.random()<0.5)addFavor('freyja',2);else addFavor('odin',2);addFavor('thor',1);}
     if(p.sp||p.pa[0]||p.pa[1])addMod('grief'+S.day,'Mourning the dead',-2,15);}
   else S.yr.left++;
   if(p.id===S.jarl)succession(cause);
@@ -213,8 +216,8 @@ function peopleDay(short){
   if(men.length&&women.length&&Math.random()<0.06){const a=pick(men),b=women.find(w=>!(w.pa[0]&&w.pa[0]===a.pa[0]))||null;if(b){marry(a,b);if(a.id===S.jarl||b.id===S.jarl)note(pname(a.id===S.jarl?a:b)+' took a spouse.');}}
   /* births */
   const room=housing()-S.pop;const fed=!short&&foodUnits()>=eatNeed()*6;
-  if(room>0&&fed&&S.mode!=='x'){
-    let bm=(S.morale>=70?1.3:S.morale<40?0.6:1)*(S.gods.freyja>=50?1.15:1)*(S.pol.ration==='normal'?1:0.5);
+  if(room>0&&fed&&S.mode!=='x'&&!((S.fx.barren||0)>S.day)){
+    let bm=(S.morale>=70?1.3:S.morale<40?0.6:1)*(fav('freyja')>=50?1.15:1)*(S.pol.ration==='normal'?1:0.5);
     for(const w of S.people){if(w.g!=='f'||!w.sp||w.a<16||w.a>=44||w.away)continue;const h=PB(w.sp);if(!h||h.away)continue;
       if(S.people.some(k=>k.pa[1]===w.id&&k.a<1.2))continue;
       if(Math.random()<0.007*bm&&S.pop<housing()){const g=Math.random()<0.5?'m':'f';const isJ=h.id===S.jarl||w.id===S.jarl;
@@ -227,8 +230,8 @@ function peopleDay(short){
   /* newcomers */
   /* from Town Hall 3, newcomers wait near and in winter while the wood would not warm them for 5 days */
   const woodOk=thLevel()<3||((S.gameT%YEAR)<SUMMER-DAY*10)||S.res.wood>=fireNeed()*5;
-  if(housing()-S.pop>0&&fed&&!short&&woodOk){const p=(0.06+S.attr/100*0.16)*(has('market')?1.25:1)*(S.morale<40?0.5:1)*(S.gameT<YEAR?1.6:1);
-    S.immAcc=(S.immAcc||0)+p;if(S.immAcc>=1){S.immAcc-=1;const pair=Math.random()<0.3&&housing()-S.pop>=2;const a=newPerson({a:Math.round(U(17,36)),tr:randTrait()});S.yr.arrived++;
+  if(housing()-S.pop>0&&fed&&!short&&woodOk){const p=(0.06+S.attr/100*0.16)*(has('market')?1.25:1)*moraleArrive()*(S.gameT<YEAR?1.6:1);
+    S.immAcc=(S.immAcc||0)+p;if(S.immAcc>=1){S.immAcc-=1;const pair=Math.random()<(S.morale>=70?0.5:0.3)&&housing()-S.pop>=2;const a=newPerson({a:Math.round(U(17,36)),tr:randTrait()});S.yr.arrived++;
       if(pair){const b=newPerson({g:a.g==='m'?'f':'m',a:Math.round(U(17,36)),tr:randTrait()});marry(a,b);S.yr.arrived++;toast('A couple, '+a.n+' and '+b.n+', settled in Kaldstrand.');}
       else toast(a.n+' arrived and settled in Kaldstrand.');syncPop();}}
   /* thralls */
@@ -248,21 +251,18 @@ function seasonDay(){const yt=S.gameT%YEAR;return yt<SUMMER?{win:false,d:Math.fl
 function calendarDay(){const sd=seasonDay(),y=yearNow();
   if(!sd.win&&sd.d===26&&!S.winter.told){const hardP=y===1?0:(S.mode==='challenge'?0.5:0.3);const hard=Math.random()<hardP;const right=hasAdv('thorbjorg')||Math.random()<0.8;
     S.winter={hard:hard,said:right?hard:!hard,told:true};toast('The Völva speaks: “'+(S.winter.said?'A hard winter is coming. Stock firewood and food.':'The winter will be mild.')+'”',5200);}
-  if(!sd.win&&sd.d===1&&y>1&&S.lastFest!=='sig'+y){S.lastFest='sig'+y;queueModal({k:'fest',f:'sigr'});}
-  if(sd.win&&sd.d===1&&S.lastFest!=='blot'+y){S.lastFest='blot'+y;S.winter.told=false;queueModal({k:'fest',f:'blot'});}
-  if(sd.win&&sd.d===8&&S.lastFest!=='jol'+y){S.lastFest='jol'+y;queueModal({k:'fest',f:'jol'});}
+  if(!sd.win&&sd.d===1&&y>1&&S.lastFest!=='sig'+y){S.lastFest='sig'+y;holyDay('sigr');}
+  if(sd.win&&sd.d===1&&S.lastFest!=='blot'+y){S.lastFest='blot'+y;S.winter.told=false;holyDay('blot');}
+  if(sd.win&&sd.d===8&&S.lastFest!=='jol'+y){S.lastFest='jol'+y;holyDay('jol');}
 }
 const FESTS={sigr:{n:'Sigrblót',t:'Summer has come. The men want a sacrifice to Odin for victory in the season of raids.',cost:()=>({meals:Math.ceil(S.pop*0.8)}),fx:()=>{addFavor('odin',15);addFavor('thor',5);addMod('fest','Sigrblót feast',8,15);addFame(5);}},
   blot:{n:'Blót',t:'Winter nights begin. It is time for the great sacrifice, so the gods watch over the dark months.',cost:()=>({meals:Math.ceil(S.pop*1.2)}),fx:()=>{GOD_KEYS.forEach(g=>addFavor(g,8));addMod('fest','Winter blót',6,15);addFame(5);}},
   jol:{n:'Jól',t:'Midwinter. The longest night. Fires are lit and the ale passes from hand to hand.',cost:()=>({meals:Math.ceil(S.pop*1.2),wood:15}),fx:()=>{GOD_KEYS.forEach(g=>addFavor(g,4));addMod('fest','Jól feast',12,15);addFame(5);}}};
-function godsDay(){for(const g of GOD_KEYS)S.gods[g]=Math.max(0,S.gods[g]-0.15-0.004*S.gods[g]);
-  const others=(S.gods.thor+S.gods.freyja+S.gods.njord+S.gods.loki)/4;
-  if(S.gods.odin<=1&&others<25&&S.day>S.wrathCd){if(!S.wrathWarn){S.wrathWarn=S.day;toast('Black ravens circle the hall and will not leave. The Völva says Odin is angry.',5000);}
-    else if(S.day-S.wrathWarn>=10){S.wrathWarn=0;S.wrathCd=S.day+90;odinWrath();}}else if(S.wrathWarn&&S.gods.odin>1)S.wrathWarn=0;}
-function odinWrath(){const k=pick(['plague','fire']);let t;
-  if(k==='plague'){const n=Math.ceil(S.pop*0.2);if(S.mode==='challenge'){for(let i=0;i<n;i++){const v=pick(S.people.filter(p=>p.id!==S.jarl));if(v)removePerson(v,'sickness');}t='Odin’s wrath fell on Kaldstrand. A plague took '+n+' lives.';}else{sicken(n);t='Odin’s wrath fell on Kaldstrand. A plague laid '+n+' people low.';}}
-  else{S.res.wood*=0.6;S.res.planks*=0.6;if(S.mode==='challenge'){const h=B.filter(b=>b.t==='house');if(h.length>2&&housing()-4>=S.pop){const v=h[h.length-1];B=B.filter(o=>o!==v);rebuildOcc();recomputeConn();}}t='Odin’s wrath fell on Kaldstrand. Fire ran through the stores; four tenths of the timber burned.';}
-  S.saga.push({y:yearNow(),t:t});queueModal({k:'info',title:'Odin’s Wrath',text:t+' Honour the Allfather before he looks this way again.'});}
+function godsDay(){const g=patron();S.gods[g]=Math.max(0,S.gods[g]-0.15-0.004*S.gods[g]);
+  /* Patron's wrath: below 25 favour, after a 10-day warning (never in the first year) */
+  if(S.gods[g]<WRATH_AT&&S.day>S.wrathCd&&S.day>=YDAYS){if(!S.wrathWarn){S.wrathWarn=S.day;toast(WRATH[g].warn+' Raise '+GODS[g].n+'’s favour above '+WRATH_AT+' within 10 days.',6000);}
+    else if(S.day-S.wrathWarn>=10){S.wrathWarn=0;S.wrathCd=S.day+90;patronWrath();}}else if(S.wrathWarn&&S.gods[g]>=WRATH_AT)S.wrathWarn=0;}
+/* odinWrath(): see the Patron's wrath in 14_zpatron.js */
 
 /* ---------- revolt ---------- */
 function revoltDay(){if(S.morale<20){S.lowDays++;if(S.lowDays===1)queueModal({k:'info',title:'Murmurs of Revolt',text:'Men gather by the well and fall silent when the Jarl passes. If spirits stay this low, they will rise. Feed them, warm them, hold a feast.'});}
@@ -291,13 +291,13 @@ function startTraining(type,want,retrain){type=type||'skirm';const tg=B.find(b=>
     for(const k in T.eq)if(S.res[k]<T.eq[k]*up.length)return 'Needs '+T.eq[k]*up.length+' '+RNAME[k].toLowerCase()+' (you have '+fmt(S.res[k])+')';ids=up.map(p=>p.id);}
   else{const n=Math.min(want===undefined?trainMax(tg.lvl):want,trainRoom(type,tg.lvl).n);if(n<=0)return 'No one can train: '+trainRoom(type,tg.lvl).why;ids=trainPool().slice(0,n).map(p=>p.id);}
   for(const k in T.eq)S.res[k]-=T.eq[k]*ids.length;S.train={n:ids.length,left:10,type:type,ids:ids};assignWorkers();return '';}
-function trainDay(){if(!S.train)return;S.train.left-=1;if(S.train.left<=0){const T=TROOPS[S.train.type];let n=0;for(const id of S.train.ids){const p=PB(id);if(p){p.w=S.train.type;p.ua=0;n++;}}S.train=null;syncPop();toast(n+' '+T.n.toLowerCase()+'s finished their training.',3600);}}
+function trainDay(){if(!S.train)return;S.train.left-=ut('warrior')?1.25:1;if(S.train.left<=0){const T=TROOPS[S.train.type];let n=0;for(const id of S.train.ids){const p=PB(id);if(p){p.w=S.train.type;p.ua=0;n++;}}S.train=null;syncPop();toast(n+' '+T.n.toLowerCase()+'s finished their training.',3600);}}
 function rearm(p){const k=PRIMARY[p.w];if(!k)return;if(S.res[k]>=1){S.res[k]-=1;p.ua=0;}else p.ua=1;}
 
 /* ---------- raids ---------- */
 function soldierStr(p){const T=TROOPS[p.w]||TROOPS.skirm;let s=T.str;if(p.ua)s*=0.5;s*=1+0.1*Math.min(3,p.xp);if(p.tr==='hot')s*=1.15;if(p.tr==='strong')s*=1.1;if(p.tr==='hawk'&&p.w==='archer')s*=1.25;if(p.a>=50)s*=0.8;return s;}
 const shipById=id=>S.ships.find(s=>s.id===id);
-function raidMult(r){let m=1;if(S.gods.thor>=50)m*=1.1;if((S.blessOn.thor||0)>S.day)m*=1.2;if(r.odin)m*=1.25;if(r.feast)m*=1.15;if(hasAdv('bjorn'))m*=1.15;if(hasAdv('lagertha'))m*=1.05;
+function raidMult(r){let m=1;if(fav('thor')>=50)m*=1.1;if(ut('warrior'))m*=1.15;if((S.blessOn.thor||0)>S.day)m*=1.2;if(r.odin)m*=1.25;if(r.feast)m*=1.15;if(hasAdv('bjorn'))m*=1.15;if(hasAdv('lagertha'))m*=1.05;
   if(r.jarl)m*=jt('brave')?1.2:1.1;m*=S.morale>=70?1.1:S.morale<40?0.85:1;
   const sh=r.ships.map(shipById).filter(Boolean);if(sh.length&&sh.every(s=>s.type==='knarr'))m*=0.75;else if(sh.some(s=>s.type==='knarr'))m*=0.9;
   if(r.prov!==undefined&&r.prov<=0)m*=0.7;return m;}
@@ -329,7 +329,7 @@ function launchRaid(plan){const t=TG(plan.tgt);const why=canRaid(t);if(why)retur
 function raidDay(){for(const r of S.raids.slice()){
     if(r.ph==='out'||r.ph==='back'||r.ph==='siege'){r.prov=Math.max(0,r.prov-r.provUse*(r.ph==='siege'?1.5:1));}
     if(r.ph==='out'){r.t--;
-      if(!r.evDone&&r.t<=Math.floor(r.d/2)){r.evDone=true;const stormP=r.safe?0:(S.gods.njord>=50?0.07:0.14);const roll=Math.random();
+      if(!r.evDone&&r.t<=Math.floor(r.d/2)){r.evDone=true;const stormP=r.safe?0:(fav('njord')>=50?0.07:0.14);const roll=Math.random();
         if(roll<stormP){const n=Math.min(r.crew.length,1+Math.floor(Math.random()*2));const lost=[];for(let i=0;i<n;i++){const id=pick(r.crew);const p=PB(id);if(p){lost.push(p.n);r.dead.push(p.n);removePerson(p,'battle');}}
           r.log.push('A storm broke over the ships. '+(lost.length?lost.join(' and ')+' went over the side.':'') );queueModal({k:'raid',rid:r.id,step:'storm',lost:lost});}
         else if(roll<stormP+0.08)queueModal({k:'raid',rid:r.id,step:'merchant'});}
@@ -407,13 +407,13 @@ function raidOpts(m){const r=S.raids.find(x=>x.id===m.rid);if(!r)return null;con
 const adultsHome=()=>S.people.filter(p=>p.a>=14&&!p.away&&p.id!==S.jarl);
 const EVTS={
   storm:{cat:'Nature',c:()=>isWinter(),w:1,mk:()=>({}),t:()=>'A storm out of the north tore turf from the roofs.',o:[{l:'Repair at once (15 planks)',ok:()=>S.res.planks>=15,f:()=>{S.res.planks-=15;return 'The roofs held. Nobody froze.';}},{l:'Let it wait',f:()=>{addMod('storm','Damaged roofs',-6,15);sicken(2);return 'Snow came in through the gaps. Two fell sick.';}}]},
-  dry:{cat:'Nature',c:()=>!isWinter()&&B.some(b=>FARMLIKE.has(b.t)),w:0.8,mk:()=>({}),t:()=>'No rain for weeks. The ground cracks and the berries wither on the branch.',o:[{l:'Offer to Freyja (10 favour)',ok:()=>S.gods.freyja>=10,f:()=>{S.gods.freyja-=10;return 'Rain came three days later.';}},{l:'Endure it',f:()=>{S.fx.dry=S.day+15;return 'Farms and gatherers will bring in less for 15 days.';}}]},
+  dry:{cat:'Nature',c:()=>!isWinter()&&B.some(b=>FARMLIKE.has(b.t)),w:0.8,mk:()=>({}),t:()=>'No rain for weeks. The ground cracks and the berries wither on the branch.',o:[{l:'Pray for rain (10 favour)',ok:()=>fav(patron())>=10,f:()=>{S.gods[patron()]-=10;return 'Rain came three days later. '+PN()+' heard you.';}},{l:'Endure it',f:()=>{S.fx.dry=S.day+15;return 'Farms and gatherers will bring in less for 15 days.';}}]},
   herring:{cat:'Nature',good:1,c:()=>!isWinter()&&has('fish'),w:1,mk:()=>({}),t:()=>'Herring fill the bay, so thick the water boils silver.',o:[{l:'Every boat out',f:()=>{const g=addRes('fish',60);return '+'+fmt(g)+' fish.';}},{l:'Let them pass',f:()=>''}]},
   wolves:{cat:'Nature',c:()=>isWinter()&&(has('pigpen')||has('sheeppen'))&&herdTotal()>3,w:1,mk:()=>({}),t:()=>'Wolves came to the pen in the night. The sheep are screaming.',o:[{l:'Send men with spears',ok:()=>S.warriors>0||S.res.spears>=2,f:()=>{if(Math.random()<0.25)sicken(1,true);addRes('hides',2);return 'The wolves were driven off. Two pelts were taken.';}},{l:'Bar the doors',f:()=>{S.herd.sheep=Math.max(1,S.herd.sheep-1);S.herd.pigs=Math.max(1,S.herd.pigs-1);return 'At dawn two animals were gone.';}}]},
   bear:{cat:'Nature',c:()=>has('wood'),w:0.8,mk:()=>({}),t:()=>'A bear walks the edge of the forest. The woodcutters will not go in.',o:[{l:'Hunt it',f:()=>{addRes('meat',30);addRes('hides',2);if(Math.random()<0.3){sicken(1,true);return 'The bear is dead. One hunter was mauled.';}return 'The bear is dead. +30 meat, +2 hides.';}},{l:'Keep away for now',f:()=>{S.fx.bear=S.day+5;return 'Woodcutters work at half pace for 5 days.';}}]},
-  aurora:{cat:'Omen',good:1,c:()=>isWinter(),w:0.7,mk:()=>({}),t:()=>'Green fire danced across the sky all night. The Völva says the gods are watching.',o:[{l:'Make an offering (10 meals)',ok:()=>foodUnits()>=10,f:()=>{spendMeals(10);GOD_KEYS.forEach(g=>addFavor(g,5));return 'All gods +5 favour.';}},{l:'Watch in silence',f:()=>{addMod('aurora','The sky-fire',3,10);return '';}}]},
+  aurora:{cat:'Omen',good:1,c:()=>isWinter(),w:0.7,mk:()=>({}),t:()=>'Green fire danced across the sky all night. The Völva says the gods are watching.',o:[{l:'Make an offering (10 meals)',ok:()=>foodUnits()>=10,f:()=>{spendMeals(10);addFavor(patron(),5);return PN()+' +5 favour.';}},{l:'Watch in silence',f:()=>{addMod('aurora','The sky-fire',3,10);return '';}}]},
   twins:{cat:'People',good:1,c:()=>S.people.some(p=>p.g==='f'&&p.sp&&p.a>=18&&p.a<40)&&housing()-S.pop>=2,w:0.6,mk:()=>{const w=pick(S.people.filter(p=>p.g==='f'&&p.sp&&p.a>=18&&p.a<40));return {a:w.id};},t:a=>{const w=PB(a.a);return 'Twins were born to '+(w?w.n:'a woman of the village')+'. The old women say Freyja smiled on her.';},
-    o:[{l:'Give thanks to Freyja',f:a=>{const w=PB(a.a);if(w&&w.sp){for(let i=0;i<2;i++){newPerson({a:0,pa:[w.sp,w.id]});S.yr.births++;}syncPop();}addFavor('freyja',5);return 'Two children. Freyja +5.';}}]},
+    o:[{l:'Give thanks to Freyja',f:a=>{const w=PB(a.a);if(w&&w.sp){for(let i=0;i<2;i++){newPerson({a:0,pa:[w.sp,w.id]});S.yr.births++;}syncPop();}return 'Two children.'+gfav('freyja',5);}}]},
   holmgang:{cat:'People',c:()=>adultsHome().filter(p=>p.g==='m').length>=4,w:0.7,mk:()=>{const m=adultsHome().filter(p=>p.g==='m');const a=pick(m);const b=pick(m.filter(x=>x!==a));return {a:a.id,b:b.id};},
     t:a=>{const x=PB(a.a),y=PB(a.b);return (x?x.n:'One man')+' and '+(y?y.n:'another')+' quarrel over a strip of field. Both call for holmgang.';},
     o:[{l:'Allow the duel',f:a=>{const x=PB(a.a),y=PB(a.b);const l=Math.random()<0.5?x:y;if(!l)return '';if(Math.random()<0.35){removePerson(l,'duel');return l.n+' died on the cloak. The matter is settled.';}l.sick=8;l.wound=1;addMod('duel','A fair fight',3,10);return l.n+' was wounded and yielded.';}},
@@ -422,25 +422,25 @@ const EVTS={
   feud:{cat:'People',c:()=>S.pop>=16,w:0.6,mk:()=>({}),t:()=>'Two families feud over an insult at the well. Knives have been drawn.',o:[{l:'Pay wergild (25 meals)',ok:()=>foodUnits()>=25,f:()=>{spendMeals(25);return 'The families made peace.';}},{l:'Let them be',f:()=>{addMod('feud','A feud in the village',-8,20);return 'The feud festers.';}}]},
   prodigy:{cat:'People',good:1,c:()=>S.people.some(p=>p.a>=8&&p.a<14&&!p.tr),w:0.5,mk:()=>({a:pick(S.people.filter(p=>p.a>=8&&p.a<14&&!p.tr)).id}),t:a=>{const p=PB(a.a);return 'Young '+(p?p.n:'one')+' carves runes cleaner than the old men.';},o:[{l:'Praise the child',f:a=>{const p=PB(a.a);if(p)p.tr='steady';return (p?p.n:'The child')+' gained Steady Hand.';}}]},
   oldwarrior:{cat:'People',c:()=>thLevel()>=3&&S.people.some(p=>p.g==='m'&&p.a>=50&&!p.w&&p.id!==S.jarl),w:0.4,mk:()=>({a:pick(S.people.filter(p=>p.g==='m'&&p.a>=50&&!p.w&&p.id!==S.jarl)).id}),t:a=>{const p=PB(a.a);return 'Old '+(p?p.n:'a man')+' says he will not die in his bed. He asks for a spear and a place at the oars.';},
-    o:[{l:'Give him a spear',ok:()=>S.res.spears>=1&&S.warriors<warCap(),f:a=>{const p=PB(a.a);if(p){S.res.spears--;p.w='skirm';syncPop();}addFavor('odin',4);return 'He joins the warriors. Odin +4.';}},{l:'Refuse him gently',f:()=>''}]},
+    o:[{l:'Give him a spear',ok:()=>S.res.spears>=1&&S.warriors<warCap(),f:a=>{const p=PB(a.a);if(p){S.res.spears--;p.w='skirm';syncPop();}return 'He joins the warriors.'+gfav('odin',4)+gfav('thor',3);}},{l:'Refuse him gently',f:()=>''}]},
   monk:{cat:'Visitor',c:()=>thLevel()>=2,w:0.5,mk:()=>({}),t:()=>'A monk from the west, thin as a reed, begs for shelter. He has a book and nothing else.',o:[{l:'Take him in',ok:()=>housing()>S.pop,f:()=>{newPerson({n:'Aldhelm',g:'m',a:34,tr:'patient'});S.yr.arrived++;syncPop();return 'Aldhelm the monk lives among you now. He is patient.';}},{l:'Send him away',f:()=>''},{l:'Make him a thrall',cruel:1,ok:()=>thrallCap()>S.thralls,f:()=>{S.thralls++;addFavor('odin',2);return '+1 thrall.';}}]},
   peddler:{cat:'Visitor',c:()=>!isWinter(),w:0.8,mk:()=>({}),t:()=>'A peddler walks in from the hills with a pack of iron goods.',o:[{l:'Buy 5 tools (30 silver)',ok:()=>S.res.silver>=30,f:()=>{S.res.silver-=30;S.res.tools+=5;return '+5 tools.';}},{l:'Buy 5 tools (40 meals)',ok:()=>foodUnits()>=40,f:()=>{spendMeals(40);S.res.tools+=5;return '+5 tools.';}},{l:'Send him on',f:()=>''}]},
   skald:{cat:'Visitor',good:1,c:()=>true,w:0.6,mk:()=>({}),t:()=>'A wandering skald asks for a seat by the fire. He knows the songs of Ragnar.',o:[{l:'Feast him (20 meals)',ok:()=>foodUnits()>=20,f:()=>{spendMeals(20);const f=addFame(15);addMod('skald','Songs in the hall',4,15);return '+'+Math.round(f)+' fame.';}},{l:'Give him bread and send him on',f:()=>''}]},
   refugees:{cat:'Visitor',c:()=>housing()-S.pop>=3,w:0.6,mk:()=>({}),t:()=>'Three people come over the pass. Their village was burned. They ask for a home.',o:[{l:'Welcome them (30 meals)',ok:()=>foodUnits()>=30,f:()=>{spendMeals(30);const a=newPerson({a:Math.round(U(20,35)),tr:randTrait()}),b=newPerson({g:a.g==='m'?'f':'m',a:Math.round(U(20,35))});marry(a,b);newPerson({a:Math.round(U(3,10)),pa:[a.id,b.id]});S.yr.arrived+=3;syncPop();return '+3 people.';}},{l:'Turn them away',f:()=>{addMod('refuse','Refugees turned away',-3,15);return '';}}]},
   messenger:{cat:'Visitor',c:()=>thLevel()>=2,w:0.5,mk:()=>({}),t:()=>'A messenger from Jarl Hrolf the Grey of Hordaland brings a silver arm-ring. He waits for a gift in return.',o:[{l:'Send 20 planks back',ok:()=>S.res.planks>=20,f:()=>{S.res.planks-=20;S.res.silver+=15;addFame(10);return '+15 silver, +10 fame. Hrolf is pleased.';}},{l:'Keep the ring and send nothing',f:()=>{S.res.silver+=15;const st=S.tg.hord=S.tg.hord||{};st.grudge=(st.grudge||0)+1;return '+15 silver. Hrolf will remember this.';}}]},
-  wreck:{cat:'Sea',good:1,c:()=>!isWinter(),w:0.6,mk:()=>({}),t:()=>'A foreign ship broke on the rocks in the night. Men cling to the wreck.',o:[{l:'Salvage the wreck',f:()=>{addRes('planks',30);addRes('iron',10);addRes('misc',5);return '+30 planks, +10 iron.';}},{l:'Rescue the sailors',ok:()=>housing()-S.pop>=2,f:()=>{newPerson({g:'m',a:26,tr:'seafarer'});newPerson({g:'m',a:30});S.yr.arrived+=2;syncPop();addFavor('njord',4);return 'Two sailors stay in Kaldstrand. Njord +4.';}},{l:'Rescue them and keep them as thralls',cruel:1,ok:()=>thrallCap()-S.thralls>=2,f:()=>{S.thralls+=2;return '+2 thralls.';}}]},
+  wreck:{cat:'Sea',good:1,c:()=>!isWinter(),w:0.6,mk:()=>({}),t:()=>'A foreign ship broke on the rocks in the night. Men cling to the wreck.',o:[{l:'Salvage the wreck',f:()=>{addRes('planks',30);addRes('iron',10);addRes('misc',5);return '+30 planks, +10 iron.';}},{l:'Rescue the sailors',ok:()=>housing()-S.pop>=2,f:()=>{newPerson({g:'m',a:26,tr:'seafarer'});newPerson({g:'m',a:30});S.yr.arrived+=2;syncPop();return 'Two sailors stay in Kaldstrand.'+gfav('njord',4);}},{l:'Rescue them and keep them as thralls',cruel:1,ok:()=>thrallCap()-S.thralls>=2,f:()=>{S.thralls+=2;return '+2 thralls.';}}]},
   whale:{cat:'Sea',good:1,c:()=>true,w:0.4,mk:()=>({}),t:()=>'A whale lies stranded on the beach, as long as a longhouse.',o:[{l:'Butcher it',f:()=>{const g=addRes('meat',60);addRes('misc',8);return '+'+fmt(g)+' meat, +8 odds and ends.';}}]},
   amber:{cat:'Sea',good:1,c:()=>true,w:0.4,mk:()=>({}),t:()=>'After the storm, amber lies along the tideline like honey.',o:[{l:'Gather it',f:()=>{addRes('misc',10);return '+10 odds and ends for the gods.';}}]},
-  fever:{cat:'Crisis',crisis:1,c:()=>S.pop>=12,w:0.6,mk:()=>({}),t:()=>'A fever goes from house to house.',o:[{l:'Keep the sick apart',f:()=>{sicken(2);return 'Two fell sick.';}},{l:'Pray to Freyja (10 favour)',ok:()=>S.gods.freyja>=10,f:()=>{S.gods.freyja-=10;sicken(1);return 'Only one fell sick.';}}]},
+  fever:{cat:'Crisis',crisis:1,c:()=>S.pop>=12,w:0.6,mk:()=>({}),t:()=>'A fever goes from house to house.',o:[{l:'Keep the sick apart',f:()=>{sicken(2);return 'Two fell sick.';}},{l:'Pray for the sick (10 favour)',ok:()=>fav(patron())>=10,f:()=>{S.gods[patron()]-=10;sicken(1);return 'Only one fell sick.';}}]},
   fire:{cat:'Crisis',crisis:1,c:()=>S.res.wood>40,w:0.5,mk:()=>({}),t:()=>'Fire in the woodpile! Sparks fly toward the roofs.',o:[{l:'Form a bucket chain',f:()=>{S.res.wood*=0.85;if(Math.random()<0.3){sicken(1,true);return 'The fire is out. One man was burned.';}return 'The fire is out. Some timber was lost.';}},{l:'Let it burn out',f:()=>{S.res.wood*=0.5;return 'Half the wood burned.';}}]},
   thrallflee:{cat:'Crisis',crisis:1,c:()=>S.thralls>=3,w:0.5,mk:()=>({n:Math.max(1,Math.round(S.thralls*0.3))}),t:a=>a.n+' thralls slipped away toward the hills.',o:[{l:'Send warriors after them',ok:()=>S.people.some(p=>p.w&&!p.away),f:a=>{const back=Math.round(a.n*0.7);S.thralls-=a.n-back;return back+' brought back.';}},{l:'Let them go',f:a=>{S.thralls-=a.n;return '';}}]},
   rumours:{cat:'Crisis',crisis:1,c:()=>S.morale<35,w:1.2,mk:()=>({}),t:()=>'Men mutter against the Jarl at the well. They say he cares more for his hall than for them.',o:[{l:'Hold a feast ('+'1 meal each)',ok:()=>foodUnits()>=S.pop,f:()=>{spendMeals(S.pop);addMod('feast','A feast in the hall',10,15);return 'Spirits rise.';}},{l:'Make an example',cruel:1,f:()=>{addMod('example','Fear',-4,20);S.lowDays=0;return 'The muttering stops. For now.';}},{l:'Ignore it',f:()=>''}]},
   freedom:{cat:'People',c:()=>S.thralls>0&&S.pol.thralls==='soft'&&S.thrallSave>=10,w:0.8,mk:()=>({}),t:()=>'A thrall has saved ten pieces of silver. He offers them for his freedom.',o:[{l:'Accept',ok:()=>housing()>S.pop,f:()=>{S.thralls--;S.thrallSave-=10;S.res.silver+=10;newPerson({g:'m',a:Math.round(U(20,35))});syncPop();return 'He is a free man of Kaldstrand. +10 silver.';}},{l:'Refuse',f:()=>{addMod('refusefree','A broken promise',-2,10);return '';}}]},
-  curse:{cat:'Omen',crisis:1,c:()=>GOD_KEYS.some(g=>S.gods[g]<20),w:0.8,mk:()=>({g:pick(GOD_KEYS.filter(g=>S.gods[g]<20))}),t:a=>'The Völva throws the bones and goes pale. '+GODS[a.g].n+' is angry with Kaldstrand.',
+  curse:{cat:'Omen',crisis:1,c:()=>false/* replaced by the Patron's wrath */,w:0.8,mk:()=>({g:pick(GOD_KEYS.filter(g=>S.gods[g]<20))}),t:a=>'The Völva throws the bones and goes pale. '+GODS[a.g].n+' is angry with Kaldstrand.',
     o:[{l:'Accept the god’s anger',f:a=>{const g=a.g;if(g==='freyja'){S.fx.dry=S.day+10;return 'Crops wither for 10 days.';}if(g==='njord'){S.fx.nofish=S.day+10;return 'The fish stay away for 10 days.';}if(g==='odin'){addFame(-10);return '−10 fame.';}if(g==='thor'){S.blessOn.thor=0;addMod('thor','Thunder without rain',-4,15);return 'Spirits fall.';}S.res.wood*=0.8;return 'Things go missing. A fifth of the wood is gone.';}}]}
 };
 function eventDay(){if(S.day<S.nextEvt||S.modal.length)return;
-  const crisisW=S.mode==='challenge'?1.5:0.8,goodW=S.mode==='relaxed'?1.4:1;const lokiW=S.gods.loki>=50?1.3:1;
+  const crisisW=S.mode==='challenge'?1.5:0.8,goodW=S.mode==='relaxed'?1.4:1;const lokiW=1;
   const pool=[];for(const id in EVTS){const e=EVTS[id];if((S.evtSeen[id]||-99)>S.day-40)continue;let ok=false;try{ok=e.c();}catch(x){ok=false;}if(!ok)continue;pool.push([id,e.w*(e.crisis?crisisW:1)*(e.good?goodW:1)]);}
   S.nextEvt=S.day+Math.round(U(11,20)/lokiW);if(!pool.length)return;
   let tot=pool.reduce((a,x)=>a+x[1],0),r=Math.random()*tot;let id=pool[0][0];for(const x of pool){r-=x[1];if(r<=0){id=x[0];break;}}
@@ -457,7 +457,7 @@ function yearRoll(){const y=yearNow()-1;const s=S.yr;
 
 /* ---------- daily hook ---------- */
 function p2Day(short){const yBefore=Math.floor((S.gameT-DAY)/YEAR);
-  peopleDay(short);godsDay();trainDay();raidDay();marketDay();mercDay();if(S.tombDone){addFame(1);S.gods.odin=Math.max(30,S.gods.odin);}if(S.banqReset&&S.day>=S.banqReset){S.banqN=0;S.banqReset=0;}
+  peopleDay(short);godsDay();trainDay();raidDay();marketDay();mercDay();if(S.tombDone){addFame(1);S.gods[patron()]=Math.max(30,S.gods[patron()]);}if(S.banqReset&&S.day>=S.banqReset){S.banqN=0;S.banqReset=0;}
   if(isWinter()&&S.res.clothes>0)S.res.clothes=Math.max(0,S.res.clothes-S.pop/120);calendarDay();recalcMorale();revoltDay();eventDay();
   if(S.mode==='sandbox'||S.mode==='test'){S.res.wood=Math.max(S.res.wood,250);S.res.planks=Math.max(S.res.planks,250);S.res.iron=Math.max(S.res.iron,150);S.res.tools=Math.max(S.res.tools,30);S.res.water=Math.max(S.res.water,100);if(foodUnits()<150)S.res.dfish+=60;}
   if(Math.floor(S.gameT/YEAR)>yBefore&&yBefore>=0&&S.day>2)yearRoll();}

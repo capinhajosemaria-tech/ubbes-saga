@@ -71,7 +71,7 @@ function drawHarbour(b,win){const F=hbFrame(b),Lp=F.L,W=F.W,hP=F.hL+4,hD=4,pa=1.
   ships.filter(o=>o.side!==back).forEach(o=>o.f());
   return true;}
 /* moored ships: knarrs take the inner berths (they load at the pier), warships raft up outside */
-function hbShips(b){const home=S.ships.filter(s=>!s.away);if(!home.length)return [];const spots=dockSpots(b);
+function hbShips(b){const home=shipsAt(b).filter(s=>!s.away);if(!home.length)return [];const spots=dockSpots(b);
   const order=home.slice().sort((a,c)=>(c.type==='knarr')-(a.type==='knarr'));
   return order.slice(0,spots.length).map((s,i)=>{const sp=spots[i],p=iso(sp.q[0],sp.q[1]);return {side:sp.side,f:()=>{const bob=Math.sin(t*1.2+i)*1.0;drawShip(p[0],p[1]+3+bob,0.34,sp.flip,s.type);SHIP_HITS.push([p[0],p[1],s.id]);}};});}
 function drawShipsAtHarbour(win){}

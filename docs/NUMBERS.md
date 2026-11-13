@@ -1,4 +1,4 @@
-# Ubbe's Saga: numbers (Beta 0.17.1)
+# Ubbe's Saga: numbers (Beta 0.19.0)
 
 Generated from the game by `tools/gen_numbers.py`. Do not edit by hand.
 
@@ -45,7 +45,7 @@ Limits are per Town Hall level 1 / 2 / 3 / 4 / 5. Workers: +1 at building level 
 | flax | Flax Field | Farms | 3 | 3×3 | 20 wood | 2 | 4 flax per worker a day (summer) | 0 / 0 / 1 / 2 / 2 |
 | weaver | Weaver | Crafts | 3 | 2×2 | 20 wood, 25 planks | 2 | 2 wool → 1 sailcloth; 2 flax → 1 rope | 0 / 0 / 1 / 1 / 1 |
 | shipyard | Shipyard | Sea | 3 | 3×3 | 60 wood, 60 planks, 10 iron | 4 |  | 0 / 0 / 1 / 1 / 1 |
-| harbour | Harbour | Sea | 3 | 2×6 | 40 wood, 50 planks | 0 |  | 0 / 0 / 1 / 1 / 1 |
+| harbour | Harbour | Sea | 3 | 2×6 | 40 wood, 50 planks | 0 |  | 0 / 0 / 1 / 1 / 2 |
 | thrall | Thrall Pen | Homes | 3 | 3×2 | 40 wood, 20 planks, 5 iron | 0 |  | 0 / 0 / 1 / 1 / 1 |
 | camp | Community Fire | Decor | 1 | 1×1 | 10 wood | 0 |  | 4 / 6 / 8 / 10 / 12 |
 | bench | Wooden Benches | Decor | 1 | 1×1 | 5 wood | 0 |  | 6 / 8 / 10 / 12 / 14 |

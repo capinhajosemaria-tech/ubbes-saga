@@ -17,16 +17,16 @@ Finished items are removed from this file; what each version changed is in `CHAN
 - Music and placement — 20 min of season music + special pieces, building rotation, doors where they are drawn, 3×3 shipyard (Beta 0.17.0).
 - Work priorities and Town Hall builders (Beta 0.17.1).
 - Wood, sources that run out, market panel (Beta 0.18.0).
+- 1D start choices, patron god, Feast · 1E trade map · more newcomers · berths · 4-side rotation (Beta 0.19.0).
 
 ## 1. Core redesign (decided with José, 2026-11-11)
 Goal: fewer systems, each one counts more; decisions matter, but the player stays free to build his own way and can always progress (maybe more slowly). City building and resources first; the lineage matters later, when resources are less of a worry.
-Order: Round 1 (done, 0.14.0) → 1C (done, 0.15.0) → **1H** → 1D → 1I → 1E → 1F → 1G → 1J → 1K (1K's place not decided yet — ask José). Balance fixes 1 items E1 (Smokehouse) and A2 (Bakery) are replaced by Round 1; re-check the rest after it.
+Order: Round 1 (done, 0.14.0) → 1C (done, 0.15.0) → 1D + 1E (done, 0.19.0) → **1H** → 1I → 1F → 1G → 1J → 1K (1K's place not decided yet — ask José). Balance fixes 1 items E1 (Smokehouse) and A2 (Bakery) are replaced by Round 1; re-check the rest after it.
 
 ## This round
 - (none — next is 1H. Firewood option A was assumed in 0.14.0; tune after José plays.)
 
 ## Bugs and small fixes
-- [ ] **More newcomers when morale is good** (José, 2026-11-12): if there are free beds and morale is above 55, some people move in; above 70, many more. Today arrivals follow attractiveness only (`14_people_lineage_morale_gods_r.js`). Tune with José after he plays the new priorities.
 - [ ] **Gold has no counter in the top bar** (José, 2026-11-12): `CHIPS` in `26_hud.js` has silver but no gold, so the player can't see how much gold he has (it only shows in the trader sheet). Also, **silver only appears from Town Hall 3** (`chip-silver` hidden below TH3). Show silver from the start, or as soon as there is any, and add a gold chip that appears once there is gold.
 
 ## Next rounds (in this order)
@@ -40,18 +40,14 @@ Order: Round 1 (done, 0.14.0) → 1C (done, 0.15.0) → **1H** → 1D → 1I →
 - [ ] **Click selects by tile** (José: clicking a tree near a building picks the building): the game finds the tile under the cursor and selects what stands on it. Order: a person under the cursor → the building on that tile → the tree / bush / ore on that tile; only if the tile is empty, fall back to a building whose picture covers the point (tall roofs over tiles behind them). Highlight what will be selected on hover.
 - [ ] Visual only at first (walking distance does not cut output). Watch performance (~110 people at TH5): fewer figures when zoomed out.
 
-### 1D. Start choices, gods, feast
-- [ ] New saga starts with three choices: **Ubbe's trait** (Builder, Warrior, Trader, Provider, Skald — bonuses only, no penalties), **patron god**, **first advisor**. Advisors: 4 in all, the 4th at TH5. Heirs later get or inherit traits (lineage).
-- [ ] **Patron god only**: one favour bar; "Odin's wrath" becomes **"Patron's wrath"** below 25 favour (own punishment per god). Each patron asks its own offering, all TH1 resources: Odin — preserved food, Thor — iron, Freyja — berries, Njord — fish. Keep each god's bonus and blessing.
-- [ ] **One Feast** instead of banquets (people / warriors / council) and festivals; uses ale and mead.
+### Play feedback for 0.19.0
+- [ ] José plays: patron favour speed (falls ~0.35 a day, offerings +8), wrath at 25, Feast costs, trade offers (acceptance 1.12 at relation 30), request rewards (1.5×), berths. Advisors: 4 seats in all (2nd at TH3, 3rd TH4, 4th TH5) out of 6 advisors — check this is what was meant.
+- [ ] Rotation: on the last two turns the door is on the hidden far side (no new art). If José wants a visible back door or different back walls, that needs new art per building.
+- [ ] Heirs get or inherit traits (lineage): today Ubbe's trait stays with the whole line.
 
 ### 1I. Saga and events
 - [ ] **Year chronicle**: at the end of each winter a short saga page (births, deaths, harvests, raids, the jarl); kept in a book that can be reread.
 - [ ] **Events tied to the player's choices**: fewer, stronger events (26 today) that react to the patron god and Ubbe's trait (Thor's sign before a battle, merchants for a Trader, wolves only in winter).
-
-### 1E. Trade and land
-- Land stays as it is now: bought with fame, no silver cost (José, 2026-11-12: "fame is fine").
-- [ ] **New trade screen**: map with the trading partners; click one to see its requests and send our offers (good + price, for another good or for silver); they accept, refuse or counter. Each village has a relation that improves with good deals. Goods travel by knarr (takes days). Silver buys goods at the market.
 
 ### 1F. World map
 - [ ] One map from Finland to Portugal, down to North Africa and the future Middle East targets; mist over it that still shows the coastlines; targets marked as now.
@@ -72,7 +68,6 @@ Decided: roads B, grass B (now in Round 1).
 - [x] **New building art and grass released in Beta 0.16.0**: every building, the decor and the tall grass with wildflowers use José's chosen options (all in `docs/art/STYLE.md`; code `source/src/20_zzstyle.js`, switches `window.__setX(n)` in the test page, 0 = old drawing). Houses use the 8 new colour schemes.
 - [ ] **Preserver makes jam only; dried fish goes to the Smokehouse** (José, 2026-11-12): today the Preserver turns fish into dried fish and berries into jam (`13_zflow.js`, `13_daily_economy.js`), and the Smokehouse makes smoked fish and meat. Change: Preserver = berries → jam only; fish preserving only at the Smokehouse (merge dried fish into smoked fish or keep both there). Check balance after.
 - [ ] **Watchtower: 1 tile, part of the palisade** (José, 2026-11-12): today 2×2 (`07_building_definitions.js`), placed apart from the walls. Change: slim tower on **one tile**, placeable **in the palisade line**; the wall tiles next to it connect to it (mark its tile in `walls` as a tower so `wallsClosed()` and the wall drawing treat it as part of the ring; neighbours draw their logs up to it). Keep the defence bonus (more by the palisade). Look chosen in the art work (see STYLE.md). Save keys may need a bump.
-- [ ] **Berths: 2 ships per Harbour, 1 at the Shipyard** (José, 2026-11-12): a Harbour pier moors **two ships, one on each side**; to keep more ships the player builds another Harbour. The **Shipyard** gets a big hall and a small pier of its own with **one berth**. A finished ship goes to a Harbour with a free berth; if none is free it stays at the Shipyard; if that berth is taken too, **the Shipyard cannot start another ship** (José, decided). Today `harbourBerths()` (`20_zharbour.js`) rafts more ships outside and ship numbers are not tied to berths — check `19_ships.js`, the raid planner and the world panel. Tell the player in the Harbour/Shipyard sheets (berths used / free).
 - [x] **Shadows and ground patch follow the building shape**: done in Beta 0.16.1 (`20_zzzshade.js`).
 - [ ] Tidy the art code: fold `20_zzstyle.js` into the old drawing files and remove the unused options and old drawings (smaller file, faster load); phone check.
 To decide:

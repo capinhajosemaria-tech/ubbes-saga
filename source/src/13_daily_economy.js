@@ -56,7 +56,7 @@ function dayTick(){
         if(!made)b.status='Waiting for grain or honey';else b.made='Brewing '+made;break;}
       case 'hives':mk('honey',n*3*E);break;
       case 'tailor':{const u=Math.min(n*E*0.8,resv('wool')/2,resv('hides'));if(u<=0.05){b.status=holdMsg(['wool','hides']);break;}r.wool-=u*2;r.hides-=u;mk('clothes',u);break;}
-      case 'hof':{const g=GOD_KEYS.slice().sort((a,c)=>S.gods[a]-S.gods[c])[0];addFavor(g,0.6*n);b.made='The gothi honours '+GODS[g].n;break;}
+      case 'hof':{const g=patron();addFavor(g,0.6*n);b.made='The gothi honours '+GODS[g].n;break;}
       case 'tomb':{if(!b.proj){b.status='Waiting to begin: needs 40 gold, 6 swords and a ship';break;}if(b.proj.done>=TOMB_WORK){b.status='Finished';b.made='Ragnar rests here';break;}b.proj.done+=n*E;b.made=Math.floor(100*b.proj.done/TOMB_WORK)+'% raised';
         if(b.proj.done>=TOMB_WORK){S.tombDone=1;S.saga.push({y:yearNow(),t:'Ragnar’s ship-tomb was finished. Its mound can be seen from the sea.'});queueModal({k:'info',title:'Ragnar’s Ship-Tomb',text:'The mound is closed over the ship. From now on, Odin’s favour never falls below 30, and the tomb adds to Kaldstrand’s fame every day.'});}break;}
       case 'shipyard':{if(!b.proj){b.status='Idle: choose a ship to build';break;}b.proj.done+=n*E;

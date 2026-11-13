@@ -2,6 +2,12 @@
 
 Versions are `Beta 0.MINOR.PATCH` until Town Hall 10 (`1.0.0`).
 
+## Beta 0.20.0
+- **A new opening for every saga:** three illustrated story pages present the year 865, Ubbe and Kaldstrand over the new village. Then come three choice pages with picture cards: Ubbe's gift, the patron god (gift, blessing, offering and wrath on each card) and the first advisor.
+- **New guide (11 steps)** for today's game: seasons, food and wood (with sources that run out), builders, worker priority, fish, planks, preserving, firewood, the Production panel and reserves, your patron god and the Feast, tools and the Town Hall. Each step has a picture, a task list that ticks itself, a button that does the step, and the button it is talking about pulses. On PC the guide sits on the left and moves aside when a sheet opens.
+- **Gold in the top bar:** a gold counter appears as soon as you have any gold. Silver is shown from the start.
+- **Clicking picks what is on the tile:** a click (and the hover glow) chooses the building on the tile under the cursor, then the tree, bush or ore on it. Only an empty tile falls back to a tall roof drawn over it. Trees, bushes and ore glow on hover too.
+
 ## Beta 0.19.0
 - **New saga choices:** after the intro you choose Ubbe's trait (Builder, Warrior, Trader, Provider or Skald, bonuses only), the patron god and the first advisor.
 - **One patron god:** only your patron (Odin, Thor, Freyja or Njord) has a favour bar. Each asks his own offering, made from the Town Hall or the Altar (+50% there): Odin preserved food, Thor iron, Freyja berries, Njord fish. Each keeps his gift at 50 and his blessing at 80 (asked at the Altar).

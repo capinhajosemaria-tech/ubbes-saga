@@ -11,12 +11,13 @@ const ICON={food:'<svg width="14" height="14" viewBox="0 0 20 20" aria-hidden="t
   people:'<svg width="14" height="14" viewBox="0 0 20 20" aria-hidden="true"><circle cx="13.5" cy="5.6" r="2.6" fill="#7E8C92"/><path d="M8.6 17 Q9.2 9.4 13.5 9.4 Q17.8 9.4 18.4 17 Z" fill="#7E8C92"/><circle cx="7" cy="6.2" r="3" fill="#C9C2B2"/><path d="M1.4 18 Q2 10.6 7 10.6 Q12 10.6 12.6 18 Z" fill="#B5733F"/><path d="M4.2 5.2 Q7 2 9.8 5.2" fill="none" stroke="#8E6F52" stroke-width="1.2"/></svg>',
   warriors:'<svg width="14" height="14" viewBox="0 0 20 20" aria-hidden="true"><path d="M15 2 L15 18" stroke="#7A5D44" stroke-width="1.3"/><path d="M15 0.8 L16.6 4 L13.4 4 Z" fill="#8C9398"/><circle cx="8.5" cy="11" r="7" fill="#A34A3A" stroke="#5A4636" stroke-width="1"/><path d="M8.5 4 V18 M1.5 11 H15.5" stroke="#E9E2D0" stroke-width="1.6"/><circle cx="8.5" cy="11" r="2.2" fill="#B7BCBF" stroke="#5E6468" stroke-width="0.7"/></svg>',
   morale:'<svg width="14" height="14" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8.4" fill="#C9A64A" stroke="#8C6A24" stroke-width="0.9"/><path d="M5.8 11.4 Q10 15.6 14.2 11.4" stroke="#263035" stroke-width="1.5" fill="none" stroke-linecap="round"/><circle cx="7.2" cy="7.8" r="1.1" fill="#263035"/><circle cx="12.8" cy="7.8" r="1.1" fill="#263035"/></svg>',
+  gold:'<svg width="14" height="14" viewBox="0 0 20 20" aria-hidden="true"><ellipse cx="8" cy="15" rx="6" ry="2.4" fill="#A9822E"/><rect x="2" y="11.6" width="12" height="3.4" fill="#A9822E"/><ellipse cx="8" cy="11.6" rx="6" ry="2.4" fill="#E2C05A" stroke="#A9822E" stroke-width="0.6"/><path d="M11 4 L18 4 L19 8 L10 8 Z" fill="#E8C85E" stroke="#8C6A24" stroke-width="0.8" stroke-linejoin="round"/><path d="M12 5.4 H16.6" stroke="#FFF0B0" stroke-width="0.8"/></svg>',
   silver:'<svg width="14" height="14" viewBox="0 0 20 20" aria-hidden="true"><ellipse cx="9" cy="14.5" rx="6.5" ry="2.6" fill="#8C9398"/><rect x="2.5" y="11" width="13" height="3.5" fill="#8C9398"/><ellipse cx="9" cy="11" rx="6.5" ry="2.6" fill="#C9CED1" stroke="#8C9398" stroke-width="0.6"/><ellipse cx="13" cy="7" rx="5" ry="4.6" fill="#DDE1E3" stroke="#8C9398" stroke-width="0.9"/><path d="M11 7 H15 M13 5 V9" stroke="#8C9398" stroke-width="0.9"/></svg>'};
-const CHIPS=[['food','Food'],['wood','Wood'],['planks','Planks'],['iron','Iron'],['tools','Tools'],['fame','Fame'],['people','People'],['morale','Morale'],['warriors','Warriors'],['silver','Silver']];
-const RGROUPS=[['people','morale'],['food'],['wood','planks','iron','tools'],['silver','fame','warriors']];
+const CHIPS=[['food','Food'],['wood','Wood'],['planks','Planks'],['iron','Iron'],['tools','Tools'],['fame','Fame'],['people','People'],['morale','Morale'],['warriors','Warriors'],['silver','Silver'],['gold','Gold']];
+const RGROUPS=[['people','morale'],['food'],['wood','planks','iron','tools'],['silver','gold','fame','warriors']];
 $('res').innerHTML=RGROUPS.map(g=>'<div class="rg">'+g.map(k=>{const c=CHIPS.find(q=>q[0]===k);return '<button type="button" class="chip" id="chip-'+k+'" data-res="'+k+'" aria-label="'+c[1]+'">'+ICON[k]+'<span class="v"><span class="lbl">'+c[1]+'</span><span class="n"><strong id="r-'+k+'">0</strong><em id="d-'+k+'"></em></span></span></button>';}).join('')+'</div>').join('');
 {const tip=document.createElement('div');tip.id='rtip';tip.className='rtip';tip.hidden=true;document.body.appendChild(tip);}
-const RTIP={food:'Everything people eat. Each person eats about 1 a day, more in winter.',water:'Carried from wells. Each person drinks every day.',wood:'Felled by woodcutters. Burned as firewood in winter and turned into planks.',planks:'Sawn from wood at the carpenter.',iron:'Dug at the mine.',tools:'Forged by the smith. Workers wear them out.',silver:'From trade and plunder.',fame:'Earned by deeds. Spend it on land.',people:'People living in Kaldstrand / beds in houses.',morale:'How content the village is.',warriors:'Trained fighters (+ in training).'};
+const RTIP={food:'Everything people eat. Each person eats about 1 a day, more in winter.',water:'Carried from wells. Each person drinks every day.',wood:'Felled by woodcutters. Burned as firewood in winter and turned into planks.',planks:'Sawn from wood at the carpenter.',iron:'Dug at the mine.',tools:'Forged by the smith. Workers wear them out.',silver:'From trade and plunder. Buys goods from merchants.',gold:'Rare. Taken in raids on rich places; needed for the greatest works.',fame:'Earned by deeds. Spend it on land.',people:'People living in Kaldstrand / beds in houses.',morale:'How content the village is.',warriors:'Trained fighters (+ in training).'};
 function tipHtml(k){const c=CHIPS.find(q=>q[0]===k),r=S.res,bal=(S.bal||{})[k],L=(S.prodLog||{})[k]||{};
   let h='<b>'+c[1]+'</b><p>'+RTIP[k]+'</p>';
   const cap={food:capFood(),water:capWater(),wood:capMat(),planks:capMat(),iron:capMat()}[k];
@@ -37,10 +38,10 @@ function hud(){
   document.querySelectorAll('.seg .fast').forEach(b=>b.hidden=!(S.mode==='test'||S.mode==='sandbox'));
   const r=S.res;
   $('r-food').textContent=fmt(foodUnits());$('r-wood').textContent=fmt(r.wood);$('r-planks').textContent=fmt(r.planks);$('r-iron').textContent=fmt(r.iron);$('r-tools').textContent=fmt(r.tools);$('r-fame').textContent=fmt(S.fame);$('r-people').textContent=S.pop+'/'+housing();
-  const B0=S.bal||{};for(const k of ['food','wood','planks','iron','tools','silver','fame']){const e=$('d-'+k);if(!e)continue;const v=B0[k];if(v===undefined||Math.abs(v)<0.05){e.textContent='';e.className='';continue;}e.textContent=(v>0?'▲':'▼')+fmt(Math.abs(v));e.className=v>0?'up':'dn';}
+  const B0=S.bal||{};for(const k of ['food','wood','planks','iron','tools','silver','gold','fame']){const e=$('d-'+k);if(!e)continue;const v=B0[k];if(v===undefined||Math.abs(v)<0.05){e.textContent='';e.className='';continue;}e.textContent=(v>0?'▲':'▼')+fmt(Math.abs(v));e.className=v>0?'up':'dn';}
   if(!$('rtip').hidden){const hv=document.querySelector('.chip:hover');if(hv)$('rtip').innerHTML=tipHtml(hv.dataset.res);}
-  $('r-warriors').textContent=S.warriors+(S.train?'+'+S.train.n:'');$('r-silver').textContent=fmt(r.silver);$('r-morale').textContent=Math.round(S.morale);$('chip-morale').classList.toggle('warn',S.morale<40);
-  $('chip-warriors').hidden=thLevel()<2;$('chip-silver').hidden=thLevel()<3;
+  $('r-warriors').textContent=S.warriors+(S.train?'+'+S.train.n:'');$('r-silver').textContent=fmt(r.silver);$('r-gold').textContent=fmt(r.gold||0);$('r-morale').textContent=Math.round(S.morale);$('chip-morale').classList.toggle('warn',S.morale<40);
+  $('chip-warriors').hidden=thLevel()<2;$('chip-gold').hidden=!((r.gold||0)>0||S.goldSeen);if((r.gold||0)>0)S.goldSeen=1;
   $('chip-food').classList.toggle('warn',foodUnits()<eatNeed()*3);$('chip-wood').classList.toggle('warn',isWinter()&&r.wood<fireNeed()*3);$('chip-tools').classList.toggle('warn',r.tools<1);
   const yt=S.gameT%YEAR,year=Math.floor(S.gameT/YEAR)+1,win=yt>=SUMMER;
   const day=win?Math.floor((yt-SUMMER)/DAY)+1:Math.floor(yt/DAY)+1,len=win?15:30,pr=win?(yt-SUMMER)/400:yt/SUMMER;
@@ -239,9 +240,10 @@ function tap(px,py){
   if(mode==='place'){camX=w[0];camY=w[1];clampCam();return;}
   if(mode==='road'){roadTap(tt);return;}
   if(mode==='remove'){removeTap(tt);return;}
-  for(let k=0;k<4;k++){const x=tt[0]+k,y=tt[1]+k;if(!inMap(x,y))continue;const id=occ[y*N+x];if(id){const b=B.find(o=>o.id===id);if(b){demolishArmed=0;buildingSheet(b);return;}}}
-  if(!inMap(tt[0],tt[1])){closeSheet();return;}
-  tileSheet(tt[0],tt[1]);
+  const pk=pickAt(px,py);
+  if(pk&&pk.b){demolishArmed=0;buildingSheet(pk.b);return;}
+  if(!pk){closeSheet();return;}
+  tileSheet(pk.tile[0],pk.tile[1]);
 }
 
 /* ---------- input ---------- */

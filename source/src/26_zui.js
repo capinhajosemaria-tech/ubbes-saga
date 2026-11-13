@@ -80,17 +80,38 @@ function openTray(cat){trayCat=cat;buildCat=cat;const tr=$('tray');
 
 /* --- hover: buildings light up under the mouse and show their name --- */
 let HOVER_B=null;
-function buildingAt(px,py){const w=s2w(px,py),tt=w2t(w[0],w[1]);for(let k=0;k<4;k++){const x=tt[0]+k,y=tt[1]+k;if(!inMap(x,y))continue;const id=occ[y*N+x];if(id){const b=B.find(o=>o.id===id);if(b)return b;}}return null;}
-function hoverAt(px,py){if(mode!=='view'||titleOn||modalOpen){setHover(null);return;}setHover(buildingAt(px,py),px,py);}
+/* pickAt: what a click / hover at screen point (px,py) selects.
+   1) the tile really under the cursor (elevation counted, front tiles win);
+   2) a building standing on that tile; 3) the tree / bush / ore on it;
+   4) only if the tile is empty: a building whose picture covers the point (tall roofs). */
+function tileUnder(px,py){const w=s2w(px,py),tt=w2t(w[0],w[1]);let best=null,bd=-1;
+  for(let k=-1;k<=5;k++)for(let j=-1;j<=1;j++){const x=tt[0]+k+(j>0?1:0),y=tt[1]+k+(j<0?1:0);if(!inMap(x,y))continue;const i=y*N+x;
+    const e=ter[i]===T.RIVER?-2:(elev[i]||0),sx=(x-y)*HW,sy=(x+y)*HH-e;
+    if(Math.abs(w[0]-sx)/HW+Math.abs(w[1]-sy)/HH<=1.001&&x+y>bd){bd=x+y;best=[x,y];}}
+  return best||(inMap(tt[0],tt[1])?tt:null);}
+function natOn(x,y){const i=y*N+x,t=ter[i];if(t===T.FOREST)return trees.some(o=>o.x===x&&o.y===y);if(t===T.BERRY)return bushes.some(o=>o.x===x&&o.y===y);return t===T.IRON;}
+function bOn(x,y){const id=occ[y*N+x];return id?B.find(o=>o.id===id)||null:null;}
+function pickAt(px,py){const t=tileUnder(px,py);
+  if(t){const b=bOn(t[0],t[1]);if(b)return {b:b};if(natOn(t[0],t[1]))return {tile:t,nat:true};}
+  const w=s2w(px,py),tt=w2t(w[0],w[1]);
+  for(let k=0;k<4;k++){const x=tt[0]+k,y=tt[1]+k;if(!inMap(x,y))continue;const b=bOn(x,y);if(b)return {b:b};}
+  return t?{tile:t}:null;}
+function buildingAt(px,py){const p=pickAt(px,py);return p&&p.b||null;}
+function hoverAt(px,py){if(mode!=='view'||titleOn||modalOpen){setHover(null);return;}const p=pickAt(px,py);
+  if(p&&p.b){HOVER_T=null;setHover(p.b,px,py);return;}
+  if(p&&p.nat){setHover(null);HOVER_T=p.tile;cv.style.cursor='pointer';const tip=$('htip');if(tip){const tn=ter[p.tile[1]*N+p.tile[0]];tip.innerHTML='<b>'+(tn===T.FOREST?'Forest':tn===T.BERRY?'Berry bushes':'Iron outcrop')+'</b>';tip.hidden=false;tip.style.left=Math.min(innerWidth-260,px+16)+'px';tip.style.top=(py+18)+'px';}return;}
+  HOVER_T=null;setHover(null);}
+let HOVER_T=null;
 function setHover(b,px,py){HOVER_B=b;const tip=$('htip');cv.style.cursor=b?'pointer':'';if(!tip)return;if(!b){tip.hidden=true;return;}
   const D=DEF[b.t];tip.innerHTML='<b>'+esc(b.t==='th'?'Town Hall':D.name)+'</b>'+(D.up||b.t==='th'?' <span>level '+(b.t==='th'?thLevel():b.lvl)+'</span>':'')+(slotsOf(b)?'<em>'+b.workers+' of '+slotsOf(b)+' working'+(slotsOf(b)?' · '+(winterStopped(b)?'winter stop':PRIO[prioOf(b)].toLowerCase()):'')+(b.status&&b.status!=='Working'?' · '+esc(b.status):'')+'</em>':'');
   tip.hidden=false;tip.style.left=Math.min(innerWidth-260,px+16)+'px';tip.style.top=(py+18)+'px';}
-function drawHover(){const b=HOVER_B;if(!b||mode!=='view')return;const c=fp(b),e=elev[b.fy*N+b.fx]||2;
+function drawHover(){if(mode!=='view')return;const b=HOVER_B;if(!b&&HOVER_T){const x=HOVER_T[0],y=HOVER_T[1],i=y*N+x,e=ter[i]===T.RIVER?-2:(elev[i]||0),sx=(x-y)*HW,sy=(x+y)*HH-e;
+  ctx.save();ctx.strokeStyle='rgba(255,236,170,0.9)';ctx.lineWidth=2/zoom+0.6;ctx.beginPath();ctx.moveTo(sx,sy-HH);ctx.lineTo(sx+HW,sy);ctx.lineTo(sx,sy+HH);ctx.lineTo(sx-HW,sy);ctx.closePath();ctx.stroke();ctx.fillStyle='rgba(255,236,170,0.14)';ctx.fill();ctx.restore();return;}if(!b)return;const c=fp(b),e=elev[b.fy*N+b.fx]||2;
   ctx.save();ctx.translate(0,-e);ctx.strokeStyle='rgba(255,236,170,0.95)';ctx.lineWidth=2.4/zoom+0.6;ctx.setLineDash([]);ctx.beginPath();ctx.moveTo(c.T[0],c.T[1]);ctx.lineTo(c.R[0],c.R[1]);ctx.lineTo(c.Bt[0],c.Bt[1]);ctx.lineTo(c.L[0],c.L[1]);ctx.closePath();ctx.stroke();
   ctx.fillStyle='rgba(255,236,170,0.12)';ctx.fill();ctx.restore();}
 {const tip=document.createElement('div');tip.id='htip';tip.className='htip';tip.hidden=true;document.body.appendChild(tip);}
 cv.addEventListener('pointermove',e=>{if(e.pointerType==='mouse'&&!e.buttons)hoverAt(e.clientX,e.clientY);});
-cv.addEventListener('pointerleave',()=>setHover(null));
+cv.addEventListener('pointerleave',()=>{HOVER_T=null;setHover(null);});
 cv.addEventListener('pointerdown',()=>{const t=$('htip');if(t)t.hidden=true;});
 
 /* --- suggested actions: what needs doing, one click to get there --- */

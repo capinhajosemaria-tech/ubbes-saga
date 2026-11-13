@@ -18,16 +18,17 @@ Finished items are removed from this file; what each version changed is in `CHAN
 - Work priorities and Town Hall builders (Beta 0.17.1).
 - Wood, sources that run out, market panel (Beta 0.18.0).
 - 1D start choices, patron god, Feast · 1E trade map · more newcomers · berths · 4-side rotation (Beta 0.19.0).
+- 1J new guide · new opening (story + choice cards) · gold and silver in the top bar · click selects by tile (Beta 0.20.0).
 
 ## 1. Core redesign (decided with José, 2026-11-11)
 Goal: fewer systems, each one counts more; decisions matter, but the player stays free to build his own way and can always progress (maybe more slowly). City building and resources first; the lineage matters later, when resources are less of a worry.
-Order: Round 1 (done, 0.14.0) → 1C (done, 0.15.0) → 1D + 1E (done, 0.19.0) → **1H** → 1I → 1F → 1G → 1J → 1K (1K's place not decided yet — ask José). Balance fixes 1 items E1 (Smokehouse) and A2 (Bakery) are replaced by Round 1; re-check the rest after it.
+Order: Round 1 (done, 0.14.0) → 1C (done, 0.15.0) → 1D + 1E (done, 0.19.0) → **1H** → 1I → 1F → 1G → 1K (1J done, 0.20.0) (1K's place not decided yet — ask José). Balance fixes 1 items E1 (Smokehouse) and A2 (Bakery) are replaced by Round 1; re-check the rest after it.
 
 ## This round
 - (none — next is 1H. Firewood option A was assumed in 0.14.0; tune after José plays.)
 
 ## Bugs and small fixes
-- [ ] **Gold has no counter in the top bar** (José, 2026-11-12): `CHIPS` in `26_hud.js` has silver but no gold, so the player can't see how much gold he has (it only shows in the trader sheet). Also, **silver only appears from Town Hall 3** (`chip-silver` hidden below TH3). Show silver from the start, or as soon as there is any, and add a gold chip that appears once there is gold.
+- (none)
 
 ## Next rounds (in this order)
 
@@ -37,7 +38,6 @@ Order: Round 1 (done, 0.14.0) → 1C (done, 0.15.0) → 1D + 1E (done, 0.19.0) �
 ### 1H. Living village (José, 2026-11-11)
 - [ ] **Real people walk**: each villager is a walker (today only 3–10 decorative ones wander near the hall). At dawn they walk from their own house to their workplace along roads, at dusk back home; children play near home, warriors at the Training Ground, elders walk slower. Commute follows the light cycle (3 game days), not every 27-second day.
 - [ ] **Click a person**: sheet with name, age, traits, family, house and workplace; buttons to show their house and workplace. Click a house or building → list of who lives / works there.
-- [ ] **Click selects by tile** (José: clicking a tree near a building picks the building): the game finds the tile under the cursor and selects what stands on it. Order: a person under the cursor → the building on that tile → the tree / bush / ore on that tile; only if the tile is empty, fall back to a building whose picture covers the point (tall roofs over tiles behind them). Highlight what will be selected on hover.
 - [ ] Visual only at first (walking distance does not cut output). Watch performance (~110 people at TH5): fewer figures when zoomed out.
 
 ### Play feedback for 0.19.0
@@ -58,8 +58,8 @@ Order: Round 1 (done, 0.14.0) → 1C (done, 0.15.0) → 1D + 1E (done, 0.19.0) �
 ### 1K. Sources run out again — done in Beta 0.18.0
 - [ ] José plays and says if wood is still the limit and if iron still piles up (numbers in `10_zsources.js`: `SRC_Y`, `SRC_NEED`, `SRC_RATE`).
 
-### 1J. Tutorial
-- [ ] Rewrite the guide for the new game, with more explanations (seasons, source limits, firewood, construction, production panel, reserves, Town Hall requirements).
+### 1J. Tutorial — done in Beta 0.20.0
+- [ ] José plays the new opening and guide and says what to change (text, order, pictures).
 
 ## 2. Art redesign (José, 2026-11-11)
 Prototypes are on branch `art-prototypes` (code, switches and option sheets: `docs/art/README.md` on that branch). Nothing is released.

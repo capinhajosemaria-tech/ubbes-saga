@@ -414,6 +414,95 @@ h3 svg{vertical-align:-3px}
 /* trade map offer form */
 .trf{display:flex;flex-direction:column;gap:6px}.trf label{display:flex;align-items:center;gap:6px;font-size:14px}.trf input{width:64px;padding:4px 6px;font:inherit;border:1px solid var(--line,#B9AE98);border-radius:6px;background:#FFFDF7}.trf select{flex:1;min-width:0;padding:4px 6px;font:inherit;border:1px solid var(--line,#B9AE98);border-radius:6px;background:#FFFDF7}
 .wfs .wrow[disabled]{opacity:.55;cursor:default}
+/* ===== Beta 0.20: the opening of a new saga ===== */
+body.titled .dock,body.titled .tray,body.titled #guide{display:none}
+.title.op{background:radial-gradient(ellipse at 50% 45%,rgba(20,16,12,.18) 0%,rgba(20,16,12,.55) 60%,rgba(14,11,8,.86) 100%);padding:20px}
+.title.op .tc{max-width:1120px;background:none;box-shadow:none;padding:0;max-height:none;overflow:visible;text-align:left}
+.opc{position:relative;display:flex;flex-direction:column;gap:14px;max-height:calc(100vh - 40px);overflow:auto;box-sizing:border-box;padding:22px 30px 20px;border-radius:6px;color:var(--ink);
+  background:radial-gradient(ellipse at 50% 0%,#FBF6EA 0%,#F1E8D4 55%,#E6D9BD 100%);
+  border:3px solid #2F2620;box-shadow:0 0 0 1px #C9A64A,0 0 0 7px #2F2620,0 0 0 8px rgba(201,166,74,.6),0 30px 70px rgba(0,0,0,.55),inset 0 0 60px rgba(122,95,70,.22);
+  animation:opIn .45s ease-out both}
+@keyframes opIn{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:none}}
+.opc::before,.opc::after{content:'';position:absolute;width:38px;height:38px;border:2px solid var(--gold);pointer-events:none}
+.opc::before{top:8px;left:8px;border-right:0;border-bottom:0}.opc::after{bottom:8px;right:8px;border-left:0;border-top:0}
+.opsteps{display:flex;justify-content:center;gap:4px;flex-wrap:wrap;font-size:12px;letter-spacing:.06em;color:#9A8B74}
+.opsteps span{display:flex;align-items:center;gap:6px;padding:0 6px}
+.opsteps span+span::before{content:'';width:22px;height:1px;background:#CDBFA6;margin-right:4px}
+.opsteps i{width:9px;height:9px;transform:rotate(45deg);border:1.5px solid #B9A88C;background:transparent;flex:none}
+.opsteps .done i{background:#B9A88C}.opsteps .on{color:var(--wood)}.opsteps .on i{background:var(--gold);border-color:#8C6A24;box-shadow:0 0 0 3px rgba(201,166,74,.25)}
+.opbody{display:block}.opbody.two{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:30px;align-items:center}
+.opplate{border-radius:4px;overflow:hidden;line-height:0;border:2px solid #2F2620;box-shadow:0 0 0 4px #E6D9BD,0 0 0 5px rgba(201,166,74,.7),0 10px 24px rgba(30,24,18,.3);background:#C9D3D4}
+.opplate svg{width:100%;height:auto;display:block}
+.opport{display:flex;justify-content:center;align-items:flex-end;background:linear-gradient(180deg,#B8C7CC,#8FA4AC);padding-top:12px}
+.opport svg{width:62%;height:auto}
+.optext{display:flex;flex-direction:column;gap:10px}
+.opkick{margin:0;font-size:12px;letter-spacing:.32em;text-transform:uppercase;color:var(--accent)}
+.oph{margin:0;font:400 36px/1.1 var(--display);color:var(--wood);letter-spacing:.02em}
+.oprule{width:220px;height:12px;color:var(--gold);display:block}
+.ophead{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px}
+.ophead .oplead{max-width:640px}
+.oplead{margin:0;font-size:16.5px;line-height:1.6;color:#4E4436}
+.oplead.drop::first-letter{float:left;font:400 56px/0.9 var(--display);color:var(--accent);padding:5px 9px 0 0;text-shadow:1px 1px 0 rgba(201,166,74,.6)}
+.opmarks{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.opmark{display:flex;align-items:center;gap:7px;padding:6px 11px 6px 8px;border-radius:999px;background:rgba(255,255,255,.55);border:1px solid #D6CAB2;font-size:13.5px}
+.opmark b{font-weight:400}.opmark svg{width:18px;height:18px;flex:none}
+.opacts{display:flex;align-items:center;gap:8px;border-top:1px solid #D6CAB2;padding-top:12px}
+.opsp{flex:1}.ophint{font-size:13px;color:#8A7C66;font-style:italic}
+.opgrid{display:grid;gap:12px;margin-top:4px}
+.opgrid.g5{grid-template-columns:repeat(5,minmax(0,1fr))}.opgrid.g4{grid-template-columns:repeat(4,minmax(0,1fr))}.opgrid.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.opcard{--bc:#3D3129;display:flex;flex-direction:column;align-items:stretch;text-align:left;padding:0;border-radius:8px;overflow:hidden;cursor:pointer;font-family:var(--body);color:var(--ink);
+  background:#FBF8F1;border:1px solid #CDBFA6;box-shadow:0 2px 6px rgba(30,24,18,.12);transition:transform .16s ease,box-shadow .16s ease,border-color .16s;animation:opIn .4s ease-out both}
+.opgrid .opcard:nth-child(2){animation-delay:.05s}.opgrid .opcard:nth-child(3){animation-delay:.1s}.opgrid .opcard:nth-child(4){animation-delay:.15s}.opgrid .opcard:nth-child(5){animation-delay:.2s}.opgrid .opcard:nth-child(6){animation-delay:.25s}
+.opcard:hover,.opcard:focus-visible{transform:translateY(-5px);border-color:var(--gold);box-shadow:0 0 0 2px rgba(201,166,74,.55),0 14px 26px rgba(30,24,18,.28);outline:none}
+.ocban{display:flex;justify-content:center;align-items:center;height:104px;background:radial-gradient(circle at 50% 55%,rgba(255,255,255,.14),transparent 62%),var(--bc);border-bottom:3px solid var(--gold);position:relative}
+.ocban::after{content:'';position:absolute;inset:6px;border:1px solid rgba(226,199,122,.35);border-radius:4px;pointer-events:none}
+.ocban svg{width:86px;height:86px;filter:drop-shadow(0 3px 3px rgba(0,0,0,.35));transition:transform .2s}
+.opcard:hover .ocban svg{transform:scale(1.08) rotate(-3deg)}
+.ocbody{display:flex;flex-direction:column;gap:6px;padding:11px 12px 13px}
+.ocbody b{font:400 19px var(--display);color:var(--wood)}
+.ocbody em{font-style:normal;font-size:12px;letter-spacing:.06em;color:var(--accent);margin-top:-3px}
+.ocd{font-size:13.5px;line-height:1.45;color:#4E4436}
+.ocrow{display:block;font-size:12.5px;line-height:1.4;color:#4E4436;padding-top:5px;border-top:1px dashed #DCD0B8}
+.ocrow i{display:block;font-style:normal;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:#8A7C66}
+.opcard.god .ocban{height:116px}
+.opcard.adv2{flex-direction:row;align-items:flex-start;gap:0}
+.ocport{flex:none;padding:12px 0 12px 12px}.ocport svg{display:block;border-radius:8px;box-shadow:0 0 0 2px #FBF8F1,0 0 0 3px rgba(201,166,74,.7)}
+.adv2 .ocbody{padding:12px}.adv2 q{font-size:12.5px;line-height:1.4;color:#6E6250;font-style:italic;quotes:'“' '”'}
+.opsum{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.opsum span{display:flex;align-items:center;gap:8px;padding:4px 14px 4px 4px;border-radius:999px;background:var(--wood);color:var(--cream);font-size:13.5px;box-shadow:inset 0 0 0 1px rgba(201,166,74,.5)}
+.opsum svg{width:30px;height:30px;background:#3D3129;border-radius:50%;padding:2px;box-sizing:border-box}
+@media (max-width:1100px){.opgrid.g5{grid-template-columns:repeat(3,minmax(0,1fr))}.opgrid.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.opgrid.g3{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:760px){.opbody.two{grid-template-columns:1fr;gap:14px}.oph{font-size:27px}.opc{padding:16px 16px 14px}.oplead{font-size:15px}
+  .opgrid.g5,.opgrid.g4,.opgrid.g3{grid-template-columns:1fr}.ocban{height:70px}.ocban svg{width:50px;height:50px}.opsteps span+span::before{width:8px}.opsteps{font-size:10.5px}.ophint{display:none}}
+/* ===== Beta 0.20: illustrated guide ===== */
+.guide{width:300px;border-radius:8px;border:2px solid var(--wood);box-shadow:0 0 0 1px rgba(201,166,74,.55),0 8px 22px rgba(30,24,18,.3);background:linear-gradient(180deg,#FBF8F1,#F2EBDC)}
+.guide.gin{animation:opIn .35s ease-out both}
+.guide .gh{padding:7px 8px 7px 10px;background:linear-gradient(180deg,#3D3129,#2F2620);border-bottom:2px solid var(--gold)}
+.guide .grune{width:15px;height:15px;color:var(--gold2);flex:none}
+.guide .gdots{display:flex;gap:4px;justify-content:center;padding:7px 10px 0}
+.guide .gdots i{width:7px;height:7px;transform:rotate(45deg);border:1px solid #B9A88C;flex:none}
+.guide .gdots i.d{background:#B9A88C}.guide .gdots i.on{background:var(--gold);border-color:#8C6A24;box-shadow:0 0 0 2px rgba(201,166,74,.25)}
+.guide .gart{display:flex;justify-content:center;align-items:center;gap:6px;margin:8px 10px 0;min-height:76px;padding:6px;border-radius:6px;background:radial-gradient(ellipse at 50% 70%,#E9EFE2 0%,#D9DCCB 70%);border:1px solid #D6CAB2;box-shadow:inset 0 0 14px rgba(122,95,70,.15)}
+.guide .gth{height:72px;width:auto;max-width:48%;object-fit:contain;filter:drop-shadow(0 3px 3px rgba(30,24,18,.25))}
+.guide .gseas{width:100%;height:auto}
+.guide .gpic{height:66px;width:auto}
+.guide .gemb svg{width:68px;height:68px;padding:4px;border-radius:50%;background:var(--wood);box-shadow:0 0 0 2px var(--gold)}
+.guide .gprio{display:flex;gap:5px;flex-wrap:wrap;justify-content:center}
+.guide .gprio span{font-size:11.5px;padding:4px 8px;border-radius:6px;background:#FBF8F1;border:1px solid var(--pc);color:var(--pc);box-shadow:inset 3px 0 0 var(--pc)}
+.guide .gb{padding:9px 12px 11px}.guide .gb strong{font:400 17px var(--display);color:var(--wood);margin-bottom:4px;font-weight:400}
+.guide .gb p{font-size:12.8px;line-height:1.5;color:#4E4436}.guide .gb p b{color:#2F2620;font-weight:600}
+.guide .gtasks{list-style:none;margin:2px 0 8px;padding:7px 9px;border-radius:6px;background:rgba(255,255,255,.6);border:1px dashed #CDBFA6;display:flex;flex-direction:column;gap:5px}
+.guide .gtasks li{display:flex;align-items:center;gap:7px;font-size:12.5px;color:#2F2620}
+.guide .gtasks li.ok{color:#7A8A6A;text-decoration:line-through;text-decoration-color:rgba(94,122,78,.5)}
+.guide .gck{width:15px;height:15px;border-radius:4px;border:1.5px solid #B9A88C;background:#fff;flex:none;display:flex}
+.guide .gck.ok{background:var(--green);border-color:var(--green)}.guide .gck svg{width:100%;height:100%}
+.guide .gb .gw{display:flex;align-items:center;gap:5px;font-style:normal;color:#5E7F8C;font-size:11.5px}.guide .gw span{font-size:12px}
+.guide .ga .btn{min-height:32px}
+.gpulse{position:relative;animation:gPulse 1.6s ease-in-out infinite;border-radius:8px}
+@keyframes gPulse{0%,100%{box-shadow:0 0 0 0 rgba(226,199,122,0)}50%{box-shadow:0 0 0 3px rgba(226,199,122,.9),0 0 16px 4px rgba(226,199,122,.55)}}
+@media (max-width:899px){.guide{width:230px}.guide .gth{height:54px}.guide .gart{min-height:58px}}
+.guide{position:fixed;z-index:6;top:calc(env(safe-area-inset-top,0px) + 112px);left:16px;max-height:calc(100vh - 230px);overflow:auto;scrollbar-width:thin;transition:left .2s ease}
+@media (max-width:899px){.guide{left:auto;right:max(16px, env(safe-area-inset-right,0px));top:calc(env(safe-area-inset-top,0px) + 112px)}}
 </style>
 
 <canvas id="map" aria-label="Mapa isométrico de Kaldstrand"></canvas>
@@ -470,7 +559,7 @@ h3 svg{vertical-align:-3px}
 <script>
 (function(){
 'use strict';
-const GAME_VERSION="Beta 0.19.0";
+const GAME_VERSION="Beta 0.20.0";
 /* =================== constants =================== */
 const N=132,OX=30,OY=24,SX=12,SY=6,HW=32,HH=16,TW=64;
 const HOME_X=63,HOME_Y=60;  /* the village centre in tile coords */
@@ -6244,12 +6333,13 @@ const ICON={food:'<svg width="14" height="14" viewBox="0 0 20 20" aria-hidden="t
   people:'<svg width="14" height="14" viewBox="0 0 20 20" aria-hidden="true"><circle cx="13.5" cy="5.6" r="2.6" fill="#7E8C92"/><path d="M8.6 17 Q9.2 9.4 13.5 9.4 Q17.8 9.4 18.4 17 Z" fill="#7E8C92"/><circle cx="7" cy="6.2" r="3" fill="#C9C2B2"/><path d="M1.4 18 Q2 10.6 7 10.6 Q12 10.6 12.6 18 Z" fill="#B5733F"/><path d="M4.2 5.2 Q7 2 9.8 5.2" fill="none" stroke="#8E6F52" stroke-width="1.2"/></svg>',
   warriors:'<svg width="14" height="14" viewBox="0 0 20 20" aria-hidden="true"><path d="M15 2 L15 18" stroke="#7A5D44" stroke-width="1.3"/><path d="M15 0.8 L16.6 4 L13.4 4 Z" fill="#8C9398"/><circle cx="8.5" cy="11" r="7" fill="#A34A3A" stroke="#5A4636" stroke-width="1"/><path d="M8.5 4 V18 M1.5 11 H15.5" stroke="#E9E2D0" stroke-width="1.6"/><circle cx="8.5" cy="11" r="2.2" fill="#B7BCBF" stroke="#5E6468" stroke-width="0.7"/></svg>',
   morale:'<svg width="14" height="14" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8.4" fill="#C9A64A" stroke="#8C6A24" stroke-width="0.9"/><path d="M5.8 11.4 Q10 15.6 14.2 11.4" stroke="#263035" stroke-width="1.5" fill="none" stroke-linecap="round"/><circle cx="7.2" cy="7.8" r="1.1" fill="#263035"/><circle cx="12.8" cy="7.8" r="1.1" fill="#263035"/></svg>',
+  gold:'<svg width="14" height="14" viewBox="0 0 20 20" aria-hidden="true"><ellipse cx="8" cy="15" rx="6" ry="2.4" fill="#A9822E"/><rect x="2" y="11.6" width="12" height="3.4" fill="#A9822E"/><ellipse cx="8" cy="11.6" rx="6" ry="2.4" fill="#E2C05A" stroke="#A9822E" stroke-width="0.6"/><path d="M11 4 L18 4 L19 8 L10 8 Z" fill="#E8C85E" stroke="#8C6A24" stroke-width="0.8" stroke-linejoin="round"/><path d="M12 5.4 H16.6" stroke="#FFF0B0" stroke-width="0.8"/></svg>',
   silver:'<svg width="14" height="14" viewBox="0 0 20 20" aria-hidden="true"><ellipse cx="9" cy="14.5" rx="6.5" ry="2.6" fill="#8C9398"/><rect x="2.5" y="11" width="13" height="3.5" fill="#8C9398"/><ellipse cx="9" cy="11" rx="6.5" ry="2.6" fill="#C9CED1" stroke="#8C9398" stroke-width="0.6"/><ellipse cx="13" cy="7" rx="5" ry="4.6" fill="#DDE1E3" stroke="#8C9398" stroke-width="0.9"/><path d="M11 7 H15 M13 5 V9" stroke="#8C9398" stroke-width="0.9"/></svg>'};
-const CHIPS=[['food','Food'],['wood','Wood'],['planks','Planks'],['iron','Iron'],['tools','Tools'],['fame','Fame'],['people','People'],['morale','Morale'],['warriors','Warriors'],['silver','Silver']];
-const RGROUPS=[['people','morale'],['food'],['wood','planks','iron','tools'],['silver','fame','warriors']];
+const CHIPS=[['food','Food'],['wood','Wood'],['planks','Planks'],['iron','Iron'],['tools','Tools'],['fame','Fame'],['people','People'],['morale','Morale'],['warriors','Warriors'],['silver','Silver'],['gold','Gold']];
+const RGROUPS=[['people','morale'],['food'],['wood','planks','iron','tools'],['silver','gold','fame','warriors']];
 $('res').innerHTML=RGROUPS.map(g=>'<div class="rg">'+g.map(k=>{const c=CHIPS.find(q=>q[0]===k);return '<button type="button" class="chip" id="chip-'+k+'" data-res="'+k+'" aria-label="'+c[1]+'">'+ICON[k]+'<span class="v"><span class="lbl">'+c[1]+'</span><span class="n"><strong id="r-'+k+'">0</strong><em id="d-'+k+'"></em></span></span></button>';}).join('')+'</div>').join('');
 {const tip=document.createElement('div');tip.id='rtip';tip.className='rtip';tip.hidden=true;document.body.appendChild(tip);}
-const RTIP={food:'Everything people eat. Each person eats about 1 a day, more in winter.',water:'Carried from wells. Each person drinks every day.',wood:'Felled by woodcutters. Burned as firewood in winter and turned into planks.',planks:'Sawn from wood at the carpenter.',iron:'Dug at the mine.',tools:'Forged by the smith. Workers wear them out.',silver:'From trade and plunder.',fame:'Earned by deeds. Spend it on land.',people:'People living in Kaldstrand / beds in houses.',morale:'How content the village is.',warriors:'Trained fighters (+ in training).'};
+const RTIP={food:'Everything people eat. Each person eats about 1 a day, more in winter.',water:'Carried from wells. Each person drinks every day.',wood:'Felled by woodcutters. Burned as firewood in winter and turned into planks.',planks:'Sawn from wood at the carpenter.',iron:'Dug at the mine.',tools:'Forged by the smith. Workers wear them out.',silver:'From trade and plunder. Buys goods from merchants.',gold:'Rare. Taken in raids on rich places; needed for the greatest works.',fame:'Earned by deeds. Spend it on land.',people:'People living in Kaldstrand / beds in houses.',morale:'How content the village is.',warriors:'Trained fighters (+ in training).'};
 function tipHtml(k){const c=CHIPS.find(q=>q[0]===k),r=S.res,bal=(S.bal||{})[k],L=(S.prodLog||{})[k]||{};
   let h='<b>'+c[1]+'</b><p>'+RTIP[k]+'</p>';
   const cap={food:capFood(),water:capWater(),wood:capMat(),planks:capMat(),iron:capMat()}[k];
@@ -6270,10 +6360,10 @@ function hud(){
   document.querySelectorAll('.seg .fast').forEach(b=>b.hidden=!(S.mode==='test'||S.mode==='sandbox'));
   const r=S.res;
   $('r-food').textContent=fmt(foodUnits());$('r-wood').textContent=fmt(r.wood);$('r-planks').textContent=fmt(r.planks);$('r-iron').textContent=fmt(r.iron);$('r-tools').textContent=fmt(r.tools);$('r-fame').textContent=fmt(S.fame);$('r-people').textContent=S.pop+'/'+housing();
-  const B0=S.bal||{};for(const k of ['food','wood','planks','iron','tools','silver','fame']){const e=$('d-'+k);if(!e)continue;const v=B0[k];if(v===undefined||Math.abs(v)<0.05){e.textContent='';e.className='';continue;}e.textContent=(v>0?'▲':'▼')+fmt(Math.abs(v));e.className=v>0?'up':'dn';}
+  const B0=S.bal||{};for(const k of ['food','wood','planks','iron','tools','silver','gold','fame']){const e=$('d-'+k);if(!e)continue;const v=B0[k];if(v===undefined||Math.abs(v)<0.05){e.textContent='';e.className='';continue;}e.textContent=(v>0?'▲':'▼')+fmt(Math.abs(v));e.className=v>0?'up':'dn';}
   if(!$('rtip').hidden){const hv=document.querySelector('.chip:hover');if(hv)$('rtip').innerHTML=tipHtml(hv.dataset.res);}
-  $('r-warriors').textContent=S.warriors+(S.train?'+'+S.train.n:'');$('r-silver').textContent=fmt(r.silver);$('r-morale').textContent=Math.round(S.morale);$('chip-morale').classList.toggle('warn',S.morale<40);
-  $('chip-warriors').hidden=thLevel()<2;$('chip-silver').hidden=thLevel()<3;
+  $('r-warriors').textContent=S.warriors+(S.train?'+'+S.train.n:'');$('r-silver').textContent=fmt(r.silver);$('r-gold').textContent=fmt(r.gold||0);$('r-morale').textContent=Math.round(S.morale);$('chip-morale').classList.toggle('warn',S.morale<40);
+  $('chip-warriors').hidden=thLevel()<2;$('chip-gold').hidden=!((r.gold||0)>0||S.goldSeen);if((r.gold||0)>0)S.goldSeen=1;
   $('chip-food').classList.toggle('warn',foodUnits()<eatNeed()*3);$('chip-wood').classList.toggle('warn',isWinter()&&r.wood<fireNeed()*3);$('chip-tools').classList.toggle('warn',r.tools<1);
   const yt=S.gameT%YEAR,year=Math.floor(S.gameT/YEAR)+1,win=yt>=SUMMER;
   const day=win?Math.floor((yt-SUMMER)/DAY)+1:Math.floor(yt/DAY)+1,len=win?15:30,pr=win?(yt-SUMMER)/400:yt/SUMMER;
@@ -6472,9 +6562,10 @@ function tap(px,py){
   if(mode==='place'){camX=w[0];camY=w[1];clampCam();return;}
   if(mode==='road'){roadTap(tt);return;}
   if(mode==='remove'){removeTap(tt);return;}
-  for(let k=0;k<4;k++){const x=tt[0]+k,y=tt[1]+k;if(!inMap(x,y))continue;const id=occ[y*N+x];if(id){const b=B.find(o=>o.id===id);if(b){demolishArmed=0;buildingSheet(b);return;}}}
-  if(!inMap(tt[0],tt[1])){closeSheet();return;}
-  tileSheet(tt[0],tt[1]);
+  const pk=pickAt(px,py);
+  if(pk&&pk.b){demolishArmed=0;buildingSheet(pk.b);return;}
+  if(!pk){closeSheet();return;}
+  tileSheet(pk.tile[0],pk.tile[1]);
 }
 
 /* ---------- input ---------- */
@@ -6611,17 +6702,38 @@ function openTray(cat){trayCat=cat;buildCat=cat;const tr=$('tray');
 
 /* --- hover: buildings light up under the mouse and show their name --- */
 let HOVER_B=null;
-function buildingAt(px,py){const w=s2w(px,py),tt=w2t(w[0],w[1]);for(let k=0;k<4;k++){const x=tt[0]+k,y=tt[1]+k;if(!inMap(x,y))continue;const id=occ[y*N+x];if(id){const b=B.find(o=>o.id===id);if(b)return b;}}return null;}
-function hoverAt(px,py){if(mode!=='view'||titleOn||modalOpen){setHover(null);return;}setHover(buildingAt(px,py),px,py);}
+/* pickAt: what a click / hover at screen point (px,py) selects.
+   1) the tile really under the cursor (elevation counted, front tiles win);
+   2) a building standing on that tile; 3) the tree / bush / ore on it;
+   4) only if the tile is empty: a building whose picture covers the point (tall roofs). */
+function tileUnder(px,py){const w=s2w(px,py),tt=w2t(w[0],w[1]);let best=null,bd=-1;
+  for(let k=-1;k<=5;k++)for(let j=-1;j<=1;j++){const x=tt[0]+k+(j>0?1:0),y=tt[1]+k+(j<0?1:0);if(!inMap(x,y))continue;const i=y*N+x;
+    const e=ter[i]===T.RIVER?-2:(elev[i]||0),sx=(x-y)*HW,sy=(x+y)*HH-e;
+    if(Math.abs(w[0]-sx)/HW+Math.abs(w[1]-sy)/HH<=1.001&&x+y>bd){bd=x+y;best=[x,y];}}
+  return best||(inMap(tt[0],tt[1])?tt:null);}
+function natOn(x,y){const i=y*N+x,t=ter[i];if(t===T.FOREST)return trees.some(o=>o.x===x&&o.y===y);if(t===T.BERRY)return bushes.some(o=>o.x===x&&o.y===y);return t===T.IRON;}
+function bOn(x,y){const id=occ[y*N+x];return id?B.find(o=>o.id===id)||null:null;}
+function pickAt(px,py){const t=tileUnder(px,py);
+  if(t){const b=bOn(t[0],t[1]);if(b)return {b:b};if(natOn(t[0],t[1]))return {tile:t,nat:true};}
+  const w=s2w(px,py),tt=w2t(w[0],w[1]);
+  for(let k=0;k<4;k++){const x=tt[0]+k,y=tt[1]+k;if(!inMap(x,y))continue;const b=bOn(x,y);if(b)return {b:b};}
+  return t?{tile:t}:null;}
+function buildingAt(px,py){const p=pickAt(px,py);return p&&p.b||null;}
+function hoverAt(px,py){if(mode!=='view'||titleOn||modalOpen){setHover(null);return;}const p=pickAt(px,py);
+  if(p&&p.b){HOVER_T=null;setHover(p.b,px,py);return;}
+  if(p&&p.nat){setHover(null);HOVER_T=p.tile;cv.style.cursor='pointer';const tip=$('htip');if(tip){const tn=ter[p.tile[1]*N+p.tile[0]];tip.innerHTML='<b>'+(tn===T.FOREST?'Forest':tn===T.BERRY?'Berry bushes':'Iron outcrop')+'</b>';tip.hidden=false;tip.style.left=Math.min(innerWidth-260,px+16)+'px';tip.style.top=(py+18)+'px';}return;}
+  HOVER_T=null;setHover(null);}
+let HOVER_T=null;
 function setHover(b,px,py){HOVER_B=b;const tip=$('htip');cv.style.cursor=b?'pointer':'';if(!tip)return;if(!b){tip.hidden=true;return;}
   const D=DEF[b.t];tip.innerHTML='<b>'+esc(b.t==='th'?'Town Hall':D.name)+'</b>'+(D.up||b.t==='th'?' <span>level '+(b.t==='th'?thLevel():b.lvl)+'</span>':'')+(slotsOf(b)?'<em>'+b.workers+' of '+slotsOf(b)+' working'+(slotsOf(b)?' · '+(winterStopped(b)?'winter stop':PRIO[prioOf(b)].toLowerCase()):'')+(b.status&&b.status!=='Working'?' · '+esc(b.status):'')+'</em>':'');
   tip.hidden=false;tip.style.left=Math.min(innerWidth-260,px+16)+'px';tip.style.top=(py+18)+'px';}
-function drawHover(){const b=HOVER_B;if(!b||mode!=='view')return;const c=fp(b),e=elev[b.fy*N+b.fx]||2;
+function drawHover(){if(mode!=='view')return;const b=HOVER_B;if(!b&&HOVER_T){const x=HOVER_T[0],y=HOVER_T[1],i=y*N+x,e=ter[i]===T.RIVER?-2:(elev[i]||0),sx=(x-y)*HW,sy=(x+y)*HH-e;
+  ctx.save();ctx.strokeStyle='rgba(255,236,170,0.9)';ctx.lineWidth=2/zoom+0.6;ctx.beginPath();ctx.moveTo(sx,sy-HH);ctx.lineTo(sx+HW,sy);ctx.lineTo(sx,sy+HH);ctx.lineTo(sx-HW,sy);ctx.closePath();ctx.stroke();ctx.fillStyle='rgba(255,236,170,0.14)';ctx.fill();ctx.restore();return;}if(!b)return;const c=fp(b),e=elev[b.fy*N+b.fx]||2;
   ctx.save();ctx.translate(0,-e);ctx.strokeStyle='rgba(255,236,170,0.95)';ctx.lineWidth=2.4/zoom+0.6;ctx.setLineDash([]);ctx.beginPath();ctx.moveTo(c.T[0],c.T[1]);ctx.lineTo(c.R[0],c.R[1]);ctx.lineTo(c.Bt[0],c.Bt[1]);ctx.lineTo(c.L[0],c.L[1]);ctx.closePath();ctx.stroke();
   ctx.fillStyle='rgba(255,236,170,0.12)';ctx.fill();ctx.restore();}
 {const tip=document.createElement('div');tip.id='htip';tip.className='htip';tip.hidden=true;document.body.appendChild(tip);}
 cv.addEventListener('pointermove',e=>{if(e.pointerType==='mouse'&&!e.buttons)hoverAt(e.clientX,e.clientY);});
-cv.addEventListener('pointerleave',()=>setHover(null));
+cv.addEventListener('pointerleave',()=>{HOVER_T=null;setHover(null);});
 cv.addEventListener('pointerdown',()=>{const t=$('htip');if(t)t.hidden=true;});
 
 /* --- suggested actions: what needs doing, one click to get there --- */
@@ -6682,33 +6794,64 @@ function needsList(k,short){const D=DEF[k],a=[];if(!D)return a;
 function needsOf(k){return needsList(k,false);}
 function needsShort(k){return needsList(k,true).filter(x=>!/workers$/.test(x)).join(', ');}
 
-/* =================== guide: short dynamic tutorial at the start of a new saga =================== */
-/* S.guide: step index while the guide runs, -1 when finished or closed, undefined in old saves and test villages */
+/* =================== guide: illustrated tutorial at the start of a new saga (1J, Beta 0.20) ===================
+   S.guide: step index while the guide runs, -1 when finished or closed, undefined in old saves and test villages.
+   Each step has a picture strip, a short text, an optional task list that ticks itself, a button that starts
+   the placement or opens the right panel, and an optional UI element that pulses (hl). */
+const gThumb=t=>'<img class="gth" alt="" src="'+buildThumb(t,1)+'">';
+const gTick=ok=>'<i class="gck'+(ok?' ok':'')+'">'+(ok?'<svg viewBox="0 0 12 12"><path d="M2.5 6.5 L5 9 L9.5 3.5" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>':'')+'</i>';
+function gSeasons(){const yt=S.gameT%YEAR,d=Math.min(44,Math.floor(yt/DAY));let h='<svg class="gseas" viewBox="0 0 270 54" aria-hidden="true">';
+  for(let k=0;k<45;k++){const x=4+k*5.9,w=k<30;h+='<rect x="'+x.toFixed(1)+'" y="'+(w?16:14)+'" width="4.9" height="'+(w?18:22)+'" rx="1.2" fill="'+(w?(k<d?'#A9B86A':'#C9D48C'):(k<d?'#7FA0B4':'#B9D0DC'))+'"/>';}
+  const mx=4+d*5.9+2.4;h+='<path d="M'+mx+' 10 l-4 -6 h8 z" fill="#A34A3A"/><text x="4" y="50" font-size="9" fill="#5E5446">30 days of summer</text><text x="266" y="50" font-size="9" fill="#5E7F8C" text-anchor="end">15 of winter</text>';
+  h+='<g transform="translate(92 2)"><circle cx="6" cy="6" r="3.4" fill="#E2C05A"/></g><g transform="translate(206 0)" stroke="#7FA0B4" stroke-width="1.3"><path d="M6 1 V11 M1.5 3.5 L10.5 8.5 M1.5 8.5 L10.5 3.5"/></g></svg>';return h;}
+function gPrio(){return '<div class="gprio">'+[['Stopped','#8A7C66'],['Low','#7E8C92'],['High','#5E7A4E'],['Urgent','#A34A3A']].map(p=>'<span style="--pc:'+p[1]+'">'+p[0]+'</span>').join('')+'</div>';}
+function gFire(){return '<svg class="gpic" viewBox="0 0 120 64" aria-hidden="true"><path d="M30 58 V34 L54 18 L78 34 V58 Z" fill="#8E6F52" stroke="#5A4636" stroke-width="1.5"/><path d="M26 36 L54 15 L82 36" fill="none" stroke="#5A4636" stroke-width="3" stroke-linecap="round"/><rect x="48" y="42" width="12" height="16" fill="#3A2C22"/><path d="M66 22 V12 h6 v14" fill="#6E5440"/><path d="M69 10 q-4 -5 1 -9 q-1 4 3 5 q3 -5 6 0 q3 6 -4 8 z" fill="#E2A04A" opacity=".85"/><path d="M68 4 q6 -6 12 -2" fill="none" stroke="#B9B2A6" stroke-width="2" stroke-linecap="round" opacity=".7"/><g transform="translate(92 34)"><rect x="0" y="12" width="22" height="5" rx="1" fill="#8E6F52"/><rect x="2" y="6" width="22" height="5" rx="1" fill="#7A5D44"/><rect x="0" y="0" width="22" height="5" rx="1" fill="#8E6F52"/><ellipse cx="22" cy="2.5" rx="2" ry="2.5" fill="#D8B98A"/><ellipse cx="24" cy="8.5" rx="2" ry="2.5" fill="#D8B98A"/><ellipse cx="22" cy="14.5" rx="2" ry="2.5" fill="#D8B98A"/></g></svg>';}
+function gProd(){const r=(n,a,b,c)=>'<g transform="translate(0 '+a+')"><text x="6" y="10" font-size="9" fill="#4E4436">'+n+'</text><rect x="58" y="3" width="'+b+'" height="7" rx="2" fill="#A9B86A"/><rect x="'+(60+b)+'" y="3" width="'+c+'" height="7" rx="2" fill="#C98A6A"/></g>';
+  return '<svg class="gpic" viewBox="0 0 160 64" aria-hidden="true"><rect x="1" y="1" width="158" height="62" rx="5" fill="#FBF8F1" stroke="#CDBFA6"/>'+r('Food',6,44,22)+r('Wood',22,52,30)+r('Planks',38,26,10)+'<path d="M128 46 h22" stroke="#C9A64A" stroke-width="2"/><text x="139" y="58" font-size="8" fill="#8A7C66" text-anchor="middle">reserve</text></svg>';}
+function gGodPic(){return '<span class="gemb">'+(typeof EMB!=='undefined'?EMB[patron()]:'')+'</span>';}
 const GUIDE=[
-  {h:'Welcome to Kaldstrand',t:()=>'A year has 30 days of summer and 15 of winter. In summer your people gather and build. In winter they live on what you stored, and every house burns wood to keep warm.',next:true},
-  {h:'Food and wood',t:()=>'Pick a Berry Gatherer and a Woodcutter’s Lodge from the bar at the bottom (the first of each is free). Berries feed people in summer; wood builds everything and heats the houses. Trees and bushes never run out, but each one serves a single building: a lodge needs 45 trees of its own for full output, a gatherer 6 bushes. When placing, the circle shows how many it gets.',done:()=>has('berry')&&has('wood'),go:()=>placeType(has('berry')?'wood':'berry'),btn:()=>'Place '+DEF[has('berry')?'wood':'berry'].name},
-  {h:'Workers',t:()=>'People take jobs on their own. Click a building to see what it makes and what it needs, and use − and + to choose how many work there. Idle people show up in the To do list. New buildings take 1 to 3 days to raise and borrow 1 to 3 workers while the scaffolding stands.',next:true},
-  {h:'Fish',t:()=>'The Fisher’s Hut is your steadiest food: 4 fish per worker a day. It fishes the water within 3 tiles and needs 5 water tiles of its own for full output; each tile serves one hut only. In winter it catches more at sea than on the river.',done:()=>has('fish'),go:()=>placeType('fish'),btn:()=>'Place a Fisher’s Hut'},
-  {h:'Planks',t:()=>'The Carpenter saws wood into planks. Storing 40 planks opens the Granary, Warehouse, Iron Mine and Smithy.',done:()=>has('carp'),go:()=>placeType('carp'),btn:()=>'Place a Carpenter'},
-  {h:'Food for the winter',t:()=>'Fresh food loses 3% a day. The Preserver turns fish and berries into dried fish and jam that never spoil and feed twice as much. A Granary holds 300 more food.',done:()=>has('pres')&&has('gran'),go:()=>placeType(has('pres')?'gran':'pres'),btn:()=>has('pres')?(isAvail('gran')?'Place a Granary':''):'Place a Preserver'},
-  {h:'Firewood',t:()=>{const w=Math.ceil(fireNeed()*15);return 'Each house burns about ⅓ wood a day in summer and under 1 in winter. Your village needs about '+w+' wood to get through this winter, on top of what you build with. Keep the woodcutters busy; if the logs run out, the fires burn planks.';},next:true},
-  {h:'Tools and the Town Hall',t:()=>'Work slows down without tools: build an Iron Mine and a Smithy. Follow the goal at the top and the To do list on the right. To raise the Town Hall you need enough people, its cost in materials, and at least one house at the highest level your hall allows. Click the Town Hall to see what is missing.',next:true,last:true}];
-function guideStep(){if(typeof S.guide!=='number'||S.guide<0)return null;while(S.guide<GUIDE.length&&GUIDE[S.guide].done&&GUIDE[S.guide].done())S.guide++;if(S.guide>=GUIDE.length){S.guide=-1;return null;}return GUIDE[S.guide];}
+  {h:'Welcome to Kaldstrand',art:()=>gSeasons(),t:()=>'A year is <b>30 days of summer and 15 of winter</b>; a day lasts about 27 seconds at 1×. In summer your people gather and build. In winter gatherers and fields rest, fishing drops and every house burns wood: what you store in summer must carry you through.',next:true},
+  {h:'Food and wood',art:()=>gThumb('berry')+gThumb('wood'),t:()=>'Open <b>Food</b> and <b>Materials</b> in the bar below. The first Berry Gatherer and Woodcutter’s Lodge are free. Sources run out: a tree gives <b>50 wood a year</b>, a bush <b>45 berries</b>. A lodge needs <b>20 trees</b> of its own, a gatherer <b>6 bushes</b>; the circle shows how many it gets while you place it. Felled trees grow back 3 days after winter.',
+    tasks:[['Place a Berry Gatherer',()=>has('berry')],['Place a Woodcutter’s Lodge',()=>has('wood')]],go:()=>placeType(has('berry')?'wood':'berry'),btn:()=>'Place '+DEF[has('berry')?'wood':'berry'].name,hl:()=>has('berry')?'#dock [data-dc="Materials"]':'#dock [data-dc="Food"]'},
+  {h:'Building takes time',art:()=>gThumb('th'),t:()=>'A new building rises in <b>½ to 3 days</b>. The builders are the Town Hall’s <b>builder posts</b> (3 at Town Hall 1, one more each level); they only take people while scaffolding stands. With no builders free, a plot waits its turn.',next:true},
+  {h:'Workers and priority',art:()=>gPrio(),t:()=>'People take jobs by themselves. Click any building to see what it makes and needs, and set its <b>priority</b>: Urgent places fill first, then High, then Low; Stopped takes nobody. Idle people show in the <b>To do</b> list on the right.',next:true,hl:()=>'#todo'},
+  {h:'Fish',art:()=>gThumb('fish'),t:()=>'The Fisher’s Hut is your steadiest food: <b>4 fish per worker a day</b>. It needs <b>5 water tiles</b> within 3 tiles; a sea tile holds 100 fish a year, a river tile 70. In winter it catches less, more at sea than on the river.',
+    tasks:[['Place a Fisher’s Hut',()=>has('fish')]],go:()=>placeType('fish'),btn:()=>'Place a Fisher’s Hut',hl:()=>'#dock [data-dc="Food"]'},
+  {h:'Planks',art:()=>gThumb('carp'),t:()=>'The Carpenter saws <b>4 wood into 2 planks</b> per worker a day. Storing <b>40 planks</b> opens the Granary, Warehouse, Iron Mine and Smithy.',
+    tasks:[['Place a Carpenter',()=>has('carp')]],go:()=>placeType('carp'),btn:()=>'Place a Carpenter',hl:()=>'#dock [data-dc="Materials"]'},
+  {h:'Food for the winter',art:()=>gThumb('pres')+gThumb('gran'),t:()=>'Fresh fish, berries and meat lose <b>3% a day</b>. The Preserver turns them into dried fish and jam that <b>never spoil and count as two meals</b>. A Granary stores more food.',
+    tasks:[['Place a Preserver',()=>has('pres')],['Place a Granary',()=>has('gran')]],go:()=>placeType(has('pres')?'gran':'pres'),btn:()=>has('pres')?(isAvail('gran')?'Place a Granary':''):'Place a Preserver'},
+  {h:'Firewood',art:()=>gFire(),t:()=>{const w=Math.ceil(fireNeed()*15);return 'Each house burns about <b>⅓ wood a day in summer</b> and <b>under 1 in winter</b>. Your village needs about <b>'+w+' wood</b> to get through this winter, on top of what you build with. If the logs run out, the fires burn planks.';},next:true},
+  {h:'Production and reserves',art:()=>gProd(),t:()=>'<b>Production</b> in the bar below lists every good: in store, made and used a day, and how many <b>winter days</b> it lasts. With − / + you set a <b>reserve</b>: workshops never use a good below it. “Reserve for next Town Hall” keeps the wood, planks and iron the next level costs.',next:true,go:()=>{const b=$('dk-prod');if(b)b.click();},btn:()=>'Open Production',hl:()=>'#dk-prod'},
+  {h:'Your patron god',art:()=>gGodPic(),t:()=>{const g=patron(),G=GODS[g],o=PATRON_OFF[g];return '<b>'+G.n+'</b>’s favour fades a little every day. Make an <b>offering</b> at the Town Hall ('+o.n+' '+o.t+') to keep it above 50 for his gift; at 80, ask his blessing at an Altar. Below 25 his wrath falls. A <b>Feast</b> in the hall lifts morale and favour, twice as much near a holy day.';},next:true},
+  {h:'Tools and the Town Hall',art:()=>gThumb('mine')+gThumb('smith'),t:()=>'Work slows without tools: build an <b>Iron Mine</b> and a <b>Smithy</b>. To raise the Town Hall you need <b>people, its materials and one house at the highest level</b> your hall allows. Follow the saga goal at the top; click the Town Hall to see what is missing.',next:true,last:true,go:()=>{const b=B.find(o=>o.t==='th');if(b)buildingSheet(b);},btn:()=>'Show the Town Hall'}];
+function gDone(g){return g.tasks?g.tasks.every(t=>t[1]()):(g.done?g.done():false);}
+function guideStep(){if(typeof S.guide!=='number'||S.guide<0)return null;while(S.guide<GUIDE.length&&!GUIDE[S.guide].next&&gDone(GUIDE[S.guide]))S.guide++;if(S.guide>=GUIDE.length){S.guide=-1;return null;}return GUIDE[S.guide];}
 function winterIn(){const yt=S.gameT%YEAR;return yt<SUMMER?Math.max(1,Math.ceil((SUMMER-yt)/DAY)):0;}
 let guideKey='';
-function renderGuide(){const side=document.querySelector('.side');if(!side)return;let el=$('guide');
+function guideHl(sel){document.querySelectorAll('.gpulse').forEach(e=>{if(!sel||!e.matches(sel))e.classList.remove('gpulse');});if(sel){const e=document.querySelector(sel);if(e)e.classList.add('gpulse');}}
+function renderGuide(){let el=$('guide');
   const g=titleOn?null:guideStep();
-  if(!g){if(el)el.hidden=true;return;}
-  if(!el){el=document.createElement('div');el.id='guide';el.className='guide';side.insertBefore(el,side.firstChild);}
-  el.hidden=false;
-  const wi=winterIn(),body=g.t(),b=g.btn?g.btn():'';
-  const key=S.guide+'|'+body+'|'+b+'|'+wi;if(key===guideKey)return;guideKey=key;
-  el.innerHTML='<div class="gh"><b>Guide</b><span>'+(S.guide+1)+' / '+GUIDE.length+'</span><button type="button" class="gx" id="g-x" aria-label="Close the guide" title="Close the guide">×</button></div>'+
-    '<div class="gb"><strong>'+esc(g.h)+'</strong><p>'+esc(body)+'</p>'+(wi?'<p class="gw">Winter comes in '+wi+' day'+(wi>1?'s':'')+'.</p>':'<p class="gw">It is winter now.</p>')+
-    '<div class="ga">'+(b&&g.go?'<button type="button" class="btn primary" id="g-go">'+esc(b)+'</button>':'')+(g.next?'<button type="button" class="btn'+(g.go?'':' primary')+'" id="g-next">'+(g.last?'Done':'Next')+'</button>':'')+'</div></div>';
+  if(!g){if(el)el.hidden=true;guideHl(null);return;}
+  if(!el){el=document.createElement('div');el.id='guide';el.className='guide';document.body.appendChild(el);}
+  el.hidden=false;placeGuide();guideHl(g.hl?g.hl():null);
+  const wi=winterIn(),body=g.t(),b=g.btn?g.btn():'',tk=g.tasks?g.tasks.map(t=>t[1]()?1:0).join(''):'';
+  const key=S.guide+'|'+body+'|'+b+'|'+wi+'|'+tk+'|'+(S.guide===0?Math.floor((S.gameT%YEAR)/DAY):'');if(key===guideKey)return;guideKey=key;
+  const dots=GUIDE.map((_,k)=>'<i class="'+(k<S.guide?'d':k===S.guide?'on':'')+'"></i>').join('');
+  el.innerHTML='<div class="gh"><svg class="grune" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1 V15 M8 5 L13 1 M8 9 L13 5" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg><b>Saga guide</b><span>'+(S.guide+1)+' / '+GUIDE.length+'</span><button type="button" class="gx" id="g-x" aria-label="Close the guide" title="Close the guide">×</button></div>'+
+    '<div class="gdots">'+dots+'</div><div class="gart">'+g.art()+'</div>'+
+    '<div class="gb"><strong>'+esc(g.h)+'</strong><p>'+body+'</p>'+
+    (g.tasks?'<ul class="gtasks">'+g.tasks.map(t=>'<li class="'+(t[1]()?'ok':'')+'">'+gTick(t[1]())+esc(t[0])+'</li>').join('')+'</ul>':'')+
+    '<p class="gw">'+(wi?'<span>❄</span> Winter comes in '+wi+' day'+(wi>1?'s':''):'<span>❄</span> It is winter now')+'</p>'+
+    '<div class="ga">'+(S.guide>0?'<button type="button" class="btn" id="g-prev" aria-label="Previous step">‹</button>':'')+(b&&g.go?'<button type="button" class="btn'+(g.next?'':' primary')+'" id="g-go">'+esc(b)+'</button>':'')+(g.next?'<button type="button" class="btn primary" id="g-next">'+(g.last?'Done':'Next')+'</button>':'')+'</div></div>';
+  if(renderGuide.st!==S.guide){renderGuide.st=S.guide;el.classList.remove('gin');void el.offsetWidth;el.classList.add('gin');}
   $('g-x').onclick=()=>{S.guide=-1;guideKey='';renderGuide();toast('Guide closed. You can open it again from the Saga panel.',3200);};
   if($('g-go'))$('g-go').onclick=()=>{if(mode!=='view')endMode();g.go();};
+  if($('g-prev'))$('g-prev').onclick=()=>{S.guide=Math.max(0,S.guide-1);while(S.guide>0&&!GUIDE[S.guide].next&&gDone(GUIDE[S.guide]))S.guide--;guideKey='';renderGuide();};
   if($('g-next'))$('g-next').onclick=()=>{S.guide++;guideKey='';renderGuide();};}
+/* PC: the guide sits on the left under the date bar, and steps aside when a sheet docks there */
+function placeGuide(){const el=$('guide');if(!el)return;const sh=$('sheet');let x=16;if(isWide()&&sh&&!sh.hidden)x=16+(sh.classList.contains('wide')?660:420)+12;el.style.left=isWide()?x+'px':'';}
+{const _o=openSheet,_c=closeSheet;openSheet=function(){const r=_o.apply(this,arguments);placeGuide();return r;};closeSheet=function(){const r=_c.apply(this,arguments);placeGuide();return r;};}
 setInterval(()=>{try{renderGuide();}catch(e){}},700);
 
 /* =================== portraits =================== */
@@ -7375,6 +7518,70 @@ function showTitle(screen,arg){titleOn=true;setSpeed(0);closeSheet();$('modal').
 function hideTitle(){titleOn=false;$('title').hidden=true;document.body.classList.remove('titled');}
 function startSaga(slot,mode,adv,trait,pg){freshState(mode,adv);S.utrait=UTRAITS[trait]?trait:'builder';setPatron(GODS[pg]&&pg!=='loki'?pg:'odin');curSlot=slot;S.saga.push({y:1,t:'Ubbe the '+UTRAITS[S.utrait].n.toLowerCase()+' swore to '+GODS[S.patron].n+' at the new hearth.'});S.saga.push({y:1,t:ADVISORS[adv].n+' the '+ADVISORS[adv].role.toLowerCase()+' stood at Ubbe’s side.'});syncWalkers();assignWorkers();hideTitle();const p=iso(HOME_X,HOME_Y);camX=p[0];camY=p[1];zoom=Math.min(1.1,Math.max(0.6,W/520));S.guide=0;save();setSpeed(1);}
 function loadSlot(i){try{const s=localStorage.getItem(SLOT_KEY(i));if(s&&apply(JSON.parse(s))){curSlot=i;try{localStorage.setItem(LAST_KEY,String(i));}catch(e){}syncWalkers();hideTitle();const p=iso(HOME_X,HOME_Y);camX=p[0];camY=p[1];setSpeed(1);return true;}}catch(e){}toast('That saga could not be loaded.');return false;}
+
+/* =================== the opening of a new saga (Beta 0.20) ===================
+   After the difficulty is chosen: three story pages that present Ubbe, then three choice pages
+   (Ubbe's gift, the patron god, the first advisor) drawn as illustrated cards over the new Kaldstrand.
+   Replaces the intro / trait / patron / advisor screens of showTitle (ids kept: #t-next, #t-skip, #t-back,
+   [data-ut], [data-pg], [data-ad] - the UI scripts click them). */
+const EMB={
+  builder:'<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M12 50 L32 30 L52 50" fill="none" stroke="#E9DCC0" stroke-width="3" stroke-linejoin="round"/><path d="M18 50 V40 M46 50 V40 M14 50 H50" stroke="#C9A97A" stroke-width="3" stroke-linecap="round"/><path d="M24 50 L32 42 L40 50" fill="none" stroke="#C9A97A" stroke-width="2"/><path d="M38 12 L50 24" stroke="#8E6F52" stroke-width="4" stroke-linecap="round"/><path d="M33 14 L41 6 L47 12 L39 20 Z" fill="#B7BCBF" stroke="#5E6468" stroke-width="1.4" stroke-linejoin="round"/></svg>',
+  warrior:'<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M14 52 L48 12" stroke="#8E6F52" stroke-width="3.4" stroke-linecap="round"/><path d="M40 10 Q52 8 54 20 Q48 18 44 20 Z" fill="#C9CED1" stroke="#5E6468" stroke-width="1.3"/><circle cx="28" cy="38" r="15" fill="#A34A3A" stroke="#E9DCC0" stroke-width="2.4"/><path d="M28 23 V53 M13 38 H43" stroke="#E9DCC0" stroke-width="2.4"/><circle cx="28" cy="38" r="4.5" fill="#B7BCBF" stroke="#5E6468" stroke-width="1.2"/></svg>',
+  trader:'<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 10 V50 M20 52 H44" stroke="#E9DCC0" stroke-width="3" stroke-linecap="round"/><path d="M12 20 H52" stroke="#E9DCC0" stroke-width="2.6" stroke-linecap="round"/><path d="M12 20 L6 34 Q12 40 18 34 Z M52 20 L46 34 Q52 40 58 34 Z" fill="#C9A64A" fill-opacity=".35" stroke="#E2C05A" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="31" r="3" fill="#DDE1E3"/><circle cx="52" cy="31" r="3" fill="#E2C05A"/><circle cx="32" cy="10" r="3" fill="#E2C05A"/></svg>',
+  provider:'<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M22 54 Q24 34 22 14 M22 34 Q14 28 12 18 M22 28 Q30 22 32 12 M22 42 Q14 38 11 30 M22 38 Q30 34 33 26" fill="none" stroke="#D9B45A" stroke-width="2.6" stroke-linecap="round"/><ellipse cx="12" cy="17" rx="2.6" ry="5" fill="#E2C05A" transform="rotate(-25 12 17)"/><ellipse cx="32" cy="12" rx="2.6" ry="5" fill="#E2C05A" transform="rotate(25 32 12)"/><ellipse cx="11" cy="29" rx="2.4" ry="4.6" fill="#E2C05A" transform="rotate(-35 11 29)"/><ellipse cx="33" cy="25" rx="2.4" ry="4.6" fill="#E2C05A" transform="rotate(35 33 25)"/><path d="M34 46 Q44 34 54 42 L60 36 L59 50 L54 46 Q44 56 34 46 Z" fill="#9FB4BC" stroke="#E9DCC0" stroke-width="1.6" stroke-linejoin="round"/><circle cx="40" cy="44" r="1.6" fill="#263035"/></svg>',
+  skald:'<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M20 54 Q10 30 22 10 Q30 18 32 30 Q34 18 42 10 Q54 30 44 54 Z" fill="none" stroke="#C9A97A" stroke-width="3" stroke-linejoin="round"/><path d="M20 46 H44" stroke="#C9A97A" stroke-width="3"/><path d="M25 20 V46 M30 24 V46 M35 24 V46 M40 20 V46" stroke="#E9DCC0" stroke-width="1.2"/><path d="M46 8 Q52 12 50 18 M52 6 Q60 12 56 20" fill="none" stroke="#E2C05A" stroke-width="1.8" stroke-linecap="round"/></svg>',
+  odin:'<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M10 40 Q14 22 32 20 Q40 12 48 16 L58 16 L50 22 Q52 34 40 42 L46 54 L38 48 L34 54 L32 44 Q20 46 10 40 Z" fill="#263035" stroke="#9AAFC2" stroke-width="1.6" stroke-linejoin="round"/><circle cx="45" cy="19" r="1.8" fill="#E2C05A"/><path d="M16 38 Q26 34 34 36 M20 42 Q28 38 36 40" stroke="#5E7F8C" stroke-width="1.3" fill="none"/></svg>',
+  thor:'<svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="30" cy="9" r="3.4" fill="none" stroke="#C9A97A" stroke-width="2"/><path d="M30 13 V30" stroke="#8E6F52" stroke-width="5.5" stroke-linecap="round"/><path d="M27 17 L33 19 M27 22 L33 24" stroke="#5A4636" stroke-width="1.4"/><path d="M17 30 H43 L49 52 Q30 58 11 52 Z" fill="#9AA1A6" stroke="#E9DCC0" stroke-width="2" stroke-linejoin="round"/><path d="M20 37 Q30 42 40 37 M18 45 Q30 50 42 45" fill="none" stroke="#5E6468" stroke-width="1.6"/><circle cx="30" cy="40" r="2" fill="#5E6468"/><path d="M53 6 L45 22 L51 22 L43 38" fill="none" stroke="#E2C05A" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/></svg>',
+  freyja:'<svg viewBox="0 0 64 64" aria-hidden="true"><g transform="translate(32 30)"><g fill="#C97A8A" stroke="#F0DCC8" stroke-width="1.2">'+[0,45,90,135,180,225,270,315].map(a=>'<ellipse cx="0" cy="-13" rx="5.5" ry="10" transform="rotate('+a+')"/>').join('')+'</g><circle r="6.5" fill="#E2C05A" stroke="#8C6A24" stroke-width="1.2"/></g><path d="M18 54 Q32 46 46 54" fill="none" stroke="#7FA05A" stroke-width="2.6" stroke-linecap="round"/><circle cx="20" cy="54" r="2" fill="#E2C05A"/><circle cx="32" cy="50" r="2" fill="#E2C05A"/><circle cx="44" cy="54" r="2" fill="#E2C05A"/></svg>',
+  njord:'<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M12 36 Q20 30 26 36 L46 36 Q50 26 46 16 Q54 18 56 26 Q58 34 52 36 Z" fill="#8E6F52" stroke="#E9DCC0" stroke-width="1.6" stroke-linejoin="round"/><path d="M30 36 V12" stroke="#E9DCC0" stroke-width="2"/><path d="M30 13 L42 16 L42 30 L30 32 Z" fill="#E9DCC0" fill-opacity=".85"/><path d="M6 44 Q12 40 18 44 T30 44 T42 44 T54 44 T62 44 M10 52 Q16 48 22 52 T34 52 T46 52 T58 52" fill="none" stroke="#7FB0C2" stroke-width="2.4" stroke-linecap="round"/></svg>'};
+const GOD_LOOK={odin:{ep:'The Allfather',c:'#33495A'},thor:{ep:'The Thunderer',c:'#7A3328'},freyja:{ep:'Lady of the Vanir',c:'#6E4A5E'},njord:{ep:'Lord of the Sea',c:'#2E5A62'}};
+const TRAIT_LOOK={builder:{c:'#5C4A36',f:'Hall, houses, workshops'},warrior:{c:'#6E2E26',f:'Raids and defence'},trader:{c:'#6B5A2A',f:'Silver and partners'},provider:{c:'#3E5434',f:'Food and herds'},skald:{c:'#3C3A5C',f:'Fame and morale'}};
+const OP_STEPS=['The year 865','Ubbe','Kaldstrand','His gift','The patron','The council'];
+const RUNE_RULE='<svg class="oprule" viewBox="0 0 240 12" aria-hidden="true"><path d="M0 6 H100 M140 6 H240" stroke="currentColor" stroke-width="1"/><path d="M110 6 L120 0 L130 6 L120 12 Z" fill="currentColor"/><circle cx="104" cy="6" r="1.8" fill="currentColor"/><circle cx="136" cy="6" r="1.8" fill="currentColor"/></svg>';
+function opSteps(i){return '<div class="opsteps">'+OP_STEPS.map((n,k)=>'<span class="'+(k<i?'done':k===i?'on':'')+'"><i></i>'+esc(n)+'</span>').join('')+'</div>';}
+function opMark(icon,t){return '<span class="opmark">'+icon+'<b>'+esc(t)+'</b></span>';}
+const OP_SVG={scar:'<svg viewBox="0 0 20 20" width="18" height="18"><path d="M5 4 L15 16 M7 9 L10 7 M9 12 L12 10" stroke="#A34A3A" stroke-width="1.8" stroke-linecap="round"/></svg>',
+  ham:'<svg viewBox="0 0 20 20" width="18" height="18"><path d="M4 4 H16 L14 10 H6 Z" fill="#B7BCBF" stroke="#5E6468"/><path d="M10 10 V17" stroke="#8E6F52" stroke-width="2.4" stroke-linecap="round"/></svg>',
+  crown:'<svg viewBox="0 0 20 20" width="18" height="18"><path d="M3 15 L4 6 L8 10 L10 4 L12 10 L16 6 L17 15 Z" fill="#E2C05A" stroke="#8C6A24" stroke-linejoin="round"/></svg>',
+  house:'<svg viewBox="0 0 20 20" width="18" height="18"><path d="M3 10 L10 4 L17 10 V17 H3 Z" fill="#8E6F52" stroke="#5A4636"/><path d="M8.5 17 V12 H11.5 V17" fill="#3A2C22"/></svg>'};
+function opPage(T,i,h,art,body,acts){
+  T.innerHTML='<div class="opc">'+opSteps(i)+'<div class="opbody'+(art?' two':'')+'">'+(art?'<div class="opplate">'+art+'</div>':'')+'<div class="optext">'+h+body+'</div></div><div class="opacts">'+acts+'</div></div>';}
+function opEnter(arg){const T=$('title');T.classList.add('op');
+  if(!opEnter.on||opEnter.mode!==arg.mode){try{freshState(arg.mode,'');syncWalkers();}catch(e){}opEnter.mode=arg.mode;const p=iso(HOME_X,HOME_Y);camX=p[0]+40;camY=p[1]+10;zoom=Math.min(1.05,Math.max(0.7,W/1500));}
+  opEnter.on=true;}
+const _showTitle0=showTitle;
+showTitle=function(screen,arg){
+  if(!['intro','trait','patron','advisor'].includes(screen)){$('title').classList.remove('op');opEnter.on=false;return _showTitle0(screen,arg);}
+  titleOn=true;setSpeed(0);closeSheet();$('modal').hidden=true;modalOpen=null;$('title').hidden=false;document.body.classList.add('titled');
+  opEnter(arg);const T=$('title-card');
+  if(screen==='intro'){const i=Math.min(arg.i||0,2);
+    const P=[
+      {k:'Chapter I',h:'The year 865',art:ART_FLEET,t:'Ragnar Lothbrok is dead, thrown into a pit of serpents by King Ælla of Northumbria. His sons swear vengeance and gather the greatest fleet the north has ever seen.',t2:'The English will call it the Great Heathen Army.'},
+      {k:'Chapter II',h:'Ubbe, son of Ragnar',art:'<div class="opport">'+UBBE_SVG+'</div>',t:'Ubbe will fight beside his brothers. But he wants something his father never built: a home that outlasts him.',t2:'',marks:[[OP_SVG.crown,'Ambitious'],[OP_SVG.ham,'Devout: a Mjölnir at his throat'],[OP_SVG.scar,'A scar from his first raid']]},
+      {k:'Chapter III',h:'Kaldstrand',art:ART_SHORE,t:'A cold shore between the mountains and the sea: a river, a forest, berry slopes and iron in the hills.',t2:'Sixteen souls step off the ship: Ubbe, his wife Thora, their son, and thirteen who chose to follow him.',marks:[[ICON.people,'16 people'],[OP_SVG.house,'4 houses and the Jarl’s House'],[ICON.food,'Food for the first days'],[ICON.wood,'80 wood, 20 planks']]}][i];
+    const body='<p class="opkick">'+P.k+'</p><h2 class="oph">'+esc(P.h)+'</h2>'+RUNE_RULE+'<p class="oplead drop">'+esc(P.t)+'</p>'+(P.t2?'<p class="oplead">'+esc(P.t2)+'</p>':'')+(P.marks?'<div class="opmarks">'+P.marks.map(m=>opMark(m[0],m[1])).join('')+'</div>':'');
+    opPage(T,i,'',P.art,body,'<button type="button" class="btn" id="t-back">Back</button><span class="opsp"></span><button type="button" class="btn" id="t-skip">Skip the story</button><button type="button" class="btn primary" id="t-next">'+(i<2?'Next':'Shape the saga')+'</button>');
+    $('t-back').onclick=()=>i?showTitle('intro',Object.assign({},arg,{i:i-1})):showTitle('mode',{slot:arg.slot});
+    $('t-skip').onclick=()=>showTitle('trait',arg);$('t-next').onclick=()=>i<2?showTitle('intro',Object.assign({},arg,{i:i+1})):showTitle('trait',arg);return;}
+  const head=(k,h,l)=>'<div class="ophead"><p class="opkick">'+k+'</p><h2 class="oph">'+esc(h)+'</h2>'+RUNE_RULE+'<p class="oplead">'+esc(l)+'</p></div>';
+  const back='<button type="button" class="btn" id="t-back">Back</button><span class="opsp"></span><span class="ophint">Click a card to choose</span>';
+  if(screen==='trait'){
+    const cards=Object.keys(UTRAITS).map(k=>{const A=UTRAITS[k],L=TRAIT_LOOK[k];return '<button type="button" class="opcard" data-ut="'+k+'" style="--bc:'+L.c+'"><span class="ocban">'+EMB[k]+'</span><span class="ocbody"><b>The '+esc(A.n)+'</b><em>'+esc(L.f)+'</em><span class="ocd">'+esc(A.d)+'</span></span></button>';}).join('');
+    opPage(T,3,'','',head('His gift','What kind of man is Ubbe?','His gift stays with him all his life and passes down his line. Each one only helps: none is a wrong choice.')+'<div class="opgrid g5">'+cards+'</div>',back);
+    $('t-back').onclick=()=>showTitle('intro',Object.assign({},arg,{i:2}));T.querySelectorAll('[data-ut]').forEach(b=>b.onclick=()=>showTitle('patron',Object.assign({},arg,{ut:b.dataset.ut})));return;}
+  if(screen==='patron'){
+    const row=(l,v)=>'<span class="ocrow"><i>'+l+'</i>'+esc(v)+'</span>';
+    const cards=GOD_KEYS.map(k=>{const G=GODS[k],o=PATRON_OFF[k],L=GOD_LOOK[k];return '<button type="button" class="opcard god" data-pg="'+k+'" style="--bc:'+L.c+'"><span class="ocban">'+EMB[k]+'</span><span class="ocbody"><b>'+esc(G.n)+'</b><em>'+esc(L.ep)+' · loves '+esc(G.likes.toLowerCase())+'</em>'+row('Gift',G.pass)+row('Blessing',G.bless.n+': '+G.bless.d.toLowerCase())+row('Offering',o.n+' '+o.t)+row('Wrath',WRATH[k].d)+'</span></button>';}).join('');
+    opPage(T,4,'','',head('The patron','Which god does Kaldstrand follow?','You honour one god. Keep his favour with offerings and feasts: his gift works from 50, his blessing from 80. Below 25, his wrath falls on you.')+'<div class="opgrid g4">'+cards+'</div>',back);
+    $('t-back').onclick=()=>showTitle('trait',arg);T.querySelectorAll('[data-pg]').forEach(b=>b.onclick=()=>showTitle('advisor',Object.assign({},arg,{pg:b.dataset.pg})));return;}
+  if(screen==='advisor'){
+    const sum='<div class="opsum">'+(arg.ut&&UTRAITS[arg.ut]?'<span>'+EMB[arg.ut]+'Ubbe the '+esc(UTRAITS[arg.ut].n)+'</span>':'')+(arg.pg&&GODS[arg.pg]?'<span>'+EMB[arg.pg]+'Sworn to '+esc(GODS[arg.pg].n)+'</span>':'')+'</div>';
+    const cards=Object.keys(ADVISORS).map(k=>{const A=ADVISORS[k];return '<button type="button" class="opcard adv2" data-ad="'+k+'"><span class="ocport">'+portrait(ADV_P[k],76)+'</span><span class="ocbody"><b>'+esc(A.n)+'</b><em>'+esc(A.role)+'</em><span class="ocd">'+esc(A.b)+'</span><q>'+esc(A.q.replace(/[“”]/g,''))+'</q></span></button>';}).join('');
+    opPage(T,5,'','',head('The council','Who stands at Ubbe’s side?','Choose the first advisor. The council grows to four seats as the hall grows great (Town Hall 3, 4 and 5).')+sum+'<div class="opgrid g3">'+cards+'</div>',back);
+    $('t-back').onclick=()=>showTitle('patron',arg);T.querySelectorAll('[data-ad]').forEach(b=>b.onclick=()=>{$('title').classList.remove('op');opEnter.on=false;startSaga(arg.slot,arg.mode,b.dataset.ad,arg.ut,arg.pg);});return;}
+};
+/* a slow drift over the new village while the opening is open */
+setInterval(()=>{if(titleOn&&opEnter.on){camX-=0.35;}},50);
 
 /* =================== planner, test mode and test tools =================== */
 function nearConnRoad(x,y,w,h,r){let best=99;for(let yy=y-r;yy<y+h+r;yy++)for(let xx=x-r;xx<x+w+r;xx++){if(!inMap(xx,yy)||!conn[yy*N+xx])continue;const d=Math.max(Math.max(x-xx,0,xx-(x+w-1)),Math.max(y-yy,0,yy-(y+h-1)));if(d<best)best=d;}return best;}

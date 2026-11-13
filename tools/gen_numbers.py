@@ -11,7 +11,7 @@ async def main():
         await pg.goto('file://'+os.path.join(T,'test.html'));await pg.wait_for_timeout(400)
         d=await pg.evaluate("""(()=>{const G=__G;const cs=c=>Object.entries(c||{}).map(e=>e[1]+' '+e[0]).join(', ');
           const ver=document.querySelector('.ver')?document.querySelector('.ver').textContent:'';
-          const b=Object.keys(G.DEF).filter(k=>!G.DEF[k].hidden).map(k=>{const D=G.DEF[k];return [k,D.name,D.cat,D.lvl,D.w+'×'+D.h,cs(D.cost),D.slots||0,(D.out||'').replace(/\\|/g,'/'),(['house','gran','ware'].includes(k)?['no limit']:(G.LIMITS[k]||[1,1,1,1,1])).join(' / ')];});
+          const b=Object.keys(G.DEF).filter(k=>!G.DEF[k].hidden).map(k=>{const D=G.DEF[k];return [k,D.name,D.cat,D.lvl,D.w+'×'+D.h,cs(D.cost),D.slots||0,(D.out||'').replace(/\\|/g,'/'),(G.UNLIMITED.has(k)?[['house','gran','ware'].includes(k)?'no limit':'no limit, +'+Math.round(G.COPY_RISE*100)+'% per copy after the 2nd']:(G.LIMITS[k]||[1,1,1,1,1])).join(' / ')];});
           const th=Object.keys(G.TH_UP).map(l=>{const u=G.TH_UP[l];return [l,cs(u.cost),u.pop,u.house?'level '+u.house:''];});
           const ms=G.MS.map(m=>[m.lv,m.title,m.goal,m.fame,(m.unlock||[]).map(k=>G.DEF[k]?G.DEF[k].name:k).join(', ')]);
           const tr=Object.keys(G.TROOPS).map(k=>{const t=G.TROOPS[k];return [k,t.n||k,t.lv,t.str,cs(t.eq||t.cost||t.gear||{})];});
@@ -26,7 +26,7 @@ async def main():
     md+='## Town Hall upgrades\n\n'+table(['To level','Materials','People','Best house at least'],d['th'])
     md+='## Buildings\n\nLimits are per Town Hall level 1 / 2 / 3 / 4 / 5. Workers: +1 at building level 3 (not fields, wonders or one-worker buildings: pens, preserver, smokehouse, brewery, tailor; those four workshops make ×1.5 from level 3 instead). House capacity by house level: '+' / '.join(map(str,d['hc']))+'.\n\n'
     md+=table(['Key','Name','Category','Town Hall','Size','Cost','Workers','Output','Limits'],d['b'])
-    n=d['ne'];md+='## Daily needs\n\n'+table(['Need','Amount'],[['Meals a day, adult',n['eat']],['Meals a day, child (<14), elder (50+) or thrall',n['eat']*0.5],['Meals a day, warrior',n['eat']*n['war']],['Firewood a day, house in summer',round(n['fh']*0.5,2)],['Firewood a day, house in winter',round(n['fh']*1.2,2)],['Firewood, houses at level 3+','×0.75'],['Firewood, Town Hall','as 2 houses'],['Firewood, hard winter','×1.3']])
+    n=d['ne'];md+='## Daily needs\n\n'+table(['Need','Amount'],[['Meals a day, adult',n['eat']],['Meals a day, child (<12), elder (50+) or thrall',n['eat']*0.5],['Meals a day, warrior',n['eat']*n['war']],['Firewood a day, house in summer',round(n['fh']*0.5,2)],['Firewood a day, house in winter',round(n['fh']*1.2,2)],['Firewood, houses at level 3+','×0.75'],['Firewood, Town Hall','as 2 houses'],['Firewood, hard winter','×1.3']])
     md+='Meals per item: '+', '.join(k+' '+str(v) for k,v in n['meal'].items())+'. Storage: Granary and Warehouse hold 450 each (+225 a level), every one costs the same.\n\n'
     md+='## Market\n\nBase prices in silver (sell). A partner who wants a good pays ×1.35. Buying costs ×1.45 × 0.85, and ×'+str(n['buyx'].get('iron',1))+' more for iron and tools.\n\n'+table(['Good','Base price'],sorted(n['basep'].items()))
     md+='## Saga goals\n\n'+table(['Age','Goal','Task','Fame','Unlocks'],d['ms'])

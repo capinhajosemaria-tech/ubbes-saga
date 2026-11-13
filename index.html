@@ -559,7 +559,7 @@ body.titled .dock,body.titled .tray,body.titled #guide{display:none}
 <script>
 (function(){
 'use strict';
-const GAME_VERSION="Beta 0.21.0";
+const GAME_VERSION="Beta 0.22.0";
 /* =================== constants =================== */
 const N=132,OX=30,OY=24,SX=12,SY=6,HW=32,HH=16,TW=64;
 const HOME_X=63,HOME_Y=60;  /* the village centre in tile coords */
@@ -758,6 +758,8 @@ const REGROW=60, TREE_WOOD=8;
 
 /* =================== economy constants =================== */
 /* 1 day ≈ 27 s at 1×. People eat 0.5 meals a day; warriors eat 1.5× */
+/* B3 (A1): children work and eat as adults from 12 (was 14) */
+const ADULT=12;
 const EAT=0.5,FIRE_HOUSE=0.7,FIRE_TH=2,WAR_EAT=1.5;
 /* ale and mead are not meals: they are drunk at feasts and in the tavern (goods, kept in the warehouse) */
 const MEAL={fish:1,berries:1,meat:1,bread:1.5,jam:2,smoked:2};
@@ -776,16 +778,16 @@ const DEF={
   house:{name:'House',w:2,h:2,cost:{wood:20},slots:0,housing:4,road:false,cat:'Homes',lvl:1,up:true,desc:'Home for 4 people, 5 after the first upgrade; the second upgrade insulates it (−25% firewood). Burns ½ wood a day in summer and 1.2 in winter; when the logs run out, planks are burned (1 plank = 2 wood).'},
   jarl:{name:'Jarl’s House',w:3,h:3,cost:{wood:60,planks:30},slots:0,housing:4,road:false,cat:'Homes',lvl:1,desc:'Home of Ubbe and his heirs.'},
   pyre:{name:'Funeral Pyre',w:2,h:2,cost:{wood:10},slots:0,road:false,cat:'Community',lvl:1,desc:'The dead are burned here, so the river stays clean.'},
-  wood:{name:'Woodcutter’s Lodge',w:2,h:2,cost:{wood:15},slots:3,tools:true,need:{k:'tree',r:6},cat:'Materials',lvl:1,up:true,out:'5 wood per worker a day',desc:'Fells trees within 6 tiles. Full output needs 20 trees of its own (each belongs to one lodge only) and each gives 50 wood a year. Used-up trees stand as stumps and grow back 3 days after winter. Works through winter.'},
+  wood:{name:'Woodcutter’s Lodge',w:2,h:2,cost:{wood:15},slots:3,tools:true,need:{k:'tree',r:6},cat:'Materials',lvl:1,up:true,out:'5 wood per worker a day',desc:'Fells trees within 6 tiles. Full output needs 20 trees of its own (each belongs to one lodge only) and each gives 50 wood a year (65 / 75 / 88 / 100 for a lodge of level 2 / 3 / 4 / 5). Used-up trees stand as stumps and grow back 3 days after winter. Works through winter.'},
   carp:{name:'Carpenter',w:2,h:2,cost:{wood:25},slots:2,tools:true,cat:'Materials',lvl:1,up:true,out:'4 wood → 2 planks per worker a day',desc:'Saws timber into planks. Never touches the wood reserve you set.'},
-  mine:{name:'Iron Mine',w:2,h:2,cost:{wood:30,planks:10},slots:3,tools:true,need:{k:'iron',r:4},cat:'Materials',lvl:1,up:true,out:'2 iron per worker a day',desc:'Digs ore within 4 tiles at the foot of the mountains. Full output needs 5 iron outcrops of its own; each belongs to one mine only and holds 80 iron, refilled every two years when winter starts.'},
+  mine:{name:'Iron Mine',w:2,h:2,cost:{wood:30,planks:10},slots:3,tools:true,need:{k:'iron',r:4},cat:'Materials',lvl:1,up:true,out:'2 iron per worker a day',desc:'Digs ore within 4 tiles at the foot of the mountains. Full output needs 5 iron outcrops of its own; each belongs to one mine only and holds 40 iron a year (52 / 60 / 70 / 80 for a mine of level 2 / 3 / 4 / 5), refilled when winter starts.'},
   smith:{name:'Smithy',w:2,h:2,cost:{wood:15,planks:20,iron:10},slots:2,cat:'Crafts',lvl:1,up:true,out:'Tools, and later weapons',desc:'Forges tools; from Town Hall 2 spears, from Town Hall 3 shields, bows, arrows and swords. Needs a working anvil; a new one costs 10 iron. +15% next to a mine.'},
-  fish:{name:'Fisher’s Hut',w:2,h:1,cost:{wood:15},slots:3,tools:true,need:{k:'water',r:3},cat:'Food',lvl:1,up:true,out:'4 fish per worker a day',desc:'A small hut with boats. Fishes the water within 3 tiles. Full output needs 5 water tiles of its own; each belongs to one hut only and holds 100 fish a year (river 70), back when summer starts. Catches far less in winter, more at sea than on the river.'},
-  berry:{name:'Berry Gatherer',w:2,h:2,cost:{wood:10},slots:2,tools:true,need:{k:'bush',r:5},seasonal:true,cat:'Food',lvl:1,up:true,out:'4 berries per worker a day (summer)',desc:'Picks berries within 5 tiles. Full output needs 6 bushes of its own; each belongs to one gatherer only and gives 45 berries a year. Rests in winter; its workers are free for other jobs.'},
+  fish:{name:'Fisher’s Hut',w:2,h:1,cost:{wood:15},slots:3,tools:true,need:{k:'water',r:3},cat:'Food',lvl:1,up:true,out:'4 fish per worker a day',desc:'A small hut with boats. Fishes the water within 3 tiles. Full output needs 5 water tiles of its own; each belongs to one hut only and holds 100 fish a year (river 85), more for an upgraded hut (×1.3 / 1.5 / 1.75 / 2 at level 2 / 3 / 4 / 5), back when summer starts. Catches far less in winter, more at sea than on the river.'},
+  berry:{name:'Berry Gatherer',w:2,h:2,cost:{wood:10},slots:2,tools:true,need:{k:'bush',r:5},seasonal:true,cat:'Food',lvl:1,up:true,out:'4 berries per worker a day (summer)',desc:'Picks berries within 5 tiles. Full output needs 6 bushes of its own; each belongs to one gatherer only and gives 45 berries a year (×1.3 / 1.5 / 1.75 / 2 at level 2 / 3 / 4 / 5). Rests in winter; its workers are free for other jobs.'},
   pres:{name:'Preserver',w:2,h:2,cost:{wood:15,planks:20},slots:1,cat:'Food',lvl:1,up:true,out:'Jam from berries',desc:'2 berries → 1 jam (2 meals); one worker makes 2½ jam a day. Jam never spoils. Fish is kept at the Smokehouse.'},
   gran:{name:'Granary',w:3,h:2,cost:{wood:30,planks:10},slots:0,road:false,store:{food:300},cat:'Storage',lvl:1,up:true,desc:'Raised storehouse. Holds 300 more food, +150 per upgrade.'},
   ware:{name:'Warehouse',w:3,h:2,cost:{wood:30,planks:10},slots:0,road:false,store:{mat:300},cat:'Storage',lvl:1,up:true,desc:'Holds 300 more goods, +150 per upgrade.'},
-  market:{name:'Market Square',w:4,h:4,cost:{wood:40,planks:40},slots:1,cat:'Community',lvl:1,out:'More families settle here',desc:'Open square with stalls. Draws newcomers to Kaldstrand.'},
+  market:{name:'Market Square',w:4,h:4,cost:{wood:40,planks:40},slots:1,cat:'Community',lvl:1,out:'More families settle here',desc:'Open square with stalls. +15 attractiveness; while its stallkeeper works there, 25% more newcomers come.'},
   /* ---- Town Hall level 2 ---- */
   pigpen:{name:'Pig Pen',w:3,h:3,cost:{wood:40,planks:10},slots:1,road:false,cat:'Farms',lvl:2,up:true,out:'Breeds pigs: meat and hides',desc:'Pigs breed in summer and eat fodder in winter. Pigs above the pen’s room are slaughtered for meat. Holds 12 pigs, +8 per upgrade.'},
   sheeppen:{name:'Sheep Pen',w:3,h:3,cost:{wood:40,planks:10},slots:1,road:false,cat:'Farms',lvl:2,up:true,out:'Keeps sheep: wool for sails and warm clothing',desc:'Sheep are shorn in summer and eat fodder in winter. Holds 12 sheep, +8 per upgrade.'},
@@ -825,28 +827,39 @@ const thLevel=()=>S.th||1;
 const SBX=()=>!!(typeof S!=='undefined'&&S&&S.mode==='sandbox');
 const MAX_TH=5;
 const gateLv=()=>SBX()?MAX_TH:thLevel();   /* the level that gates buildings, limits and upgrades */
-/* houses, granaries and warehouses have no limit (granaries and warehouses cost more after the second) */
-const UNLIMITED=new Set(['house','gran','ware']),NOLIMIT=9999;
+/* Beta 0.22 (B1): ordinary buildings (materials, food, farms, crafts, storage) and houses have no count limit.
+   Unique or strategic ones (Town Hall, Jarl's House, Market, wonders, Altar/Hof, Training Ground, Shipyard, Harbour, Trading House,
+   Thrall Pen, Arsenal, Pyre, Tavern, Watchtower) and the decor keep their limits. Collectors are held back by their own sources. */
+const UNLIMITED=new Set(['house','gran','ware','wood','carp','mine','smith','fish','berry','pres','smoke','pigpen','sheeppen','fodder',
+  'grain','bakery','flax','weaver','mill','brewery','hives','tailor']),NOLIMIT=9999;
 /* how many of these a test village builds */
-const TEST_COUNT={house:[11,15,22,25,27],gran:[1,2,2,3,3],ware:[1,2,2,3,3]};
+const TEST_COUNT={house:[11,15,22,25,27],gran:[1,2,2,3,3],ware:[1,2,2,3,3],wood:[2,3,4,4,5],carp:[1,2,2,2,2],mine:[1,1,2,2,2],smith:[1,1,1,2,2],
+  fish:[2,2,2,2,2],berry:[2,2,2,2,2],pres:[1,1,1,1,2],smoke:[1,1,1,1,2],pigpen:[0,1,1,2,2],sheeppen:[0,1,1,2,2],fodder:[0,1,2,3,3],grain:[0,0,2,3,3],
+  bakery:[0,0,1,2,2],flax:[0,0,1,2,2],weaver:[0,0,1,1,1],mill:[0,0,1,1,2],brewery:[0,0,1,1,2],hives:[0,0,2,2,3],tailor:[0,0,0,0,1]};
 const limitOf=k=>UNLIMITED.has(k)?NOLIMIT:(LIMITS[k]||[1,1,1])[gateLv()-1];
 const limTxt=k=>UNLIMITED.has(k)?'no limit':limitOf(k);
 const FIRST_FREE=['berry','wood'];
-/* 1st and 2nd at base price, 3rd–5th each +30% on the one before, then each +50% */
-const storeMult=n=>1;/* 0.21: every granary and warehouse costs the same */
+/* B1: rising cost per copy for the open buildings (not houses or storage): 1st and 2nd at base price, then each copy +COPY_RISE on the one before */
+const COPY_RISE=0.3,COPY_FLAT=new Set(['house','gran','ware']);
+const copyMult=(k,n)=>(!UNLIMITED.has(k)||COPY_FLAT.has(k)||n<=2)?1:Math.pow(1+COPY_RISE,n-2);
 const costOf=k=>builderMul(costOf0(k));
-const costOf0=k=>{if(FIRST_FREE.includes(k)&&!B.some(b=>b.t===k))return {};const c=DEF[k].cost;if(k!=='gran'&&k!=='ware')return c;
-  const m=storeMult(B.filter(b=>b.t===k).length+1);if(m===1)return c;const o={};for(const q in c)o[q]=Math.round(c[q]*m);return o;};
+/* tray note: how much dearer the next copy is */
+const copyNote=k=>{const m=copyMult(k,count(k)+1);return m>1?' · next +'+Math.round((m-1)*100)+'%':'';};
+const costOf0=k=>{if(FIRST_FREE.includes(k)&&!B.some(b=>b.t===k))return {};const c=DEF[k].cost;
+  const m=copyMult(k,B.filter(b=>b.t===k).length+1);if(m===1)return c;const o={};for(const q in c)o[q]=Math.round(c[q]*m);return o;};
 const CATS=['Homes','Food','Farms','Materials','Crafts','Storage','Community','Military','Sea','Decor'];
 const BUILDABLE=new Set([T.GRASS,T.BEACH,T.FOOT]);
 const isAvail=k=>{const D=DEF[k];if(SBX())return !D.hidden;if(D.needB&&!has(D.needB))return false;if(D.lvl>1||D.cat==='Decor')return thLevel()>=D.lvl;return S.avail.includes(k);};
 /* Town Hall: people + materials + at least one house at the highest level the current hall allows */
-const TH_UP={2:{cost:{wood:110,planks:70,iron:20},pop:22,house:1},
-             3:{cost:{wood:190,planks:150,iron:50,tools:10},pop:32,house:2}};
+const TH_UP={2:{cost:{wood:110,planks:70,iron:40},pop:22,house:1},
+             3:{cost:{wood:190,planks:150,iron:80,tools:10},pop:36,house:2}};
 /* one-worker buildings (0.21): no extra post at level 3; the four workshops get ×1.5 output from level 3 instead, so their output is what it was with 2–3 workers */
 const ONE_MAN=new Set(['pigpen','sheeppen','pres','smoke','brewery','tailor']),ONE_MAN_X=new Set(['pres','smoke','brewery','tailor']);
 const slotsOf=b=>(b.cons&&b.cons.k==='build')?0:(DEF[b.t].slots||0)+(DEF[b.t].slots&&!DEF[b.t].wonder&&!FIELDS.has(b.t)&&!ONE_MAN.has(b.t)&&b.lvl>=3?1:0);
-const upCost=b=>{const c=DEF[b.t].cost,o={};Object.keys(c).forEach(k=>o[k]=Math.round(c[k]*(b.lvl)*1.0));if(!Object.keys(o).length)o.wood=20*b.lvl;return builderMul(o);};
+/* O1 (Beta 0.22): upgrades to level 4 and 5 also cost silver: workplaces 15 / 30, houses 5 / 10 */
+const UP_SILVER={4:15,5:30},UP_SILVER_HOUSE={4:5,5:10};
+const upCost=b=>{const c=DEF[b.t].cost,o={};Object.keys(c).forEach(k=>o[k]=Math.round(c[k]*(b.lvl)*1.0));if(!Object.keys(o).length)o.wood=20*b.lvl;
+  const nx=b.lvl+1,sv=(b.t==='house'?UP_SILVER_HOUSE:UP_SILVER)[nx];if(sv&&!SBX())o.silver=(o.silver||0)+sv;return builderMul(o);};
 const canUpgrade=b=>DEF[b.t].up&&b.lvl<gateLv()&&!b.cons;
 
 /* ---- Town Hall levels 4 and 5 ---- */
@@ -855,12 +868,12 @@ Object.assign(DEF,{
   hives:{name:'Beehives',w:2,h:2,cost:{wood:20,planks:10},slots:1,road:false,seasonal:true,farm:true,cat:'Farms',lvl:3,up:true,out:'3 honey per keeper a day (summer)',desc:'Straw skeps on a sunny slope. Honey for mead, offerings to Freyja and trade.'},
   tomb:{name:'Ragnar’s Ship-Tomb',w:4,h:4,cost:{planks:150,iron:40},slots:5,cat:'Community',lvl:4,wonder:true,out:'A wonder: up to 5 builders raise it, year after year',desc:'A great mound over a sacrificed ship, for Ragnar Lothbrok. To begin: 40 gold, 6 swords and one of your ships. When finished, Odin’s favour never falls below 30 and Kaldstrand gains 1 fame every day.'},
   tailor:{name:'Tailor',w:2,h:2,cost:{wood:20,planks:30},slots:1,cat:'Crafts',lvl:5,up:true,out:'2 wool + 1 hide → 1 warm clothing',desc:'Sews wool cloaks and fur-lined boots. With enough warm clothing for everyone, winter sickness is halved and spirits rise.'},
-  hof:{name:'Hof',w:4,h:3,cost:{wood:80,planks:80,iron:20,silver:50},slots:1,cat:'Community',lvl:5,desc:'A temple hall kept by a gothi. Favour rises 25% faster, the gothi tends the least-honoured God, and blessings cost 20 favour instead of 30.'},
+  hof:{name:'Hof',w:4,h:3,cost:{wood:80,planks:80,iron:20,silver:150},slots:1,cat:'Community',lvl:5,desc:'A temple hall kept by a gothi. Favour rises 25% faster, the gothi tends the least-honoured God, and blessings cost 20 favour instead of 30.'},
   tower:{name:'Watchtower',w:1,h:1,cost:{wood:40,planks:30},slots:0,road:false,cat:'Military',lvl:5,desc:'A slim tower for two archers on one tile. Build it in the palisade line: the wall joins it and raiders cannot break through it. Adds to the village’s defence.'}
 });
 for(const k in LIMITS){const a=LIMITS[k];while(a.length<5)a.push(a[a.length-1]);}
-TH_UP[4]={cost:{wood:320,planks:270,iron:100,tools:20,silver:100},pop:48,house:3};
-TH_UP[5]={cost:{wood:460,planks:400,iron:170,tools:30,silver:250,gold:20},pop:80,house:4};
+TH_UP[4]={cost:{wood:500,planks:450,iron:110,tools:30,silver:150},pop:60,house:3};
+TH_UP[5]={cost:{wood:800,planks:700,iron:190,tools:50,silver:350,gold:20},pop:90,house:4};
 
 /* =================== saga milestones =================== */
 const MS=[
@@ -1022,7 +1035,13 @@ function srcFree(b,taken){return srcList(b).filter(o=>!taken.has(o)).sort((p,q)=
 const srcOwn=b=>srcClaims().get(b.id)||[];
 /* share of full output the sources allow: 0..1 */
 function srcFactor(b){const need=SRC_NEED[b.t];if(!need)return srcList(b).length?1:0;return Math.min(1,srcOwn(b).length/need);}
-const SRC_Y={tree:50,bush:45,iron:80,sea:100,river:70};
+const SRC_Y={tree:50,bush:45,iron:40,sea:100,river:85};
+/* Beta 0.22 (B2): each source yields more for a higher-level owner (the map does not change; the same tree gives more wood).
+   Stored amounts stay in base units: the owner takes 1 unit of source for every srcYMult units of output. */
+const SRC_YM=[1,1.3,1.5,1.75,2];
+const srcYMult=lvl=>SRC_YM[Math.max(1,Math.min(5,lvl||1))-1];
+/* multiplier of the building that owns source o (1 when nobody owns it) */
+function srcTileMult(o){const C=srcClaims();for(const b of B){const own=C.get(b.id);if(own&&own.includes(o))return srcYMult(b.lvl);}return 1;}
 const SRC_OF={wood:'tree',berry:'bush',mine:'iron',fish:'water'};
 const SRC_R={wood:6,berry:5,mine:4,fish:3};
 const SRC_WORD={tree:['tree','trees'],bush:['berry bush','berry bushes'],iron:['iron outcrop','iron outcrops'],water:['water tile','water tiles']};
@@ -1037,8 +1056,8 @@ for(const b of bushes){b.cap=SRC_Y.bush;b.amt=b.cap;}
 function refillSources(){for(const a of [trees,bushes,ores,waters])for(const o of a)if(!o.gone)o.amt=o.cap;}
 function refillKind(a){for(const o of a)if(!o.gone)o.amt=o.cap;}
 /* called once at the start of each day: d = day of the year (0..44, winter from day 30) */
-const SRC_BACK={tree:'3 days after winter ends',bush:'when summer starts',water:'when summer starts',iron:'every two years, when winter starts'};
-function sourceSeasons(d,year){if(d===0){refillKind(bushes);refillKind(waters);}if(d===3)refillKind(trees);if(d===30&&year%2===0)refillKind(ores);}
+const SRC_BACK={tree:'3 days after winter ends',bush:'when summer starts',water:'when summer starts',iron:'every year, when winter starts'};
+function sourceSeasons(d,year){if(d===0){refillKind(bushes);refillKind(waters);}if(d===3)refillKind(trees);if(d===30)refillKind(ores);}
 /* sources a building (or a planned building {t,fx,fy,w,h}) works */
 function srcList(b){const k=SRC_OF[b.t],r=SRC_R[b.t];if(!k)return [];
   if(k==='tree')return trees.filter(o=>!o.gone&&rectDist(b,o.x,o.y)<=r);
@@ -1057,7 +1076,7 @@ function srcInfo(b,planned){const t=b.t,list=srcList(b);let share=0,shared=0;
   const sl=planned?(DEF[t].slots||0):slotsOf(b),mx=maxYear(t,planned?1:b.lvl,Math.max(1,sl));
   let left=0;for(const o of list)left+=o.amt/srcShare(o,t,planned?null:b,planned);
   if(SRC_ENDLESS){const need=SRC_NEED[t];if(!need)return {n:list.length,need:0,inR:list.length,pct:list.length?1:0,left:Infinity,list:list};
-    const C=srcClaims(),own=planned?srcFree(b,C.taken):srcOwn(b);let lf=0,cp=0;for(const o of own){lf+=o.amt;cp+=o.cap;}return {n:own.length,need:need,inR:list.length,pct:Math.min(1,own.length/need),left:lf,cap:cp,empty:own.filter(o=>o.amt<=0.01).length,list:own};}
+    const C=srcClaims(),own=planned?srcFree(b,C.taken):srcOwn(b),ym=srcYMult(planned?1:b.lvl);let lf=0,cp=0;for(const o of own){lf+=o.amt*ym;cp+=o.cap*ym;}return {n:own.length,need:need,inR:list.length,pct:Math.min(1,own.length/need),left:lf,cap:cp,empty:own.filter(o=>o.amt<=0.01).length,list:own};}
   return {n:list.length,shared:shared,share:share,pct:mx>0?Math.min(1,share/mx):0,left:left,list:list};}
 function srcLabel(b,planned){const k=SRC_OF[b.t],w=SRC_WORD[k],I=srcInfo(b,planned);
   if(!I.n)return {n:0,label:'No '+w[1]+' in range'};
@@ -1067,11 +1086,11 @@ function srcLabel(b,planned){const k=SRC_OF[b.t],w=SRC_WORD[k],I=srcInfo(b,plann
   if(!planned)s+=' · '+fmt(I.left)+' '+RNAME[SRC_RES[b.t]].toLowerCase()+' left this year';
   return {n:I.n,label:s,pct:I.pct};}
 /* take up to `want` from the building's sources, each shared source split between the buildings using it */
-function harvest(b,want){if(want<=0)return 0;if(SRC_ENDLESS){want*=srcFactor(b);const own=srcOwn(b).filter(o=>o.amt>0.001);if(!own.length)return 0;
+function harvest(b,want){if(want<=0)return 0;if(SRC_ENDLESS){const ym=srcYMult(b.lvl);want*=srcFactor(b)/ym;const own=srcOwn(b).filter(o=>o.amt>0.001);if(!own.length)return 0;
     /* take evenly from the building's own sources (the fullest first when some run dry) */
     let got=0,rest=want;own.sort((p,q)=>q.amt-p.amt);for(let i=0;i<own.length&&rest>0.0001;i++){const o=own[i],take=Math.min(o.amt,rest/(own.length-i));o.amt-=take;got+=take;rest-=take;}
     if(rest>0.0001)for(const o of own){const take=Math.min(o.amt,rest);o.amt-=take;got+=take;rest-=take;if(rest<=0.0001)break;}
-    return got;}const list=srcList(b).filter(o=>o.amt>0.001);if(!list.length)return 0;
+    return got*ym;}const list=srcList(b).filter(o=>o.amt>0.001);if(!list.length)return 0;
   const w=list.map(o=>1/srcShare(o,b.t,b,false)),ws=w.reduce((a,c)=>a+c,0);let got=0;
   list.forEach((o,i)=>{const take=Math.min(o.amt,want*w[i]/ws);o.amt-=take;got+=take;});
   let rest=want-got;for(const o of list){if(rest<=0.001)break;const take=Math.min(o.amt,rest);o.amt-=take;got+=take;rest-=take;}
@@ -1204,7 +1223,7 @@ function dayTick(){
     switch(b.t){
       case 'wood':{const got=harvest(b,n*SRC_RATE.wood*E);if(got<=0.001)b.status=srcOwn(b).length?'Trees used up: they grow back 3 days after winter':srcList(b).length?'Every tree in range belongs to another lodge':'No trees in range';mk('wood',got);break;}
       case 'carp':{const av=Math.max(0,r.wood-S.woodReserve),p=Math.min(n*2*E,av/2);if(p<=0.05){b.status=holdMsg(['wood']);break;}r.wood-=p*2;mk('planks',p);break;}
-      case 'mine':{const got=harvest(b,n*2*E);if(got<=0.001)b.status=srcOwn(b).length?'Ore used up: it comes back every two years, when winter starts':srcList(b).length?'Every outcrop in range belongs to another mine':'No iron in range';mk('iron',got);break;}
+      case 'mine':{const got=harvest(b,n*2*E);if(got<=0.001)b.status=srcOwn(b).length?'Ore used up: it comes back when winter starts':srcList(b).length?'Every outcrop in range belongs to another mine':'No iron in range';mk('iron',got);break;}
       case 'smith':{if(b.anvil<=0){if(r.iron>=10){r.iron-=10;b.anvil=100;toast('The smith forged a new anvil (10 iron).');}else{b.status='Anvil broken: needs 10 iron';break;}}
         let md=b.mode;if(!SMITH[md]||SMITH[md].lv>thLevel())md='tools';const sm=SMITH[md];let make=n*sm.per*E;
         for(const k in sm.c){make=Math.min(make,resv(k)/sm.c[k]);}
@@ -1417,7 +1436,7 @@ const PB=id=>{for(const p of S.people)if(p.id===id)return p;return null;};
 const jarlP=()=>PB(S.jarl);
 const jt=k=>{const j=jarlP();return !!(j&&j.jt&&j.jt.includes(k));};
 function pname(p){if(!p)return '—';if(p.num)return p.num===1?'Ubbe Ragnarsson':'Ubbe '+ROMAN[p.num];return p.n;}
-function roleOf(p){if(p.id===S.jarl)return 'Jarl';if(p.away)return 'At sea';if(S.train&&S.train.ids.includes(p.id))return 'In training';if(p.w)return (TROOPS[p.w]||{n:'Warrior'}).n+(p.xp>=2?' · Drengr':'');if(p.sick>0)return p.wound?'Wounded':'Sick';if(p.a<14)return S.pol.child&&p.a>=10?'Child (works)':'Child';if(p.a>=50)return 'Elder';return 'Worker';}
+function roleOf(p){if(p.id===S.jarl)return 'Jarl';if(p.away)return 'At sea';if(S.train&&S.train.ids.includes(p.id))return 'In training';if(p.w)return (TROOPS[p.w]||{n:'Warrior'}).n+(p.xp>=2?' · Drengr':'');if(p.sick>0)return p.wound?'Wounded':'Sick';if(p.a<ADULT)return S.pol.child&&p.a>=10?'Child (works)':'Child';if(p.a>=50)return 'Elder';return 'Worker';}
 
 /* ---------- troops & weapons ---------- */
 const TROOPS={skirm:{n:'Skirmisher',lv:2,str:1,eq:{spears:1},d:'Light spear. Cheap and quick to train.'},
@@ -1491,9 +1510,9 @@ function syncPop(){S.pop=S.people.length;S.warriors=S.people.filter(p=>p.w).leng
 
 /* ---------- workforce, food ---------- */
 function workerVal(p,win){if(p.id===S.jarl||p.sick>0||p.away)return 0;if(S.train&&S.train.ids.includes(p.id))return 0;if(p.w&&!win)return 0;
-  let v=p.a>=14?(p.a>=50?0.5:1):(S.pol.child&&p.a>=10?0.5:0);if(p.tr==='lazy')v*=0.85;return v;}
+  let v=p.a>=ADULT?(p.a>=50?0.5:1):(S.pol.child&&p.a>=10?0.5:0);if(p.tr==='lazy')v*=0.85;return v;}
 function workforce(){if(!S.people)return 0;const win=isWinter();let s=0;for(const p of S.people)s+=workerVal(p,win);s+=S.thralls*(S.pol.thralls==='harsh'?1.15:1);return Math.max(0,Math.round(s));}
-function eatNeed(){if(!S.people)return 0;let s=0;for(const p of S.people){if(p.away)continue;s+=p.w?EAT*WAR_EAT:(p.a<14||p.a>=50?EAT*0.5:EAT);}s+=S.thralls*EAT*0.5;return s*RATION[S.pol.ration].f;}
+function eatNeed(){if(!S.people)return 0;let s=0;for(const p of S.people){if(p.away)continue;s+=p.w?EAT*WAR_EAT:(p.a<ADULT||p.a>=50?EAT*0.5:EAT);}s+=S.thralls*EAT*0.5;return s*RATION[S.pol.ration].f;}
 function thrallCap(){return B.filter(b=>b.t==='thrall').reduce((a,b)=>a+8+4*(b.lvl-1),0);}
 function spendMeals(m){const order=['fish','berries','meat','bread','jam','smoked'];if(foodUnits()<m)return false;for(const k of order){if(m<=0)break;const e=Math.min(S.res[k],m/MEAL[k]);S.res[k]-=e;m-=e*MEAL[k];}return true;}
 const resv=k=>Math.max(0,S.res[k]-((S.reserve&&S.reserve[k])||0)-(k==='wood'?S.woodReserve:0));
@@ -1516,7 +1535,7 @@ function recalcMorale(){
   if(jt('cruel'))add('A cruel Jarl',-3);if(jt('greedy'))add('A greedy Jarl',-3);
   if(S.pol.loot==='warriors'&&S.raidsDone)add('Loot shared with the crews',4);
   if(S.thralls>0&&S.pol.thralls==='harsh')add('Thralls beaten in the yard',-2);
-  if(S.pop>housing())add('Crowded houses',-6);if(isWinter()&&S.res.clothes>=S.pop)add('Warm cloaks for all',4);if(S.mobilUntil>S.day)add('Mobilised for war',-5);
+  if(S.pop>housing())add('Crowded houses',-6);if(overReach()>0)add('More people than the hall can order ('+S.pop+' / '+hallReach()+')',-Math.min(12,overReach()*0.3));if(isWinter()&&S.res.clothes>=S.pop)add('Warm cloaks for all',4);if(S.mobilUntil>S.day)add('Mobilised for war',-5);
   for(const m of S.mods)if(m.until>S.day)add(m.t,m.v);
   S.mods=S.mods.filter(m=>m.until>S.day);
   S.mf=f;const target=clamp(52+f.reduce((a,x)=>a+x.v,0),0,100);
@@ -1529,7 +1548,7 @@ function recalcMorale(){
   const hs=B.filter(b=>b.t==='house');if(hs.length){ad('Better houses',4*(hs.reduce((s,b)=>s+b.lvl,0)/hs.length-1));
     const near=(t,rr)=>hs.filter(h=>B.some(o=>o.t===t&&bDist(h,o)<=rr)).length;
     ad('Houses by the market',Math.min(6,near('market',4)));ad('Houses by the smithy or smokehouse',-Math.min(8,2*(near('smith',2)+near('smoke',2))));}
-  if(S.contam>0)ad('Foul river',-10);
+  if(S.contam>0)ad('Foul river',-10);if(overReach()>0)ad('A crowded village ('+S.pop+' / '+hallReach()+' the hall can order)',-Math.min(25,overReach()*0.6));
   ad(S.pol.borders==='open'?'Open borders':'Closed borders',S.pol.borders==='open'?8:-5);
   if(S.morale>=70)ad('Happy people',5);else if(S.morale<40)ad('Unhappy people',-10);
   S.af=a;S.attr=clamp(a.reduce((s,x)=>s+x.v,0),0,100);
@@ -1537,6 +1556,20 @@ function recalcMorale(){
 const moraleProd=()=>S.morale>=70?1.1:S.morale<40?0.85:1;
 /* newcomers: good morale draws people when there are free beds (José, 2026-11-12) */
 const moraleArrive=()=>S.morale>=70?2.2:S.morale>55?1.5:S.morale<40?0.5:1;
+/* Beta 0.22 (B3): births and newcomers follow the village's mood = the mean of morale and attractiveness.
+   Houses alone do not grow the village: a gloomy one barely grows, a happy one grows fast. ×1 at mood 60. */
+const MOOD_PTS=[[0,0.05],[30,0.15],[45,0.45],[60,1],[75,1.5],[100,2]];
+const villageMood=()=>((S.morale||0)+(S.attr||0))/2;
+function moodGrowth(){const x=villageMood();for(let i=1;i<MOOD_PTS.length;i++){const a=MOOD_PTS[i-1],b=MOOD_PTS[i];if(x<=b[0])return a[1]+(b[1]-a[1])*(x-a[0])/(b[0]-a[0]);}return MOOD_PTS[MOOD_PTS.length-1][1];}
+const BIRTH_P=0.004,ARRIVE_P=0.2;
+/* B3: how many people the hall can keep in good order at each Town Hall level. Above it the village feels crowded:
+   −0.6 attractiveness and −0.3 morale for each person over (at most −25 / −12), so growth slows by itself. */
+const HALL_REACH=[30,45,70,100,130];const hallReach=()=>HALL_REACH[Math.min(5,thLevel())-1];
+const overReach=()=>Math.max(0,(S.pop||0)-hallReach());
+/* past the reach newcomers dwindle (20 over: almost none) and fewer children are born */
+const crowdArrive=()=>Math.max(0.05,1-overReach()/20),crowdBirth=()=>Math.max(0.2,1-overReach()/30);
+/* E3: the Market's ×1.25 on newcomers only while its stallkeeper works there (road + worker) */
+const mktWorked=()=>B.some(b=>b.t==='market'&&!underCons(b)&&b.conn&&b.workers>0);
 
 /* ---------- production multipliers ---------- */
 const NB={smith:['mine'],carp:['wood'],pres:['berry'],smoke:['fish','pigpen'],bakery:['mill'],mill:['grain']};
@@ -1582,7 +1615,7 @@ function gameOver(text){S.over=true;S.modal=[{k:'over',text:text}];}
 function sicken(n,wound){const pool=S.people.filter(p=>p.sick<=0&&!p.away);for(let i=0;i<n&&pool.length;i++){const p=pool.splice(Math.floor(Math.random()*pool.length),1)[0];p.sick=wound?10:Math.round(U(4,8));p.wound=wound?1:0;}}
 function peopleDay(short){
   const win=isWinter(),hard=win&&S.winter.hard;
-  const tc={};for(const p of S.people)if(p.tr&&p.a>=14&&!p.away)tc[p.tr]=(tc[p.tr]||0)+1;S.tc=tc;
+  const tc={};for(const p of S.people)if(p.tr&&p.a>=ADULT&&!p.away)tc[p.tr]=(tc[p.tr]||0)+1;S.tc=tc;
   const crowd=S.pop/Math.max(1,housing());
   const sickN=S.people.filter(p=>p.sick>0&&!p.wound).length;
   for(const p of S.people.slice()){
@@ -1598,7 +1631,7 @@ function peopleDay(short){
   /* shortages */
   if(short){
     if(S.mode==='challenge'&&short!=='firewood'){const pool=S.people.filter(p=>p.id!==S.jarl&&!p.away).sort((a,b)=>(Math.abs(b.a-30))-(Math.abs(a.a-30)));const v=pool[0];if(v&&Math.random()<0.5){note(pname(v)+' died of '+(short==='food'?'hunger':'thirst')+'.');removePerson(v,'hunger');}}
-    else if(S.pop>8&&Math.random()<0.6){const pool=S.people.filter(p=>p.id!==S.jarl&&p.a>=14&&!p.w&&!p.away&&!S.people.some(k=>k.pa.includes(p.id)&&k.a<14)&&(!p.sp||PB(p.sp)&&!PB(p.sp).w));
+    else if(S.pop>8&&Math.random()<0.6){const pool=S.people.filter(p=>p.id!==S.jarl&&p.a>=ADULT&&!p.w&&!p.away&&!S.people.some(k=>k.pa.includes(p.id)&&k.a<ADULT)&&(!p.sp||PB(p.sp)&&!PB(p.sp).w));
       const v=pool.find(p=>!p.sp)||pool[0];if(v){const sp=v.sp?PB(v.sp):null;removePerson(v,'left');if(sp&&sp.id!==S.jarl)removePerson(sp,'left');toast((sp?'A couple':'A family member')+' left Kaldstrand: not enough '+short+'.');}}
     else toast('Kaldstrand is going hungry: not enough '+short+'. The last families hold on, but nobody will join until it is fixed.',4000);
   }
@@ -1609,10 +1642,10 @@ function peopleDay(short){
   /* births */
   const room=housing()-S.pop;const fed=!short&&foodUnits()>=eatNeed()*6;
   if(room>0&&fed&&!((S.fx.barren||0)>S.day)){
-    let bm=(S.morale>=70?1.3:S.morale<40?0.6:1)*(fav('freyja')>=50?1.15:1)*(S.pol.ration==='normal'?1:0.5);
+    let bm=moodGrowth()*crowdBirth()*(fav('freyja')>=50?1.15:1)*(S.pol.ration==='normal'?1:0.5);
     for(const w of S.people){if(w.g!=='f'||!w.sp||w.a<16||w.a>=44||w.away)continue;const h=PB(w.sp);if(!h||h.away)continue;
       if(S.people.some(k=>k.pa[1]===w.id&&k.a<1.2))continue;
-      if(Math.random()<0.007*bm&&S.pop<housing()){const g=Math.random()<0.5?'m':'f';const isJ=h.id===S.jarl||w.id===S.jarl;
+      if(Math.random()<BIRTH_P*bm&&S.pop<housing()){const g=Math.random()<0.5?'m':'f';const isJ=h.id===S.jarl||w.id===S.jarl;
         let o={g:g,a:0,pa:[h.id,w.id],tr:(h.tr&&Math.random()<0.35)?h.tr:(w.tr&&Math.random()<0.35)?w.tr:(Math.random()<0.12?pick(TRAIT_KEYS):'')};
         if(isJ&&g==='m'&&!kidsOf(S.jarl).some(k=>k.num)){o.n='Ubbe';o.num=S.gen+1;}
         const c=newPerson(o);S.yr.births++;addFavor('freyja',1);
@@ -1622,7 +1655,7 @@ function peopleDay(short){
   /* newcomers */
   /* from Town Hall 3, newcomers wait near and in winter while the wood would not warm them for 5 days */
   const woodOk=thLevel()<3||((S.gameT%YEAR)<SUMMER-DAY*10)||S.res.wood>=fireNeed()*5;
-  if(housing()-S.pop>0&&fed&&!short&&woodOk){const p=(0.06+S.attr/100*0.16)*(has('market')?1.25:1)*moraleArrive()*(S.gameT<YEAR?1.6:1);
+  if(housing()-S.pop>0&&fed&&!short&&woodOk){const p=ARRIVE_P*(mktWorked()?1.25:1)*moodGrowth()*crowdArrive()*(S.gameT<YEAR?1.6:1);
     S.immAcc=(S.immAcc||0)+p;if(S.immAcc>=1){S.immAcc-=1;const pair=Math.random()<(S.morale>=70?0.5:0.3)&&housing()-S.pop>=2;const a=newPerson({a:Math.round(U(17,36)),tr:randTrait()});S.yr.arrived++;
       if(pair){const b=newPerson({g:a.g==='m'?'f':'m',a:Math.round(U(17,36)),tr:randTrait()});marry(a,b);S.yr.arrived++;toast('A couple, '+a.n+' and '+b.n+', settled in Kaldstrand.');}
       else toast(a.n+' arrived and settled in Kaldstrand.');syncPop();}}
@@ -1796,7 +1829,7 @@ function raidOpts(m){const r=S.raids.find(x=>x.id===m.rid);if(!r)return null;con
   }return null;}
 
 /* ---------- events ---------- */
-const adultsHome=()=>S.people.filter(p=>p.a>=14&&!p.away&&p.id!==S.jarl);
+const adultsHome=()=>S.people.filter(p=>p.a>=ADULT&&!p.away&&p.id!==S.jarl);
 const EVTS={
   storm:{cat:'Nature',c:()=>isWinter(),w:1,mk:()=>({}),t:()=>'A storm out of the north tore turf from the roofs.',o:[{l:'Repair at once (15 planks)',ok:()=>S.res.planks>=15,f:()=>{S.res.planks-=15;return 'The roofs held. Nobody froze.';}},{l:'Let it wait',f:()=>{addMod('storm','Damaged roofs',-6,15);sicken(2);return 'Snow came in through the gaps. Two fell sick.';}}]},
   dry:{cat:'Nature',c:()=>!isWinter()&&B.some(b=>FARMLIKE.has(b.t)),w:0.8,mk:()=>({}),t:()=>'No rain for weeks. The ground cracks and the berries wither on the branch.',o:[{l:'Pray for rain (10 favour)',ok:()=>fav(patron())>=10,f:()=>{S.gods[patron()]-=10;return 'Rain came three days later. '+PN()+' heard you.';}},{l:'Endure it',f:()=>{S.fx.dry=S.day+15;return 'Farms and gatherers will bring in less for 15 days.';}}]},
@@ -1812,7 +1845,7 @@ const EVTS={
       {l:'Settle it yourself (20 meals)',ok:()=>foodUnits()>=20,f:()=>{spendMeals(20);return 'Both ate at the Jarl’s table and the quarrel cooled.';}},
       {l:'Fine them both',cruel:1,f:()=>{addMod('fine','A harsh judgement',-4,15);S.res.silver+=10;return '+10 silver. The village grumbles.';}}]},
   feud:{cat:'People',c:()=>S.pop>=16,w:0.6,mk:()=>({}),t:()=>'Two families feud over an insult at the well. Knives have been drawn.',o:[{l:'Pay wergild (25 meals)',ok:()=>foodUnits()>=25,f:()=>{spendMeals(25);return 'The families made peace.';}},{l:'Let them be',f:()=>{addMod('feud','A feud in the village',-8,20);return 'The feud festers.';}}]},
-  prodigy:{cat:'People',good:1,c:()=>S.people.some(p=>p.a>=8&&p.a<14&&!p.tr),w:0.5,mk:()=>({a:pick(S.people.filter(p=>p.a>=8&&p.a<14&&!p.tr)).id}),t:a=>{const p=PB(a.a);return 'Young '+(p?p.n:'one')+' carves runes cleaner than the old men.';},o:[{l:'Praise the child',f:a=>{const p=PB(a.a);if(p)p.tr='steady';return (p?p.n:'The child')+' gained Steady Hand.';}}]},
+  prodigy:{cat:'People',good:1,c:()=>S.people.some(p=>p.a>=8&&p.a<ADULT&&!p.tr),w:0.5,mk:()=>({a:pick(S.people.filter(p=>p.a>=8&&p.a<ADULT&&!p.tr)).id}),t:a=>{const p=PB(a.a);return 'Young '+(p?p.n:'one')+' carves runes cleaner than the old men.';},o:[{l:'Praise the child',f:a=>{const p=PB(a.a);if(p)p.tr='steady';return (p?p.n:'The child')+' gained Steady Hand.';}}]},
   oldwarrior:{cat:'People',c:()=>thLevel()>=3&&S.people.some(p=>p.g==='m'&&p.a>=50&&!p.w&&p.id!==S.jarl),w:0.4,mk:()=>({a:pick(S.people.filter(p=>p.g==='m'&&p.a>=50&&!p.w&&p.id!==S.jarl)).id}),t:a=>{const p=PB(a.a);return 'Old '+(p?p.n:'a man')+' says he will not die in his bed. He asks for a spear and a place at the oars.';},
     o:[{l:'Give him a spear',ok:()=>S.res.spears>=1&&S.warriors<warCap(),f:a=>{const p=PB(a.a);if(p){S.res.spears--;p.w='skirm';syncPop();}return 'He joins the warriors.'+gfav('odin',4)+gfav('thor',3);}},{l:'Refuse him gently',f:()=>''}]},
   monk:{cat:'Visitor',c:()=>thLevel()>=2,w:0.5,mk:()=>({}),t:()=>'A monk from the west, thin as a reed, begs for shelter. He has a book and nothing else.',o:[{l:'Take him in',ok:()=>housing()>S.pop,f:()=>{newPerson({n:'Aldhelm',g:'m',a:34,tr:'patient'});S.yr.arrived++;syncPop();return 'Aldhelm the monk lives among you now. He is patient.';}},{l:'Send him away',f:()=>''},{l:'Make him a thrall',cruel:1,ok:()=>thrallCap()>S.thralls,f:()=>{S.thralls++;addFavor('odin',2);return '+1 thrall.';}}]},
@@ -1917,8 +1950,9 @@ const BANQ={people:{n:'People’s feast',d:'+12 morale for 20 days',c:()=>({smok
   council:{n:'Council feast',d:'+20 fame and the Gods take note',c:()=>({smoked:10,mead:10}),fx:()=>{addFame(20);GOD_KEYS.forEach(g=>addFavor(g,3));}}};
 function banqCost(k){const base=BANQ[k].c(),m=1+0.5*(S.banqN||0);const o={};for(const x in base)o[x]=Math.ceil(base[x]*m);return o;}
 function holdBanquet(k){const c=banqCost(k);if(!afford(c))return 'Not enough: needs '+costStr(c);pay(c,1);BANQ[k].fx();S.banqN=(S.banqN||0)+1;S.banqReset=S.day+20;S.feast={until:S.gameT+DAY*1.5};return '';}
-/* mercenaries: hired for a year, paid in silver up front */
-function hireMercs(){if(thLevel()<4)return 'Mercenaries come at Town Hall level 4';if(S.fame<300)return 'They only follow a Jarl of 300 fame or more';const n=Math.min(5,warCap()-S.warriors);if(n<=0)return 'No room for more warriors';const cost=n*14;if(S.res.silver<cost)return 'Needs '+cost+' silver';if(housing()-S.pop<n)return 'Needs room in the houses for '+n;
+/* mercenaries: hired for a year, paid in silver up front (O1, Beta 0.22: 14 → 40 each) */
+const MERC_SILVER=40;
+function hireMercs(){if(thLevel()<4)return 'Mercenaries come at Town Hall level 4';if(S.fame<300)return 'They only follow a Jarl of 300 fame or more';const n=Math.min(5,warCap()-S.warriors);if(n<=0)return 'No room for more warriors';const cost=n*MERC_SILVER;if(S.res.silver<cost)return 'Needs '+cost+' silver';if(housing()-S.pop<n)return 'Needs room in the houses for '+n;
   S.res.silver-=cost;for(let i=0;i<n;i++)newPerson({g:'m',a:Math.round(U(22,38)),w:'merc',xp:1,tr:Math.random()<0.3?'hot':'',merc:S.day+YDAYS});syncPop();return '';}
 function mercDay(){for(const p of S.people.slice())if(p.merc&&p.merc<=S.day&&!p.away){removePerson(p,'left');toast('A mercenary’s year is up. He takes his pay and sails south.');}}
 
@@ -6271,7 +6305,7 @@ function vrEnd(){const out={dead:[],wounded:0};for(const u of VR.u)if(u.side==='
   vrReport(VR.killed,S.vr.n,VR.stolen,out,VR.broke);VR=null;}
 function vrAuto(){/* settled without the scene (a save mid-fight, or no screen) */
   /* a closed palisade makes the village harder to take; survivors carry off what they can, as in the scene (6 silver or 3 of a good per grab, 20 each) */
-  const a=S.vr.n*RAIDER.dps*2.2,d=defenceValue()*3.2*(S.wallClosed?1.2+0.4*wallLv():1);const k=Math.min(S.vr.n,Math.round(S.vr.n*Math.min(1,d/Math.max(1,a))));const stolen={};
+  const a=S.vr.n*RAIDER.dps*2.2,d=defenceValue()/(S.wallClosed?1.5:1)*3.2*(S.wallClosed?1.2+0.4*wallLv():1)/* O3: the palisade bonus counted once (×1.6 / 2.0 / 2.4 by palisade level) */;const k=Math.min(S.vr.n,Math.round(S.vr.n*Math.min(1,d/Math.max(1,a))));const stolen={};
   if(d<a){for(let r=0;r<S.vr.n-k;r++){let bag=0;while(bag<RAIDER.carry){const ks=STEAL.filter(x=>(S.res[x]||0)>=1);if(!ks.length)break;const key=pick(ks),v=Math.min(Math.floor(S.res[key]),key==='silver'?6:3,RAIDER.carry-bag);if(v<=0)break;S.res[key]-=v;stolen[key]=(stolen[key]||0)+v;bag+=v;}}}
   const out={dead:[],wounded:0};const def=S.people.filter(p=>p.w&&!p.away);const hurt=Math.min(def.length,Math.round(S.vr.n*0.25*Math.min(1.5,a/Math.max(1,d))));for(let i=0;i<hurt;i++)vrCasualty(def[i],out);
   VR=null;vrReport(k,S.vr.n,stolen,out,0);}
@@ -6442,9 +6476,9 @@ function tileSheet(x,y){
   const TN={0:'Sea',1:'Beach',2:'Meadow',3:'Forest',4:'Mountains',5:'Foothills',6:'River',7:'Berry bushes',8:'Iron outcrop'};
   const TX={0:'Open water. Each tile within 3 of a fisher’s hut holds 100 fish a year (river 70); fished-out water comes back when summer starts.',1:'Sand and shingle. Good ground for fishers and the harbour.',2:'Open ground for houses, workshops, fields and roads.',3:'Woodcutters work these trees. Each tree gives 50 wood a year; a used-up tree stands as a stump and grows back 3 days after winter.',4:'The mountains close the land off. Nothing can be built here.',5:'Rocky ground at the foot of the mountains. Mines go here.',6:'Fresh water. Fishers work from its banks; roads cross it as bridges.',7:'Gatherers pick berries here in summer: 45 a bush each year, back when summer starts. Bushes rest in winter.',8:'Iron ore: 80 iron, refilled every two years when winter starts. Place an iron mine within 4 tiles.'};
   let extra='';
-  if(tt===T.FOREST){const ts=trees.filter(o=>o.x===x&&o.y===y&&!o.gone);if(ts.length)extra='Wood left here this year: '+fmt(ts.reduce((a,o)=>a+o.amt,0))+' of '+ts.reduce((a,o)=>a+o.cap,0);}
-  if(tt===T.BERRY){const bs=bushes.find(o=>o.x===x&&o.y===y&&!o.gone);if(bs)extra='Berries left this year: '+fmt(bs.amt)+' of '+bs.cap;}
-  if(tt===T.IRON||tt===T.SEA||tt===T.RIVER){const o=SRCAT[y*N+x];if(o)extra=(tt===T.IRON?'Iron':'Fish')+' left here this year: '+fmt(o.amt)+' of '+o.cap;}
+  if(tt===T.FOREST){const ts=trees.filter(o=>o.x===x&&o.y===y&&!o.gone);if(ts.length){const m=srcTileMult(ts[0]);extra='Wood left here this year: '+fmt(m*ts.reduce((a,o)=>a+o.amt,0))+' of '+fmt(m*ts.reduce((a,o)=>a+o.cap,0));}}
+  if(tt===T.BERRY){const bs=bushes.find(o=>o.x===x&&o.y===y&&!o.gone);if(bs){const m=srcTileMult(bs);extra='Berries left this year: '+fmt(m*bs.amt)+' of '+fmt(m*bs.cap);}}
+  if(tt===T.IRON||tt===T.SEA||tt===T.RIVER){const o=SRCAT[y*N+x];if(o){const m=srcTileMult(o);extra=(tt===T.IRON?'Iron':'Fish')+' left here this year: '+fmt(m*o.amt)+' of '+fmt(m*o.cap);}}
   let h=head(TN[tt],zoneName(zx,zy)+' · '+(un?'Unlocked':'Locked'))+'<p>'+esc(TX[tt])+'</p>'+(extra?'<div class="meta">'+esc(extra)+'</div>':'');
   if((tt===T.FOREST||tt===T.BERRY)&&un)h+='<div class="meta">To clear these for good, use Remove next to Roads.</div>';
   if(!un){const adj=zoneAdj(zx,zy);h+='<div class="acts"><button type="button" class="btn primary" id="z-un" '+(adj&&S.fame>=cost?'':'disabled')+'>Unlock for '+cost+' fame</button></div>'+(!adj?'<div class="meta">Unlock a neighbouring land first.</div>':S.fame<cost?'<div class="meta">You have '+fmt(S.fame)+' fame. Complete saga goals to earn more.</div>':'');}
@@ -6460,7 +6494,7 @@ function renderBuild(){if(isWide()){if(mode!=='view')endMode();closeSheet();open
   h+='<div class="tabs" role="group" aria-label="Categories">'+CATS.map(c=>'<button type="button" data-cat="'+c+'" aria-pressed="'+(c===buildCat)+'">'+c+'</button>').join('')+'</div><div class="blist">';
   Object.keys(DEF).filter(k=>DEF[k].cat===buildCat).forEach(k=>{const D=DEF[k],av=isAvail(k),lim=limitOf(k),cnt=count(k),uq=cnt>=lim,cst=costOf(k),free=!Object.keys(cst).length&&Object.keys(D.cost).length,ok=av&&!uq&&afford(cst);
     const lock=D.lvl>gateLv()?'Needs Town Hall level '+D.lvl:!av?'Unlocks with: '+(MS.find(m=>m.unlock.includes(k))||{title:'?'}).title:uq?'Limit reached for this level':'';
-    h+='<button type="button" class="bcard'+(ok?'':' no')+'" data-b="'+k+'"><img class="bth" alt="" src="'+buildThumb(k,1)+'"><b>'+esc(D.name)+'</b>'+(D.lvl<=gateLv()?'<span class="lim">Built '+cnt+(UNLIMITED.has(k)?'':' / '+lim)+'</span>':'')+'<span>'+D.w+'×'+D.h+(D.slots?' · '+D.slots+' workers':'')+(D.housing?' · '+D.housing+' people':'')+'</span><span class="cost'+(av&&!afford(cst)?' bad':'')+'">'+(free?'First one free':costIco(cst))+'</span>'+(lock?'<span>'+esc(lock)+'</span>':'')+'</button>';});
+    h+='<button type="button" class="bcard'+(ok?'':' no')+'" data-b="'+k+'"><img class="bth" alt="" src="'+buildThumb(k,1)+'"><b>'+esc(D.name)+'</b>'+(D.lvl<=gateLv()?'<span class="lim">Built '+cnt+(UNLIMITED.has(k)?copyNote(k):' / '+lim)+'</span>':'')+'<span>'+D.w+'×'+D.h+(D.slots?' · '+D.slots+' workers':'')+(D.housing?' · '+D.housing+' people':'')+'</span><span class="cost'+(av&&!afford(cst)?' bad':'')+'">'+(free?'First one free':costIco(cst))+'</span>'+(lock?'<span>'+esc(lock)+'</span>':'')+'</button>';});
   h+='</div>';openSheet(h,'build');
   $('sheet-card').querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{buildCat=b.dataset.cat;renderBuild();});
   $('sheet-card').querySelectorAll('.bcard').forEach(c=>c.onclick=()=>{const k=c.dataset.b,D=DEF[k];
@@ -6685,7 +6719,7 @@ function openTray(cat){trayCat=cat;buildCat=cat;const tr=$('tray');
   let h='<div class="trh"><b>'+esc(cat)+'</b><span>Town Hall level '+thLevel()+' · click a building, then choose its spot</span><button type="button" class="x" id="tray-x" aria-label="Close">×</button></div><div class="trl">';
   for(const k of keys){const D=DEF[k],av=isAvail(k),lim=limitOf(k),cnt=count(k),uq=cnt>=lim,cst=costOf(k),free=!Object.keys(cst).length&&Object.keys(D.cost).length,ok=av&&!uq&&afford(cst)&&D.lvl<=gateLv();
     const msU=MS.find(m=>m.unlock.includes(k)),lkP=[];if(D.lvl>gateLv())lkP.push('Town Hall '+D.lvl);if(!av&&msU)lkP.push('saga goal “'+msU.title+'”');const lock=lkP.length?'🔒 Unlocks with: '+lkP.join(' + '):uq?'Limit reached':'';
-    h+='<button type="button" class="tcard'+(ok?'':' no')+(lock?' lk':'')+'" data-b="'+k+'" title="'+esc((D.desc||'')+(needsOf(k).length?' Needs: '+needsOf(k).join(', ')+'.':''))+'"><img alt="" src="'+buildThumb(k,1)+'"><b>'+esc(D.name)+'</b><span class="tc3">'+esc(roleOf(k))+'</span><span class="tc2">'+(D.lvl<=gateLv()?cnt+(UNLIMITED.has(k)?' built':' / '+lim):'')+(D.slots?' · '+D.slots+' workers':'')+(D.housing?' · '+D.housing+' beds':'')+(needsShort(k)?'<br>Needs '+esc(needsShort(k)):'')+'</span>'+(lock?'<span class="lkb'+(uq?' lim':'')+'">'+esc(lock)+'</span>':'')+'<span class="cost big'+(!lock&&av&&!afford(cst)?' bad':'')+'">'+(free?'First one free':costHave(cst))+'</span></button>';}
+    h+='<button type="button" class="tcard'+(ok?'':' no')+(lock?' lk':'')+'" data-b="'+k+'" title="'+esc((D.desc||'')+(needsOf(k).length?' Needs: '+needsOf(k).join(', ')+'.':''))+'"><img alt="" src="'+buildThumb(k,1)+'"><b>'+esc(D.name)+'</b><span class="tc3">'+esc(roleOf(k))+'</span><span class="tc2">'+(D.lvl<=gateLv()?cnt+(UNLIMITED.has(k)?' built'+copyNote(k):' / '+lim):'')+(D.slots?' · '+D.slots+' workers':'')+(D.housing?' · '+D.housing+' beds':'')+(needsShort(k)?'<br>Needs '+esc(needsShort(k)):'')+'</span>'+(lock?'<span class="lkb'+(uq?' lim':'')+'">'+esc(lock)+'</span>':'')+'<span class="cost big'+(!lock&&av&&!afford(cst)?' bad':'')+'">'+(free?'First one free':costHave(cst))+'</span></button>';}
   tr.innerHTML=h+'</div>';tr.hidden=false;
   $('tray-x').onclick=closeTray;
   tr.querySelectorAll('.tcard').forEach(c=>c.onclick=()=>{const k=c.dataset.b,D=DEF[k];
@@ -6857,7 +6891,7 @@ const CLOTHC=['#4B6A76','#7C8A6A','#8E5A4E','#6E5248','#5E7F8C','#8A7A5A','#5C6B
 function shade(hx,f){const c=hex(hx);return 'rgb('+Math.min(255,c[0]*f|0)+','+Math.min(255,c[1]*f|0)+','+Math.min(255,c[2]*f|0)+')';}
 function portrait(p,sz){
   const s=(p.look||1)+7,h=k=>{const x=Math.sin(s*12.9898+k*78.233)*43758.5453;return x-Math.floor(x);};
-  const sk=SKIN[Math.floor(h(1)*3)],child=p.a<14,old=p.a>=50,male=p.g==='m',jarl=S&&p.id===S.jarl;
+  const sk=SKIN[Math.floor(h(1)*3)],child=p.a<ADULT,old=p.a>=50,male=p.g==='m',jarl=S&&p.id===S.jarl;
   let hair=HAIRC[Math.floor(h(2)*HAIRC.length)];if(old)hair=p.a>=60?'#D5D8D8':'#A9AEAE';const hairD=shade(hair,0.85);
   const cloth=p.w?'#7A7F84':CLOTHC[Math.floor(h(3)*CLOTHC.length)];
   const bg=p.w?'#C9C2B8':jarl?'#C9D3D4':'#D3DAD8';
@@ -7008,10 +7042,10 @@ function personSheet(p){const sp=p.sp?PB(p.sp):null,fa=PB(p.pa[0]),mo=PB(p.pa[1]
 function peoplePanel(){assignWorkers();
   let h=head('People',S.pop+' free people'+(S.thralls?' · '+S.thralls+' thralls':''));
   h+=tabsHtml(['Overview','Lineage','Everyone'],tabP,'data-tp');
-  if(tabP==='Overview'){const ad=S.people.filter(p=>p.a>=14&&p.a<50).length,ch=S.people.filter(p=>p.a<14).length,el=S.people.filter(p=>p.a>=50).length,sk=S.people.filter(p=>p.sick>0).length;
+  if(tabP==='Overview'){const ad=S.people.filter(p=>p.a>=ADULT&&p.a<50).length,ch=S.people.filter(p=>p.a<ADULT).length,el=S.people.filter(p=>p.a>=50).length,sk=S.people.filter(p=>p.sick>0).length;
     h+='<table class="t"><tr><td>Adults · children · elders</td><td>'+ad+' · '+ch+' · '+el+'</td></tr><tr><td>Housing</td><td>'+S.pop+' / '+housing()+'</td></tr>'+(thLevel()>=2?'<tr><td>Warriors</td><td>'+S.warriors+(S.train?' (+'+S.train.n+' training)':'')+'</td></tr>':'')+(S.thralls||thLevel()>=3?'<tr><td>Thralls</td><td>'+S.thralls+' / '+thrallCap()+'</td></tr>':'')+'<tr><td>Sick or wounded</td><td>'+sk+'</td></tr><tr><td>Able to work · free now</td><td>'+workforce()+' · '+freeWorkers+'</td></tr><tr><td>This year</td><td>'+S.yr.births+' born · '+S.yr.deaths+' died · '+S.yr.arrived+' came</td></tr></table>';
-    h+='<h3>Morale · '+Math.round(S.morale)+' / 100</h3>'+bar(S.morale,S.morale<40?'#A34A3A':S.morale>=70?'#5E7A4E':'#C9A64A')+'<p class="meta">Above 70: +10% work and more births. Below 40: −15% work. Below 20 the people may rise. Heading to '+Math.round(S.moraleTarget||S.morale)+'.</p>'+factors(S.mf);
-    h+='<h3>Attractiveness · '+Math.round(S.attr)+' / 100</h3>'+bar(S.attr,'#5E7F8C')+'<p class="meta">Draws newcomers when there is room and food.'+(S.morale>=70?' Morale is high: <b>many more</b> come (×2.2).':S.morale>55?' Morale is good: <b>more</b> come (×1.5).':S.morale<40?' Morale is low: fewer come (×0.5).':' Above 55 morale more people come, above 70 many more.')+'</p>'+factors(S.af);
+    h+='<h3>Morale · '+Math.round(S.morale)+' / 100</h3>'+bar(S.morale,S.morale<40?'#A34A3A':S.morale>=70?'#5E7A4E':'#C9A64A')+'<p class="meta">Above 70: +10% work. Below 40: −15% work. Below 20 the people may rise. Heading to '+Math.round(S.moraleTarget||S.morale)+'.</p>'+factors(S.mf);
+    h+='<h3>Attractiveness · '+Math.round(S.attr)+' / 100</h3>'+bar(S.attr,'#5E7F8C')+'<p class="meta">Draws newcomers when there is room and food.</p>'+factors(S.af)+'<h3>Village mood · '+Math.round(villageMood())+'</h3><p class="meta">The mean of morale and attractiveness. Births and newcomers ×'+moodGrowth().toFixed(2)+' (×1 at 60; below 45 the village hardly grows, above 75 it grows fast). Building houses alone does not bring people. The hall keeps up to '+hallReach()+' people in good order; more than that lowers attractiveness and morale.</p>';
     h+='<h3>Workplaces</h3><table class="t"><tr><td>Builders <span class="meta">Town Hall</span></td><td>'+buildersWorking+' / '+builderSlots()+' <span class="meta">'+PRIO[builderPrio()]+'</span></td></tr>'+B.filter(b=>slotsOf(b)).map(b=>'<tr><td>'+esc(DEF[b.t].name)+(b.lvl>1?' <span class="meta">lv '+b.lvl+'</span>':'')+'</td><td>'+b.workers+' / '+slotsOf(b)+' <span class="meta">'+(winterStopped(b)?'Winter stop':PRIO[prioOf(b)])+'</span></td></tr>').join('')+'</table>';}
   if(tabP==='Lineage'){const j=jarlP();
     if(j){h+='<div class="pcard">'+portrait(j,110)+'<div><h2>'+esc(pname(j))+'</h2><p class="meta">Jarl of Kaldstrand · '+Math.floor(j.a)+' years · generation '+S.gen+'</p>'+(j.jt||[]).map(k=>'<p><strong>'+esc(JTRAITS[k].n)+'</strong> · '+esc(JTRAITS[k].d)+'</p>').join('')+'</div></div>';
@@ -7019,7 +7053,7 @@ function peoplePanel(){assignWorkers();
       const k=kidsOf(j.id);h+='<h3>Children</h3>'+(k.length?k.map(personRow).join(''):'<p>No children yet.</p>');
       const hr=S.heir?PB(S.heir):null;h+='<h3>Heir</h3><p>'+(hr?'<strong>'+esc(pname(hr))+'</strong>, '+Math.floor(hr.a)+'. Tap a child to name another heir; passing over the eldest costs morale.':'No heir. '+(S.mode==='challenge'?'If the Jarl dies without one, the saga ends.':'If the Jarl dies without one, the people choose a new leader.'))+'</p>';}
     h+='<h3>Line of Ubbe</h3><p class="saga">Ragnar Lothbrok → Ubbe Ragnarsson'+(S.gen>1?' → … → '+esc(pname(j)):'')+'</p>';}
-  if(tabP==='Everyone'){const F={All:()=>true,Workers:p=>roleOf(p)==='Worker',Warriors:p=>!!p.w,Children:p=>p.a<14,Elders:p=>p.a>=50,Sick:p=>p.sick>0};
+  if(tabP==='Everyone'){const F={All:()=>true,Workers:p=>roleOf(p)==='Worker',Warriors:p=>!!p.w,Children:p=>p.a<ADULT,Elders:p=>p.a>=50,Sick:p=>p.sick>0};
     h+='<div class="tabs" role="group">'+Object.keys(F).map(c=>'<button type="button" data-pf="'+c+'" aria-pressed="'+(c===peopleFilter)+'">'+c+'</button>').join('')+'</div>';
     const list=S.people.filter(F[peopleFilter]).sort((a,b)=>(b.id===S.jarl)-(a.id===S.jarl)||b.a-a.a);h+='<div class="plist">'+list.map(personRow).join('')+'</div>'+(list.length?'':'<p>Nobody here.</p>');}
   openSheet(h,'panel');const card=$('sheet-card');card.dataset.p='people';
@@ -7291,7 +7325,7 @@ function tombHtml(b,on){if(b.proj)return '<p>'+(S.tombDone?'Ragnar rests in his 
   on.push(()=>{if($('tb-go'))$('tb-go').onclick=()=>{const sh=S.ships.find(s=>!s.away);if(!sh||S.res.gold<40||S.res.swords<6)return;S.res.gold-=40;S.res.swords-=6;S.ships=S.ships.filter(s=>s!==sh);b.proj={done:0};S.saga.push({y:yearNow(),t:'The '+sh.name+' was dragged ashore to be Ragnar’s grave-ship.'});checkMilestones();toast('The keel of Ragnar’s tomb is laid.');buildingSheet(b);save();};});
   return '<p>To begin, give 40 gold, 6 swords and one ship from the harbour'+(ship?' (the '+esc(ship.name)+')':'')+'.</p><div class="acts">'+btn('tb-go','Begin the tomb',{cls:'primary',dis:!ok})+'</div>';}
 function warExtraHtml(on){let h='';
-  if(thLevel()>=4){h+='<h3>Hire and levy</h3><div class="wk">'+btn('w-merc','Hire 5 mercenaries (70 silver)',{cls:'small'})+'<span class="meta">Strength 2, ready at once, stay one year. Needs 300 fame.</span></div>';
+  if(thLevel()>=4){h+='<h3>Hire and levy</h3><div class="wk">'+btn('w-merc','Hire 5 mercenaries ('+5*MERC_SILVER+' silver)',{cls:'small'})+'<span class="meta">Strength 2, ready at once, stay one year. Needs 300 fame.</span></div>';
     const lev=S.mobilUntil>S.day;h+='<div class="wk">'+btn('w-levy',lev?'Levy called ('+(S.mobilUntil-S.day)+' days)':'Call the levy',{cls:'small',dis:lev})+'<span class="meta">+20% warrior limit for 30 days. −5 morale.</span></div>';}
   if(thLevel()>=5){recomputeWalls();h+='<h3>Defence</h3><table class="t"><tr><td>Defence of the village</td><td>'+defenceValue()+'</td></tr><tr><td>Palisade</td><td>'+(S.wallClosed?'closed':walls.some(v=>v)?'open: there is a gap':'none')+'</td></tr><tr><td>Watchtowers manned</td><td>'+Math.min(B.filter(b=>b.t==='tower').length,Math.floor(S.people.filter(p=>p.w==='archer'&&!p.away).length/2))+' / '+B.filter(b=>b.t==='tower').length+'</td></tr></table><p class="meta">From Town Hall 5 raiders land on the shore now and then; scouts give you 5 days’ warning. A closed palisade (with a gate) keeps them out until they hack through it.</p><div class="acts">'+btn('w-wall','Build the palisade',{cls:'primary'})+'</div>'+wallDefHtml(on);}
   on.push(()=>{if($('w-merc'))$('w-merc').onclick=()=>{const w=hireMercs();toast(w||'Five mercenaries came ashore.');if(!w){warPanel();save();}};

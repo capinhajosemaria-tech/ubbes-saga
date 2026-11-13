@@ -1,5 +1,7 @@
 /* =================== economy constants =================== */
 /* 1 day ≈ 27 s at 1×. People eat 0.5 meals a day; warriors eat 1.5× */
+/* B3 (A1): children work and eat as adults from 12 (was 14) */
+const ADULT=12;
 const EAT=0.5,FIRE_HOUSE=0.7,FIRE_TH=2,WAR_EAT=1.5;
 /* ale and mead are not meals: they are drunk at feasts and in the tavern (goods, kept in the warehouse) */
 const MEAL={fish:1,berries:1,meat:1,bread:1.5,jam:2,smoked:2};

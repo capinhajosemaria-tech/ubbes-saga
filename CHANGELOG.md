@@ -2,6 +2,15 @@
 
 Versions are `Beta 0.MINOR.PATCH` until Town Hall 10 (`1.0.0`).
 
+## Beta 0.22.0
+- **Build as many as you like:** houses and every ordinary building (materials, food, farms, crafts, storage) have no count limit any more. From the 3rd copy each one costs 30% more than the one before (houses, granaries and warehouses always cost the same); the build tray shows the count and how much dearer the next copy is. Unique buildings (Town Hall, Jarl's House, Market, the tomb, Altar, Hof, Training Ground, Shipyard, Harbour, Trading House, Thrall Pen, Arsenal, Pyre, Tavern, Watchtower) and decor keep their limits. Collectors are held back by their own trees, bushes, water and ore: a lodge squeezed between others gets little.
+- **Upgrading a collector makes its own sources give more:** the same tree, bush, water tile or outcrop yields ×1.3 / 1.5 / 1.75 / 2 for a building of level 2 / 3 / 4 / 5, so an upgraded lodge or fisher no longer runs dry before winter. The map is unchanged. Iron outcrops refill every year (40 a year, the same average as before); river water holds 85 fish.
+- **People follow the village's mood:** births and newcomers depend on the mean of morale and attractiveness (×1 at 60, hardly any below 45, fast growth above 75). Houses alone no longer grow the village. **The hall's reach:** each Town Hall level keeps 30 / 45 / 70 / 100 / 130 people in good order; above that the village feels crowded and growth slows. Children work from 12 (was 14) and fewer are born.
+- **Silver matters:** levels 4 and 5 of every upgrade cost some silver, mercenaries cost 40 silver each, the Hof 150, Town Hall 4 150 and Town Hall 5 350.
+- **Town Hall pacing:** TH2 40 iron · TH3 80 iron and 36 people · TH4 500 wood, 450 planks, 110 iron, 30 tools, 150 silver, 60 people · TH5 800 wood, 700 planks, 190 iron, 50 tools, 350 silver, 20 gold, 90 people.
+- Fixes: the Market's extra newcomers need its stallkeeper at work; the closed palisade's bonus in an off-screen raid is counted once (60 / 100 / 140% by level), not twice.
+- Balance bots: a new `steady` profile upgrades collectors and workshops, uses the open limits, keeps mood high and picks land by the trees, ore and water it needs; every run now logs stock per Town Hall level to spot goods piling up.
+
 ## Beta 0.21.0
 - **Preserver makes jam only; fish is kept at the Smokehouse.** The Smokehouse now unlocks at Town Hall 1 together with the Preserver (one at TH1), so the first winter can still be stocked with fish. **Dried fish is merged into smoked food** (2 meals each); dried fish in old saves turns into smoked food. "Ready for winter" asks for a preserver *or* a smokehouse.
 - **One worker is enough** at the Pig Pen, Sheep Pen, Preserver, Smokehouse, Brewery and Tailor. Each makes as much as before: the worker makes twice as much, and from level 3 these workshops get ×1.5 in place of an extra worker. More people are free for other jobs.

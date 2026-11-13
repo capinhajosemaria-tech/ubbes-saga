@@ -127,7 +127,7 @@ function vrEnd(){const out={dead:[],wounded:0};for(const u of VR.u)if(u.side==='
   vrReport(VR.killed,S.vr.n,VR.stolen,out,VR.broke);VR=null;}
 function vrAuto(){/* settled without the scene (a save mid-fight, or no screen) */
   /* a closed palisade makes the village harder to take; survivors carry off what they can, as in the scene (6 silver or 3 of a good per grab, 20 each) */
-  const a=S.vr.n*RAIDER.dps*2.2,d=defenceValue()*3.2*(S.wallClosed?1.2+0.4*wallLv():1);const k=Math.min(S.vr.n,Math.round(S.vr.n*Math.min(1,d/Math.max(1,a))));const stolen={};
+  const a=S.vr.n*RAIDER.dps*2.2,d=defenceValue()/(S.wallClosed?1.5:1)*3.2*(S.wallClosed?1.2+0.4*wallLv():1)/* O3: the palisade bonus counted once (×1.6 / 2.0 / 2.4 by palisade level) */;const k=Math.min(S.vr.n,Math.round(S.vr.n*Math.min(1,d/Math.max(1,a))));const stolen={};
   if(d<a){for(let r=0;r<S.vr.n-k;r++){let bag=0;while(bag<RAIDER.carry){const ks=STEAL.filter(x=>(S.res[x]||0)>=1);if(!ks.length)break;const key=pick(ks),v=Math.min(Math.floor(S.res[key]),key==='silver'?6:3,RAIDER.carry-bag);if(v<=0)break;S.res[key]-=v;stolen[key]=(stolen[key]||0)+v;bag+=v;}}}
   const out={dead:[],wounded:0};const def=S.people.filter(p=>p.w&&!p.away);const hurt=Math.min(def.length,Math.round(S.vr.n*0.25*Math.min(1.5,a/Math.max(1,d))));for(let i=0;i<hurt;i++)vrCasualty(def[i],out);
   VR=null;vrReport(k,S.vr.n,stolen,out,0);}

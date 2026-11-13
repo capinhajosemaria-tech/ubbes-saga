@@ -17,7 +17,7 @@ function dayTick(){
     switch(b.t){
       case 'wood':{const got=harvest(b,n*SRC_RATE.wood*E);if(got<=0.001)b.status=srcOwn(b).length?'Trees used up: they grow back 3 days after winter':srcList(b).length?'Every tree in range belongs to another lodge':'No trees in range';mk('wood',got);break;}
       case 'carp':{const av=Math.max(0,r.wood-S.woodReserve),p=Math.min(n*2*E,av/2);if(p<=0.05){b.status=holdMsg(['wood']);break;}r.wood-=p*2;mk('planks',p);break;}
-      case 'mine':{const got=harvest(b,n*2*E);if(got<=0.001)b.status=srcOwn(b).length?'Ore used up: it comes back every two years, when winter starts':srcList(b).length?'Every outcrop in range belongs to another mine':'No iron in range';mk('iron',got);break;}
+      case 'mine':{const got=harvest(b,n*2*E);if(got<=0.001)b.status=srcOwn(b).length?'Ore used up: it comes back when winter starts':srcList(b).length?'Every outcrop in range belongs to another mine':'No iron in range';mk('iron',got);break;}
       case 'smith':{if(b.anvil<=0){if(r.iron>=10){r.iron-=10;b.anvil=100;toast('The smith forged a new anvil (10 iron).');}else{b.status='Anvil broken: needs 10 iron';break;}}
         let md=b.mode;if(!SMITH[md]||SMITH[md].lv>thLevel())md='tools';const sm=SMITH[md];let make=n*sm.per*E;
         for(const k in sm.c){make=Math.min(make,resv(k)/sm.c[k]);}

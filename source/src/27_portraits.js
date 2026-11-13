@@ -5,7 +5,7 @@ const CLOTHC=['#4B6A76','#7C8A6A','#8E5A4E','#6E5248','#5E7F8C','#8A7A5A','#5C6B
 function shade(hx,f){const c=hex(hx);return 'rgb('+Math.min(255,c[0]*f|0)+','+Math.min(255,c[1]*f|0)+','+Math.min(255,c[2]*f|0)+')';}
 function portrait(p,sz){
   const s=(p.look||1)+7,h=k=>{const x=Math.sin(s*12.9898+k*78.233)*43758.5453;return x-Math.floor(x);};
-  const sk=SKIN[Math.floor(h(1)*3)],child=p.a<14,old=p.a>=50,male=p.g==='m',jarl=S&&p.id===S.jarl;
+  const sk=SKIN[Math.floor(h(1)*3)],child=p.a<ADULT,old=p.a>=50,male=p.g==='m',jarl=S&&p.id===S.jarl;
   let hair=HAIRC[Math.floor(h(2)*HAIRC.length)];if(old)hair=p.a>=60?'#D5D8D8':'#A9AEAE';const hairD=shade(hair,0.85);
   const cloth=p.w?'#7A7F84':CLOTHC[Math.floor(h(3)*CLOTHC.length)];
   const bg=p.w?'#C9C2B8':jarl?'#C9D3D4':'#D3DAD8';

@@ -5,16 +5,16 @@ const DEF={
   house:{name:'House',w:2,h:2,cost:{wood:20},slots:0,housing:4,road:false,cat:'Homes',lvl:1,up:true,desc:'Home for 4 people, 5 after the first upgrade; the second upgrade insulates it (−25% firewood). Burns ½ wood a day in summer and 1.2 in winter; when the logs run out, planks are burned (1 plank = 2 wood).'},
   jarl:{name:'Jarl’s House',w:3,h:3,cost:{wood:60,planks:30},slots:0,housing:4,road:false,cat:'Homes',lvl:1,desc:'Home of Ubbe and his heirs.'},
   pyre:{name:'Funeral Pyre',w:2,h:2,cost:{wood:10},slots:0,road:false,cat:'Community',lvl:1,desc:'The dead are burned here, so the river stays clean.'},
-  wood:{name:'Woodcutter’s Lodge',w:2,h:2,cost:{wood:15},slots:3,tools:true,need:{k:'tree',r:6},cat:'Materials',lvl:1,up:true,out:'5 wood per worker a day',desc:'Fells trees within 6 tiles. Full output needs 20 trees of its own (each belongs to one lodge only) and each gives 50 wood a year. Used-up trees stand as stumps and grow back 3 days after winter. Works through winter.'},
+  wood:{name:'Woodcutter’s Lodge',w:2,h:2,cost:{wood:15},slots:3,tools:true,need:{k:'tree',r:6},cat:'Materials',lvl:1,up:true,out:'5 wood per worker a day',desc:'Fells trees within 6 tiles. Full output needs 20 trees of its own (each belongs to one lodge only) and each gives 50 wood a year (65 / 75 / 88 / 100 for a lodge of level 2 / 3 / 4 / 5). Used-up trees stand as stumps and grow back 3 days after winter. Works through winter.'},
   carp:{name:'Carpenter',w:2,h:2,cost:{wood:25},slots:2,tools:true,cat:'Materials',lvl:1,up:true,out:'4 wood → 2 planks per worker a day',desc:'Saws timber into planks. Never touches the wood reserve you set.'},
-  mine:{name:'Iron Mine',w:2,h:2,cost:{wood:30,planks:10},slots:3,tools:true,need:{k:'iron',r:4},cat:'Materials',lvl:1,up:true,out:'2 iron per worker a day',desc:'Digs ore within 4 tiles at the foot of the mountains. Full output needs 5 iron outcrops of its own; each belongs to one mine only and holds 80 iron, refilled every two years when winter starts.'},
+  mine:{name:'Iron Mine',w:2,h:2,cost:{wood:30,planks:10},slots:3,tools:true,need:{k:'iron',r:4},cat:'Materials',lvl:1,up:true,out:'2 iron per worker a day',desc:'Digs ore within 4 tiles at the foot of the mountains. Full output needs 5 iron outcrops of its own; each belongs to one mine only and holds 40 iron a year (52 / 60 / 70 / 80 for a mine of level 2 / 3 / 4 / 5), refilled when winter starts.'},
   smith:{name:'Smithy',w:2,h:2,cost:{wood:15,planks:20,iron:10},slots:2,cat:'Crafts',lvl:1,up:true,out:'Tools, and later weapons',desc:'Forges tools; from Town Hall 2 spears, from Town Hall 3 shields, bows, arrows and swords. Needs a working anvil; a new one costs 10 iron. +15% next to a mine.'},
-  fish:{name:'Fisher’s Hut',w:2,h:1,cost:{wood:15},slots:3,tools:true,need:{k:'water',r:3},cat:'Food',lvl:1,up:true,out:'4 fish per worker a day',desc:'A small hut with boats. Fishes the water within 3 tiles. Full output needs 5 water tiles of its own; each belongs to one hut only and holds 100 fish a year (river 70), back when summer starts. Catches far less in winter, more at sea than on the river.'},
-  berry:{name:'Berry Gatherer',w:2,h:2,cost:{wood:10},slots:2,tools:true,need:{k:'bush',r:5},seasonal:true,cat:'Food',lvl:1,up:true,out:'4 berries per worker a day (summer)',desc:'Picks berries within 5 tiles. Full output needs 6 bushes of its own; each belongs to one gatherer only and gives 45 berries a year. Rests in winter; its workers are free for other jobs.'},
+  fish:{name:'Fisher’s Hut',w:2,h:1,cost:{wood:15},slots:3,tools:true,need:{k:'water',r:3},cat:'Food',lvl:1,up:true,out:'4 fish per worker a day',desc:'A small hut with boats. Fishes the water within 3 tiles. Full output needs 5 water tiles of its own; each belongs to one hut only and holds 100 fish a year (river 85), more for an upgraded hut (×1.3 / 1.5 / 1.75 / 2 at level 2 / 3 / 4 / 5), back when summer starts. Catches far less in winter, more at sea than on the river.'},
+  berry:{name:'Berry Gatherer',w:2,h:2,cost:{wood:10},slots:2,tools:true,need:{k:'bush',r:5},seasonal:true,cat:'Food',lvl:1,up:true,out:'4 berries per worker a day (summer)',desc:'Picks berries within 5 tiles. Full output needs 6 bushes of its own; each belongs to one gatherer only and gives 45 berries a year (×1.3 / 1.5 / 1.75 / 2 at level 2 / 3 / 4 / 5). Rests in winter; its workers are free for other jobs.'},
   pres:{name:'Preserver',w:2,h:2,cost:{wood:15,planks:20},slots:1,cat:'Food',lvl:1,up:true,out:'Jam from berries',desc:'2 berries → 1 jam (2 meals); one worker makes 2½ jam a day. Jam never spoils. Fish is kept at the Smokehouse.'},
   gran:{name:'Granary',w:3,h:2,cost:{wood:30,planks:10},slots:0,road:false,store:{food:300},cat:'Storage',lvl:1,up:true,desc:'Raised storehouse. Holds 300 more food, +150 per upgrade.'},
   ware:{name:'Warehouse',w:3,h:2,cost:{wood:30,planks:10},slots:0,road:false,store:{mat:300},cat:'Storage',lvl:1,up:true,desc:'Holds 300 more goods, +150 per upgrade.'},
-  market:{name:'Market Square',w:4,h:4,cost:{wood:40,planks:40},slots:1,cat:'Community',lvl:1,out:'More families settle here',desc:'Open square with stalls. Draws newcomers to Kaldstrand.'},
+  market:{name:'Market Square',w:4,h:4,cost:{wood:40,planks:40},slots:1,cat:'Community',lvl:1,out:'More families settle here',desc:'Open square with stalls. +15 attractiveness; while its stallkeeper works there, 25% more newcomers come.'},
   /* ---- Town Hall level 2 ---- */
   pigpen:{name:'Pig Pen',w:3,h:3,cost:{wood:40,planks:10},slots:1,road:false,cat:'Farms',lvl:2,up:true,out:'Breeds pigs: meat and hides',desc:'Pigs breed in summer and eat fodder in winter. Pigs above the pen’s room are slaughtered for meat. Holds 12 pigs, +8 per upgrade.'},
   sheeppen:{name:'Sheep Pen',w:3,h:3,cost:{wood:40,planks:10},slots:1,road:false,cat:'Farms',lvl:2,up:true,out:'Keeps sheep: wool for sails and warm clothing',desc:'Sheep are shorn in summer and eat fodder in winter. Holds 12 sheep, +8 per upgrade.'},
@@ -54,28 +54,39 @@ const thLevel=()=>S.th||1;
 const SBX=()=>!!(typeof S!=='undefined'&&S&&S.mode==='sandbox');
 const MAX_TH=5;
 const gateLv=()=>SBX()?MAX_TH:thLevel();   /* the level that gates buildings, limits and upgrades */
-/* houses, granaries and warehouses have no limit (granaries and warehouses cost more after the second) */
-const UNLIMITED=new Set(['house','gran','ware']),NOLIMIT=9999;
+/* Beta 0.22 (B1): ordinary buildings (materials, food, farms, crafts, storage) and houses have no count limit.
+   Unique or strategic ones (Town Hall, Jarl's House, Market, wonders, Altar/Hof, Training Ground, Shipyard, Harbour, Trading House,
+   Thrall Pen, Arsenal, Pyre, Tavern, Watchtower) and the decor keep their limits. Collectors are held back by their own sources. */
+const UNLIMITED=new Set(['house','gran','ware','wood','carp','mine','smith','fish','berry','pres','smoke','pigpen','sheeppen','fodder',
+  'grain','bakery','flax','weaver','mill','brewery','hives','tailor']),NOLIMIT=9999;
 /* how many of these a test village builds */
-const TEST_COUNT={house:[11,15,22,25,27],gran:[1,2,2,3,3],ware:[1,2,2,3,3]};
+const TEST_COUNT={house:[11,15,22,25,27],gran:[1,2,2,3,3],ware:[1,2,2,3,3],wood:[2,3,4,4,5],carp:[1,2,2,2,2],mine:[1,1,2,2,2],smith:[1,1,1,2,2],
+  fish:[2,2,2,2,2],berry:[2,2,2,2,2],pres:[1,1,1,1,2],smoke:[1,1,1,1,2],pigpen:[0,1,1,2,2],sheeppen:[0,1,1,2,2],fodder:[0,1,2,3,3],grain:[0,0,2,3,3],
+  bakery:[0,0,1,2,2],flax:[0,0,1,2,2],weaver:[0,0,1,1,1],mill:[0,0,1,1,2],brewery:[0,0,1,1,2],hives:[0,0,2,2,3],tailor:[0,0,0,0,1]};
 const limitOf=k=>UNLIMITED.has(k)?NOLIMIT:(LIMITS[k]||[1,1,1])[gateLv()-1];
 const limTxt=k=>UNLIMITED.has(k)?'no limit':limitOf(k);
 const FIRST_FREE=['berry','wood'];
-/* 1st and 2nd at base price, 3rd–5th each +30% on the one before, then each +50% */
-const storeMult=n=>1;/* 0.21: every granary and warehouse costs the same */
+/* B1: rising cost per copy for the open buildings (not houses or storage): 1st and 2nd at base price, then each copy +COPY_RISE on the one before */
+const COPY_RISE=0.3,COPY_FLAT=new Set(['house','gran','ware']);
+const copyMult=(k,n)=>(!UNLIMITED.has(k)||COPY_FLAT.has(k)||n<=2)?1:Math.pow(1+COPY_RISE,n-2);
 const costOf=k=>builderMul(costOf0(k));
-const costOf0=k=>{if(FIRST_FREE.includes(k)&&!B.some(b=>b.t===k))return {};const c=DEF[k].cost;if(k!=='gran'&&k!=='ware')return c;
-  const m=storeMult(B.filter(b=>b.t===k).length+1);if(m===1)return c;const o={};for(const q in c)o[q]=Math.round(c[q]*m);return o;};
+/* tray note: how much dearer the next copy is */
+const copyNote=k=>{const m=copyMult(k,count(k)+1);return m>1?' · next +'+Math.round((m-1)*100)+'%':'';};
+const costOf0=k=>{if(FIRST_FREE.includes(k)&&!B.some(b=>b.t===k))return {};const c=DEF[k].cost;
+  const m=copyMult(k,B.filter(b=>b.t===k).length+1);if(m===1)return c;const o={};for(const q in c)o[q]=Math.round(c[q]*m);return o;};
 const CATS=['Homes','Food','Farms','Materials','Crafts','Storage','Community','Military','Sea','Decor'];
 const BUILDABLE=new Set([T.GRASS,T.BEACH,T.FOOT]);
 const isAvail=k=>{const D=DEF[k];if(SBX())return !D.hidden;if(D.needB&&!has(D.needB))return false;if(D.lvl>1||D.cat==='Decor')return thLevel()>=D.lvl;return S.avail.includes(k);};
 /* Town Hall: people + materials + at least one house at the highest level the current hall allows */
-const TH_UP={2:{cost:{wood:110,planks:70,iron:20},pop:22,house:1},
-             3:{cost:{wood:190,planks:150,iron:50,tools:10},pop:32,house:2}};
+const TH_UP={2:{cost:{wood:110,planks:70,iron:40},pop:22,house:1},
+             3:{cost:{wood:190,planks:150,iron:80,tools:10},pop:36,house:2}};
 /* one-worker buildings (0.21): no extra post at level 3; the four workshops get ×1.5 output from level 3 instead, so their output is what it was with 2–3 workers */
 const ONE_MAN=new Set(['pigpen','sheeppen','pres','smoke','brewery','tailor']),ONE_MAN_X=new Set(['pres','smoke','brewery','tailor']);
 const slotsOf=b=>(b.cons&&b.cons.k==='build')?0:(DEF[b.t].slots||0)+(DEF[b.t].slots&&!DEF[b.t].wonder&&!FIELDS.has(b.t)&&!ONE_MAN.has(b.t)&&b.lvl>=3?1:0);
-const upCost=b=>{const c=DEF[b.t].cost,o={};Object.keys(c).forEach(k=>o[k]=Math.round(c[k]*(b.lvl)*1.0));if(!Object.keys(o).length)o.wood=20*b.lvl;return builderMul(o);};
+/* O1 (Beta 0.22): upgrades to level 4 and 5 also cost silver: workplaces 15 / 30, houses 5 / 10 */
+const UP_SILVER={4:15,5:30},UP_SILVER_HOUSE={4:5,5:10};
+const upCost=b=>{const c=DEF[b.t].cost,o={};Object.keys(c).forEach(k=>o[k]=Math.round(c[k]*(b.lvl)*1.0));if(!Object.keys(o).length)o.wood=20*b.lvl;
+  const nx=b.lvl+1,sv=(b.t==='house'?UP_SILVER_HOUSE:UP_SILVER)[nx];if(sv&&!SBX())o.silver=(o.silver||0)+sv;return builderMul(o);};
 const canUpgrade=b=>DEF[b.t].up&&b.lvl<gateLv()&&!b.cons;
 
 /* ---- Town Hall levels 4 and 5 ---- */
@@ -84,9 +95,9 @@ Object.assign(DEF,{
   hives:{name:'Beehives',w:2,h:2,cost:{wood:20,planks:10},slots:1,road:false,seasonal:true,farm:true,cat:'Farms',lvl:3,up:true,out:'3 honey per keeper a day (summer)',desc:'Straw skeps on a sunny slope. Honey for mead, offerings to Freyja and trade.'},
   tomb:{name:'Ragnar’s Ship-Tomb',w:4,h:4,cost:{planks:150,iron:40},slots:5,cat:'Community',lvl:4,wonder:true,out:'A wonder: up to 5 builders raise it, year after year',desc:'A great mound over a sacrificed ship, for Ragnar Lothbrok. To begin: 40 gold, 6 swords and one of your ships. When finished, Odin’s favour never falls below 30 and Kaldstrand gains 1 fame every day.'},
   tailor:{name:'Tailor',w:2,h:2,cost:{wood:20,planks:30},slots:1,cat:'Crafts',lvl:5,up:true,out:'2 wool + 1 hide → 1 warm clothing',desc:'Sews wool cloaks and fur-lined boots. With enough warm clothing for everyone, winter sickness is halved and spirits rise.'},
-  hof:{name:'Hof',w:4,h:3,cost:{wood:80,planks:80,iron:20,silver:50},slots:1,cat:'Community',lvl:5,desc:'A temple hall kept by a gothi. Favour rises 25% faster, the gothi tends the least-honoured God, and blessings cost 20 favour instead of 30.'},
+  hof:{name:'Hof',w:4,h:3,cost:{wood:80,planks:80,iron:20,silver:150},slots:1,cat:'Community',lvl:5,desc:'A temple hall kept by a gothi. Favour rises 25% faster, the gothi tends the least-honoured God, and blessings cost 20 favour instead of 30.'},
   tower:{name:'Watchtower',w:1,h:1,cost:{wood:40,planks:30},slots:0,road:false,cat:'Military',lvl:5,desc:'A slim tower for two archers on one tile. Build it in the palisade line: the wall joins it and raiders cannot break through it. Adds to the village’s defence.'}
 });
 for(const k in LIMITS){const a=LIMITS[k];while(a.length<5)a.push(a[a.length-1]);}
-TH_UP[4]={cost:{wood:320,planks:270,iron:100,tools:20,silver:100},pop:48,house:3};
-TH_UP[5]={cost:{wood:460,planks:400,iron:170,tools:30,silver:250,gold:20},pop:80,house:4};
+TH_UP[4]={cost:{wood:500,planks:450,iron:110,tools:30,silver:150},pop:60,house:3};
+TH_UP[5]={cost:{wood:800,planks:700,iron:190,tools:50,silver:350,gold:20},pop:90,house:4};

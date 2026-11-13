@@ -21,7 +21,13 @@ function srcFree(b,taken){return srcList(b).filter(o=>!taken.has(o)).sort((p,q)=
 const srcOwn=b=>srcClaims().get(b.id)||[];
 /* share of full output the sources allow: 0..1 */
 function srcFactor(b){const need=SRC_NEED[b.t];if(!need)return srcList(b).length?1:0;return Math.min(1,srcOwn(b).length/need);}
-const SRC_Y={tree:50,bush:45,iron:80,sea:100,river:70};
+const SRC_Y={tree:50,bush:45,iron:40,sea:100,river:85};
+/* Beta 0.22 (B2): each source yields more for a higher-level owner (the map does not change; the same tree gives more wood).
+   Stored amounts stay in base units: the owner takes 1 unit of source for every srcYMult units of output. */
+const SRC_YM=[1,1.3,1.5,1.75,2];
+const srcYMult=lvl=>SRC_YM[Math.max(1,Math.min(5,lvl||1))-1];
+/* multiplier of the building that owns source o (1 when nobody owns it) */
+function srcTileMult(o){const C=srcClaims();for(const b of B){const own=C.get(b.id);if(own&&own.includes(o))return srcYMult(b.lvl);}return 1;}
 const SRC_OF={wood:'tree',berry:'bush',mine:'iron',fish:'water'};
 const SRC_R={wood:6,berry:5,mine:4,fish:3};
 const SRC_WORD={tree:['tree','trees'],bush:['berry bush','berry bushes'],iron:['iron outcrop','iron outcrops'],water:['water tile','water tiles']};
@@ -36,8 +42,8 @@ for(const b of bushes){b.cap=SRC_Y.bush;b.amt=b.cap;}
 function refillSources(){for(const a of [trees,bushes,ores,waters])for(const o of a)if(!o.gone)o.amt=o.cap;}
 function refillKind(a){for(const o of a)if(!o.gone)o.amt=o.cap;}
 /* called once at the start of each day: d = day of the year (0..44, winter from day 30) */
-const SRC_BACK={tree:'3 days after winter ends',bush:'when summer starts',water:'when summer starts',iron:'every two years, when winter starts'};
-function sourceSeasons(d,year){if(d===0){refillKind(bushes);refillKind(waters);}if(d===3)refillKind(trees);if(d===30&&year%2===0)refillKind(ores);}
+const SRC_BACK={tree:'3 days after winter ends',bush:'when summer starts',water:'when summer starts',iron:'every year, when winter starts'};
+function sourceSeasons(d,year){if(d===0){refillKind(bushes);refillKind(waters);}if(d===3)refillKind(trees);if(d===30)refillKind(ores);}
 /* sources a building (or a planned building {t,fx,fy,w,h}) works */
 function srcList(b){const k=SRC_OF[b.t],r=SRC_R[b.t];if(!k)return [];
   if(k==='tree')return trees.filter(o=>!o.gone&&rectDist(b,o.x,o.y)<=r);
@@ -56,7 +62,7 @@ function srcInfo(b,planned){const t=b.t,list=srcList(b);let share=0,shared=0;
   const sl=planned?(DEF[t].slots||0):slotsOf(b),mx=maxYear(t,planned?1:b.lvl,Math.max(1,sl));
   let left=0;for(const o of list)left+=o.amt/srcShare(o,t,planned?null:b,planned);
   if(SRC_ENDLESS){const need=SRC_NEED[t];if(!need)return {n:list.length,need:0,inR:list.length,pct:list.length?1:0,left:Infinity,list:list};
-    const C=srcClaims(),own=planned?srcFree(b,C.taken):srcOwn(b);let lf=0,cp=0;for(const o of own){lf+=o.amt;cp+=o.cap;}return {n:own.length,need:need,inR:list.length,pct:Math.min(1,own.length/need),left:lf,cap:cp,empty:own.filter(o=>o.amt<=0.01).length,list:own};}
+    const C=srcClaims(),own=planned?srcFree(b,C.taken):srcOwn(b),ym=srcYMult(planned?1:b.lvl);let lf=0,cp=0;for(const o of own){lf+=o.amt*ym;cp+=o.cap*ym;}return {n:own.length,need:need,inR:list.length,pct:Math.min(1,own.length/need),left:lf,cap:cp,empty:own.filter(o=>o.amt<=0.01).length,list:own};}
   return {n:list.length,shared:shared,share:share,pct:mx>0?Math.min(1,share/mx):0,left:left,list:list};}
 function srcLabel(b,planned){const k=SRC_OF[b.t],w=SRC_WORD[k],I=srcInfo(b,planned);
   if(!I.n)return {n:0,label:'No '+w[1]+' in range'};
@@ -66,11 +72,11 @@ function srcLabel(b,planned){const k=SRC_OF[b.t],w=SRC_WORD[k],I=srcInfo(b,plann
   if(!planned)s+=' · '+fmt(I.left)+' '+RNAME[SRC_RES[b.t]].toLowerCase()+' left this year';
   return {n:I.n,label:s,pct:I.pct};}
 /* take up to `want` from the building's sources, each shared source split between the buildings using it */
-function harvest(b,want){if(want<=0)return 0;if(SRC_ENDLESS){want*=srcFactor(b);const own=srcOwn(b).filter(o=>o.amt>0.001);if(!own.length)return 0;
+function harvest(b,want){if(want<=0)return 0;if(SRC_ENDLESS){const ym=srcYMult(b.lvl);want*=srcFactor(b)/ym;const own=srcOwn(b).filter(o=>o.amt>0.001);if(!own.length)return 0;
     /* take evenly from the building's own sources (the fullest first when some run dry) */
     let got=0,rest=want;own.sort((p,q)=>q.amt-p.amt);for(let i=0;i<own.length&&rest>0.0001;i++){const o=own[i],take=Math.min(o.amt,rest/(own.length-i));o.amt-=take;got+=take;rest-=take;}
     if(rest>0.0001)for(const o of own){const take=Math.min(o.amt,rest);o.amt-=take;got+=take;rest-=take;if(rest<=0.0001)break;}
-    return got;}const list=srcList(b).filter(o=>o.amt>0.001);if(!list.length)return 0;
+    return got*ym;}const list=srcList(b).filter(o=>o.amt>0.001);if(!list.length)return 0;
   const w=list.map(o=>1/srcShare(o,b.t,b,false)),ws=w.reduce((a,c)=>a+c,0);let got=0;
   list.forEach((o,i)=>{const take=Math.min(o.amt,want*w[i]/ws);o.amt-=take;got+=take;});
   let rest=want-got;for(const o of list){if(rest<=0.001)break;const take=Math.min(o.amt,rest);o.amt-=take;got+=take;rest-=take;}

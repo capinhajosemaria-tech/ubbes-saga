@@ -24,7 +24,7 @@ const PB=id=>{for(const p of S.people)if(p.id===id)return p;return null;};
 const jarlP=()=>PB(S.jarl);
 const jt=k=>{const j=jarlP();return !!(j&&j.jt&&j.jt.includes(k));};
 function pname(p){if(!p)return '—';if(p.num)return p.num===1?'Ubbe Ragnarsson':'Ubbe '+ROMAN[p.num];return p.n;}
-function roleOf(p){if(p.id===S.jarl)return 'Jarl';if(p.away)return 'At sea';if(S.train&&S.train.ids.includes(p.id))return 'In training';if(p.w)return (TROOPS[p.w]||{n:'Warrior'}).n+(p.xp>=2?' · Drengr':'');if(p.sick>0)return p.wound?'Wounded':'Sick';if(p.a<14)return S.pol.child&&p.a>=10?'Child (works)':'Child';if(p.a>=50)return 'Elder';return 'Worker';}
+function roleOf(p){if(p.id===S.jarl)return 'Jarl';if(p.away)return 'At sea';if(S.train&&S.train.ids.includes(p.id))return 'In training';if(p.w)return (TROOPS[p.w]||{n:'Warrior'}).n+(p.xp>=2?' · Drengr':'');if(p.sick>0)return p.wound?'Wounded':'Sick';if(p.a<ADULT)return S.pol.child&&p.a>=10?'Child (works)':'Child';if(p.a>=50)return 'Elder';return 'Worker';}
 
 /* ---------- troops & weapons ---------- */
 const TROOPS={skirm:{n:'Skirmisher',lv:2,str:1,eq:{spears:1},d:'Light spear. Cheap and quick to train.'},
@@ -98,9 +98,9 @@ function syncPop(){S.pop=S.people.length;S.warriors=S.people.filter(p=>p.w).leng
 
 /* ---------- workforce, food ---------- */
 function workerVal(p,win){if(p.id===S.jarl||p.sick>0||p.away)return 0;if(S.train&&S.train.ids.includes(p.id))return 0;if(p.w&&!win)return 0;
-  let v=p.a>=14?(p.a>=50?0.5:1):(S.pol.child&&p.a>=10?0.5:0);if(p.tr==='lazy')v*=0.85;return v;}
+  let v=p.a>=ADULT?(p.a>=50?0.5:1):(S.pol.child&&p.a>=10?0.5:0);if(p.tr==='lazy')v*=0.85;return v;}
 function workforce(){if(!S.people)return 0;const win=isWinter();let s=0;for(const p of S.people)s+=workerVal(p,win);s+=S.thralls*(S.pol.thralls==='harsh'?1.15:1);return Math.max(0,Math.round(s));}
-function eatNeed(){if(!S.people)return 0;let s=0;for(const p of S.people){if(p.away)continue;s+=p.w?EAT*WAR_EAT:(p.a<14||p.a>=50?EAT*0.5:EAT);}s+=S.thralls*EAT*0.5;return s*RATION[S.pol.ration].f;}
+function eatNeed(){if(!S.people)return 0;let s=0;for(const p of S.people){if(p.away)continue;s+=p.w?EAT*WAR_EAT:(p.a<ADULT||p.a>=50?EAT*0.5:EAT);}s+=S.thralls*EAT*0.5;return s*RATION[S.pol.ration].f;}
 function thrallCap(){return B.filter(b=>b.t==='thrall').reduce((a,b)=>a+8+4*(b.lvl-1),0);}
 function spendMeals(m){const order=['fish','berries','meat','bread','jam','smoked'];if(foodUnits()<m)return false;for(const k of order){if(m<=0)break;const e=Math.min(S.res[k],m/MEAL[k]);S.res[k]-=e;m-=e*MEAL[k];}return true;}
 const resv=k=>Math.max(0,S.res[k]-((S.reserve&&S.reserve[k])||0)-(k==='wood'?S.woodReserve:0));
@@ -123,7 +123,7 @@ function recalcMorale(){
   if(jt('cruel'))add('A cruel Jarl',-3);if(jt('greedy'))add('A greedy Jarl',-3);
   if(S.pol.loot==='warriors'&&S.raidsDone)add('Loot shared with the crews',4);
   if(S.thralls>0&&S.pol.thralls==='harsh')add('Thralls beaten in the yard',-2);
-  if(S.pop>housing())add('Crowded houses',-6);if(isWinter()&&S.res.clothes>=S.pop)add('Warm cloaks for all',4);if(S.mobilUntil>S.day)add('Mobilised for war',-5);
+  if(S.pop>housing())add('Crowded houses',-6);if(overReach()>0)add('More people than the hall can order ('+S.pop+' / '+hallReach()+')',-Math.min(12,overReach()*0.3));if(isWinter()&&S.res.clothes>=S.pop)add('Warm cloaks for all',4);if(S.mobilUntil>S.day)add('Mobilised for war',-5);
   for(const m of S.mods)if(m.until>S.day)add(m.t,m.v);
   S.mods=S.mods.filter(m=>m.until>S.day);
   S.mf=f;const target=clamp(52+f.reduce((a,x)=>a+x.v,0),0,100);
@@ -136,7 +136,7 @@ function recalcMorale(){
   const hs=B.filter(b=>b.t==='house');if(hs.length){ad('Better houses',4*(hs.reduce((s,b)=>s+b.lvl,0)/hs.length-1));
     const near=(t,rr)=>hs.filter(h=>B.some(o=>o.t===t&&bDist(h,o)<=rr)).length;
     ad('Houses by the market',Math.min(6,near('market',4)));ad('Houses by the smithy or smokehouse',-Math.min(8,2*(near('smith',2)+near('smoke',2))));}
-  if(S.contam>0)ad('Foul river',-10);
+  if(S.contam>0)ad('Foul river',-10);if(overReach()>0)ad('A crowded village ('+S.pop+' / '+hallReach()+' the hall can order)',-Math.min(25,overReach()*0.6));
   ad(S.pol.borders==='open'?'Open borders':'Closed borders',S.pol.borders==='open'?8:-5);
   if(S.morale>=70)ad('Happy people',5);else if(S.morale<40)ad('Unhappy people',-10);
   S.af=a;S.attr=clamp(a.reduce((s,x)=>s+x.v,0),0,100);
@@ -144,6 +144,20 @@ function recalcMorale(){
 const moraleProd=()=>S.morale>=70?1.1:S.morale<40?0.85:1;
 /* newcomers: good morale draws people when there are free beds (José, 2026-11-12) */
 const moraleArrive=()=>S.morale>=70?2.2:S.morale>55?1.5:S.morale<40?0.5:1;
+/* Beta 0.22 (B3): births and newcomers follow the village's mood = the mean of morale and attractiveness.
+   Houses alone do not grow the village: a gloomy one barely grows, a happy one grows fast. ×1 at mood 60. */
+const MOOD_PTS=[[0,0.05],[30,0.15],[45,0.45],[60,1],[75,1.5],[100,2]];
+const villageMood=()=>((S.morale||0)+(S.attr||0))/2;
+function moodGrowth(){const x=villageMood();for(let i=1;i<MOOD_PTS.length;i++){const a=MOOD_PTS[i-1],b=MOOD_PTS[i];if(x<=b[0])return a[1]+(b[1]-a[1])*(x-a[0])/(b[0]-a[0]);}return MOOD_PTS[MOOD_PTS.length-1][1];}
+const BIRTH_P=0.004,ARRIVE_P=0.2;
+/* B3: how many people the hall can keep in good order at each Town Hall level. Above it the village feels crowded:
+   −0.6 attractiveness and −0.3 morale for each person over (at most −25 / −12), so growth slows by itself. */
+const HALL_REACH=[30,45,70,100,130];const hallReach=()=>HALL_REACH[Math.min(5,thLevel())-1];
+const overReach=()=>Math.max(0,(S.pop||0)-hallReach());
+/* past the reach newcomers dwindle (20 over: almost none) and fewer children are born */
+const crowdArrive=()=>Math.max(0.05,1-overReach()/20),crowdBirth=()=>Math.max(0.2,1-overReach()/30);
+/* E3: the Market's ×1.25 on newcomers only while its stallkeeper works there (road + worker) */
+const mktWorked=()=>B.some(b=>b.t==='market'&&!underCons(b)&&b.conn&&b.workers>0);
 
 /* ---------- production multipliers ---------- */
 const NB={smith:['mine'],carp:['wood'],pres:['berry'],smoke:['fish','pigpen'],bakery:['mill'],mill:['grain']};
@@ -189,7 +203,7 @@ function gameOver(text){S.over=true;S.modal=[{k:'over',text:text}];}
 function sicken(n,wound){const pool=S.people.filter(p=>p.sick<=0&&!p.away);for(let i=0;i<n&&pool.length;i++){const p=pool.splice(Math.floor(Math.random()*pool.length),1)[0];p.sick=wound?10:Math.round(U(4,8));p.wound=wound?1:0;}}
 function peopleDay(short){
   const win=isWinter(),hard=win&&S.winter.hard;
-  const tc={};for(const p of S.people)if(p.tr&&p.a>=14&&!p.away)tc[p.tr]=(tc[p.tr]||0)+1;S.tc=tc;
+  const tc={};for(const p of S.people)if(p.tr&&p.a>=ADULT&&!p.away)tc[p.tr]=(tc[p.tr]||0)+1;S.tc=tc;
   const crowd=S.pop/Math.max(1,housing());
   const sickN=S.people.filter(p=>p.sick>0&&!p.wound).length;
   for(const p of S.people.slice()){
@@ -205,7 +219,7 @@ function peopleDay(short){
   /* shortages */
   if(short){
     if(S.mode==='challenge'&&short!=='firewood'){const pool=S.people.filter(p=>p.id!==S.jarl&&!p.away).sort((a,b)=>(Math.abs(b.a-30))-(Math.abs(a.a-30)));const v=pool[0];if(v&&Math.random()<0.5){note(pname(v)+' died of '+(short==='food'?'hunger':'thirst')+'.');removePerson(v,'hunger');}}
-    else if(S.pop>8&&Math.random()<0.6){const pool=S.people.filter(p=>p.id!==S.jarl&&p.a>=14&&!p.w&&!p.away&&!S.people.some(k=>k.pa.includes(p.id)&&k.a<14)&&(!p.sp||PB(p.sp)&&!PB(p.sp).w));
+    else if(S.pop>8&&Math.random()<0.6){const pool=S.people.filter(p=>p.id!==S.jarl&&p.a>=ADULT&&!p.w&&!p.away&&!S.people.some(k=>k.pa.includes(p.id)&&k.a<ADULT)&&(!p.sp||PB(p.sp)&&!PB(p.sp).w));
       const v=pool.find(p=>!p.sp)||pool[0];if(v){const sp=v.sp?PB(v.sp):null;removePerson(v,'left');if(sp&&sp.id!==S.jarl)removePerson(sp,'left');toast((sp?'A couple':'A family member')+' left Kaldstrand: not enough '+short+'.');}}
     else toast('Kaldstrand is going hungry: not enough '+short+'. The last families hold on, but nobody will join until it is fixed.',4000);
   }
@@ -216,10 +230,10 @@ function peopleDay(short){
   /* births */
   const room=housing()-S.pop;const fed=!short&&foodUnits()>=eatNeed()*6;
   if(room>0&&fed&&!((S.fx.barren||0)>S.day)){
-    let bm=(S.morale>=70?1.3:S.morale<40?0.6:1)*(fav('freyja')>=50?1.15:1)*(S.pol.ration==='normal'?1:0.5);
+    let bm=moodGrowth()*crowdBirth()*(fav('freyja')>=50?1.15:1)*(S.pol.ration==='normal'?1:0.5);
     for(const w of S.people){if(w.g!=='f'||!w.sp||w.a<16||w.a>=44||w.away)continue;const h=PB(w.sp);if(!h||h.away)continue;
       if(S.people.some(k=>k.pa[1]===w.id&&k.a<1.2))continue;
-      if(Math.random()<0.007*bm&&S.pop<housing()){const g=Math.random()<0.5?'m':'f';const isJ=h.id===S.jarl||w.id===S.jarl;
+      if(Math.random()<BIRTH_P*bm&&S.pop<housing()){const g=Math.random()<0.5?'m':'f';const isJ=h.id===S.jarl||w.id===S.jarl;
         let o={g:g,a:0,pa:[h.id,w.id],tr:(h.tr&&Math.random()<0.35)?h.tr:(w.tr&&Math.random()<0.35)?w.tr:(Math.random()<0.12?pick(TRAIT_KEYS):'')};
         if(isJ&&g==='m'&&!kidsOf(S.jarl).some(k=>k.num)){o.n='Ubbe';o.num=S.gen+1;}
         const c=newPerson(o);S.yr.births++;addFavor('freyja',1);
@@ -229,7 +243,7 @@ function peopleDay(short){
   /* newcomers */
   /* from Town Hall 3, newcomers wait near and in winter while the wood would not warm them for 5 days */
   const woodOk=thLevel()<3||((S.gameT%YEAR)<SUMMER-DAY*10)||S.res.wood>=fireNeed()*5;
-  if(housing()-S.pop>0&&fed&&!short&&woodOk){const p=(0.06+S.attr/100*0.16)*(has('market')?1.25:1)*moraleArrive()*(S.gameT<YEAR?1.6:1);
+  if(housing()-S.pop>0&&fed&&!short&&woodOk){const p=ARRIVE_P*(mktWorked()?1.25:1)*moodGrowth()*crowdArrive()*(S.gameT<YEAR?1.6:1);
     S.immAcc=(S.immAcc||0)+p;if(S.immAcc>=1){S.immAcc-=1;const pair=Math.random()<(S.morale>=70?0.5:0.3)&&housing()-S.pop>=2;const a=newPerson({a:Math.round(U(17,36)),tr:randTrait()});S.yr.arrived++;
       if(pair){const b=newPerson({g:a.g==='m'?'f':'m',a:Math.round(U(17,36)),tr:randTrait()});marry(a,b);S.yr.arrived++;toast('A couple, '+a.n+' and '+b.n+', settled in Kaldstrand.');}
       else toast(a.n+' arrived and settled in Kaldstrand.');syncPop();}}
@@ -403,7 +417,7 @@ function raidOpts(m){const r=S.raids.find(x=>x.id===m.rid);if(!r)return null;con
   }return null;}
 
 /* ---------- events ---------- */
-const adultsHome=()=>S.people.filter(p=>p.a>=14&&!p.away&&p.id!==S.jarl);
+const adultsHome=()=>S.people.filter(p=>p.a>=ADULT&&!p.away&&p.id!==S.jarl);
 const EVTS={
   storm:{cat:'Nature',c:()=>isWinter(),w:1,mk:()=>({}),t:()=>'A storm out of the north tore turf from the roofs.',o:[{l:'Repair at once (15 planks)',ok:()=>S.res.planks>=15,f:()=>{S.res.planks-=15;return 'The roofs held. Nobody froze.';}},{l:'Let it wait',f:()=>{addMod('storm','Damaged roofs',-6,15);sicken(2);return 'Snow came in through the gaps. Two fell sick.';}}]},
   dry:{cat:'Nature',c:()=>!isWinter()&&B.some(b=>FARMLIKE.has(b.t)),w:0.8,mk:()=>({}),t:()=>'No rain for weeks. The ground cracks and the berries wither on the branch.',o:[{l:'Pray for rain (10 favour)',ok:()=>fav(patron())>=10,f:()=>{S.gods[patron()]-=10;return 'Rain came three days later. '+PN()+' heard you.';}},{l:'Endure it',f:()=>{S.fx.dry=S.day+15;return 'Farms and gatherers will bring in less for 15 days.';}}]},
@@ -419,7 +433,7 @@ const EVTS={
       {l:'Settle it yourself (20 meals)',ok:()=>foodUnits()>=20,f:()=>{spendMeals(20);return 'Both ate at the Jarl’s table and the quarrel cooled.';}},
       {l:'Fine them both',cruel:1,f:()=>{addMod('fine','A harsh judgement',-4,15);S.res.silver+=10;return '+10 silver. The village grumbles.';}}]},
   feud:{cat:'People',c:()=>S.pop>=16,w:0.6,mk:()=>({}),t:()=>'Two families feud over an insult at the well. Knives have been drawn.',o:[{l:'Pay wergild (25 meals)',ok:()=>foodUnits()>=25,f:()=>{spendMeals(25);return 'The families made peace.';}},{l:'Let them be',f:()=>{addMod('feud','A feud in the village',-8,20);return 'The feud festers.';}}]},
-  prodigy:{cat:'People',good:1,c:()=>S.people.some(p=>p.a>=8&&p.a<14&&!p.tr),w:0.5,mk:()=>({a:pick(S.people.filter(p=>p.a>=8&&p.a<14&&!p.tr)).id}),t:a=>{const p=PB(a.a);return 'Young '+(p?p.n:'one')+' carves runes cleaner than the old men.';},o:[{l:'Praise the child',f:a=>{const p=PB(a.a);if(p)p.tr='steady';return (p?p.n:'The child')+' gained Steady Hand.';}}]},
+  prodigy:{cat:'People',good:1,c:()=>S.people.some(p=>p.a>=8&&p.a<ADULT&&!p.tr),w:0.5,mk:()=>({a:pick(S.people.filter(p=>p.a>=8&&p.a<ADULT&&!p.tr)).id}),t:a=>{const p=PB(a.a);return 'Young '+(p?p.n:'one')+' carves runes cleaner than the old men.';},o:[{l:'Praise the child',f:a=>{const p=PB(a.a);if(p)p.tr='steady';return (p?p.n:'The child')+' gained Steady Hand.';}}]},
   oldwarrior:{cat:'People',c:()=>thLevel()>=3&&S.people.some(p=>p.g==='m'&&p.a>=50&&!p.w&&p.id!==S.jarl),w:0.4,mk:()=>({a:pick(S.people.filter(p=>p.g==='m'&&p.a>=50&&!p.w&&p.id!==S.jarl)).id}),t:a=>{const p=PB(a.a);return 'Old '+(p?p.n:'a man')+' says he will not die in his bed. He asks for a spear and a place at the oars.';},
     o:[{l:'Give him a spear',ok:()=>S.res.spears>=1&&S.warriors<warCap(),f:a=>{const p=PB(a.a);if(p){S.res.spears--;p.w='skirm';syncPop();}return 'He joins the warriors.'+gfav('odin',4)+gfav('thor',3);}},{l:'Refuse him gently',f:()=>''}]},
   monk:{cat:'Visitor',c:()=>thLevel()>=2,w:0.5,mk:()=>({}),t:()=>'A monk from the west, thin as a reed, begs for shelter. He has a book and nothing else.',o:[{l:'Take him in',ok:()=>housing()>S.pop,f:()=>{newPerson({n:'Aldhelm',g:'m',a:34,tr:'patient'});S.yr.arrived++;syncPop();return 'Aldhelm the monk lives among you now. He is patient.';}},{l:'Send him away',f:()=>''},{l:'Make him a thrall',cruel:1,ok:()=>thrallCap()>S.thralls,f:()=>{S.thralls++;addFavor('odin',2);return '+1 thrall.';}}]},

@@ -61,8 +61,9 @@ const BANQ={people:{n:'People’s feast',d:'+12 morale for 20 days',c:()=>({smok
   council:{n:'Council feast',d:'+20 fame and the Gods take note',c:()=>({smoked:10,mead:10}),fx:()=>{addFame(20);GOD_KEYS.forEach(g=>addFavor(g,3));}}};
 function banqCost(k){const base=BANQ[k].c(),m=1+0.5*(S.banqN||0);const o={};for(const x in base)o[x]=Math.ceil(base[x]*m);return o;}
 function holdBanquet(k){const c=banqCost(k);if(!afford(c))return 'Not enough: needs '+costStr(c);pay(c,1);BANQ[k].fx();S.banqN=(S.banqN||0)+1;S.banqReset=S.day+20;S.feast={until:S.gameT+DAY*1.5};return '';}
-/* mercenaries: hired for a year, paid in silver up front */
-function hireMercs(){if(thLevel()<4)return 'Mercenaries come at Town Hall level 4';if(S.fame<300)return 'They only follow a Jarl of 300 fame or more';const n=Math.min(5,warCap()-S.warriors);if(n<=0)return 'No room for more warriors';const cost=n*14;if(S.res.silver<cost)return 'Needs '+cost+' silver';if(housing()-S.pop<n)return 'Needs room in the houses for '+n;
+/* mercenaries: hired for a year, paid in silver up front (O1, Beta 0.22: 14 → 40 each) */
+const MERC_SILVER=40;
+function hireMercs(){if(thLevel()<4)return 'Mercenaries come at Town Hall level 4';if(S.fame<300)return 'They only follow a Jarl of 300 fame or more';const n=Math.min(5,warCap()-S.warriors);if(n<=0)return 'No room for more warriors';const cost=n*MERC_SILVER;if(S.res.silver<cost)return 'Needs '+cost+' silver';if(housing()-S.pop<n)return 'Needs room in the houses for '+n;
   S.res.silver-=cost;for(let i=0;i<n;i++)newPerson({g:'m',a:Math.round(U(22,38)),w:'merc',xp:1,tr:Math.random()<0.3?'hot':'',merc:S.day+YDAYS});syncPop();return '';}
 function mercDay(){for(const p of S.people.slice())if(p.merc&&p.merc<=S.day&&!p.away){removePerson(p,'left');toast('A mercenary’s year is up. He takes his pay and sails south.');}}
 

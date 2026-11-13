@@ -4,7 +4,7 @@ async def one(b,opts,days):
     pg=await b.new_page();errs=[];pg.on('pageerror',lambda e:errs.append(str(e)))
     await pg.goto('file://'+os.path.abspath('test.html'));await pg.wait_for_timeout(400)
     await pg.evaluate('document.getElementById("title").hidden=true')
-    res=await pg.evaluate(open('bots/bot4.js').read()+'('+str(days)+','+json.dumps(opts)+')')
+    res=await pg.evaluate(open(os.environ.get('BOT','bots/bot4.js')).read()+'('+str(days)+','+json.dumps(opts)+')')
     await pg.close();return res,errs
 def summ(res):
     ev=res['events'];o={}
@@ -28,6 +28,12 @@ def summ(res):
         if row: x=row[-1].split();o['z%d'%dd]=int(x[26]);o['fe%d'%dd]=int(x[27]);o['f%d'%dd]=int(x[19])
     o['th4']=res['ms'].get('th4');o['th5']=res['ms'].get('th5');o['fail']=res.get('fail');o['ms']=len(res['ms']);o['missing']=res['thr'];o['ships']=len(res['ships'])
     mor=[int(l.split()[21]) for l in res['log']];o['morale_min']=min(mor);o['morale_avg']=round(sum(mor)/len(mor))
+    T=res.get('trk') or {}
+    if T:
+        at=T.get('attr') or [0];o['attr_avg']=round(sum(at)/len(at));o['mood_avg']=round((o['morale_avg']+o['attr_avg'])/2)
+        o['shortFood']=T.get('shortFood');o['wood0W']=T.get('wood0W');o['thWait']=T.get('thWait');o['extra']=T.get('extra');o['ups']=T.get('ups')
+        keys=['wood','planks','iron','tools','silver','gold','food','jam','smoked','bread','hides','wool','rope','cloth','flour','grain','ale','mead']
+        o['stkEnd']={lv:{k:v for k,v in d.items() if k in keys} for lv,d in (T.get('stkEnd') or {}).items()}
     return o
 async def main():
     days=int(sys.argv[1]);runs=json.loads(sys.argv[2])

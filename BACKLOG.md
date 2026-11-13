@@ -20,47 +20,25 @@ Finished items are removed from this file; what each version changed is in `CHAN
 - 1D start choices, patron god, Feast · 1E trade map · more newcomers · berths · 4-side rotation (Beta 0.19.0).
 - 1J new guide · new opening (story + choice cards) · gold and silver in the top bar · click selects by tile (Beta 0.20.0).
 - Economy and walls — Preserver jam only + Smokehouse at TH1 (dried fish merged), one-worker buildings, bigger storage at one price, 1-tile watchtower in the palisade, E1/E2/E5–E7 (Beta 0.21.0).
+- B. Open economy and balance — no limit on ordinary buildings (+30% per copy), source yield by collector level, population by mood + hall's reach, silver sinks, `steady` bot (Beta 0.22.0; table in `tools/balance/round_b.md`).
 
 ## 1. Core redesign (decided with José, 2026-11-11)
 Goal: fewer systems, each one counts more; decisions matter, but the player stays free to build his own way and can always progress (maybe more slowly). City building and resources first; the lineage matters later, when resources are less of a worry.
-Order: Round 1 (done, 0.14.0) → 1C (done, 0.15.0) → 1D + 1E (done, 0.19.0) → **Round B (open economy and balance, prepared 2026-11-13)** → **1H** → 1I → 1F → 1G → 1K (1J done, 0.20.0) (1K's place not decided yet — ask José). Balance fixes 1 items E1 (Smokehouse) and A2 (Bakery) are replaced by Round 1; re-check the rest after it.
+Order: Round 1 (done, 0.14.0) → 1C (done, 0.15.0) → 1D + 1E (done, 0.19.0) → Round B (done, 0.22.0) → **1H** → 1I → 1F → 1G → 1K (1J done, 0.20.0) (1K's place not decided yet — ask José). Balance fixes 1 items E1 (Smokehouse) and A2 (Bakery) are replaced by Round 1; re-check the rest after it.
 
-## This round — B. Open economy and balance (prepared 2026-11-13; José starts it in a new conversation)
-**Goal (José):** a player who **does the upgrades** and keeps **morale and attractiveness above 60 on average** reaches **Town Hall 5 without problems**. Players who play worse may go slower, but can always progress.
-**Bots allowed:** José asked explicitly (2026-11-13) to use the economy bots to test and tune values up to TH5 in this round (the `balance` agent for runs and comparisons, Sonnet; never Fable/Mythos). Raids stay out of tuning (bots never build a palisade).
-**Saves:** the map does not change; keep old saves loading if possible (bump the save keys only if the save format really has to change, and then tell José).
-Version when released: **Beta 0.22.0**.
-
-- [ ] **B1. Open building limits** (José, 2026-11-13). Buildings still unlock by Town Hall level and saga goals, but **ordinary buildings (resources, food, farms, storage) and houses have no count limit**. **Keep the limit** on unique or strategic ones: Town Hall, Jarl's House, Market Square, Tomb of Ragnar and other wonders, Altar/Hof, Training Ground, Shipyard, Harbour (berths), Trading House. **Decor keeps today's limits.**
-  - **Rising cost per copy** so cheap buildings can't be spammed and upgrading stays worth it (start: +30% per copy above the 2nd; tune with bots).
-  - The bottleneck for collectors is **their own sources** (claims in `10_zsources.js`): a new lodge next to others gets few free trees, so it goes to a fresh forest. The build preview must show it clearly ("8 of 20 trees its own · 40% output").
-  - Update everything that reads limits: `LIMITS`/`limitOf`, build tray counts ("2/3" → just the count, or "2" + next copy's cost), unlock hints, saga goals, bots (`tools/bots/bot4.js`), `gen_numbers.py` (Limits column → "no limit" / cost rise).
-- [ ] **B2. Each source gives more as the collector is upgraded — the map does not change** (José, 2026-11-13). Problem today (theoretical full output vs a year of own sources): woodcutter 675 / 1080 / 1395 at levels 1 / 3 / 5 vs 1000 wood; fisher 430 / 690 / 890 vs 500 fish (river 350); berries 240 / 430 / 560 vs 270; mine 270 / 430 / 560 vs **200 iron a year** (400 every 2 years). From level 3, upgrading only empties the sources sooner (a level-5 lodge has no wood in winter; a level-3 fisher has no fish in winter).
-  - **Yield per source grows with the level of the building that owns it** (e.g. the same multiplier as output, `srcLvlMult`: ×1 / 1.2 / 1.2 / 1.4 / 1.55, or a bit more), so an upgraded collector's own trees / bushes / water / outcrops hold enough for the whole year including winter. `SRC_NEED` (sources needed) stays as it is.
-  - **No new trees, bushes or outcrops: the map generator and the forests stay exactly the same** (José: "não é para spawnar mais árvores, é para cada árvore dar mais").
-  - Iron: keep it scarcer than wood (José's 1K worry was iron piling up), but upgrading a mine must be worth something. Consider a yearly refill (same average) instead of every two years — easier to understand.
-  - River fishing: a level-1 river hut should still have some fish in winter.
-- [ ] **B3. Population held by mood; unlimited houses** (José, 2026-11-13). Births and newcomers **fall sharply** when morale / attractiveness are very low and rise when they are high (today newcomers ×0.5 below 40 morale; births don't care). Building houses alone must not grow the village. Together with **A1 — too many children** (audit: 33–45% under 14): working age 14 → 12, birth chance 0.007 → 0.004 (tune with bots), `tools/balance/jobs.py` with the real age mix. José said "implement all balance changes" (2026-11-13), so A1 is approved.
-- [ ] **B4. Silver and small economy fixes** (audit, `tools/balance/audit_report.md` — read each finding first):
-  - **O1 — silver has no use** (~650/yr in vs ~2,000–2,500 of sinks to TH5; bots end with 8–17k unspent). Re-measure after 1E, then pick from: merchant purse 100/150/200 at TH3/4/5; mercenaries 14 → 40; TH5 silver 250 → 400; Hof 50 → 150; silver on level 4/5 upgrades. With B1, the rising cost per copy could also take silver from the 3rd/4th copy at TH4+.
-  - **E3** — Market bonus only with its worker; Pen loses its useless third slot.
-  - **O3 (part)** — palisade bonus counted once (today twice). Raider numbers and frequency (O3, E4) stay for later, after José meets a few raids.
-- [ ] **B5. Pacing TH3–TH5 and the held items, measured with the bots**:
-  - **P3, P4**: hall population 22/32/48/80 → 22/40/70/110?; TH5 fame 1,700 → 1,500? (check current values first — some changed since the audit).
-  - Re-measure and decide: more food output (A3), TH4 cost cut (P2), pen scaling (A6), the "4–8 spare workers" target (A8).
-  - A2 (Bakery) was replaced by 1B: only check bread is not the weak link of TH5 winters.
-- [ ] **B6. Bot profile for the goal, then tune until it passes** (José, 2026-11-13: "começa os testes com os números que achares certos e afina até atingirmos o objetivo"). Start with the proposed numbers in B1–B5, run, adjust, repeat, until `steady` reaches TH5 without problems.
-  - Teach `bot4.js` to **upgrade collectors and workshops** (today it upgrades houses, storage and what the TH asks), to **use the open limits** (build a 3rd/4th copy when its sources are free and it pays), and to **keep morale and attractiveness ≥ 60 on average** (decor, feasts, food variety, offerings). New profile, e.g. `steady`, in `tools/bots/profiles.json`; keep `planner`, `warlord`, `challenge`, `lazy`.
-  - **Land by resources** (José): today the bot picks land only by free grass/beach per fame (plus sea for the shipyard at TH3) — `tools/bots/bot4.js` line ~108. It must also value the **sources** in a zone against what the village lacks: free trees when wood is short, iron outcrops when iron is short, bushes, fishing water. Also check: the land loop scans zones 0–13 but the "no fame" check (line ~18) scans 0–17 — make them agree.
-  - **Targets for `steady`** (several seeds, 900 days): average morale and attractiveness ≥ 60; reaches TH5 (about 450–600 days, today's 434–587); no starvation, no day without water, wood never at 0 in winter, firewood never burns planks below the reserve; no Town Hall wait longer than ~60 days caused by a missing resource; spare workers within the A8 target. **`lazy` must still progress** (slower is fine) — the player is never stuck.
-  - **No pile-ups without a reason** (José saw a lot of iron pile up at TH1–TH2): log each good's stock per Town Hall level; flag any good that keeps growing with nothing to spend it on (e.g. stock > ~2 TH-upgrades' worth, or > 3× its yearly use). Fix the cause (output too high for that level, too few sinks, or the bot overbuilding) — iron at TH1–TH2 first. Silver is the same question (B4 O1).
-  - Write the before / after table in `tools/balance/` and summarise it for José in Portuguese.
-- End of round as usual: `SPEC.md`, `docs/NUMBERS.md`, `CHANGELOG.md`, tick this list, `tools/check.py` via the tester, release with **ubbe-release**.
+## This round
+- (none — pick the next round with José)
 
 ## Bugs and small fixes
 - (none)
 
 ## Next rounds (in this order)
+
+### Play feedback for 0.22.0
+- [ ] José plays: building many copies (is +30% per copy right?), upgraded collectors lasting the winter, the village mood and the hall's reach (30/45/70/100/130 — too tight or too loose?), new Town Hall 4–5 costs, silver from level-4 upgrades.
+- [ ] **Silver and food after TH5** pile up (5,000–14,000 silver by day 900 in the bots): needs TH6+ sinks, or the merchant purse from the audit (O1: 100/150/200 per merchant ship).
+- [ ] Bot: the Trading House sometimes cannot be placed (shore guard) and the run waits 95–260 days at TH3 — bot placement only.
+- [ ] Iron at the end of TH1 is still 140–220 in the bots when the mine is fully staffed (spent at TH2–TH3); check in play whether it still feels like too much.
 
 ### Music feedback (Beta 0.17.0)
 - [ ] José listens and says what to change per piece (instruments, tempo, mood, groove). Composer and steps: `tools/music/README.md`.

@@ -1,4 +1,4 @@
-# Ubbe's Saga: numbers (Beta 0.21.0)
+# Ubbe's Saga: numbers (Beta 0.22.0)
 
 Generated from the game by `tools/gen_numbers.py`. Do not edit by hand.
 
@@ -6,10 +6,10 @@ Generated from the game by `tools/gen_numbers.py`. Do not edit by hand.
 
 | To level | Materials | People | Best house at least |
 |---|---|---|---|
-| 2 | 110 wood, 70 planks, 20 iron | 22 | level 1 |
-| 3 | 190 wood, 150 planks, 50 iron, 10 tools | 32 | level 2 |
-| 4 | 320 wood, 270 planks, 100 iron, 20 tools, 100 silver | 48 | level 3 |
-| 5 | 460 wood, 400 planks, 170 iron, 30 tools, 250 silver, 20 gold | 80 | level 4 |
+| 2 | 110 wood, 70 planks, 40 iron | 22 | level 1 |
+| 3 | 190 wood, 150 planks, 80 iron, 10 tools | 36 | level 2 |
+| 4 | 500 wood, 450 planks, 110 iron, 30 tools, 150 silver | 60 | level 3 |
+| 5 | 800 wood, 700 planks, 190 iron, 50 tools, 350 silver, 20 gold | 90 | level 4 |
 
 ## Buildings
 
@@ -21,29 +21,29 @@ Limits are per Town Hall level 1 / 2 / 3 / 4 / 5. Workers: +1 at building level 
 | house | House | Homes | 1 | 2×2 | 20 wood | 0 |  | no limit |
 | jarl | Jarl’s House | Homes | 1 | 3×3 | 60 wood, 30 planks | 0 |  | 1 / 1 / 1 / 1 / 1 |
 | pyre | Funeral Pyre | Community | 1 | 2×2 | 10 wood | 0 |  | 1 / 1 / 2 / 2 / 2 |
-| wood | Woodcutter’s Lodge | Materials | 1 | 2×2 | 15 wood | 3 | 5 wood per worker a day | 2 / 3 / 4 / 4 / 5 |
-| carp | Carpenter | Materials | 1 | 2×2 | 25 wood | 2 | 4 wood → 2 planks per worker a day | 1 / 2 / 2 / 2 / 2 |
-| mine | Iron Mine | Materials | 1 | 2×2 | 30 wood, 10 planks | 3 | 2 iron per worker a day | 1 / 1 / 2 / 2 / 2 |
-| smith | Smithy | Crafts | 1 | 2×2 | 15 wood, 20 planks, 10 iron | 2 | Tools, and later weapons | 1 / 1 / 1 / 2 / 2 |
-| fish | Fisher’s Hut | Food | 1 | 2×1 | 15 wood | 3 | 4 fish per worker a day | 2 / 2 / 2 / 2 / 2 |
-| berry | Berry Gatherer | Food | 1 | 2×2 | 10 wood | 2 | 4 berries per worker a day (summer) | 2 / 2 / 2 / 2 / 2 |
-| pres | Preserver | Food | 1 | 2×2 | 15 wood, 20 planks | 1 | Jam from berries | 1 / 1 / 1 / 1 / 2 |
+| wood | Woodcutter’s Lodge | Materials | 1 | 2×2 | 15 wood | 3 | 5 wood per worker a day | no limit, +30% per copy after the 2nd |
+| carp | Carpenter | Materials | 1 | 2×2 | 25 wood | 2 | 4 wood → 2 planks per worker a day | no limit, +30% per copy after the 2nd |
+| mine | Iron Mine | Materials | 1 | 2×2 | 30 wood, 10 planks | 3 | 2 iron per worker a day | no limit, +30% per copy after the 2nd |
+| smith | Smithy | Crafts | 1 | 2×2 | 15 wood, 20 planks, 10 iron | 2 | Tools, and later weapons | no limit, +30% per copy after the 2nd |
+| fish | Fisher’s Hut | Food | 1 | 2×1 | 15 wood | 3 | 4 fish per worker a day | no limit, +30% per copy after the 2nd |
+| berry | Berry Gatherer | Food | 1 | 2×2 | 10 wood | 2 | 4 berries per worker a day (summer) | no limit, +30% per copy after the 2nd |
+| pres | Preserver | Food | 1 | 2×2 | 15 wood, 20 planks | 1 | Jam from berries | no limit, +30% per copy after the 2nd |
 | gran | Granary | Storage | 1 | 3×2 | 30 wood, 10 planks | 0 |  | no limit |
 | ware | Warehouse | Storage | 1 | 3×2 | 30 wood, 10 planks | 0 |  | no limit |
 | market | Market Square | Community | 1 | 4×4 | 40 wood, 40 planks | 1 | More families settle here | 1 / 1 / 1 / 1 / 1 |
-| pigpen | Pig Pen | Farms | 2 | 3×3 | 40 wood, 10 planks | 1 | Breeds pigs: meat and hides | 0 / 1 / 1 / 2 / 2 |
-| sheeppen | Sheep Pen | Farms | 2 | 3×3 | 40 wood, 10 planks | 1 | Keeps sheep: wool for sails and warm clothing | 0 / 1 / 1 / 2 / 2 |
-| fodder | Fodder Field | Farms | 2 | 3×3 | 15 wood | 2 | 5 fodder per worker a day (summer) | 0 / 1 / 2 / 3 / 3 |
-| smoke | Smokehouse | Food | 1 | 2×2 | 20 wood, 15 planks | 1 | Smoked fish and meat | 1 / 1 / 1 / 1 / 2 |
+| pigpen | Pig Pen | Farms | 2 | 3×3 | 40 wood, 10 planks | 1 | Breeds pigs: meat and hides | no limit, +30% per copy after the 2nd |
+| sheeppen | Sheep Pen | Farms | 2 | 3×3 | 40 wood, 10 planks | 1 | Keeps sheep: wool for sails and warm clothing | no limit, +30% per copy after the 2nd |
+| fodder | Fodder Field | Farms | 2 | 3×3 | 15 wood | 2 | 5 fodder per worker a day (summer) | no limit, +30% per copy after the 2nd |
+| smoke | Smokehouse | Food | 1 | 2×2 | 20 wood, 15 planks | 1 | Smoked fish and meat | no limit, +30% per copy after the 2nd |
 | altar | Altar | Community | 2 | 2×2 | 20 wood, 20 planks, 5 iron | 0 |  | 0 / 1 / 1 / 1 / 1 |
 | train | Training Ground | Military | 2 | 3×3 | 40 wood, 30 planks | 0 |  | 0 / 1 / 1 / 1 / 1 |
 | arsenal | Arsenal | Military | 2 | 3×2 | 30 wood, 30 planks, 10 iron | 0 |  | 0 / 1 / 1 / 1 / 1 |
-| mill | Water Mill | Food | 3 | 2×2 | 30 wood, 30 planks, 5 iron | 1 | 4 grain → 4 flour per worker a day | 0 / 0 / 1 / 1 / 2 |
+| mill | Water Mill | Food | 3 | 2×2 | 30 wood, 30 planks, 5 iron | 1 | 4 grain → 4 flour per worker a day | no limit, +30% per copy after the 2nd |
 | tavern | Tavern | Community | 3 | 3×2 | 30 wood, 30 planks | 1 | Morale while it has ale or mead | 0 / 0 / 1 / 1 / 1 |
-| grain | Grain Field | Farms | 3 | 3×3 | 20 wood | 2 | 4 grain per worker a day (summer) | 0 / 0 / 2 / 3 / 3 |
-| bakery | Bakery | Food | 3 | 2×2 | 20 wood, 25 planks | 2 | 3 flour + ½ wood → 3 bread per worker a day | 0 / 0 / 1 / 2 / 2 |
-| flax | Flax Field | Farms | 3 | 3×3 | 20 wood | 2 | 4 flax per worker a day (summer) | 0 / 0 / 1 / 2 / 2 |
-| weaver | Weaver | Crafts | 3 | 2×2 | 20 wood, 25 planks | 2 | 2 wool → 1 sailcloth; 2 flax → 1 rope | 0 / 0 / 1 / 1 / 1 |
+| grain | Grain Field | Farms | 3 | 3×3 | 20 wood | 2 | 4 grain per worker a day (summer) | no limit, +30% per copy after the 2nd |
+| bakery | Bakery | Food | 3 | 2×2 | 20 wood, 25 planks | 2 | 3 flour + ½ wood → 3 bread per worker a day | no limit, +30% per copy after the 2nd |
+| flax | Flax Field | Farms | 3 | 3×3 | 20 wood | 2 | 4 flax per worker a day (summer) | no limit, +30% per copy after the 2nd |
+| weaver | Weaver | Crafts | 3 | 2×2 | 20 wood, 25 planks | 2 | 2 wool → 1 sailcloth; 2 flax → 1 rope | no limit, +30% per copy after the 2nd |
 | shipyard | Shipyard | Sea | 3 | 3×3 | 60 wood, 60 planks, 10 iron | 4 |  | 0 / 0 / 1 / 1 / 1 |
 | harbour | Harbour | Sea | 3 | 2×6 | 40 wood, 50 planks | 0 |  | 0 / 0 / 1 / 1 / 2 |
 | thrall | Thrall Pen | Homes | 3 | 3×2 | 40 wood, 20 planks, 5 iron | 0 |  | 0 / 0 / 1 / 1 / 1 |
@@ -55,11 +55,11 @@ Limits are per Town Hall level 1 / 2 / 3 / 4 / 5. Workers: +1 at building level 
 | prow | Carved Prow | Decor | 3 | 1×1 | 20 planks, 2 iron | 0 |  | 0 / 0 / 3 / 4 / 6 |
 | nets | Drying Nets | Decor | 3 | 1×1 | 6 wood, 2 rope | 0 |  | 0 / 0 / 4 / 5 / 6 |
 | trade | Trading House | Sea | 3 | 3×2 | 40 wood, 40 planks, 10 iron | 0 |  | 0 / 0 / 1 / 1 / 1 |
-| brewery | Brewery | Food | 3 | 2×2 | 30 wood, 30 planks, 5 iron | 1 | 2 grain + ½ wood → 2 ale; 2 honey → 1 mead | 0 / 0 / 1 / 1 / 2 |
-| hives | Beehives | Farms | 3 | 2×2 | 20 wood, 10 planks | 1 | 3 honey per keeper a day (summer) | 0 / 0 / 2 / 2 / 3 |
+| brewery | Brewery | Food | 3 | 2×2 | 30 wood, 30 planks, 5 iron | 1 | 2 grain + ½ wood → 2 ale; 2 honey → 1 mead | no limit, +30% per copy after the 2nd |
+| hives | Beehives | Farms | 3 | 2×2 | 20 wood, 10 planks | 1 | 3 honey per keeper a day (summer) | no limit, +30% per copy after the 2nd |
 | tomb | Ragnar’s Ship-Tomb | Community | 4 | 4×4 | 150 planks, 40 iron | 5 | A wonder: up to 5 builders raise it, year after year | 0 / 0 / 0 / 1 / 1 |
-| tailor | Tailor | Crafts | 5 | 2×2 | 20 wood, 30 planks | 1 | 2 wool + 1 hide → 1 warm clothing | 0 / 0 / 0 / 0 / 1 |
-| hof | Hof | Community | 5 | 4×3 | 80 wood, 80 planks, 20 iron, 50 silver | 1 |  | 0 / 0 / 0 / 0 / 1 |
+| tailor | Tailor | Crafts | 5 | 2×2 | 20 wood, 30 planks | 1 | 2 wool + 1 hide → 1 warm clothing | no limit, +30% per copy after the 2nd |
+| hof | Hof | Community | 5 | 4×3 | 80 wood, 80 planks, 20 iron, 150 silver | 1 |  | 0 / 0 / 0 / 0 / 1 |
 | tower | Watchtower | Military | 5 | 1×1 | 40 wood, 30 planks | 0 |  | 0 / 0 / 0 / 0 / 2 |
 
 ## Daily needs
@@ -67,7 +67,7 @@ Limits are per Town Hall level 1 / 2 / 3 / 4 / 5. Workers: +1 at building level 
 | Need | Amount |
 |---|---|
 | Meals a day, adult | 0.5 |
-| Meals a day, child (<14), elder (50+) or thrall | 0.25 |
+| Meals a day, child (<12), elder (50+) or thrall | 0.25 |
 | Meals a day, warrior | 0.75 |
 | Firewood a day, house in summer | 0.35 |
 | Firewood a day, house in winter | 0.84 |

@@ -51,9 +51,9 @@ Order: Round 1 (done, 0.14.0) → 1C (done, 0.15.0) → 1D + 1E (done, 0.19.0) �
 
 ### 1L. Open building limits (José, 2026-11-13) — place in the order not decided yet, ask José
 Goal: the player chooses his own economy (e.g. food only from fish and bread, more wood and less iron). Buildings still unlock by Town Hall level and saga goals, but most have **no count limit**.
-- [ ] **Remove the limit** for ordinary buildings (resources, food, farms, storage, decor?) **and houses**. **Keep a limit** on unique or strategic ones: Town Hall, Jarl's House, Market Square, Tomb of Ragnar and other wonders, Altar/Hof, Training Ground, Shipyard, Harbour (berths), Trading House. Decide decor with José.
+- [ ] **Remove the limit** for ordinary buildings (resources, food, farms, storage) **and houses**. **Keep a limit** on unique or strategic ones: Town Hall, Jarl's House, Market Square, Tomb of Ragnar and other wonders, Altar/Hof, Training Ground, Shipyard, Harbour (berths), Trading House. **Decor keeps today's limits** (José, 2026-11-13).
 - [ ] **Rising cost per copy**, so cheap buildings can't be spammed and upgrading stays worth it: e.g. +30% per copy above the 2nd (numbers to tune).
-- [ ] **Crowding lowers output** where a source is shared: many Fisher's Huts on the same stretch of shore catch less each; woodcutters thin the forest around them (builds on `10_zsources.js`). Specialising works, but costs space and resources.
+- [ ] **The bottleneck is each building's own sources** (José, 2026-11-13): this already exists since 0.15.4/0.18.0 (`10_zsources.js`): every woodcutter, fisher, gatherer and mine claims its own trees / water / bushes / outcrops, which run out each year. With no limit, a new lodge next to others gets few free trees and low output, so it has to go to a fresh forest. Check the build preview shows this clearly ("8 of 20 trees its own · 40% output") and that the numbers still hold with many buildings.
 - [ ] **Unlimited houses, population held by mood**: births and new settlers fall **sharply** when morale / attractiveness is very low (and rise when high), so building houses alone doesn't grow the village.
 - [ ] Check what depends on today's limits: saga goals, the unlock hints, the build tray ("2/3"), bots (`tools/bots`), `gen_numbers.py` (Limits column).
 

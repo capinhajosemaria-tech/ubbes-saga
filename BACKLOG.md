@@ -19,6 +19,7 @@ Finished items are removed from this file; what each version changed is in `CHAN
 - Wood, sources that run out, market panel (Beta 0.18.0).
 - 1D start choices, patron god, Feast · 1E trade map · more newcomers · berths · 4-side rotation (Beta 0.19.0).
 - 1J new guide · new opening (story + choice cards) · gold and silver in the top bar · click selects by tile (Beta 0.20.0).
+- Economy and walls — Preserver jam only + Smokehouse at TH1 (dried fish merged), one-worker buildings, bigger storage at one price, 1-tile watchtower in the palisade, E1/E2/E5–E7 (Beta 0.21.0).
 
 ## 1. Core redesign (decided with José, 2026-11-11)
 Goal: fewer systems, each one counts more; decisions matter, but the player stays free to build his own way and can always progress (maybe more slowly). City building and resources first; the lineage matters later, when resources are less of a worry.
@@ -39,6 +40,9 @@ Order: Round 1 (done, 0.14.0) → 1C (done, 0.15.0) → 1D + 1E (done, 0.19.0) �
 - [ ] **Real people walk**: each villager is a walker (today only 3–10 decorative ones wander near the hall). At dawn they walk from their own house to their workplace along roads, at dusk back home; children play near home, warriors at the Training Ground, elders walk slower. Commute follows the light cycle (3 game days), not every 27-second day.
 - [ ] **Click a person**: sheet with name, age, traits, family, house and workplace; buttons to show their house and workplace. Click a house or building → list of who lives / works there.
 - [ ] Visual only at first (walking distance does not cut output). Watch performance (~110 people at TH5): fewer figures when zoomed out.
+
+### Play feedback for 0.21.0
+- [ ] José plays: first winter with the Smokehouse at TH1 (wood ½ per smoked food), one-worker buildings (enough jobs? too many idle people?), storage 450 at one price, watchtowers in the wall (limit still 2 at TH5 — more?).
 
 ### Play feedback for 0.19.0
 - [ ] José plays: patron favour speed (falls ~0.35 a day, offerings +8), wrath at 25, Feast costs, trade offers (acceptance 1.12 at relation 30), request rewards (1.5×), berths. Advisors: 4 seats in all (2nd at TH3, 3rd TH4, 4th TH5) out of 6 advisors — check this is what was meant.
@@ -66,8 +70,6 @@ Prototypes are on branch `art-prototypes` (code, switches and option sheets: `do
 José's problems with buildings close up: many have **no door**, **chimneys badly seated on roofs**, **details sparse** and **lines too thick**.
 Decided: roads B, grass B (now in Round 1).
 - [x] **New building art and grass released in Beta 0.16.0**: every building, the decor and the tall grass with wildflowers use José's chosen options (all in `docs/art/STYLE.md`; code `source/src/20_zzstyle.js`, switches `window.__setX(n)` in the test page, 0 = old drawing). Houses use the 8 new colour schemes.
-- [ ] **Preserver makes jam only; dried fish goes to the Smokehouse** (José, 2026-11-12): today the Preserver turns fish into dried fish and berries into jam (`13_zflow.js`, `13_daily_economy.js`), and the Smokehouse makes smoked fish and meat. Change: Preserver = berries → jam only; fish preserving only at the Smokehouse (merge dried fish into smoked fish or keep both there). Check balance after.
-- [ ] **Watchtower: 1 tile, part of the palisade** (José, 2026-11-12): today 2×2 (`07_building_definitions.js`), placed apart from the walls. Change: slim tower on **one tile**, placeable **in the palisade line**; the wall tiles next to it connect to it (mark its tile in `walls` as a tower so `wallsClosed()` and the wall drawing treat it as part of the ring; neighbours draw their logs up to it). Keep the defence bonus (more by the palisade). Look chosen in the art work (see STYLE.md). Save keys may need a bump.
 - [x] **Shadows and ground patch follow the building shape**: done in Beta 0.16.1 (`20_zzzshade.js`).
 - [ ] Tidy the art code: fold `20_zzstyle.js` into the old drawing files and remove the unused options and old drawings (smaller file, faster load); phone check.
 To decide:
@@ -81,11 +83,8 @@ Later art:
 
 ## 3. Balance fixes 1 (from the audit)
 Audit 2026-11-11: data in `tools/balance/audit_data.md`, report in `tools/balance/audit_report.md` (finding IDs refer to it; read the finding before applying). TH1–TH2 are sound. The bot was fixed (B1, B2): 24/24 runs reach TH5 in 434–587 days.
-- [ ] **E1 — rounding bugs** (Smokehouse part may go with 1B): Preserver levels 4/5 → 5/6 items a day; Smokehouse carries fractions (levels 2 and 4 add nothing now).
-- [ ] **E2 — ale and mead out of the meal count** (counted as meals, never eaten).
 - [ ] **A2 — replaced by 1B (new bread chain)**: was Bakery 2 → 4 bread per worker a day (weak link of TH5 winter food).
 - [ ] **A1 — too many children** (33–45% under 14): working age 14 → 12, birth chance 0.007 → 0.004, `jobs.py` with the real age mix (workforce share ~45% → 58%). *Ask José.*
-- [ ] **E5–E7 — cleanup**: regenerate `NUMBERS.md` (header says 0.11.0, troop gear column empty), complete Test villages, remove dead constants.
 
 ## 4. Balance fixes 2 (decide after re-measuring)
 - [ ] **O1 — silver has no use** (~650/yr in vs ~2,000–2,500 sinks to TH5; bots end with 8–17k unspent) — partly answered by 1E (goods cost silver; land stays on fame); then maybe: merchant purse 100/150/200 at TH3/4/5; mercenaries 14 → 40; TH5 silver 250 → 400; Hof 50 → 150; silver on level 4/5 upgrades.

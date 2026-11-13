@@ -20,7 +20,7 @@ function setPatron(g){S.patron=g;for(const k of Object.keys(S.gods))S.gods[k]=k=
 
 /* each patron asks his own offering, all of them Town Hall 1 goods */
 const PATRON_OFF={odin:{k:'preserved',n:8,f:8,t:'preserved food'},thor:{k:'iron',n:6,f:8,t:'iron'},freyja:{k:'berries',n:15,f:8,t:'berries'},njord:{k:'fish',n:15,f:8,t:'fish'}};
-const PRESERVED=['dfish','jam','smoked'];
+const PRESERVED=['jam','smoked'];
 const offHave=o=>o.k==='preserved'?PRESERVED.reduce((a,k)=>a+resv(k),0):resv(o.k);
 function offPay(o){let n=o.n;if(o.k!=='preserved'){S.res[o.k]-=n;return;}for(const k of PRESERVED){const e=Math.min(resv(k),n);S.res[k]-=e;n-=e;if(n<=0)break;}}
 const offerAtAltar=()=>has('altar');

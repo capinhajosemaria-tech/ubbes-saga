@@ -2,6 +2,14 @@
 
 Versions are `Beta 0.MINOR.PATCH` until Town Hall 10 (`1.0.0`).
 
+## Beta 0.21.0
+- **Preserver makes jam only; fish is kept at the Smokehouse.** The Smokehouse now unlocks at Town Hall 1 together with the Preserver (one at TH1), so the first winter can still be stocked with fish. **Dried fish is merged into smoked food** (2 meals each); dried fish in old saves turns into smoked food. "Ready for winter" asks for a preserver *or* a smokehouse.
+- **One worker is enough** at the Pig Pen, Sheep Pen, Preserver, Smokehouse, Brewery and Tailor. Each makes as much as before: the worker makes twice as much, and from level 3 these workshops get ×1.5 in place of an extra worker. More people are free for other jobs.
+- **Bigger, cheaper storage:** each Granary and Warehouse holds 450 (+225 a level), +50%. Every granary and warehouse now costs the same; the rising price is gone.
+- **Watchtower on one tile, part of the palisade:** build it on a stake of the wall (not a gate) and the logs on both sides join it; it closes the ring like a wall tile, and raiders cannot break it. Towers from old saves shrink to one tile where they stand.
+- Fixes: every Preserver level now adds output (levels 4 and 5 did nothing, and level 1 sometimes gave +50% by a rounding slip); the Brewery's mead matched its recipe at half speed, now it matches.
+- Cleanup: one table of building limits instead of three; old water, price and blessing leftovers removed; "rations" wording for warriors and thralls; `docs/NUMBERS.md` regenerated with daily needs, storage and market prices, and the troop gear column filled in.
+
 ## Beta 0.20.1
 - "God" and "Gods" are now written with a capital letter in every text of the game.
 

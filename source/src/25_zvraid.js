@@ -14,7 +14,7 @@ function upgradeWalls(){const c=wallUpCost();if(!c)return 'The palisade is as st
 function repairCost(){const n=(S.wbroken||[]).length;return n?{wood:4*n,planks:(wallLv()-1)*3*n}:{};}
 function repairWalls(){const br=S.wbroken||[];if(!br.length)return 'Nothing to repair.';if(VR)return 'Not while raiders are in the village.';const c=repairCost();if(c.planks===0)delete c.planks;if(!afford(c))return 'Not enough: needs '+costStr(c)+'.';
   pay(c,1);for(const q of br){if(!walls[q[0]]&&!occ[q[0]])walls[q[0]]=q[1];delete S.wdmg[q[0]];}S.wbroken=[];recomputeWalls();rebuildOcc();return '';}
-function breakWall(i){const v=walls[i];if(!v)return;walls[i]=0;S.wbroken=S.wbroken||[];S.wbroken.push([i,v]);delete S.wdmg[i];recomputeWalls();if(VR){VR.broke++;vrFields();vrFx('dust',i%N,(i/N)|0);}}
+function breakWall(i){const v=walls[i];if(!v||v===3)return;walls[i]=0;S.wbroken=S.wbroken||[];S.wbroken.push([i,v]);delete S.wdmg[i];recomputeWalls();if(VR){VR.broke++;vrFields();vrFx('dust',i%N,(i/N)|0);}}
 
 /* --- planning: sails sighted, landing a few days later --- */
 function vrModeF(){return S.mode==='relaxed'?0.75:S.mode==='challenge'?1.25:1;}
@@ -37,7 +37,7 @@ function vrDijkstra(src){const D=new Float32Array(N*N).fill(1e9),q=[];for(const 
   const popq=()=>{const top=q[0],last=q.pop();if(q.length){q[0]=last;let k=0;for(;;){const l=2*k+1,r=l+1;let m=k;if(l<q.length&&q[l][0]<q[m][0])m=l;if(r<q.length&&q[r][0]<q[m][0])m=r;if(m===k)break;[q[m],q[k]]=[q[k],q[m]];k=m;}}return top;};
   q.length=0;for(const i of src)push(0,i);
   while(q.length){const [d,i]=popq();if(d>D[i])continue;const x=i%N,y=(i/N)|0;
-    for(const s of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+s[0],ny=y+s[1];if(nx<0||ny<0||nx>=N||ny>=N)continue;const j=ny*N+nx;if(!vrPass(j))continue;
+    for(const s of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+s[0],ny=y+s[1];if(nx<0||ny<0||nx>=N||ny>=N)continue;const j=ny*N+nx;if(!vrPass(j)||walls[j]===3)continue;/* towers cannot be broken */
       let c=1;if(walls[j])c=8+wallHp(j)/20;else if(occ[j])c=30;else if(ter[j]===T.RIVER)c=2.5;
       if(d+c<D[j]){D[j]=d+c;push(D[j],j);}}}
   return D;}

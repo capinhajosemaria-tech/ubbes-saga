@@ -101,7 +101,7 @@ for(let d=0;d<DAYS;d++){if(G.S.over)break;const S=G.S,r=S.res;
   const sy=G.B.find(b=>b.t==='shipyard');if(sy&&!sy.proj){for(const k of ['karvi','knarr','snekkja']){const wars=S.ships.filter(s=>s.type!=='knarr').length;const capW=[0,0,1,2,3][G.thLevel()-1];if((G.SHIPS[k].lv||3)>G.thLevel())continue;if((k==='knarr'?S.ships.filter(s=>s.type==='knarr').length<1:wars<capW&&!(k==='karvi'&&S.ships.some(s=>s.type==='karvi')))&&G.afford(G.shipCost(k))){G.pay(G.shipCost(k),1);sy.proj={type:k,done:0};events.push('day '+S.day+': keel laid '+k);break;}}}
   // trade
   if(S.trader){const keep={planks:200,wood:200,iron:80,salt:40,hay:9999,grain:60,wool:30,flax:30,hides:10,meat:20,fish:20,ale:30,mead:20,sausage:30,smoked:30,honey:20};
-    for(const k of ['planks','smoked','jam','hides','flour','wool','flax','honey','mead','ale','misc','cloth','rope','dfish']){if(SAVING&&(k==='planks'))continue;let g=0;while((r[k]||0)>=(keep[k]||(O.trader?20:60))+10&&g++<20){if(G.mktSat(k)<0.8)break;r[k]-=10;r.silver+=G.priceSell(k)*10;S.mkt[k]=Math.max(0.4,G.mktSat(k)*0.93);S.trades=(S.trades||0)+1;}}
+    for(const k of ['planks','smoked','jam','hides','flour','wool','flax','honey','mead','ale','misc','cloth','rope']){if(SAVING&&(k==='planks'))continue;let g=0;while((r[k]||0)>=(keep[k]||(O.trader?20:60))+10&&g++<20){if(G.mktSat(k)<0.8)break;r[k]-=10;r.silver+=G.priceSell(k)*10;S.mkt[k]=Math.max(0.4,G.mktSat(k)*0.93);S.trades=(S.trades||0)+1;}}
     if(SAVING){const TQ=(G.TH_UP[G.thLevel()+1]||{cost:{}}).cost;const P=G.PARTNERS[S.trader.from];for(const k of ['iron','tools','gold'])if(P&&P.sells.includes(k)){let g=0;while((r[k]||0)<(TQ[k]||0)&&r.silver>(TQ.silver||0)+G.priceBuy(k)&&g++<200){r.silver-=G.priceBuy(k);r[k]=(r[k]||0)+1;G.bought(k,1);S.trades=(S.trades||0)+1;}}}
     if(G.thLevel()>=4&&r.gold<45&&r.silver>200){while(r.silver>200+G.priceBuy('gold')&&r.gold<45){r.silver-=G.priceBuy('gold');r.gold+=1;G.bought('gold',1);}}}
   // land
@@ -136,7 +136,7 @@ for(let d=0;d<DAYS;d++){if(G.S.over)break;const S=G.S,r=S.res;
   if(S.ms.length!==prevMs){S.ms.slice(prevMs).forEach(m=>msDay[m]=S.day);prevMs=S.ms.length;}
   log.push([S.day,G.isWinter()?'W':'S',S.th,S.pop,G.housing(),S.warriors,G.workforce(),G.free,Math.round(G.foodUnits()),Math.round(r.water),Math.round(r.wood),Math.round(r.planks),Math.round(r.iron),r.tools.toFixed(0),Math.round(r.spears),Math.round(r.fodder),G.herdTotal(),Math.round(r.cloth)+'/'+Math.round(r.rope),Math.round(r.silver),Math.round(S.fame),FOOD_KINDS(),Math.round(S.morale),Math.round(S.attr),S.thralls,S.raidsDone,Math.round(G.GOD_KEYS.reduce((a,k)=>a+S.gods[k],0)/5),G.unlockedSet().size,Math.round(S.fameEarned||0)].join(' '));
 }
-function FOOD_KINDS(){const r=G.S.res;return ['fish','berries','meat','bread','dfish','jam','smoked'].filter(k=>r[k]>=1).length;}
+function FOOD_KINDS(){const r=G.S.res;return ['fish','berries','meat','bread','jam','smoked'].filter(k=>r[k]>=1).length;}
 const st=G.B.filter(b=>G.slotsOf(b)).map(b=>b.t+(b.lvl>1?'L'+b.lvl:'')+':'+b.workers+'/'+G.slotsOf(b)+' '+b.status).join(' | ');
 AUD.P=window.__P;AUD.evtc={};for(const e of events){const m=/: evt:(\w+)/.exec(e);if(m)AUD.evtc[m[1]]=(AUD.evtc[m[1]]||0)+1;const f=/: fest:(\w+) -> (\w+)/.exec(e);if(f)AUD.evtc['fest_'+f[1]+'_'+f[2]]=(AUD.evtc['fest_'+f[1]+'_'+f[2]]||0)+1;}
 return {guard:GUARD,fail:FAIL,aud:AUD,log,events,final:st,ms:msDay,ships:G.S.ships,thr:G.thReq()?G.thReq().items.filter(i=>!i.ok).map(i=>i.t):[]};

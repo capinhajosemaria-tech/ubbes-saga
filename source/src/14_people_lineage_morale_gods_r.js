@@ -40,7 +40,7 @@ const PRIMARY={skirm:'spears',spear:'spears',archer:'bows',warrior:'swords'};
 const GODS={odin:{n:'Odin',likes:'Fame, brave deaths, sacrifice',pass:'+10% fame',bless:{n:'Raven’s Eye',d:'The next raid fights 25% harder'},off:[['hides',5,5],['spears',2,6],['silver',10,8],['misc',4,6]]},
   thor:{n:'Thor',likes:'Victories and a strong defence',pass:'+10% strength in battle',bless:{n:'Hammer Ward',d:'Warriors fight 20% harder for 30 days'},off:[['meat',10,5],['iron',5,5],['misc',4,6]]},
   freyja:{n:'Freyja',likes:'Harvests and births',pass:'+10% from farms, gatherers and the pens; more births',bless:{n:'Rich Harvest',d:'+30% from farms and gatherers for 15 days'},off:[['wool',5,6],['berries',15,5],['honey',5,6],['misc',4,5]]},
-  njord:{n:'Njord',likes:'Ships, fishing and trade',pass:'+10% fishing; fewer storms',bless:{n:'Fair Winds',d:'The next voyage is safe and twice as fast'},off:[['fish',15,5],['rope',3,6],['dfish',5,5],['misc',4,5]]},
+  njord:{n:'Njord',likes:'Ships, fishing and trade',pass:'+10% fishing; fewer storms',bless:{n:'Fair Winds',d:'The next voyage is safe and twice as fast'},off:[['fish',15,5],['rope',3,6],['smoked',5,5],['misc',4,5]]},
   loki:{n:'Loki',likes:'Chaos and cunning',pass:'Strange things happen more often',bless:{n:'Trickster’s Wager',d:'The next raid brings double loot, or none'},off:[['misc',3,6],['planks',10,5],['silver',5,6]]}};
 const GOD_KEYS=Object.keys(GODS).filter(k=>k!=='loki');   /* the four who can be a patron (Loki is no patron) */
 function addFavor(g,v){if(!S.gods)return;if(g!==patron())return;/* only the patron's favour counts */if(v>0){if(jt('devout'))v*=1.25;if(has('hof'))v*=1.25;if(hasAdv('thorbjorg'))v*=1.3;}S.gods[g]=clamp(S.gods[g]+v,0,100);if(g==='loki'&&v>0)S.gods.thor=Math.max(0,S.gods.thor-v*0.3);}
@@ -48,7 +48,7 @@ function addFame(v){if(v>0){if(hasAdv('egil'))v*=1.2;if(jt('ambitious'))v*=1.1;i
 
 /* ---------- world ---------- */
 const TARGETS=[
-  {id:'hval',n:'Hvalsey',type:'Fishing hamlet',x:46,y:92,d:3,def:4,loot:{fish:60,dfish:30,misc:6,silver:10},pris:4},
+  {id:'hval',n:'Hvalsey',type:'Fishing hamlet',x:46,y:92,d:3,def:4,loot:{fish:60,smoked:30,misc:6,silver:10},pris:4},
   {id:'sogn',n:'Sogn outpost',type:'Outpost',x:96,y:100,d:3,def:8,loot:{wood:80,iron:30,hides:10,silver:20},pris:4},
   {id:'hord',n:'Hordaland',type:'Hall of Jarl Hrolf the Grey',x:58,y:158,d:4,def:18,loot:{silver:70,iron:40,spears:6,shields:4,meat:30},pris:8,jarl:true},
   {id:'ringa',n:'Ringsaker',type:'Farmsteads by the lake',x:138,y:118,d:4,def:9,loot:{grain:80,meat:60,wool:30,silver:25},pris:6,herd:3},
@@ -67,7 +67,7 @@ function randTrait(){return Math.random()<0.25?pick(TRAIT_KEYS):'';}
 function marry(a,b){a.sp=b.id;b.sp=a.id;}
 function freshState(mode,adv){
   mode=mode||'relaxed';
-  const r=EMPTY_RES();Object.assign(r,{fish:55,berries:55,dfish:30,wood:80,planks:20,tools:6});
+  const r=EMPTY_RES();Object.assign(r,{fish:55,berries:55,smoked:30,wood:80,planks:20,tools:6});
   S={v:3,mode:mode,gameT:20,day:0,pop:11,fame:0,res:r,woodReserve:40,reserve:{},th:1,herd:{pigs:2,sheep:2},herdAcc:0,warriors:0,train:null,ships:[],trades:0,trader:null,
      ms:[],avail:START_AVAIL.slice(),saga:[{y:1,t:'Ragnar has fallen. Ubbe, his son, came to this cold shore with sixteen souls and raised a hall.'}],bal:null,lastShort:'',
      people:[],nextPid:1,jarl:0,heir:0,gen:1,morale:60,mf:[],attr:35,af:[],mods:[],gods:{odin:50,thor:0,freyja:0,njord:0,loki:0},patron:'odin',utrait:'',rel:{},treq:{},voy:[],blessCd:{},blessOn:{},offers:0,
@@ -101,9 +101,8 @@ function workerVal(p,win){if(p.id===S.jarl||p.sick>0||p.away)return 0;if(S.train
   let v=p.a>=14?(p.a>=50?0.5:1):(S.pol.child&&p.a>=10?0.5:0);if(p.tr==='lazy')v*=0.85;return v;}
 function workforce(){if(!S.people)return 0;const win=isWinter();let s=0;for(const p of S.people)s+=workerVal(p,win);s+=S.thralls*(S.pol.thralls==='harsh'?1.15:1);return Math.max(0,Math.round(s));}
 function eatNeed(){if(!S.people)return 0;let s=0;for(const p of S.people){if(p.away)continue;s+=p.w?EAT*WAR_EAT:(p.a<14||p.a>=50?EAT*0.5:EAT);}s+=S.thralls*EAT*0.5;return s*RATION[S.pol.ration].f;}
-function drinkers(){let n=S.thralls;for(const p of S.people)if(!p.away)n++;return n;}
 function thrallCap(){return B.filter(b=>b.t==='thrall').reduce((a,b)=>a+8+4*(b.lvl-1),0);}
-function spendMeals(m){const order=['fish','berries','meat','bread','dfish','jam','smoked'];if(foodUnits()<m)return false;for(const k of order){if(m<=0)break;const e=Math.min(S.res[k],m/MEAL[k]);S.res[k]-=e;m-=e*MEAL[k];}return true;}
+function spendMeals(m){const order=['fish','berries','meat','bread','jam','smoked'];if(foodUnits()<m)return false;for(const k of order){if(m<=0)break;const e=Math.min(S.res[k],m/MEAL[k]);S.res[k]-=e;m-=e*MEAL[k];}return true;}
 const resv=k=>Math.max(0,S.res[k]-((S.reserve&&S.reserve[k])||0)-(k==='wood'?S.woodReserve:0));
 
 /* ---------- morale & attractiveness ---------- */
@@ -147,7 +146,7 @@ const moraleProd=()=>S.morale>=70?1.1:S.morale<40?0.85:1;
 const moraleArrive=()=>S.morale>=70?2.2:S.morale>55?1.5:S.morale<40?0.5:1;
 
 /* ---------- production multipliers ---------- */
-const NB={smith:['mine'],carp:['wood'],pres:['fish'],smoke:['fish','pigpen'],bakery:['mill'],mill:['grain']};
+const NB={smith:['mine'],carp:['wood'],pres:['berry'],smoke:['fish','pigpen'],bakery:['mill'],mill:['grain']};
 function nbOf(b){const l=NB[b.t];if(!l)return null;const o=B.find(x=>x!==b&&l.includes(x.t)&&bDist(b,x)<=4);return o?DEF[o.t].name:null;}
 function traitBonus(t){const tc=S.tc||{};const m=k=>Math.min(0.15,0.03*(tc[k]||0));
   if(['carp','smith','weaver','bakery'].includes(t))return 1+m('steady');if(t==='wood'||t==='mine')return 1+m('strong');if(['fish','pres','smoke'].includes(t))return 1+m('patient');if(t==='shipyard')return 1+m('seafarer');return 1;}
@@ -216,7 +215,7 @@ function peopleDay(short){
   if(men.length&&women.length&&Math.random()<0.06){const a=pick(men),b=women.find(w=>!(w.pa[0]&&w.pa[0]===a.pa[0]))||null;if(b){marry(a,b);if(a.id===S.jarl||b.id===S.jarl)note(pname(a.id===S.jarl?a:b)+' took a spouse.');}}
   /* births */
   const room=housing()-S.pop;const fed=!short&&foodUnits()>=eatNeed()*6;
-  if(room>0&&fed&&S.mode!=='x'&&!((S.fx.barren||0)>S.day)){
+  if(room>0&&fed&&!((S.fx.barren||0)>S.day)){
     let bm=(S.morale>=70?1.3:S.morale<40?0.6:1)*(fav('freyja')>=50?1.15:1)*(S.pol.ration==='normal'?1:0.5);
     for(const w of S.people){if(w.g!=='f'||!w.sp||w.a<16||w.a>=44||w.away)continue;const h=PB(w.sp);if(!h||h.away)continue;
       if(S.people.some(k=>k.pa[1]===w.id&&k.a<1.2))continue;
@@ -363,8 +362,8 @@ function homecoming(r){const t=TG(r.tgt);const st=S.tg[t.id]=S.tg[t.id]||{};
   for(const id of r.crew){const p=PB(id);if(p){p.away=0;if(p.broke){p.broke=0;rearm(p);}if(p.w==='archer'){if(S.res.arrows>=10)S.res.arrows-=10;else p.ua=1;}}}
   if(r.jarl){const j=jarlP();if(j)j.away=0;}
   let got=[];
-  /* provisions not eaten come home as dried fish */
-  if(r.prov>=2){const df=Math.floor(r.prov/MEAL.dfish);if(df>0){addRes('dfish',df);got.push(df+' dried fish left over');}r.prov=0;}
+  /* provisions not eaten come home as smoked food */
+  if(r.prov>=2){const df=Math.floor(r.prov/MEAL.smoked);if(df>0){addRes('smoked',df);got.push(df+' smoked food left over');}r.prov=0;}
   if(r.result==='win'||r.result==='tribute'){
     let share=S.pol.loot==='warriors'?0.85:1;
     for(const k in r.loot){if(k==='animals'){let n=0;for(let i=0;i<r.loot[k];i++){const rp=pigCap()-S.herd.pigs,rs=sheepCap()-S.herd.sheep;if(rp<=0&&rs<=0)break;if(rp>=rs)S.herd.pigs++;else S.herd.sheep++;n++;}if(n)got.push(n+' animals');continue;}
@@ -459,5 +458,5 @@ function yearRoll(){const y=yearNow()-1;const s=S.yr;
 function p2Day(short){const yBefore=Math.floor((S.gameT-DAY)/YEAR);
   peopleDay(short);godsDay();trainDay();raidDay();marketDay();mercDay();if(S.tombDone){addFame(1);S.gods[patron()]=Math.max(30,S.gods[patron()]);}if(S.banqReset&&S.day>=S.banqReset){S.banqN=0;S.banqReset=0;}
   if(isWinter()&&S.res.clothes>0)S.res.clothes=Math.max(0,S.res.clothes-S.pop/120);calendarDay();recalcMorale();revoltDay();eventDay();
-  if(S.mode==='sandbox'||S.mode==='test'){S.res.wood=Math.max(S.res.wood,250);S.res.planks=Math.max(S.res.planks,250);S.res.iron=Math.max(S.res.iron,150);S.res.tools=Math.max(S.res.tools,30);S.res.water=Math.max(S.res.water,100);if(foodUnits()<150)S.res.dfish+=60;}
+  if(S.mode==='sandbox'||S.mode==='test'){S.res.wood=Math.max(S.res.wood,250);S.res.planks=Math.max(S.res.planks,250);S.res.iron=Math.max(S.res.iron,150);S.res.tools=Math.max(S.res.tools,30);if(foodUnits()<150)S.res.smoked+=60;}
   if(Math.floor(S.gameT/YEAR)>yBefore&&yBefore>=0&&S.day>2)yearRoll();}

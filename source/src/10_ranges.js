@@ -26,7 +26,7 @@ function canPlace(t,fx,fy,rot,ignoreId){
     const tt=ter[y*N+x];if((D.water&&tt===T.SEA)||(D.river&&tt===T.RIVER)){wet++;}else if((tt===T.FOREST||tt===T.BERRY)&&!ignoreId){clears.push(y*N+x);}else if(!BUILDABLE.has(tt))return {ok:false,why:tt===T.FOREST?'Trees are in the way':tt===T.RIVER||tt===T.SEA?'Cannot build on water':tt===T.BERRY?'Berry bushes are in the way':tt===T.IRON?'Rock outcrop in the way':'Cannot build here'};
     const o=occ[y*N+x];if(o&&o!==ignoreId)return {ok:false,why:'Another building is here'};
     if(roads[y*N+x])return {ok:false,why:'A road is here'};
-    if(typeof walls!=='undefined'&&walls[y*N+x])return {ok:false,why:'The palisade is here'};
+    if(typeof walls!=='undefined'&&walls[y*N+x]&&!(t==='tower'&&walls[y*N+x]===1))return {ok:false,why:walls[y*N+x]===2?'A gate is here':'The palisade is here'};
   }
   if(D.river&&!wet)return {ok:false,why:'The water mill must stand on the river: its wheel turns in the water'};
   if(D.river&&wet>Math.floor(d.w*d.h/2))return {ok:false,why:'Needs a foothold on the bank: too much of it is over the river'};

@@ -11,7 +11,7 @@ function dayTick(){
     if(b.workers===0){b.status=prioOf(b)===0?'Stopped':'No workers: raise its priority';continue;}
     const n=b.workers;let tf=1;const f0=flowSnap();
     if(D.tools){if(r.tools<=0)tf=D.farm?0.15:0.6;else r.tools=Math.max(0,r.tools-n/60);}
-    const E=tf*(b.lvl>=5?1.55:b.lvl>=4?1.4:FIELDS.has(b.t)&&b.lvl>=3?1.3:b.lvl>=2?1.2:1)*prodMult(b);
+    const E=tf*(b.lvl>=5?1.55:b.lvl>=4?1.4:FIELDS.has(b.t)&&b.lvl>=3?1.3:b.lvl>=2?1.2:1)*(ONE_MAN_X.has(b.t)&&b.lvl>=3?1.5:1)*prodMult(b);
     b.status=tf<1?'Working slowly: no tools':'Working';
     const mk=(k,a)=>{const g=addRes(k,a);b.made=(b.made?b.made+', ':'')+'+'+g.toFixed(1)+' '+(RNAME[k]||k).toLowerCase();if(a>0.01&&g<a*0.5)b.status='Storage full';return g;};
     switch(b.t){
@@ -25,16 +25,17 @@ function dayTick(){
         const g=mk(md,make);for(const k in sm.c)r[k]-=g*sm.c[k];b.anvil-=1;if(miscUse())addRes('misc',g*0.03*(md==='arrows'?0.1:1));break;}
       case 'fish':{const sea=waterDist(b,t=>t===T.SEA)<=3?1:0,got=harvest(b,n*4*E*(win?(sea>0?0.4:0.25):1));if(got<=0.001)b.status=srcOwn(b).length?'Fished out: the fish come back when summer starts':srcList(b).length?'Every water tile in range belongs to another hut':'No water in range';mk('fish',got);if(sea>0&&miscUse())addRes('misc',n*0.02);break;}
       case 'berry':{const got=harvest(b,n*4*E);if(got<=0.001)b.status=srcOwn(b).length?'Bushes picked clean: they come back next summer':srcList(b).length?'Every bush in range belongs to another gatherer':'No bushes in range';mk('berries',got);break;}
-      case 'pres':{let made=0;for(let k=0;k<Math.round(n*(E>1?1.25:1));k++){
-          if(resv('fish')>=2&&resv('fish')>=resv('berries')){r.fish-=2;made+=addRes('dfish',1);}
-          else if(resv('berries')>=2){r.berries-=2;made+=addRes('jam',1);}}
-        if(!made)b.status='Waiting for fish or berries';else b.made='+'+made+' preserved';break;}
+      case 'pres':{/* berries → jam only (fish is smoked at the Smokehouse); fractions carry over so every level counts */
+        b.acc=(b.acc||0)+n*2.5*E;let made=0;
+        while(b.acc>=1&&resv('berries')>=2){r.berries-=2;made+=addRes('jam',1);b.acc-=1;}
+        if(b.acc>1)b.acc=1;
+        if(!made&&!(b.acc>0&&b.acc<1))b.status=holdMsg(['berries']);else if(made)b.made='+'+made+' jam';break;}
       case 'market':{marketOn=true;b.made='Drawing newcomers';b.status='Drawing newcomers';break;}
       case 'fodder':mk('fodder',n*5*E);break;
       case 'grain':mk('grain',n*4*E);break;
       case 'flax':mk('flax',n*4*E);break;
       case 'smoke':{/* fractions carry over day to day, so every level counts */
-        b.acc=(b.acc||0)+n*E;let made=0;
+        b.acc=(b.acc||0)+n*2*E;let made=0;
         while(b.acc>=1){if(resv('meat')>=2&&resv('wood')>=0.5){r.meat-=2;r.wood-=0.5;made+=addRes('smoked',1);}else if(resv('fish')>=2&&resv('wood')>=0.5){r.fish-=2;r.wood-=0.5;made+=addRes('smoked',1);}else break;b.acc-=1;}
         if(b.acc>1)b.acc=1;
         if(!made&&!(b.acc>0&&b.acc<1))b.status=resv('wood')<0.5&&r.wood>=0.5?holdMsg(['wood']):'Waiting for meat or fish';else b.made='+'+made+' smoked';break;}
@@ -47,15 +48,15 @@ function dayTick(){
       case 'weaver':{let made='';for(let k=0;k<n;k++){const needCloth=r.cloth<=r.rope;
           if(needCloth&&resv('wool')>=2){r.wool-=2;addRes('cloth',E);made='cloth';}else if(resv('flax')>=2){r.flax-=2;addRes('rope',E);made=made||'rope';}else if(resv('wool')>=2){r.wool-=2;addRes('cloth',E);made='cloth';}}
         if(!made)b.status='Waiting for wool or flax';else b.made='Weaving '+made;break;}
-      case 'pigpen':{const f=Math.min(1,n/2)*E;if(!win&&S.herd.pigs>=2)S.herdAccP=(S.herdAccP||0)+S.herd.pigs*0.05*f/count('pigpen');b.made=S.herd.pigs+' pigs';break;}
-      case 'sheeppen':{const f=Math.min(1,n/2)*E;
+      case 'pigpen':{const f=Math.min(1,n)*E;if(!win&&S.herd.pigs>=2)S.herdAccP=(S.herdAccP||0)+S.herd.pigs*0.05*f/count('pigpen');b.made=S.herd.pigs+' pigs';break;}
+      case 'sheeppen':{const f=Math.min(1,n)*E;
         if(!win){if(S.herd.sheep>=2)S.herdAccS=(S.herdAccS||0)+S.herd.sheep*0.035*f/count('sheeppen');if(woolUse())mk('wool',S.herd.sheep*0.25*f/count('sheeppen'));else b.made='Sheep unshorn: wool waits for a weaver or a merchant';}
         b.made=(b.made?b.made+' · ':'')+S.herd.sheep+' sheep';break;}
-      case 'brewery':{let made='';const ua=Math.min(n*E,resv('grain')/2,resv('wood')*2);if(ua>0.05){r.grain-=ua*2;r.wood-=ua*0.5;addRes('ale',ua*2);made='ale';}
-        if(resv('honey')>=2){const um=Math.min(n*E*0.5,resv('honey')/2);r.honey-=um*2;addRes('mead',um);made=made?made+' and mead':'mead';}
+      case 'brewery':{let made='';const ua=Math.min(n*2*E,resv('grain')/2,resv('wood')*2);if(ua>0.05){r.grain-=ua*2;r.wood-=ua*0.5;addRes('ale',ua*2);made='ale';}
+        if(resv('honey')>=2){const um=Math.min(n*E,resv('honey')/2);r.honey-=um*2;addRes('mead',um);made=made?made+' and mead':'mead';}
         if(!made)b.status='Waiting for grain or honey';else b.made='Brewing '+made;break;}
       case 'hives':mk('honey',n*3*E);break;
-      case 'tailor':{const u=Math.min(n*E*0.8,resv('wool')/2,resv('hides'));if(u<=0.05){b.status=holdMsg(['wool','hides']);break;}r.wool-=u*2;r.hides-=u;mk('clothes',u);break;}
+      case 'tailor':{const u=Math.min(n*E*1.6,resv('wool')/2,resv('hides'));if(u<=0.05){b.status=holdMsg(['wool','hides']);break;}r.wool-=u*2;r.hides-=u;mk('clothes',u);break;}
       case 'hof':{const g=patron();addFavor(g,0.6*n);b.made='The gothi honours '+GODS[g].n;break;}
       case 'tomb':{if(!b.proj){b.status='Waiting to begin: needs 40 gold, 6 swords and a ship';break;}if(b.proj.done>=TOMB_WORK){b.status='Finished';b.made='Ragnar rests here';break;}b.proj.done+=n*E;b.made=Math.floor(100*b.proj.done/TOMB_WORK)+'% raised';
         if(b.proj.done>=TOMB_WORK){S.tombDone=1;S.saga.push({y:yearNow(),t:'Ragnar’s ship-tomb was finished. Its mound can be seen from the sea.'});queueModal({k:'info',title:'Ragnar’s Ship-Tomb',text:'The mound is closed over the ship. From now on, Odin’s favour never falls below 30, and the tomb adds to Kaldstrand’s fame every day.'});}break;}
@@ -81,7 +82,7 @@ function dayTick(){
   /* consumption: fresh first, then bread, then preserved */
   let short='';
   let need=eatNeed();f0=flowSnap();
-  for(const k of ['fish','berries','meat','bread','dfish','jam','smoked']){if(need<=0)break;const e=Math.min(r[k],need/MEAL[k]);r[k]-=e;need-=e*MEAL[k];}
+  for(const k of ['fish','berries','meat','bread','jam','smoked']){if(need<=0)break;const e=Math.min(r[k],need/MEAL[k]);r[k]-=e;need-=e*MEAL[k];}
   if(need>0.01)short='food';flowDiff(f0,'eat');f0=flowSnap();
   if(!burnFire(fireToday()))short=short||'firewood';flowDiff(f0,'fire');f0=flowSnap();
   ['fish','berries','meat'].forEach(k=>r[k]*=0.97);r.bread*=0.98;flowDiff(f0,'spoil');

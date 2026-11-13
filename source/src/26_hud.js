@@ -20,7 +20,7 @@ $('res').innerHTML=RGROUPS.map(g=>'<div class="rg">'+g.map(k=>{const c=CHIPS.fin
 const RTIP={food:'Everything people eat. Each person eats about 1 a day, more in winter.',water:'Carried from wells. Each person drinks every day.',wood:'Felled by woodcutters. Burned as firewood in winter and turned into planks.',planks:'Sawn from wood at the carpenter.',iron:'Dug at the mine.',tools:'Forged by the smith. Workers wear them out.',silver:'From trade and plunder. Buys goods from merchants.',gold:'Rare. Taken in raids on rich places; needed for the greatest works.',fame:'Earned by deeds. Spend it on land.',people:'People living in Kaldstrand / beds in houses.',morale:'How content the village is.',warriors:'Trained fighters (+ in training).'};
 function tipHtml(k){const c=CHIPS.find(q=>q[0]===k),r=S.res,bal=(S.bal||{})[k],L=(S.prodLog||{})[k]||{};
   let h='<b>'+c[1]+'</b><p>'+RTIP[k]+'</p>';
-  const cap={food:capFood(),water:capWater(),wood:capMat(),planks:capMat(),iron:capMat()}[k];
+  const cap={food:capFood(),wood:capMat(),planks:capMat(),iron:capMat()}[k];
   if(k==='food')h+='<div class="tr"><span>In store</span><span>'+fmt(foodUnits())+' / '+fmt(cap)+'</span></div>';
   else if(cap)h+='<div class="tr"><span>In store</span><span>'+fmt(r[k])+(k==='water'?' / '+fmt(cap):'')+'</span></div>';
   if(bal!==undefined){const prod=Object.values(L).reduce((a,v)=>a+v,0),used=Math.max(0,prod-bal);
@@ -218,7 +218,7 @@ function roadTap(t){if(!inMap(t[0],t[1]))return;
   roadTarget(t);roadHover=t[0]+','+t[1];roadLock=true;roadBar();}
 function roadHoverAt(px,py){if(!roadA||roadLock)return;const w=s2w(px,py),t=w2t(w[0],w[1]);const k=t[0]+','+t[1];if(k===roadHover||!inMap(t[0],t[1]))return;roadHover=k;roadTarget(t);roadBar();}
 function confirmRoad(){if(!roadPrev)return;if(roadKind==='wall'){if(!roadErase){const c=wallCost();if(!afford(c)){toast('Not enough: needs '+costStr(c));return;}pay(c,1);}
-    for(const p of roadPrev){const i=p[1]*N+p[0];if(roadErase)walls[i]=0;else if(!walls[i])walls[i]=roads[i]?2:1;}recomputeWalls();roadPrev=null;roadA=null;roadLock=false;roadFail=false;rebuildOcc();checkMilestones();save();roadBar();return;}
+    for(const p of roadPrev){const i=p[1]*N+p[0];if(roadErase){if(walls[i]!==3)walls[i]=0;}else if(!walls[i])walls[i]=roads[i]?2:1;}recomputeWalls();roadPrev=null;roadA=null;roadLock=false;roadFail=false;rebuildOcc();checkMilestones();save();roadBar();return;}
   for(const p of roadPrev){const i=p[1]*N+p[0];if(roadErase)roads[i]=0;else if(roadOK(p[0],p[1]))roads[i]=1;}
   roadPrev=null;roadA=null;roadLock=false;roadFail=false;recomputeConn();assignWorkers();checkMilestones();save();roadBar();}
 function drawRoadGhost(){

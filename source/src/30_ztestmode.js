@@ -20,13 +20,15 @@ function buildTestVillage(L){
   Object.keys(DEF).forEach(k=>{if(DEF[k].lvl===1&&!S.avail.includes(k))S.avail.push(k);});
   for(const m of MS)if(m.lv<L&&!S.ms.includes(m.id))S.ms.push(m.id);
   const order=['shipyard','harbour','market','jarl','tomb','hof','train','arsenal','trade','thrall','gran','ware','pyre','altar'];
-  const keys=order.concat(Object.keys(DEF).filter(k=>!order.includes(k)));const missing=[];
+  /* road-needing workshops before fields, pens and decor, so they still find a plot by a road (E6) */
+  const rk=k=>DEF[k].cat==='Decor'?2:(DEF[k].road===false||DEF[k].farm)?1:0;
+  const keys=order.concat(Object.keys(DEF).filter(k=>!order.includes(k)).sort((a,b)=>rk(a)-rk(b)));const missing=[];
   for(const k of keys){const D=DEF[k];if(k==='th'||D.lvl>L||D.hidden)continue;const n=D.cat==='Decor'?1:Math.max(0,(TEST_COUNT[k]?TEST_COUNT[k][L-1]:limitOf(k))-count(k));
     for(let i=0;i<n;i++){const b=placeAuto(k);if(!b){missing.push(DEF[k].name);break;}if(D.up)b.lvl=Math.min(L,5);b.desired=slotsOf(b);}}
   for(const b of B)if(DEF[b.t].up&&b.t!=='th')b.lvl=Math.min(L,5);  /* the starting houses too */
   rebuildOcc();recomputeConn();
   const r=S.res;for(const k in r)r[k]=0;FOOD.forEach(k=>r[k]=Math.round(capFood()*0.6/FOOD.length));MAT.forEach(k=>r[k]=Math.round(capMat()*0.5/MAT.length));ARMS.forEach(k=>r[k]=Math.round(capArms()*0.6/ARMS.length));
-  r.tools=40;r.water=capWater()*0.8;r.silver=500;r.gold=100;r.wood=Math.max(r.wood,150);r.planks=Math.max(r.planks,150);r.iron=Math.max(r.iron,80);
+  r.tools=40;r.silver=500;r.gold=100;r.wood=Math.max(r.wood,150);r.planks=Math.max(r.planks,150);r.iron=Math.max(r.iron,80);
   S.fame=2000;S.fameEarned=2000;GOD_KEYS.forEach(g=>S.gods[g]=60);
   const cap=housing(),kidsT=Math.round(cap*0.24),couples=[];while(S.people.length<cap-kidsT){const a=newPerson({a:Math.round(U(18,44)),tr:randTrait()});if(S.people.length<cap-kidsT){const b=newPerson({g:a.g==='m'?'f':'m',a:Math.round(U(18,44))});marry(a,b);couples.push([a,b]);}}
   for(let k=0;S.people.length<cap&&couples.length;k++){const c=couples[k%couples.length];newPerson({a:Math.round(U(1,13)),pa:[c[0].id,c[1].id]});}

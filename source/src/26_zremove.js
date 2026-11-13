@@ -16,7 +16,7 @@ function remRefundTxt(b){const full=underCons(b)&&b.cons.done<=0.001;return (ful
 function removeBuilding(b){const D=DEF[b.t];remArmed=null;sel=null;
   if(D.fixed){removeBar('The '+esc(D.name)+' cannot be removed.');return;}
   if(D.housing&&!underCons(b)&&housing()-(b.t==='house'?HOUSE_CAP[b.lvl-1]:D.housing)<S.pop){removeBar('Not enough room elsewhere for the people living in this '+esc(D.name.toLowerCase())+'.');return;}
-  const full=underCons(b)&&b.cons.done<=0.001;pay(b.paid||D.cost,full?-1:-0.5);B=B.filter(o=>o!==b);rebuildOcc();recomputeConn();assignWorkers();
+  const full=underCons(b)&&b.cons.done<=0.001;pay(b.paid||D.cost,full?-1:-0.5);B=B.filter(o=>o!==b);if(b.t==='tower'&&inMap(b.fx,b.fy)){const i=b.fy*N+b.fx;if(walls[i]===3){const x=b.fx,y=b.fy,nb=[[1,0],[-1,0],[0,1],[0,-1]].some(d=>inMap(x+d[0],y+d[1])&&walls[(y+d[1])*N+x+d[0]]);walls[i]=nb?1:0;}/* a tower in the ring leaves a stake behind */recomputeWalls();}rebuildOcc();recomputeConn();assignWorkers();
   removeBar(esc(D.name)+' removed. '+(full?'All':'Half')+' the materials came back.');save();}
 function removeTap(tt){const x=tt[0],y=tt[1];if(!inMap(x,y))return;const i=y*N+x;
   /* the building on this tile, or one whose picture covers it */

@@ -6,7 +6,7 @@ function apply(d){
   if(!d||d.v!==4||d.n!==N||!d.S||!Array.isArray(d.b))return false;
   const num=(v,def)=>Number.isFinite(+v)?+v:def;
   freshState(d.S.mode||'relaxed',d.S.adv||'');
-  const base=S;S=Object.assign(base,d.S);S.res=Object.assign(EMPTY_RES(),d.S.res||{});for(const k in S.res)S.res[k]=Math.max(0,num(S.res[k],0));
+  const base=S;S=Object.assign(base,d.S);S.res=Object.assign(EMPTY_RES(),d.S.res||{});if(S.res.dfish!=null){S.res.smoked=(+S.res.smoked||0)+(+S.res.dfish||0);delete S.res.dfish;}/* 0.21: dried fish merged into smoked food */for(const k in S.res)S.res[k]=Math.max(0,num(S.res[k],0));
   S.pol=Object.assign({ration:'normal',rite:'cremation',child:false,borders:'open',loot:'jarl',thralls:'soft'},d.S.pol||{});S.gods=Object.assign({odin:40,thor:40,freyja:40,njord:40,loki:30},d.S.gods||{});
   /* sagas from before 0.19: the god with the most favour becomes the patron */
   if(!d.S.patron){const g=GOD_KEYS.slice().sort((a,c)=>S.gods[c]-S.gods[a])[0];const f=S.gods[g];setPatron(g);S.gods[g]=Math.max(30,f);}
@@ -19,7 +19,7 @@ function apply(d){
   /* Beta 0.17: the shipyard became 3×3 (boathouse on the shore + quay and slipway over the sea); move old ones to the nearest spot that fits */
   rebuildOcc();for(const b of B){if(b.t!=='shipyard'||canPlace('shipyard',b.fx,b.fy,b.rot,b.id).ok)continue;let best=null;for(let dy=-1;dy<=2&&!best;dy++)for(let dx=-1;dx<=2&&!best;dx++)if(canPlace('shipyard',b.fx+dx,b.fy+dy,b.rot,b.id).ok)best=[b.fx+dx,b.fy+dy];if(best){b.fx=best[0];b.fy=best[1];rebuildOcc();}}
   roads=new Uint8Array(N*N);(d.roads||[]).forEach(i=>{if(i>=0&&i<N*N)roads[i]=1;});
-  walls=new Uint8Array(N*N);(d.walls||[]).forEach(q=>{const i=q>>2;if(i>=0&&i<N*N)walls[i]=q&3;});S.maps=S.maps||{};S.mkt=S.mkt||{};S.advs=S.advs||(S.adv?[S.adv]:[]);
+  walls=new Uint8Array(N*N);(d.walls||[]).forEach(q=>{const i=q>>2;if(i>=0&&i<N*N)walls[i]=q&3;});for(const b of B)if(b.t==='tower'){if(b.w>1){b.w=1;b.h=1;}const i=b.fy*N+b.fx;if(inMap(b.fx,b.fy))walls[i]=3;}/* 0.21: one-tile towers in the wall ring */S.maps=S.maps||{};S.mkt=S.mkt||{};S.advs=S.advs||(S.adv?[S.adv]:[]);
   unlocked=new Set((d.zones||[]).filter(z=>typeof z==='string'));if(!unlocked.size)defaultZones();
   srcLoad(d.src);
   S.cleared=Array.isArray(S.cleared)?S.cleared:[];S.cleared.forEach(i=>clearForest(i,true));

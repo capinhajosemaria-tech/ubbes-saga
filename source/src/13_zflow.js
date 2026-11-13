@@ -57,20 +57,20 @@ function winterDays(k){if(k==='food'){const f=foodFlow('winter'),net=sumV(f.p)-s
 const RECIPES=[
   {b:'wood',out:{wood:3}},{b:'carp',in:{wood:4},out:{planks:2}},{b:'mine',out:{iron:2}},
   {b:'fish',out:{fish:4}},{b:'berry',out:{berries:4},note:'summer'},
-  {b:'pres',in:{fish:2},out:{dfish:1}},{b:'pres',in:{berries:2},out:{jam:1}},
-  {b:'smoke',in:{meat:2,wood:0.5},out:{smoked:1}},{b:'smoke',in:{fish:2,wood:0.5},out:{smoked:1}},
+  {b:'pres',in:{berries:5},out:{jam:2.5}},
+  {b:'smoke',in:{meat:4,wood:1},out:{smoked:2}},{b:'smoke',in:{fish:4,wood:1},out:{smoked:2}},
   {b:'fodder',out:{fodder:5},note:'summer'},{b:'grain',out:{grain:4},note:'summer'},{b:'flax',out:{flax:4},note:'summer'},
   {b:'mill',in:{grain:4},out:{flour:4}},{b:'bakery',in:{flour:3,wood:0.5},out:{bread:3}},
-  {b:'brewery',in:{grain:2,wood:0.5},out:{ale:2}},{b:'brewery',in:{honey:2},out:{mead:1}},
+  {b:'brewery',in:{grain:4,wood:1},out:{ale:4}},{b:'brewery',in:{honey:2},out:{mead:1}},
   {b:'hives',out:{honey:3},note:'summer'},
   {b:'weaver',in:{wool:2},out:{cloth:1}},{b:'weaver',in:{flax:2},out:{rope:1}},
-  {b:'tailor',in:{wool:2,hides:1},out:{clothes:1}},
+  {b:'tailor',in:{wool:3.2,hides:1.6},out:{clothes:1.6}},
   {b:'pigpen',in:{fodder:0.4},out:{meat:10,hides:1},note:'per pig slaughtered · fodder per animal in winter'},
   {b:'sheeppen',in:{fodder:0.4},out:{wool:0.25,meat:8,hides:1},note:'wool per sheep a day in summer · meat per sheep slaughtered'}];
 function recipesFor(k){const out=RECIPES.filter(r=>r.out[k]&&DEF[r.b]);
   if(typeof SMITH!=='undefined'&&SMITH[k]){const sm=SMITH[k],inp={};for(const j in sm.c)inp[j]=+(sm.c[j]*sm.per).toFixed(2);out.push({b:'smith',in:inp,out:{[k]:sm.per},lv:sm.lv});}
   return out;}
-const RCOL={fish:'#7FA3B0',berries:'#A34A6A',meat:'#B0574A',bread:'#C99A5A',dfish:'#9A8566',jam:'#8E3B5A',smoked:'#7A4E32',fodder:'#A8B060',flour:'#E6DCC4',wool:'#E9E2D0',flax:'#8FA6C0',grain:'#D9B45A',cloth:'#D8CCB0',rope:'#A9875A',hides:'#9C6E48',honey:'#E0A43A',clothes:'#6F7F9A',ale:'#C98E3A',mead:'#D7B04A',misc:'#8E877D',spears:'#8C949A',shields:'#A34A3A',bows:'#8E6A45',arrows:'#7A6A55',swords:'#B7BCBF',axes:'#9AA0A4',armour:'#6E7478',gold:'#D9B45A'};
+const RCOL={fish:'#7FA3B0',berries:'#A34A6A',meat:'#B0574A',bread:'#C99A5A',jam:'#8E3B5A',smoked:'#7A4E32',fodder:'#A8B060',flour:'#E6DCC4',wool:'#E9E2D0',flax:'#8FA6C0',grain:'#D9B45A',cloth:'#D8CCB0',rope:'#A9875A',hides:'#9C6E48',honey:'#E0A43A',clothes:'#6F7F9A',ale:'#C98E3A',mead:'#D7B04A',misc:'#8E877D',spears:'#8C949A',shields:'#A34A3A',bows:'#8E6A45',arrows:'#7A6A55',swords:'#B7BCBF',axes:'#9AA0A4',armour:'#6E7478',gold:'#D9B45A'};
 /* a resource picture: the drawn icon if there is one, otherwise a small tinted sack */
 function resIco(k,sz){sz=sz||16;if(ICON[k])return ICON[k].replace(/width="14" height="14"/,'width="'+sz+'" height="'+sz+'"');
   const c=RCOL[k]||'#9C8A6E';return '<svg width="'+sz+'" height="'+sz+'" viewBox="0 0 20 20" aria-hidden="true"><path d="M6 4 H14 L12.6 6.4 Q17.6 9 17 14.6 Q16.4 18 10 18 Q3.6 18 3 14.6 Q2.4 9 7.4 6.4 Z" fill="'+c+'" stroke="#4A3C30" stroke-width="0.8" stroke-linejoin="round"/><path d="M7.4 6.4 H12.6" stroke="#4A3C30" stroke-width="1"/></svg>';}

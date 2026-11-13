@@ -1,4 +1,4 @@
-# Ubbe's Saga: numbers (Beta 0.19.0)
+# Ubbe's Saga: numbers (Beta 0.21.0)
 
 Generated from the game by `tools/gen_numbers.py`. Do not edit by hand.
 
@@ -13,7 +13,7 @@ Generated from the game by `tools/gen_numbers.py`. Do not edit by hand.
 
 ## Buildings
 
-Limits are per Town Hall level 1 / 2 / 3 / 4 / 5. Workers: +1 at building level 3 (not fields or wonders). House capacity by house level: 4 / 5 / 6 / 7 / 8.
+Limits are per Town Hall level 1 / 2 / 3 / 4 / 5. Workers: +1 at building level 3 (not fields, wonders or one-worker buildings: pens, preserver, smokehouse, brewery, tailor; those four workshops make ×1.5 from level 3 instead). House capacity by house level: 4 / 5 / 6 / 7 / 8.
 
 | Key | Name | Category | Town Hall | Size | Cost | Workers | Output | Limits |
 |---|---|---|---|---|---|---|---|---|
@@ -27,14 +27,14 @@ Limits are per Town Hall level 1 / 2 / 3 / 4 / 5. Workers: +1 at building level 
 | smith | Smithy | Crafts | 1 | 2×2 | 15 wood, 20 planks, 10 iron | 2 | Tools, and later weapons | 1 / 1 / 1 / 2 / 2 |
 | fish | Fisher’s Hut | Food | 1 | 2×1 | 15 wood | 3 | 4 fish per worker a day | 2 / 2 / 2 / 2 / 2 |
 | berry | Berry Gatherer | Food | 1 | 2×2 | 10 wood | 2 | 4 berries per worker a day (summer) | 2 / 2 / 2 / 2 / 2 |
-| pres | Preserver | Food | 1 | 2×2 | 15 wood, 20 planks | 2 | Dried fish and jam | 1 / 1 / 1 / 1 / 2 |
+| pres | Preserver | Food | 1 | 2×2 | 15 wood, 20 planks | 1 | Jam from berries | 1 / 1 / 1 / 1 / 2 |
 | gran | Granary | Storage | 1 | 3×2 | 30 wood, 10 planks | 0 |  | no limit |
 | ware | Warehouse | Storage | 1 | 3×2 | 30 wood, 10 planks | 0 |  | no limit |
 | market | Market Square | Community | 1 | 4×4 | 40 wood, 40 planks | 1 | More families settle here | 1 / 1 / 1 / 1 / 1 |
-| pigpen | Pig Pen | Farms | 2 | 3×3 | 40 wood, 10 planks | 2 | Breeds pigs: meat and hides | 0 / 1 / 1 / 2 / 2 |
-| sheeppen | Sheep Pen | Farms | 2 | 3×3 | 40 wood, 10 planks | 2 | Keeps sheep: wool for sails and warm clothing | 0 / 1 / 1 / 2 / 2 |
+| pigpen | Pig Pen | Farms | 2 | 3×3 | 40 wood, 10 planks | 1 | Breeds pigs: meat and hides | 0 / 1 / 1 / 2 / 2 |
+| sheeppen | Sheep Pen | Farms | 2 | 3×3 | 40 wood, 10 planks | 1 | Keeps sheep: wool for sails and warm clothing | 0 / 1 / 1 / 2 / 2 |
 | fodder | Fodder Field | Farms | 2 | 3×3 | 15 wood | 2 | 5 fodder per worker a day (summer) | 0 / 1 / 2 / 3 / 3 |
-| smoke | Smokehouse | Food | 2 | 2×2 | 20 wood, 15 planks | 2 | Smoked fish and meat | 0 / 1 / 1 / 1 / 2 |
+| smoke | Smokehouse | Food | 1 | 2×2 | 20 wood, 15 planks | 1 | Smoked fish and meat | 1 / 1 / 1 / 1 / 2 |
 | altar | Altar | Community | 2 | 2×2 | 20 wood, 20 planks, 5 iron | 0 |  | 0 / 1 / 1 / 1 / 1 |
 | train | Training Ground | Military | 2 | 3×3 | 40 wood, 30 planks | 0 |  | 0 / 1 / 1 / 1 / 1 |
 | arsenal | Arsenal | Military | 2 | 3×2 | 30 wood, 30 planks, 10 iron | 0 |  | 0 / 1 / 1 / 1 / 1 |
@@ -55,20 +55,74 @@ Limits are per Town Hall level 1 / 2 / 3 / 4 / 5. Workers: +1 at building level 
 | prow | Carved Prow | Decor | 3 | 1×1 | 20 planks, 2 iron | 0 |  | 0 / 0 / 3 / 4 / 6 |
 | nets | Drying Nets | Decor | 3 | 1×1 | 6 wood, 2 rope | 0 |  | 0 / 0 / 4 / 5 / 6 |
 | trade | Trading House | Sea | 3 | 3×2 | 40 wood, 40 planks, 10 iron | 0 |  | 0 / 0 / 1 / 1 / 1 |
-| brewery | Brewery | Food | 3 | 2×2 | 30 wood, 30 planks, 5 iron | 2 | 2 grain + ½ wood → 2 ale; 2 honey → 1 mead | 0 / 0 / 1 / 1 / 2 |
+| brewery | Brewery | Food | 3 | 2×2 | 30 wood, 30 planks, 5 iron | 1 | 2 grain + ½ wood → 2 ale; 2 honey → 1 mead | 0 / 0 / 1 / 1 / 2 |
 | hives | Beehives | Farms | 3 | 2×2 | 20 wood, 10 planks | 1 | 3 honey per keeper a day (summer) | 0 / 0 / 2 / 2 / 3 |
 | tomb | Ragnar’s Ship-Tomb | Community | 4 | 4×4 | 150 planks, 40 iron | 5 | A wonder: up to 5 builders raise it, year after year | 0 / 0 / 0 / 1 / 1 |
-| tailor | Tailor | Crafts | 5 | 2×2 | 20 wood, 30 planks | 2 | 2 wool + 1 hide → 1 warm clothing | 0 / 0 / 0 / 0 / 1 |
+| tailor | Tailor | Crafts | 5 | 2×2 | 20 wood, 30 planks | 1 | 2 wool + 1 hide → 1 warm clothing | 0 / 0 / 0 / 0 / 1 |
 | hof | Hof | Community | 5 | 4×3 | 80 wood, 80 planks, 20 iron, 50 silver | 1 |  | 0 / 0 / 0 / 0 / 1 |
-| tower | Watchtower | Military | 5 | 2×2 | 40 wood, 30 planks | 0 |  | 0 / 0 / 0 / 0 / 2 |
+| tower | Watchtower | Military | 5 | 1×1 | 40 wood, 30 planks | 0 |  | 0 / 0 / 0 / 0 / 2 |
+
+## Daily needs
+
+| Need | Amount |
+|---|---|
+| Meals a day, adult | 0.5 |
+| Meals a day, child (<14), elder (50+) or thrall | 0.25 |
+| Meals a day, warrior | 0.75 |
+| Firewood a day, house in summer | 0.35 |
+| Firewood a day, house in winter | 0.84 |
+| Firewood, houses at level 3+ | ×0.75 |
+| Firewood, Town Hall | as 2 houses |
+| Firewood, hard winter | ×1.3 |
+
+Meals per item: fish 1, berries 1, meat 1, bread 1.5, jam 2, smoked 2. Storage: Granary and Warehouse hold 450 each (+225 a level), every one costs the same.
+
+## Market
+
+Base prices in silver (sell). A partner who wants a good pays ×1.35. Buying costs ×1.45 × 0.85, and ×1.35 more for iron and tools.
+
+| Good | Base price |
+|---|---|
+| ale | 2 |
+| armour | 32 |
+| arrows | 0.6 |
+| axes | 10 |
+| bows | 6 |
+| bread | 1 |
+| cloth | 6 |
+| clothes | 9 |
+| flax | 1.2 |
+| flour | 1 |
+| fodder | 0.5 |
+| gold | 10 |
+| grain | 1 |
+| hides | 3 |
+| honey | 2.5 |
+| iron | 3 |
+| jam | 2 |
+| mead | 5 |
+| misc | 1 |
+| pig | 6 |
+| planks | 2 |
+| rope | 5 |
+| sheep | 8 |
+| shields | 8 |
+| silver | 1 |
+| smoked | 3 |
+| spears | 5 |
+| swords | 18 |
+| thrall | 18 |
+| tools | 6 |
+| wood | 0.4 |
+| wool | 2 |
 
 ## Saga goals
 
 | Age | Goal | Task | Fame | Unlocks |
 |---|---|---|---|---|
-| 1 | Settle the shore | Build a berry gatherer and a woodcutter’s lodge (the first of each is free) | 20 | Carpenter, Preserver, Funeral Pyre |
+| 1 | Settle the shore | Build a berry gatherer and a woodcutter’s lodge (the first of each is free) | 20 | Carpenter, Preserver, Smokehouse, Funeral Pyre |
 | 1 | Timber and planks | Build a carpenter and store 40 planks | 20 | Granary, Warehouse, Iron Mine, Smithy |
-| 1 | Ready for winter | Build a preserver, a granary and a warehouse, and store 35 preserved food | 40 | Market Square, Jarl’s House |
+| 1 | Ready for winter | Build a preserver or a smokehouse, a granary and a warehouse, and store 35 preserved food | 40 | Market Square, Jarl’s House |
 | 1 | Iron and tools | Build an iron mine and a smithy, and stock 12 tools | 50 |  |
 | 1 | The first winter | Survive the first winter | 50 |  |
 | 1 | A gathering place | Build the market square | 30 |  |
@@ -77,7 +131,7 @@ Limits are per Town Hall level 1 / 2 / 3 / 4 / 5. Workers: +1 at building level 
 | 2 | Pigs and sheep | Build a pig pen and a sheep pen, and keep 10 animals | 30 |  |
 | 2 | Fodder for winter | Build a fodder field and store 40 fodder | 20 |  |
 | 2 | Smoke and fire | Build a smokehouse and store 20 smoked food | 30 |  |
-| 2 | Honour the gods | Build an altar and make an offering | 30 |  |
+| 2 | Honour the Gods | Build an altar and make an offering | 30 |  |
 | 2 | The first warriors | Train 5 warriors at the training ground | 40 |  |
 | 2 | Hall of the sea-kings | Raise the Town Hall to level 3 | 100 |  |
 | 3 | Bread on the table | Build a grain field, a water mill and a bakery | 30 |  |
@@ -108,12 +162,12 @@ Limits are per Town Hall level 1 / 2 / 3 / 4 / 5. Workers: +1 at building level 
 
 | Key | Name | Town Hall | Strength | Cost / gear |
 |---|---|---|---|---|
-| skirm | Skirmisher | 2 | 1 |  |
-| spear | Spearman | 3 | 1.6 |  |
-| archer | Archer | 3 | 1.4 |  |
-| warrior | Warrior | 3 | 2.2 |  |
-| viking | Viking | 4 | 2.6 |  |
-| berserk | Berserker | 5 | 3.4 |  |
+| skirm | Skirmisher | 2 | 1 | 1 spears |
+| spear | Spearman | 3 | 1.6 | 1 spears, 1 shields |
+| archer | Archer | 3 | 1.4 | 1 bows, 20 arrows |
+| warrior | Warrior | 3 | 2.2 | 1 swords, 1 shields |
+| viking | Viking | 4 | 2.6 | 1 axes, 1 shields |
+| berserk | Berserker | 5 | 3.4 | 1 axes, 1 shields, 1 armour |
 | merc | Mercenary | 4 | 2 |  |
 
 ## Ships
@@ -128,7 +182,7 @@ Limits are per Town Hall level 1 / 2 / 3 / 4 / 5. Workers: +1 at building level 
 
 | Place | Region | Type | Defence | Walls | Loot |
 |---|---|---|---|---|---|
-| Hvalsey | scand | Fishing hamlet | 4 |  | 60 fish, 30 dfish, 6 misc, 10 silver |
+| Hvalsey | scand | Fishing hamlet | 4 |  | 60 fish, 30 smoked, 6 misc, 10 silver |
 | Sogn outpost | scand | Outpost | 8 |  | 80 wood, 30 iron, 10 hides, 20 silver |
 | Hordaland | scand | Hall of Jarl Hrolf the Grey | 18 |  | 70 silver, 40 iron, 6 spears, 4 shields, 30 meat |
 | Ringsaker | scand | Farmsteads by the lake | 9 |  | 80 grain, 60 meat, 30 wool, 25 silver |
@@ -136,7 +190,7 @@ Limits are per Town Hall level 1 / 2 / 3 / 4 / 5. Workers: +1 at building level 
 | Jutland | scand | Hall of Jarl Sigvard | 24 |  | 110 silver, 3 swords, 50 iron, 40 meat |
 | Hedeby | scand | Great market behind a rampart | 44 | yes | 320 silver, 30 cloth, 6 swords, 10 tools |
 | Birka | scand | Trading town on an island | 32 | yes | 240 silver, 30 hides, 20 cloth, 12 misc |
-| Shetland | isles | Fishing steadings | 12 |  | 80 fish, 40 wool, 30 dfish, 45 silver |
+| Shetland | isles | Fishing steadings | 12 |  | 80 fish, 40 wool, 30 smoked, 45 silver |
 | The Hebrides | isles | Farms of the western isles | 16 |  | 90 grain, 60 meat, 40 wool, 60 silver |
 | Orkney | isles | Hall of the Orkney jarl | 30 |  | 150 silver, 10 gold, 50 meat, 3 swords |
 | Lindisfarne | england | Monastery on a holy island | 12 |  | 40 gold, 120 silver, 20 cloth, 20 misc |
@@ -148,7 +202,7 @@ Limits are per Town Hall level 1 / 2 / 3 / 4 / 5. Workers: +1 at building level 
 
 | Partner | Wants | Sells |
 |---|---|---|
-| Skiringssal | flour, dfish, smoked, planks, hides | iron, tools, flour, pig, sheep, arrows |
+| Skiringssal | flour, smoked, planks, hides | iron, tools, flour, pig, sheep, arrows |
 | Hedeby | wool, cloth, hides, mead, misc | tools, iron, swords, shields, thrall, gold |
 | Birka | hides, honey, mead, rope, jam | iron, axes, bows, armour, gold, sheep |
 | Dublin | clothes, mead, swords, thrall, cloth | gold, silver, flour, tools, pig |

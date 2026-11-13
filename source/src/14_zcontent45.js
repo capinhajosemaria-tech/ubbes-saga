@@ -9,7 +9,7 @@ SHIPCAP.snekkja={crew:25,cargo:160};
 const REGIONS={scand:{n:'Scandinavia',lv:3},isles:{n:'The Northern Isles',lv:4},england:{n:'England',lv:5,map:'england'}};
 TARGETS.forEach(t=>{t.reg='scand';});
 TARGETS.push(
-  {id:'shet',reg:'isles',n:'Shetland',type:'Fishing steadings',x:0,y:0,d:4,def:12,loot:{fish:80,wool:40,dfish:30,silver:45},pris:6,herd:2},
+  {id:'shet',reg:'isles',n:'Shetland',type:'Fishing steadings',x:0,y:0,d:4,def:12,loot:{fish:80,wool:40,smoked:30,silver:45},pris:6,herd:2},
   {id:'heb',reg:'isles',n:'The Hebrides',type:'Farms of the western isles',x:0,y:0,d:6,def:16,loot:{grain:90,meat:60,wool:40,silver:60},pris:8,herd:4},
   {id:'ork',reg:'isles',n:'Orkney',type:'Hall of the Orkney jarl',x:0,y:0,d:6,def:30,loot:{silver:150,gold:10,meat:50,swords:3},pris:10,jarl:true},
   {id:'lind',reg:'england',n:'Lindisfarne',type:'Monastery on a holy island',x:0,y:0,d:9,def:12,loot:{gold:40,silver:120,cloth:20,misc:20},pris:8},
@@ -20,12 +20,12 @@ const regionOpen=r=>{const R=REGIONS[r||'scand'];return thLevel()>=R.lv&&(!R.map
 const hasAdv=k=>S.advs?S.advs.includes(k):S.adv===k;
 const advSlots=()=>[1,1,2,3,4][thLevel()-1];   /* the council: 4 seats in all, the 4th at Town Hall 5 */
 /* trading partners unlock step by step */
-const PARTNERS={skir:{n:'Skiringssal',open:()=>thLevel()>=3,wants:['flour','dfish','smoked','planks','hides'],sells:['iron','tools','flour','pig','sheep','arrows']},
+const PARTNERS={skir:{n:'Skiringssal',open:()=>thLevel()>=3,wants:['flour','smoked','planks','hides'],sells:['iron','tools','flour','pig','sheep','arrows']},
   hedeby:{n:'Hedeby',open:()=>thLevel()>=3&&S.ships.length>0,wants:['wool','cloth','hides','mead','misc'],sells:['tools','iron','swords','shields','thrall','gold']},
   birka:{n:'Birka',open:()=>thLevel()>=4,wants:['hides','honey','mead','rope','jam'],sells:['iron','axes','bows','armour','gold','sheep']},
   dublin:{n:'Dublin',open:()=>thLevel()>=5,wants:['clothes','mead','swords','thrall','cloth'],sells:['gold','silver','flour','tools','pig']},
   london:{n:'London',open:()=>thLevel()>=5&&!!(S.maps&&S.maps.england),wants:['hides','clothes','honey','smoked','mead'],sells:['gold','tools','cloth','armour','swords']}};
-const BASEP={wood:0.4,planks:2,iron:3,tools:6,flour:1,fodder:0.5,wool:2,flax:1.2,grain:1,cloth:6,rope:5,hides:3,misc:1,honey:2.5,clothes:9,smoked:3,jam:2,dfish:2,bread:1,ale:2,mead:5,
+const BASEP={wood:0.4,planks:2,iron:3,tools:6,flour:1,fodder:0.5,wool:2,flax:1.2,grain:1,cloth:6,rope:5,hides:3,misc:1,honey:2.5,clothes:9,smoked:3,jam:2,bread:1,ale:2,mead:5,
   spears:5,shields:8,bows:6,arrows:0.6,swords:18,axes:10,armour:32,thrall:18,pig:6,sheep:8,gold:10,silver:1};
 function partnerOk(id){const P=PARTNERS[id];return P&&P.open()&&!(((S.tg[id]||{}).ban||0)>S.day);}
 function mktSat(k){S.mkt=S.mkt||{};return S.mkt[k]===undefined?1:S.mkt[k];}
@@ -34,7 +34,7 @@ function priceSell(k){const P=PARTNERS[S.trader.from]||{wants:[]};let p=BASEP[k]
 const BUYX={iron:1.35,tools:1.35};
 function mktDem(k){S.mktB=S.mktB||{};return S.mktB[k]===undefined?1:S.mktB[k];}
 function bought(k,q){if(!BUYX[k])return;S.mktB=S.mktB||{};S.mktB[k]=Math.min(2.5,mktDem(k)*Math.pow(1.025,k==='arrows'?q/10:q));}
-function priceBuy(k){const P=PARTNERS[S.trader.from]||{sells:[]};let p=BASEP[k]*1.45*(P.sells.includes(k)?0.85:1.2)*(BUYX[k]||1)*mktDem(k);if(hasAdv('athelstan'))p*=0.85;if(ut('trader'))p*=0.87;return Math.max(1,p);}
+function priceBuy(k){const P=PARTNERS[S.trader.from]||{sells:[]};let p=BASEP[k]*1.45*0.85*(BUYX[k]||1)*mktDem(k);if(hasAdv('athelstan'))p*=0.85;if(ut('trader'))p*=0.87;return Math.max(1,p);}
 function newTrader(){const ok=Object.keys(PARTNERS).filter(partnerOk);if(!ok.length)return null;const id=pick(ok),P=PARTNERS[id];
   const deals=[];const w=P.wants.slice().sort(()=>Math.random()-0.5).slice(0,2);w.forEach(k=>deals.push({k:k,left:Math.round(20+Math.random()*40)}));
   return {until:S.day+4,from:id,deals:deals};}

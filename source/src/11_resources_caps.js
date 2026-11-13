@@ -3,11 +3,10 @@ const foodUnits=()=>FOOD.reduce((a,k)=>a+S.res[k]*MEAL[k],0);
 const foodItems=()=>FOOD.reduce((a,k)=>a+S.res[k],0);
 const matItems=()=>MAT.reduce((a,k)=>a+(k==='tools'?0:S.res[k]),0);
 const armsItems=()=>ARMS.reduce((a,k)=>a+(k==='arrows'?S.res[k]/10:S.res[k]),0);
-const lvlSum=t=>B.filter(b=>b.t===t&&!underCons(b)).reduce((a,b)=>a+300+150*(b.lvl-1),0);
+const lvlSum=t=>B.filter(b=>b.t===t&&!underCons(b)).reduce((a,b)=>a+450+225*(b.lvl-1),0);/* 0.21: +50% */
 const capFood=()=>200+lvlSum('gran');
 const capMat=()=>300+lvlSum('ware');
 const capArms=()=>20+B.filter(b=>b.t==='arsenal'&&!underCons(b)).reduce((a,b)=>a+60+30*(b.lvl-1),0);
-const capWater=()=>150+100*count('water');
 const HOUSE_CAP=[4,5,6,7,8];const housing=()=>B.reduce((a,b)=>{const D=DEF[b.t];return a+(D.housing&&!underCons(b)?(b.t==='house'?HOUSE_CAP[b.lvl-1]:D.housing):0);},0);
 /* firewood a day: each house 0.35 in summer (cooking) and 0.84 in winter (FIRE_HOUSE 0.7, since 0.15.3); insulated houses (lv3+) ×0.75; the Town Hall burns as much as 2 houses */
 const fireBase=()=>B.reduce((a,b)=>a+(underCons(b)?0:b.t==='house'?(b.lvl>=3?0.75:1):b.t==='jarl'?1:0),0)*FIRE_HOUSE+FIRE_TH;

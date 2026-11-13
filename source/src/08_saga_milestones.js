@@ -1,8 +1,8 @@
 /* =================== saga milestones =================== */
 const MS=[
-  {id:'settle',lv:1,title:'Settle the shore',goal:'Build a berry gatherer and a woodcutter’s lodge (the first of each is free)',fame:20,unlock:['carp','pres','pyre'],test:()=>has('berry')&&has('wood'),saga:'Ubbe sent the women to the berry slopes, men to the river with nets, and axes into the grove.'},
+  {id:'settle',lv:1,title:'Settle the shore',goal:'Build a berry gatherer and a woodcutter’s lodge (the first of each is free)',fame:20,unlock:['carp','pres','smoke','pyre'],test:()=>has('berry')&&has('wood'),saga:'Ubbe sent the women to the berry slopes, men to the river with nets, and axes into the grove.'},
   {id:'planks',lv:1,title:'Timber and planks',goal:'Build a carpenter and store 40 planks',fame:20,unlock:['gran','ware','mine','smith'],test:()=>has('carp')&&S.res.planks>=40,saga:'Planks were sawn for better halls.'},
-  {id:'winter',lv:1,title:'Ready for winter',goal:'Build a preserver, a granary and a warehouse, and store 35 preserved food',fame:40,unlock:['market','jarl'],test:()=>has('pres')&&has('gran')&&has('ware')&&S.res.dfish+S.res.jam>=35,saga:'Fish hung to dry and the storehouses filled before the dark months.'},
+  {id:'winter',lv:1,title:'Ready for winter',goal:'Build a preserver or a smokehouse, a granary and a warehouse, and store 35 preserved food',fame:40,unlock:['market','jarl'],test:()=>(has('pres')||has('smoke'))&&has('gran')&&has('ware')&&S.res.smoked+S.res.jam>=35,saga:'Fish hung in the smoke and the storehouses filled before the dark months.'},
   {id:'iron',lv:1,title:'Iron and tools',goal:'Build an iron mine and a smithy, and stock 12 tools',fame:50,unlock:[],test:()=>has('mine')&&has('smith')&&S.res.tools>=12,saga:'Ore was dug below the mountain, and the first tools came hot from the anvil.'},
   {id:'firstwinter',lv:1,title:'The first winter',goal:'Survive the first winter',fame:50,unlock:[],test:()=>Math.floor(S.gameT/YEAR)>=1,saga:'The first winter passed. Kaldstrand still stood when the ice broke.'},
   {id:'market',lv:1,title:'A gathering place',goal:'Build the market square',fame:30,unlock:[],test:()=>has('market'),saga:'Traders and neighbours met in the new square.'},
@@ -27,10 +27,6 @@ const MS=[
 const START_AVAIL=['house','fish','berry','wood'];
 const SHIP_NAMES=['Sea-Raven','Wave-Biter','Storm-Ox','Grey Goose','Long Serpent','Iron Swan','Foam-Wolf','Elk of the Waves'];
 const SHIPS={karvi:{name:'Karvi',work:110,cost:{planks:80,iron:20,cloth:10,rope:10},desc:'Warship. Carries 15 men and 120 loads of plunder.'},knarr:{name:'Knarr',work:140,cost:{planks:100,iron:15,cloth:15,rope:15},desc:'Cargo ship. 8 men, 250 loads. Poor in battle.'}};
-const BLESS_OLD={freyja:{name:'Freyja’s harvest',cost:{berries:30},meals:40,text:'+25% from farms, gatherers and the pens',hits:['fodder','grain','flax','berry','pigpen','sheeppen']},
-             njord:{name:'Njord’s catch',cost:{fish:20},meals:40,text:'+25% from fishers',hits:['fish']},
-             odin:{name:'Odin’s wisdom',cost:{planks:20,iron:10},text:'+25% from all crafts',hits:['carp','smith','pres','smoke','bakery','weaver']}};
-const PRICES={sell:{planks:2,flour:1,wool:2,cloth:6,rope:5,hides:3,smoked:3,jam:2,dfish:2,iron:3,tools:6,bread:1,misc:1},buy:{tools:9,iron:5,pig:6,sheep:8,shields:12,bows:10,arrows:8,swords:30,thrall:25}};
 const shipCost=k=>{const c=SHIPS[k].cost,o={};for(const x in c)o[x]=Math.round(c[x]*(hasAdv('floki')?0.8:1));return o;};
 
 MS.splice(MS.findIndex(m=>m.id==='forty')+1,0,
